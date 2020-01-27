@@ -26,56 +26,46 @@
 //
 
 !function () {
+    'use strict';
 
     var extend = function (base) {
         this.prototype = Object.create(base.prototype);
         this.prototype.constructor = this;
         return this;
     };
-    var implement = function () {
-        for (var index = 0; index < arguments.length; ++index) {
-            var prototype = arguments[index].prototype;
-            for (var key in prototype) {
-                // noinspection JSUnfilteredForInLoop
-                if (this.prototype.hasOwnProperty(key)) {
-                    continue;
-                }
-                // noinspection JSUnfilteredForInLoop
-                this.prototype[key] = prototype[key];
+
+    var implement = function (protocol) {
+        var prototype = protocol.prototype;
+        var names = Object.getOwnPropertyNames(prototype);
+        for (var j = 0; j < names.length; ++j) {
+            var key = names[j];
+            // noinspection JSUnfilteredForInLoop
+            if (this.prototype.hasOwnProperty(key)) {
+                continue;
             }
+            // noinspection JSUnfilteredForInLoop
+            var fn = prototype[key];
+            if (typeof fn !== 'function') {
+                continue;
+            }
+            this.prototype[key] = fn;
         }
         return this;
     };
 
-    var inherit = function () {
+    var inherits = function () {
         // extends BaseClass
-        this.prototype = Object.create(arguments[0].prototype);
+        extend.call(this, arguments[0]);
         // implements Interface(s)
-        for (var index = 1; index < arguments.length; ++index) {
-            var prototype = arguments[index].prototype;
-            for (var key in prototype) {
-                // noinspection JSUnfilteredForInLoop
-                if (this.prototype.hasOwnProperty(key)) {
-                    continue;
-                }
-                // noinspection JSUnfilteredForInLoop
-                this.prototype[key] = prototype[key];
-            }
+        for (var i = 1; i < arguments.length; ++i) {
+            implement.call(this, arguments[i]);
         }
-        this.prototype.constructor = this;
         return this;
     };
 
-    //-------- patch --------\\
+    //-------- patch --------
     if (typeof Function.prototype.inherits !== 'function') {
-        Function.prototype.inherits = inherit;
-    }
-
-    if (typeof Function.prototype.extends !== 'function') {
-        Function.prototype.extends = extend;
-    }
-    if (typeof Function.prototype.implements !== 'function') {
-        Function.prototype.implements = implement;
+        Function.prototype.inherits = inherits;
     }
 
 }();

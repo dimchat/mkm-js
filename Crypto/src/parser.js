@@ -30,9 +30,10 @@ if (typeof DIMP !== 'object') {
 }
 
 //! require 'class.js'
-//! require 'json2.js'
+//! require 'json2.js' (https://github.com/douglascrockford/JSON-js)
 
 !function (dimp) {
+    'use strict';
 
     //
     //  DataParser interface
@@ -63,11 +64,11 @@ if (typeof DIMP !== 'object') {
     };
 
     //
-    //  JSON (https://github.com/douglascrockford/JSON-js)
+    //  JSON
     //
     var json = function () {
     };
-    json.implements(parser);
+    json.inherits(parser);
     json.prototype.encode = function (container) {
         return JSON.stringify(container);
     };
@@ -98,6 +99,7 @@ if (typeof DIMP !== 'object') {
 }(DIMP);
 
 !function (dimp) {
+    'use strict';
 
     //
     //  KeyParser interface
@@ -154,7 +156,7 @@ if (typeof DIMP !== 'object') {
     //
     var pem = function () {
     };
-    pem.implements(parser);
+    pem.inherits(parser);
     pem.prototype.encodePublicKey = function (key) {
         console.assert(key != null, 'public key content empty');
         console.assert(false, 'PEM parser not implemented');
@@ -195,7 +197,7 @@ if (typeof DIMP !== 'object') {
         return this.parser.decodePrivateKey(pem);
     };
 
-    //-------- namespace --------\\
+    //-------- namespace --------
     if (typeof dimp.format !== 'object') {
         dimp.format = {}
     }

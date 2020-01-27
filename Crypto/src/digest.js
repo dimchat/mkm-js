@@ -32,6 +32,7 @@ if (typeof DIMP !== 'object') {
 //! require 'class.js'
 
 !function (dimp) {
+    'use strict';
 
     //
     //  Hash interface
@@ -55,7 +56,7 @@ if (typeof DIMP !== 'object') {
     //
     var md5 = function () {
     };
-    md5.implements(hash);
+    md5.inherits(hash);
     md5.prototype.digest = function (data) {
         console.assert(data != null, 'data empty');
         console.assert(false, 'MD5 not implemented');
@@ -67,7 +68,7 @@ if (typeof DIMP !== 'object') {
     //
     var sha256 = function () {
     };
-    sha256.implements(hash);
+    sha256.inherits(hash);
     sha256.prototype.digest = function (data) {
         console.assert(data != null, 'data empty');
         console.assert(false, 'SHA256 not implemented');
@@ -79,7 +80,7 @@ if (typeof DIMP !== 'object') {
     //
     var ripemd160 = function () {
     };
-    ripemd160.implements(hash);
+    ripemd160.inherits(hash);
     ripemd160.prototype.digest = function (data) {
         console.assert(data != null, 'data empty');
         console.assert(false, 'RIPEMD160 not implemented');
@@ -96,7 +97,7 @@ if (typeof DIMP !== 'object') {
         return this.hash.digest(data);
     };
 
-    //-------- namespace --------\\
+    //-------- namespace --------
     if (typeof dimp.digest !== 'object') {
         dimp.digest = {}
     }

@@ -32,6 +32,7 @@ if (typeof DIMP !== 'object') {
 //! require 'class.js'
 
 !function (dimp) {
+    'use strict';
 
     //
     //  BaseCoder interface
@@ -66,7 +67,7 @@ if (typeof DIMP !== 'object') {
     //
     var hex = function () {
     };
-    hex.implements(coder);
+    hex.inherits(coder);
     hex.prototype.encode = function (data) {
         console.assert(data != null, 'data empty');
         console.assert(false, 'HEX encode not implemented');
@@ -83,7 +84,7 @@ if (typeof DIMP !== 'object') {
     //
     var base58 = function () {
     };
-    base58.implements(coder);
+    base58.inherits(coder);
     base58.prototype.encode = function (data) {
         console.assert(data != null, 'data empty');
         console.assert(false, 'Base58 encode not implemented');
@@ -100,7 +101,7 @@ if (typeof DIMP !== 'object') {
     //
     var base64 = function () {
     };
-    base64.implements(coder);
+    base64.inherits(coder);
     base64.prototype.encode = function (data) {
         console.assert(data != null, 'data empty');
         console.assert(false, 'Base64 encode not implemented');
@@ -125,7 +126,7 @@ if (typeof DIMP !== 'object') {
         return this.coder.decode(string);
     };
 
-    //-------- namespace --------\\
+    //-------- namespace --------
     if (typeof dimp.format !== 'object') {
         dimp.format = {}
     }

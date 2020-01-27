@@ -33,6 +33,7 @@ if (typeof DIMP !== 'object') {
 //! require 'cryptography.js'
 
 !function (dimp) {
+    'use strict';
 
     var CryptographyKey = dimp.crypto.CryptographyKey;
 
@@ -48,17 +49,18 @@ if (typeof DIMP !== 'object') {
     //
     var AsymmetricKey = function () {
     };
-    AsymmetricKey.implements(CryptographyKey);
+    AsymmetricKey.inherits(CryptographyKey);
 
     AsymmetricKey.RSA = 'RSA'; //-- "RSA/ECB/PKCS1Padding", "SHA256withRSA"
     AsymmetricKey.ECC = 'ECC';
 
-    //-------- namespace --------\\
+    //-------- namespace --------
     dimp.crypto.AsymmetricKey = AsymmetricKey;
 
 }(DIMP);
 
 !function (dimp) {
+    'use strict';
 
     var CryptographyKey = dimp.crypto.CryptographyKey;
     var AsymmetricKey = dimp.crypto.AsymmetricKey;
@@ -69,7 +71,7 @@ if (typeof DIMP !== 'object') {
 
     var PublicKey = function () {
     };
-    PublicKey.implements(AsymmetricKey, VerifyKey);
+    PublicKey.inherits(AsymmetricKey, VerifyKey);
 
     PublicKey.prototype.matches = function (privateKey) {
         if (privateKey === null) {
@@ -85,7 +87,7 @@ if (typeof DIMP !== 'object') {
         return this.verify(promise, signature);
     };
 
-    //-------- runtime --------\\
+    //-------- runtime --------
     var public_key_classes = {};
 
     /**
@@ -118,12 +120,13 @@ if (typeof DIMP !== 'object') {
         throw TypeError('key algorithm error: ' + algorithm);
     };
 
-    //-------- namespace --------\\
+    //-------- namespace --------
     dimp.crypto.PublicKey = PublicKey;
 
 }(DIMP);
 
 !function (dimp) {
+    'use strict';
 
     var CryptographyKey = dimp.crypto.CryptographyKey;
     var AsymmetricKey = dimp.crypto.AsymmetricKey;
@@ -131,7 +134,7 @@ if (typeof DIMP !== 'object') {
 
     var PrivateKey = function () {
     };
-    PrivateKey.implements(AsymmetricKey, SignKey);
+    PrivateKey.inherits(AsymmetricKey, SignKey);
 
     PrivateKey.prototype.equals = function (other) {
         var publicKey = this.getPublicKey();
@@ -155,7 +158,7 @@ if (typeof DIMP !== 'object') {
         return this.getInstance({algorithm: algorithm});
     };
 
-    //-------- runtime --------\\
+    //-------- runtime --------
     var private_key_classes = {};
 
     /**
@@ -188,7 +191,7 @@ if (typeof DIMP !== 'object') {
         throw TypeError('key algorithm error: ' + algorithm);
     };
 
-    //-------- namespace --------\\
+    //-------- namespace --------
     dimp.crypto.PrivateKey = PrivateKey;
 
 }(DIMP);

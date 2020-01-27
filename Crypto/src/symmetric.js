@@ -33,6 +33,7 @@ if (typeof DIMP !== 'object') {
 //! require 'cryptography.js'
 
 !function (dimp) {
+    'use strict';
 
     var CryptographyKey = dimp.crypto.CryptographyKey;
     var EncryptKey = dimp.crypto.EncryptKey;
@@ -55,7 +56,7 @@ if (typeof DIMP !== 'object') {
     //
     var SymmetricKey = function () {
     };
-    SymmetricKey.implements(EncryptKey, DecryptKey);
+    SymmetricKey.inherits(EncryptKey, DecryptKey);
 
     SymmetricKey.prototype.equals = function (other) {
         // check by encryption
@@ -74,7 +75,7 @@ if (typeof DIMP !== 'object') {
         return this.getInstance({algorithm: algorithm});
     };
 
-    //-------- runtime --------\\
+    //-------- runtime --------
     var key_classes = {};
 
     /**
@@ -110,7 +111,7 @@ if (typeof DIMP !== 'object') {
     SymmetricKey.AES = 'AES'; //-- "AES/CBC/PKCS7Padding"
     SymmetricKey.DES = 'DES';
 
-    //-------- namespace --------\\
+    //-------- namespace --------
     dimp.crypto.SymmetricKey = SymmetricKey;
 
 }(DIMP);

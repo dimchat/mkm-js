@@ -32,6 +32,7 @@ if (typeof DIMP !== 'object') {
 //! require 'class.js'
 
 !function (dimp) {
+    'use strict';
 
     //
     //  Cryptography Key
@@ -85,7 +86,7 @@ if (typeof DIMP !== 'object') {
 
     var EncryptKey = function () {
     };
-    EncryptKey.implements(CryptographyKey);
+    EncryptKey.inherits(CryptographyKey);
     /**
      *  ciphertext = encrypt(plaintext, PW)
      *  ciphertext = encrypt(plaintext, PK)
@@ -101,7 +102,7 @@ if (typeof DIMP !== 'object') {
 
     var DecryptKey = function () {
     };
-    DecryptKey.implements(CryptographyKey);
+    DecryptKey.inherits(CryptographyKey);
     /**
      *  plaintext = decrypt(ciphertext, PW);
      *  plaintext = decrypt(ciphertext, SK);
@@ -117,7 +118,7 @@ if (typeof DIMP !== 'object') {
 
     var SignKey = function () {
     };
-    SignKey.implements(CryptographyKey);
+    SignKey.inherits(CryptographyKey);
     /**
      *  signature = sign(data, SK);
      *
@@ -132,7 +133,7 @@ if (typeof DIMP !== 'object') {
 
     var VerifyKey = function () {
     };
-    VerifyKey.implements(CryptographyKey);
+    VerifyKey.inherits(CryptographyKey);
     /**
      *  OK = verify(data, signature, PK)
      *
@@ -147,7 +148,7 @@ if (typeof DIMP !== 'object') {
         return false;
     };
 
-    //-------- namespace --------\\
+    //-------- namespace --------
     if (typeof dimp.crypto !== 'object') {
         dimp.crypto = {}
     }
