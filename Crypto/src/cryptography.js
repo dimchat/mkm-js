@@ -25,13 +25,9 @@
 // =============================================================================
 //
 
-if (typeof DIMP !== 'object') {
-    DIMP = {};
-}
-
 //! require 'class.js'
 
-!function (dimp) {
+!function (ns) {
     'use strict';
 
     //
@@ -149,13 +145,13 @@ if (typeof DIMP !== 'object') {
     };
 
     //-------- namespace --------
-    if (typeof dimp.crypto !== 'object') {
-        dimp.crypto = {}
+    if (typeof ns.crypto !== 'object') {
+        ns.crypto = {}
     }
-    dimp.crypto.CryptographyKey = CryptographyKey;
-    dimp.crypto.EncryptKey = EncryptKey;
-    dimp.crypto.DecryptKey = DecryptKey;
-    dimp.crypto.SignKey = SignKey;
-    dimp.crypto.VerifyKey = VerifyKey;
+    ns.crypto.CryptographyKey = CryptographyKey;
+    ns.crypto.EncryptKey = EncryptKey;
+    ns.crypto.DecryptKey = DecryptKey;
+    ns.crypto.SignKey = SignKey;
+    ns.crypto.VerifyKey = VerifyKey;
 
 }(DIMP);

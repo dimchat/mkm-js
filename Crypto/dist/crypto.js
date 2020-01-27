@@ -6,585 +6,616 @@
  * @copyright (c) 2020 Albert Moky
  * @license   {@link https://mit-license.org | MIT License}
  */
-! function() {
-    var c = function(d) {
-        this.prototype = Object.create(d.prototype);
+if (typeof DIMP !== "object") {
+    DIMP = {}
+}! function() {
+    var is_instanceof = function(clazz) {
+        if (this instanceof clazz) {
+            return true
+        }
+        var me = Object.getPrototypeOf(this);
+        var prototype = clazz.prototype;
+        var names = Object.getOwnPropertyNames(prototype);
+        for (var j = 0; j < names.length; ++j) {
+            var key = names[j];
+            if (!me.hasOwnProperty(key)) {
+                return false
+            }
+        }
+        return true
+    };
+    var implement = function(protocol) {
+        var prototype = protocol.prototype;
+        var names = Object.getOwnPropertyNames(prototype);
+        for (var j = 0; j < names.length; ++j) {
+            var key = names[j];
+            if (this.prototype.hasOwnProperty(key)) {
+                continue
+            }
+            var fn = prototype[key];
+            if (typeof fn !== "function") {
+                continue
+            }
+            this.prototype[key] = fn
+        }
+        return this
+    };
+    var extend = function(base) {
+        this.prototype = Object.create(base.prototype);
         this.prototype.constructor = this;
         return this
     };
-    var b = function(i) {
-        var e = i.prototype;
-        var h = Object.getOwnPropertyNames(e);
-        for (var d = 0; d < h.length; ++d) {
-            var f = h[d];
-            if (this.prototype.hasOwnProperty(f)) {
-                continue
-            }
-            var g = e[f];
-            if (typeof g !== "function") {
-                continue
-            }
-            this.prototype[f] = g
+    var inherits = function() {
+        extend.call(this, arguments[0]);
+        for (var i = 1; i < arguments.length; ++i) {
+            implement.call(this, arguments[i])
         }
         return this
     };
-    var a = function() {
-        c.call(this, arguments[0]);
-        for (var d = 1; d < arguments.length; ++d) {
-            b.call(this, arguments[d])
-        }
-        return this
-    };
+    if (typeof Object.prototype.isinstanceof !== "function") {
+        Object.prototype.isinstanceof = is_instanceof
+    }
     if (typeof Function.prototype.inherits !== "function") {
-        Function.prototype.inherits = a
+        Function.prototype.inherits = inherits
     }
 }();
-if (typeof DIMP !== "object") {
-    DIMP = {}
-}! function(b) {
-    var c = function() {};
-    c.prototype.encode = function(g) {
-        console.assert(g != null, "data empty");
+! function(ns) {
+    var coder = function() {};
+    coder.prototype.encode = function(data) {
+        console.assert(data != null, "data empty");
         console.assert(false, "implement me!");
         return null
     };
-    c.prototype.decode = function(g) {
-        console.assert(g != null, "string empty");
+    coder.prototype.decode = function(string) {
+        console.assert(string != null, "string empty");
         console.assert(false, "implement me!");
         return null
     };
-    var e = function() {};
-    e.inherits(c);
-    e.prototype.encode = function(g) {
-        console.assert(g != null, "data empty");
+    var hex = function() {};
+    hex.inherits(coder);
+    hex.prototype.encode = function(data) {
+        console.assert(data != null, "data empty");
         console.assert(false, "HEX encode not implemented");
         return null
     };
-    e.prototype.decode = function(g) {
-        console.assert(g != null, "string empty");
+    hex.prototype.decode = function(string) {
+        console.assert(string != null, "string empty");
         console.assert(false, "HEX decode not implemented");
         return null
     };
-    var d = function() {};
-    d.inherits(c);
-    d.prototype.encode = function(g) {
-        console.assert(g != null, "data empty");
+    var base58 = function() {};
+    base58.inherits(coder);
+    base58.prototype.encode = function(data) {
+        console.assert(data != null, "data empty");
         console.assert(false, "Base58 encode not implemented");
         return null
     };
-    d.prototype.decode = function(g) {
-        console.assert(g != null, "string empty");
+    base58.prototype.decode = function(string) {
+        console.assert(string != null, "string empty");
         console.assert(false, "Base58 decode not implemented");
         return null
     };
-    var a = function() {};
-    a.inherits(c);
-    a.prototype.encode = function(g) {
-        console.assert(g != null, "data empty");
+    var base64 = function() {};
+    base64.inherits(coder);
+    base64.prototype.encode = function(data) {
+        console.assert(data != null, "data empty");
         console.assert(false, "Base64 encode not implemented");
         return null
     };
-    a.prototype.decode = function(g) {
-        console.assert(g != null, "string empty");
+    base64.prototype.decode = function(string) {
+        console.assert(string != null, "string empty");
         console.assert(false, "Base64 decode not implemented");
         return null
     };
-    var f = function(g) {
-        this.coder = g
+    var C = function(lib) {
+        this.coder = lib
     };
-    f.prototype.encode = function(g) {
-        return this.coder.encode(g)
+    C.prototype.encode = function(data) {
+        return this.coder.encode(data)
     };
-    f.prototype.decode = function(g) {
-        return this.coder.decode(g)
+    C.prototype.decode = function(string) {
+        return this.coder.decode(string)
     };
-    if (typeof b.format !== "object") {
-        b.format = {}
+    if (typeof ns.format !== "object") {
+        ns.format = {}
     }
-    b.format.BaseCoder = c;
-    b.format.Hex = new f(new e());
-    b.format.Base58 = new f(new d());
-    b.format.Base64 = new f(new a())
+    ns.format.BaseCoder = coder;
+    ns.format.Hex = new C(new hex());
+    ns.format.Base58 = new C(new base58());
+    ns.format.Base64 = new C(new base64())
 }(DIMP);
-if (typeof DIMP !== "object") {
-    DIMP = {}
-}! function(a) {
-    var f = function() {};
-    f.prototype.digest = function(g) {
-        console.assert(g != null, "data empty");
+! function(ns) {
+    var hash = function() {};
+    hash.prototype.digest = function(data) {
+        console.assert(data != null, "data empty");
         console.assert(false, "implement me!");
         return null
     };
-    var d = function() {};
-    d.inherits(f);
-    d.prototype.digest = function(g) {
-        console.assert(g != null, "data empty");
+    var md5 = function() {};
+    md5.inherits(hash);
+    md5.prototype.digest = function(data) {
+        console.assert(data != null, "data empty");
         console.assert(false, "MD5 not implemented");
         return null
     };
-    var c = function() {};
-    c.inherits(f);
-    c.prototype.digest = function(g) {
-        console.assert(g != null, "data empty");
+    var sha256 = function() {};
+    sha256.inherits(hash);
+    sha256.prototype.digest = function(data) {
+        console.assert(data != null, "data empty");
         console.assert(false, "SHA256 not implemented");
         return null
     };
-    var e = function() {};
-    e.inherits(f);
-    e.prototype.digest = function(g) {
-        console.assert(g != null, "data empty");
+    var ripemd160 = function() {};
+    ripemd160.inherits(hash);
+    ripemd160.prototype.digest = function(data) {
+        console.assert(data != null, "data empty");
         console.assert(false, "RIPEMD160 not implemented");
         return null
     };
-    var b = function(g) {
-        this.hash = g
+    var H = function(lib) {
+        this.hash = lib
     };
-    b.prototype.digest = function(g) {
-        return this.hash.digest(g)
+    H.prototype.digest = function(data) {
+        return this.hash.digest(data)
     };
-    if (typeof a.digest !== "object") {
-        a.digest = {}
+    if (typeof ns.digest !== "object") {
+        ns.digest = {}
     }
-    a.digest.Hash = f;
-    a.digest.MD5 = new b(new d());
-    a.digest.SHA256 = new b(new c());
-    a.digest.RIPEMD160 = new b(new e())
+    ns.digest.Hash = hash;
+    ns.digest.MD5 = new H(new md5());
+    ns.digest.SHA256 = new H(new sha256());
+    ns.digest.RIPEMD160 = new H(new ripemd160())
 }(DIMP);
-if (typeof DIMP !== "object") {
-    DIMP = {}
-}! function(a) {
-    var d = function() {};
-    d.prototype.encode = function(e) {
-        console.assert(e != null, "container empty");
+! function(ns) {
+    var parser = function() {};
+    parser.prototype.encode = function(container) {
+        console.assert(container != null, "container empty");
         console.assert(false, "implement me!");
         return null
     };
-    d.prototype.decode = function(e) {
-        console.assert(e != null, "string empty");
+    parser.prototype.decode = function(string) {
+        console.assert(string != null, "string empty");
         console.assert(false, "implement me!");
         return null
     };
-    var b = function() {};
-    b.inherits(d);
-    b.prototype.encode = function(e) {
-        return JSON.stringify(e)
+    var json = function() {};
+    json.inherits(parser);
+    json.prototype.encode = function(container) {
+        return JSON.stringify(container)
     };
-    b.prototype.decode = function(e) {
-        return JSON.parse(e)
+    json.prototype.decode = function(string) {
+        return JSON.parse(string)
     };
-    var c = function(e) {
-        this.parser = e
+    var P = function(lib) {
+        this.parser = lib
     };
-    c.prototype.encode = function(e) {
-        return this.parser.encode(e)
+    P.prototype.encode = function(container) {
+        return this.parser.encode(container)
     };
-    c.prototype.decode = function(e) {
-        return this.parser.decode(e)
+    P.prototype.decode = function(string) {
+        return this.parser.decode(string)
     };
-    if (typeof a.format !== "object") {
-        a.format = {}
+    if (typeof ns.format !== "object") {
+        ns.format = {}
     }
-    a.format.DataParser = d;
-    a.format.JSON = new c(new b())
+    ns.format.DataParser = parser;
+    ns.format.JSON = new P(new json())
 }(DIMP);
-! function(a) {
-    var d = function() {};
-    d.prototype.encodePublicKey = function(e) {
-        console.assert(e != null, "public key empty");
+! function(ns) {
+    var parser = function() {};
+    parser.prototype.encodePublicKey = function(key) {
+        console.assert(key != null, "public key empty");
         console.assert(false, "implement me!");
         return null
     };
-    d.prototype.encodePrivateKey = function(e) {
-        console.assert(e != null, "private key empty");
+    parser.prototype.encodePrivateKey = function(key) {
+        console.assert(key != null, "private key empty");
         console.assert(false, "implement me!");
         return null
     };
-    d.prototype.decodePublicKey = function(e) {
-        console.assert(e != null, "pem content empty");
+    parser.prototype.decodePublicKey = function(pem) {
+        console.assert(pem != null, "pem content empty");
         console.assert(false, "implement me!");
         return null
     };
-    d.prototype.decodePrivateKey = function(e) {
-        console.assert(e != null, "pem content empty");
+    parser.prototype.decodePrivateKey = function(pem) {
+        console.assert(pem != null, "pem content empty");
         console.assert(false, "implement me!");
         return null
     };
-    var c = function() {};
-    c.inherits(d);
-    c.prototype.encodePublicKey = function(e) {
-        console.assert(e != null, "public key content empty");
+    var pem = function() {};
+    pem.inherits(parser);
+    pem.prototype.encodePublicKey = function(key) {
+        console.assert(key != null, "public key content empty");
         console.assert(false, "PEM parser not implemented");
         return null
     };
-    c.prototype.encodePrivateKey = function(e) {
-        console.assert(e != null, "private key content empty");
+    pem.prototype.encodePrivateKey = function(key) {
+        console.assert(key != null, "private key content empty");
         console.assert(false, "PEM parser not implemented");
         return null
     };
-    c.prototype.decodePublicKey = function(e) {
-        console.assert(e != null, "pem content empty");
+    pem.prototype.decodePublicKey = function(pem) {
+        console.assert(pem != null, "pem content empty");
         console.assert(false, "PEM parser not implemented");
         return null
     };
-    c.prototype.decodePrivateKey = function(e) {
-        console.assert(e != null, "pem content empty");
+    pem.prototype.decodePrivateKey = function(pem) {
+        console.assert(pem != null, "pem content empty");
         console.assert(false, "PEM parser not implemented");
         return null
     };
-    var b = function(e) {
-        this.parser = e
+    var P = function(lib) {
+        this.parser = lib
     };
-    b.prototype.encodePublicKey = function(e) {
-        return this.parser.encodePublicKey(e)
+    P.prototype.encodePublicKey = function(key) {
+        return this.parser.encodePublicKey(key)
     };
-    b.prototype.encodePrivateKey = function(e) {
-        return this.parser.encodePrivateKey(e)
+    P.prototype.encodePrivateKey = function(key) {
+        return this.parser.encodePrivateKey(key)
     };
-    b.prototype.decodePublicKey = function(e) {
-        return this.parser.decodePublicKey(e)
+    P.prototype.decodePublicKey = function(pem) {
+        return this.parser.decodePublicKey(pem)
     };
-    b.prototype.decodePrivateKey = function(e) {
-        return this.parser.decodePrivateKey(e)
+    P.prototype.decodePrivateKey = function(pem) {
+        return this.parser.decodePrivateKey(pem)
     };
-    if (typeof a.format !== "object") {
-        a.format = {}
+    if (typeof ns.format !== "object") {
+        ns.format = {}
     }
-    a.format.KeyParser = d;
-    a.format.PEM = new b(new c())
+    ns.format.KeyParser = parser;
+    ns.format.PEM = new P(new pem())
 }(DIMP);
-if (typeof DIMP !== "object") {
-    DIMP = {}
-}! function(a) {
-    var f = {
-        encode: function(j) {
-            var l = [];
-            var g = j.length;
-            var k;
-            for (var h = 0; h < g; ++h) {
-                k = j.charCodeAt(h);
-                if (k <= 0) {
+! function(ns) {
+    var UTF8 = {
+        encode: function(str) {
+            var array = [];
+            var len = str.length;
+            var c;
+            for (var i = 0; i < len; ++i) {
+                c = str.charCodeAt(i);
+                if (c <= 0) {
                     break
                 } else {
-                    if (k < 128) {
-                        l.push(k)
+                    if (c < 128) {
+                        array.push(c)
                     } else {
-                        if (k < 2048) {
-                            l.push(192 | ((k >> 6) & 31));
-                            l.push(128 | ((k >> 0) & 63))
+                        if (c < 2048) {
+                            array.push(192 | ((c >> 6) & 31));
+                            array.push(128 | ((c >> 0) & 63))
                         } else {
-                            l.push(224 | ((k >> 12) & 15));
-                            l.push(128 | ((k >> 6) & 63));
-                            l.push(128 | ((k >> 0) & 63))
+                            array.push(224 | ((c >> 12) & 15));
+                            array.push(128 | ((c >> 6) & 63));
+                            array.push(128 | ((c >> 0) & 63))
                         }
                     }
                 }
             }
-            return l
+            return array
         },
-        decode: function(n) {
-            var j = "";
-            var g = n.length;
-            var m, l, h;
-            for (var k = 0; k < g; ++k) {
-                m = n[k];
-                switch (m >> 4) {
+        decode: function(array) {
+            var string = "";
+            var len = array.length;
+            var c, c2, c3;
+            for (var i = 0; i < len; ++i) {
+                c = array[i];
+                switch (c >> 4) {
                     case 12:
                     case 13:
-                        l = n[++k];
-                        m = ((m & 31) << 6) | (l & 63);
+                        c2 = array[++i];
+                        c = ((c & 31) << 6) | (c2 & 63);
                         break;
                     case 14:
-                        l = n[++k];
-                        h = n[++k];
-                        m = ((m & 15) << 12) | ((l & 63) << 6) | (h & 63);
+                        c2 = array[++i];
+                        c3 = array[++i];
+                        c = ((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63);
                         break
                 }
-                j += String.fromCharCode(m)
+                string += String.fromCharCode(c)
             }
-            return j
+            return string
         }
     };
-    var d = function(g) {
-        this.data = g
+    var obj = function(value) {
+        this.value = value
     };
-    d.prototype.equals = function(g) {
-        console.assert(false, "implement me!");
-        return false
-    };
-    d.prototype.toString = function() {
-        return this.data.toString()
-    };
-    d.prototype.toLocaleString = function() {
-        return this.data.toLocaleString()
-    };
-    d.prototype.toJSON = function() {
-        return a.format.JSON.encode(this.data)
-    };
-    var e = function(g, h) {
-        if (h === "UTF-8") {
-            g = f.decode(g)
-        }
-        d.call(this, g)
-    };
-    e.inherits(d);
-    e.prototype.equals = function(g) {
-        if (!g) {
-            return !this.data
+    obj.prototype.equals = function(other) {
+        if (other instanceof obj) {
+            return this.value === other.value
         } else {
-            if (g instanceof e) {
-                return this.data === g.data
+            return this.value === other
+        }
+    };
+    obj.prototype.toString = function() {
+        return this.value.toString()
+    };
+    obj.prototype.toLocaleString = function() {
+        return this.value.toLocaleString()
+    };
+    obj.prototype.toJSON = function() {
+        return ns.format.JSON.encode(this.value)
+    };
+    var str = function(data, charset) {
+        if (charset === "UTF-8") {
+            data = UTF8.decode(data)
+        }
+        obj.call(this, data)
+    };
+    str.inherits(obj);
+    str.prototype.equals = function(other) {
+        if (!other) {
+            return !this.value
+        } else {
+            if (other instanceof str) {
+                return this.value === other.value
             }
         }
-        return this.data === g
+        return this.value === other
     };
-    e.prototype.getBytes = function(g) {
-        if (!g || g === "UTF-8") {
-            return f.encode(this.data)
+    var equalsIgnoreCase = function(str1, str2) {
+        if (str1.length !== str2.length) {
+            return false
         }
-        return this.data
+        var low1 = str1.toLowerCase();
+        var low2 = str2.toLowerCase();
+        return low1 === low2
     };
-    var b = {
-        equals: function(h, g) {
-            if (h === g) {
+    str.prototype.equalsIgnoreCase = function(other) {
+        if (!other) {
+            return !this.value
+        } else {
+            if (other instanceof str) {
+                return equalsIgnoreCase(this.value, other.value)
+            }
+        }
+        return equalsIgnoreCase(this.value, other)
+    };
+    str.prototype.getLength = function() {
+        return this.value.length
+    };
+    str.prototype.getBytes = function(charset) {
+        if (!charset || charset === "UTF-8") {
+            return UTF8.encode(this.value)
+        }
+        return this.value
+    };
+    var arrays = {
+        equals: function(a1, a2) {
+            if (a1 === a2) {
                 return true
             }
-            if (h.length !== g.length) {
+            if (a1.length !== a2.length) {
                 return false
             }
-            for (var i in h) {
-                if (h[i] !== g[i]) {
+            for (var k in a1) {
+                if (a1[k] !== a2[k]) {
                     return false
                 }
             }
             return true
         },
     };
-    var c = function(g) {
-        d.call(this, g)
+    var map = function(map) {
+        obj.call(this, map)
     };
-    c.inherits(d);
-    c.prototype.equals = function(g) {
-        if (!g) {
-            return !this.data
+    map.inherits(obj);
+    map.prototype.equals = function(other) {
+        if (!other) {
+            return !this.value
         } else {
-            if (g instanceof c) {
-                return b.equals(this.data, g.data)
+            if (other instanceof map) {
+                return arrays.equals(this.value, other.value)
             }
         }
-        return b.equals(this.data, g)
+        return arrays.equals(this.value, other)
     };
-    c.prototype.allKeys = function() {
-        return Object.keys(this.data)
+    map.prototype.allKeys = function() {
+        return Object.keys(this.value)
     };
-    c.prototype.getValue = function(g) {
-        return this.data[g]
+    map.prototype.getValue = function(key) {
+        return this.value[key]
     };
-    c.prototype.setValue = function(g, h) {
-        this.data[g] = h
+    map.prototype.setValue = function(key, value) {
+        this.value[key] = value
     };
-    if (typeof a.type !== "object") {
-        a.type = {}
+    if (typeof ns.type !== "object") {
+        ns.type = {}
     }
-    a.type.String = e;
-    a.type.Dictionary = c;
-    a.type.Arrays = b
+    ns.type.Object = obj;
+    ns.type.String = str;
+    ns.type.Dictionary = map;
+    ns.type.Arrays = arrays
 }(DIMP);
-if (typeof DIMP !== "object") {
-    DIMP = {}
-}! function(b) {
-    var e = function() {};
-    e.prototype.equals = function(g) {
-        console.assert(g != null, "other key empty");
+! function(ns) {
+    var CryptographyKey = function() {};
+    CryptographyKey.prototype.equals = function(other) {
+        console.assert(other != null, "other key empty");
         console.assert(false, "implement me!");
         return false
     };
-    e.prototype.getData = function() {
+    CryptographyKey.prototype.getData = function() {
         console.assert(false, "implement me!");
         return null
     };
-    e.prototype.getSize = function() {
+    CryptographyKey.prototype.getSize = function() {
         console.assert(false, "implement me!");
         return 0
     };
-    e.createInstance = function(g, h) {
-        if (typeof g.createInstance === "function") {
-            return g.createInstance(h)
+    CryptographyKey.createInstance = function(clazz, map) {
+        if (typeof clazz.createInstance === "function") {
+            return clazz.createInstance(map)
         } else {
-            return new g(h)
+            return new clazz(map)
         }
     };
-    var f = function() {};
-    f.inherits(e);
-    f.prototype.encrypt = function(g) {
-        console.assert(g != null, "data empty");
+    var EncryptKey = function() {};
+    EncryptKey.inherits(CryptographyKey);
+    EncryptKey.prototype.encrypt = function(data) {
+        console.assert(data != null, "data empty");
         console.assert(false, "implement me!");
         return null
     };
-    var c = function() {};
-    c.inherits(e);
-    c.prototype.decrypt = function(g) {
-        console.assert(g != null, "data empty");
+    var DecryptKey = function() {};
+    DecryptKey.inherits(CryptographyKey);
+    DecryptKey.prototype.decrypt = function(data) {
+        console.assert(data != null, "data empty");
         console.assert(false, "implement me!");
         return null
     };
-    var a = function() {};
-    a.inherits(e);
-    a.prototype.sign = function(g) {
-        console.assert(g != null, "data empty");
+    var SignKey = function() {};
+    SignKey.inherits(CryptographyKey);
+    SignKey.prototype.sign = function(data) {
+        console.assert(data != null, "data empty");
         console.assert(false, "implement me!");
         return null
     };
-    var d = function() {};
-    d.inherits(e);
-    d.prototype.verify = function(h, g) {
-        console.assert(h != null, "data empty");
-        console.assert(g != null, "signature empty");
+    var VerifyKey = function() {};
+    VerifyKey.inherits(CryptographyKey);
+    VerifyKey.prototype.verify = function(data, signature) {
+        console.assert(data != null, "data empty");
+        console.assert(signature != null, "signature empty");
         console.assert(false, "implement me!");
         return false
     };
-    if (typeof b.crypto !== "object") {
-        b.crypto = {}
+    if (typeof ns.crypto !== "object") {
+        ns.crypto = {}
     }
-    b.crypto.CryptographyKey = e;
-    b.crypto.EncryptKey = f;
-    b.crypto.DecryptKey = c;
-    b.crypto.SignKey = a;
-    b.crypto.VerifyKey = d
+    ns.crypto.CryptographyKey = CryptographyKey;
+    ns.crypto.EncryptKey = EncryptKey;
+    ns.crypto.DecryptKey = DecryptKey;
+    ns.crypto.SignKey = SignKey;
+    ns.crypto.VerifyKey = VerifyKey
 }(DIMP);
-if (typeof DIMP !== "object") {
-    DIMP = {}
-}! function(a) {
-    var g = a.crypto.CryptographyKey;
-    var h = a.crypto.EncryptKey;
-    var b = a.crypto.DecryptKey;
-    var d = a.type.Arrays;
-    var f = new a.type.String("Moky loves May Lee forever!");
-    f = f.getBytes();
-    var e = function() {};
-    e.inherits(h, b);
-    e.prototype.equals = function(i) {
-        var k = i.encrypt(f);
-        var j = this.decrypt(k);
-        return d.equals(k, j)
+! function(ns) {
+    var CryptographyKey = ns.crypto.CryptographyKey;
+    var EncryptKey = ns.crypto.EncryptKey;
+    var DecryptKey = ns.crypto.DecryptKey;
+    var Arrays = ns.type.Arrays;
+    var promise = new ns.type.String("Moky loves May Lee forever!");
+    promise = promise.getBytes();
+    var SymmetricKey = function() {};
+    SymmetricKey.inherits(EncryptKey, DecryptKey);
+    SymmetricKey.prototype.equals = function(other) {
+        var ciphertext = other.encrypt(promise);
+        var plaintext = this.decrypt(ciphertext);
+        return Arrays.equals(ciphertext, plaintext)
     };
-    e.generate = function(i) {
+    SymmetricKey.generate = function(algorithm) {
         return this.getInstance({
-            algorithm: i
+            algorithm: algorithm
         })
     };
-    var c = {};
-    e.register = function(i, j) {
-        c[i] = j
+    var key_classes = {};
+    SymmetricKey.register = function(algorithm, clazz) {
+        key_classes[algorithm] = clazz
     };
-    e.getInstance = function(k) {
-        if (k === null) {
+    SymmetricKey.getInstance = function(key) {
+        if (!key) {
             return null
         } else {
-            if (k instanceof e) {
-                return k
+            if (key.isinstanceof(SymmetricKey)) {
+                return key
             }
         }
-        var i = k["algorithm"];
-        var j = c[i];
-        if (typeof j === "function") {
-            return g.createInstance(j, k)
+        var algorithm = key["algorithm"];
+        var clazz = key_classes[algorithm];
+        if (typeof clazz === "function") {
+            return CryptographyKey.createInstance(clazz, key)
         }
-        throw TypeError("key algorithm error: " + i)
+        throw TypeError("key algorithm error: " + algorithm)
     };
-    e.AES = "AES";
-    e.DES = "DES";
-    a.crypto.SymmetricKey = e
+    SymmetricKey.AES = "AES";
+    SymmetricKey.DES = "DES";
+    ns.crypto.SymmetricKey = SymmetricKey
 }(DIMP);
-if (typeof DIMP !== "object") {
-    DIMP = {}
-}! function(a) {
-    var c = a.crypto.CryptographyKey;
-    var b = function() {};
-    b.inherits(c);
-    b.RSA = "RSA";
-    b.ECC = "ECC";
-    a.crypto.AsymmetricKey = b
+! function(ns) {
+    var CryptographyKey = ns.crypto.CryptographyKey;
+    var AsymmetricKey = function() {};
+    AsymmetricKey.inherits(CryptographyKey);
+    AsymmetricKey.RSA = "RSA";
+    AsymmetricKey.ECC = "ECC";
+    ns.crypto.AsymmetricKey = AsymmetricKey
 }(DIMP);
-! function(b) {
-    var g = b.crypto.CryptographyKey;
-    var c = b.crypto.AsymmetricKey;
-    var f = b.crypto.VerifyKey;
-    var e = new b.type.String("Moky loves May Lee forever!");
-    e = e.getBytes();
-    var d = function() {};
-    d.inherits(c, f);
-    d.prototype.matches = function(i) {
-        if (i === null) {
+! function(ns) {
+    var CryptographyKey = ns.crypto.CryptographyKey;
+    var AsymmetricKey = ns.crypto.AsymmetricKey;
+    var VerifyKey = ns.crypto.VerifyKey;
+    var promise = new ns.type.String("Moky loves May Lee forever!");
+    promise = promise.getBytes();
+    var PublicKey = function() {};
+    PublicKey.inherits(AsymmetricKey, VerifyKey);
+    PublicKey.prototype.matches = function(privateKey) {
+        if (privateKey === null) {
             return false
         }
-        var j = i.getPublicKey();
-        if (this.equals(j)) {
+        var publicKey = privateKey.getPublicKey();
+        if (this.equals(publicKey)) {
             return true
         }
-        var h = i.sign(e);
-        return this.verify(e, h)
+        var signature = privateKey.sign(promise);
+        return this.verify(promise, signature)
     };
-    var a = {};
-    d.register = function(h, i) {
-        a[h] = i
+    var public_key_classes = {};
+    PublicKey.register = function(algorithm, clazz) {
+        public_key_classes[algorithm] = clazz
     };
-    d.getInstance = function(j) {
-        if (j === null) {
+    PublicKey.getInstance = function(key) {
+        if (key === null) {
             return null
         } else {
-            if (j instanceof d) {
-                return j
+            if (key.isinstanceof(PublicKey)) {
+                return key
             }
         }
-        var h = j["algorithm"];
-        var i = a[h];
-        if (typeof i === "function") {
-            return g.createInstance(i, j)
+        var algorithm = key["algorithm"];
+        var clazz = public_key_classes[algorithm];
+        if (typeof clazz === "function") {
+            return CryptographyKey.createInstance(clazz, key)
         }
-        throw TypeError("key algorithm error: " + h)
+        throw TypeError("key algorithm error: " + algorithm)
     };
-    b.crypto.PublicKey = d
+    ns.crypto.PublicKey = PublicKey
 }(DIMP);
-! function(b) {
-    var e = b.crypto.CryptographyKey;
-    var c = b.crypto.AsymmetricKey;
-    var a = b.crypto.SignKey;
-    var d = function() {};
-    d.inherits(c, a);
-    d.prototype.equals = function(g) {
-        var h = this.getPublicKey();
-        if (h === null) {
+! function(ns) {
+    var CryptographyKey = ns.crypto.CryptographyKey;
+    var AsymmetricKey = ns.crypto.AsymmetricKey;
+    var SignKey = ns.crypto.SignKey;
+    var PrivateKey = function() {};
+    PrivateKey.inherits(AsymmetricKey, SignKey);
+    PrivateKey.prototype.equals = function(other) {
+        var publicKey = this.getPublicKey();
+        if (publicKey === null) {
             return false
         }
-        return h.matches(g)
+        return publicKey.matches(other)
     };
-    d.prototype.getPublicKey = function() {
+    PrivateKey.prototype.getPublicKey = function() {
         console.assert(false, "implement me!");
         return null
     };
-    d.generate = function(g) {
+    PrivateKey.generate = function(algorithm) {
         return this.getInstance({
-            algorithm: g
+            algorithm: algorithm
         })
     };
-    var f = {};
-    d.register = function(g, h) {
-        f[g] = h
+    var private_key_classes = {};
+    PrivateKey.register = function(algorithm, clazz) {
+        private_key_classes[algorithm] = clazz
     };
-    d.getInstance = function(i) {
-        if (i === null) {
+    PrivateKey.getInstance = function(key) {
+        if (key === null) {
             return null
         } else {
-            if (i instanceof d) {
-                return i
+            if (key.isinstanceof(PrivateKey)) {
+                return key
             }
         }
-        var g = i["algorithm"];
-        var h = f[g];
-        if (typeof h === "function") {
-            return e.createInstance(h, i)
+        var algorithm = key["algorithm"];
+        var clazz = private_key_classes[algorithm];
+        if (typeof clazz === "function") {
+            return CryptographyKey.createInstance(clazz, key)
         }
-        throw TypeError("key algorithm error: " + g)
+        throw TypeError("key algorithm error: " + algorithm)
     };
-    b.crypto.PrivateKey = d
+    ns.crypto.PrivateKey = PrivateKey
 }(DIMP);

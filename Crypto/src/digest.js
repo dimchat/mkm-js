@@ -25,13 +25,9 @@
 // =============================================================================
 //
 
-if (typeof DIMP !== 'object') {
-    DIMP = {};
-}
-
 //! require 'class.js'
 
-!function (dimp) {
+!function (ns) {
     'use strict';
 
     //
@@ -98,12 +94,12 @@ if (typeof DIMP !== 'object') {
     };
 
     //-------- namespace --------
-    if (typeof dimp.digest !== 'object') {
-        dimp.digest = {}
+    if (typeof ns.digest !== 'object') {
+        ns.digest = {}
     }
-    dimp.digest.Hash = hash;
-    dimp.digest.MD5 = new H(new md5());
-    dimp.digest.SHA256 = new H(new sha256());
-    dimp.digest.RIPEMD160 = new H(new ripemd160());
+    ns.digest.Hash = hash;
+    ns.digest.MD5 = new H(new md5());
+    ns.digest.SHA256 = new H(new sha256());
+    ns.digest.RIPEMD160 = new H(new ripemd160());
 
 }(DIMP);

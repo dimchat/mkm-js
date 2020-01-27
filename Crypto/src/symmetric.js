@@ -25,23 +25,19 @@
 // =============================================================================
 //
 
-if (typeof DIMP !== 'object') {
-    DIMP = {};
-}
-
 //! require 'class.js'
 //! require 'cryptography.js'
 
-!function (dimp) {
+!function (ns) {
     'use strict';
 
-    var CryptographyKey = dimp.crypto.CryptographyKey;
-    var EncryptKey = dimp.crypto.EncryptKey;
-    var DecryptKey = dimp.crypto.DecryptKey;
+    var CryptographyKey = ns.crypto.CryptographyKey;
+    var EncryptKey = ns.crypto.EncryptKey;
+    var DecryptKey = ns.crypto.DecryptKey;
 
-    var Arrays = dimp.type.Arrays;
+    var Arrays = ns.type.Arrays;
 
-    var promise = new dimp.type.String('Moky loves May Lee forever!');
+    var promise = new ns.type.String('Moky loves May Lee forever!');
     promise = promise.getBytes();
 
     //
@@ -95,9 +91,9 @@ if (typeof DIMP !== 'object') {
      * @returns {SymmetricKey}
      */
     SymmetricKey.getInstance = function (key) {
-        if (key === null) {
+        if (!key) {
             return null;
-        } else if (key instanceof SymmetricKey) {
+        } else if (key.isinstanceof(SymmetricKey)) {
             return key;
         }
         var algorithm = key['algorithm'];
@@ -112,6 +108,6 @@ if (typeof DIMP !== 'object') {
     SymmetricKey.DES = 'DES';
 
     //-------- namespace --------
-    dimp.crypto.SymmetricKey = SymmetricKey;
+    ns.crypto.SymmetricKey = SymmetricKey;
 
 }(DIMP);

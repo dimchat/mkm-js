@@ -25,14 +25,10 @@
 // =============================================================================
 //
 
-if (typeof DIMP !== 'object') {
-    DIMP = {};
-}
-
 //! require 'class.js'
 //! require 'json2.js' (https://github.com/douglascrockford/JSON-js)
 
-!function (dimp) {
+!function (ns) {
     'use strict';
 
     //
@@ -90,15 +86,15 @@ if (typeof DIMP !== 'object') {
     };
 
     //-------- namespace --------//
-    if (typeof dimp.format !== 'object') {
-        dimp.format = {}
+    if (typeof ns.format !== 'object') {
+        ns.format = {}
     }
-    dimp.format.DataParser = parser;
-    dimp.format.JSON = new P(new json());
+    ns.format.DataParser = parser;
+    ns.format.JSON = new P(new json());
 
 }(DIMP);
 
-!function (dimp) {
+!function (ns) {
     'use strict';
 
     //
@@ -198,10 +194,10 @@ if (typeof DIMP !== 'object') {
     };
 
     //-------- namespace --------
-    if (typeof dimp.format !== 'object') {
-        dimp.format = {}
+    if (typeof ns.format !== 'object') {
+        ns.format = {}
     }
-    dimp.format.KeyParser = parser;
-    dimp.format.PEM = new P(new pem());
+    ns.format.KeyParser = parser;
+    ns.format.PEM = new P(new pem());
 
 }(DIMP);

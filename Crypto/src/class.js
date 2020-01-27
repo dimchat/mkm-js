@@ -25,13 +25,28 @@
 // =============================================================================
 //
 
+if (typeof DIMP !== 'object') {
+    DIMP = {};
+}
+
 !function () {
     'use strict';
 
-    var extend = function (base) {
-        this.prototype = Object.create(base.prototype);
-        this.prototype.constructor = this;
-        return this;
+    var is_instanceof = function (clazz) {
+        if (this instanceof clazz) {
+            return true;
+        }
+        var me = Object.getPrototypeOf(this);
+        var prototype = clazz.prototype;
+        var names = Object.getOwnPropertyNames(prototype);
+        for (var j = 0; j < names.length; ++j) {
+            var key = names[j];
+            // noinspection JSUnfilteredForInLoop
+            if (!me.hasOwnProperty(key)) {
+                return false;
+            }
+        }
+        return true;
     };
 
     var implement = function (protocol) {
@@ -53,6 +68,12 @@
         return this;
     };
 
+    var extend = function (base) {
+        this.prototype = Object.create(base.prototype);
+        this.prototype.constructor = this;
+        return this;
+    };
+
     var inherits = function () {
         // extends BaseClass
         extend.call(this, arguments[0]);
@@ -64,6 +85,11 @@
     };
 
     //-------- patch --------
+
+    if (typeof Object.prototype.isinstanceof !== 'function') {
+        Object.prototype.isinstanceof = is_instanceof;
+    }
+
     if (typeof Function.prototype.inherits !== 'function') {
         Function.prototype.inherits = inherits;
     }

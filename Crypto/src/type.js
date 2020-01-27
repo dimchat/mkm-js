@@ -25,14 +25,10 @@
 // =============================================================================
 //
 
-if (typeof DIMP !== 'object') {
-    DIMP = {};
-}
-
 //! require 'class.js'
 //! require 'parser.js'
 
-!function (dimp) {
+!function (ns) {
     'use strict';
 
     //
@@ -107,25 +103,28 @@ if (typeof DIMP !== 'object') {
     //
     //  Object wrapper
     //
-    var obj = function (data) {
-        this.data = data;
+    var obj = function (value) {
+        this.value = value;
     };
 
     obj.prototype.equals = function (other) {
-        console.assert(false, 'implement me!');
-        return false;
+        if (other instanceof obj) {
+            return this.value === other.value;
+        } else {
+            return this.value === other;
+        }
     };
 
     obj.prototype.toString = function () {
-        return this.data.toString();
+        return this.value.toString();
     };
 
     obj.prototype.toLocaleString = function () {
-        return this.data.toLocaleString();
+        return this.value.toLocaleString();
     };
 
     obj.prototype.toJSON = function () {
-        return dimp.format.JSON.encode(this.data);
+        return ns.format.JSON.encode(this.value);
     };
 
     //
@@ -141,12 +140,35 @@ if (typeof DIMP !== 'object') {
 
     str.prototype.equals = function (other) {
         if (!other) {
-            return !this.data;
+            return !this.value;
         } else if (other instanceof str) {
-            return this.data === other.data;
+            return this.value === other.value;
         }
         // console.assert(other instanceof String, 'other string error');
-        return this.data === other;
+        return this.value === other;
+    };
+
+    var equalsIgnoreCase = function (str1, str2) {
+        if (str1.length !== str2.length) {
+            return false;
+        }
+        var low1 = str1.toLowerCase();
+        var low2 = str2.toLowerCase();
+        return low1 === low2;
+    };
+
+    str.prototype.equalsIgnoreCase = function (other) {
+        if (!other) {
+            return !this.value;
+        } else if (other instanceof str) {
+            return equalsIgnoreCase(this.value, other.value);
+        }
+        // console.assert(other instanceof String, 'other string error');
+        return equalsIgnoreCase(this.value, other);
+    };
+
+    str.prototype.getLength = function() {
+        return this.value.length;
     };
 
     /**
@@ -157,10 +179,10 @@ if (typeof DIMP !== 'object') {
      */
     str.prototype.getBytes = function (charset) {
         if (!charset || charset === 'UTF-8') {
-            return UTF8.encode(this.data);
+            return UTF8.encode(this.value);
         }
         // TODO: other charset
-        return this.data;
+        return this.value;
     };
 
     //
@@ -195,11 +217,11 @@ if (typeof DIMP !== 'object') {
 
     map.prototype.equals = function (other) {
         if (!other) {
-            return !this.data;
+            return !this.value;
         } else if (other instanceof map) {
-            return arrays.equals(this.data, other.data);
+            return arrays.equals(this.value, other.value);
         }
-        return arrays.equals(this.data, other);
+        return arrays.equals(this.value, other);
     };
 
     /**
@@ -208,7 +230,7 @@ if (typeof DIMP !== 'object') {
      * @returns {string[]}
      */
     map.prototype.allKeys = function() {
-        return Object.keys(this.data);
+        return Object.keys(this.value);
     };
 
     /**
@@ -218,7 +240,7 @@ if (typeof DIMP !== 'object') {
      * @returns {*}
      */
     map.prototype.getValue = function (key) {
-        return this.data[key];
+        return this.value[key];
     };
 
     /**
@@ -228,15 +250,16 @@ if (typeof DIMP !== 'object') {
      * @param value
      */
     map.prototype.setValue = function (key, value) {
-        this.data[key] = value;
+        this.value[key] = value;
     };
 
     //-------- namespace --------
-    if (typeof dimp.type !== 'object') {
-        dimp.type = {}
+    if (typeof ns.type !== 'object') {
+        ns.type = {}
     }
-    dimp.type.String = str;
-    dimp.type.Dictionary = map;
-    dimp.type.Arrays = arrays;
+    ns.type.Object = obj;
+    ns.type.String = str;
+    ns.type.Dictionary = map;
+    ns.type.Arrays = arrays;
 
 }(DIMP);

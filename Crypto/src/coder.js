@@ -25,13 +25,9 @@
 // =============================================================================
 //
 
-if (typeof DIMP !== 'object') {
-    DIMP = {};
-}
-
 //! require 'class.js'
 
-!function (dimp) {
+!function (ns) {
     'use strict';
 
     //
@@ -127,12 +123,12 @@ if (typeof DIMP !== 'object') {
     };
 
     //-------- namespace --------
-    if (typeof dimp.format !== 'object') {
-        dimp.format = {}
+    if (typeof ns.format !== 'object') {
+        ns.format = {}
     }
-    dimp.format.BaseCoder = coder;
-    dimp.format.Hex = new C(new hex());
-    dimp.format.Base58 = new C(new base58());
-    dimp.format.Base64 = new C(new base64());
+    ns.format.BaseCoder = coder;
+    ns.format.Hex = new C(new hex());
+    ns.format.Base58 = new C(new base58());
+    ns.format.Base64 = new C(new base64());
 
 }(DIMP);

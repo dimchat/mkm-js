@@ -25,17 +25,13 @@
 // =============================================================================
 //
 
-if (typeof DIMP !== 'object') {
-    DIMP = {};
-}
-
 //! require 'class.js'
 //! require 'cryptography.js'
 
-!function (dimp) {
+!function (ns) {
     'use strict';
 
-    var CryptographyKey = dimp.crypto.CryptographyKey;
+    var CryptographyKey = ns.crypto.CryptographyKey;
 
     //
     //  Asymmetric Cryptography Key
@@ -55,18 +51,18 @@ if (typeof DIMP !== 'object') {
     AsymmetricKey.ECC = 'ECC';
 
     //-------- namespace --------
-    dimp.crypto.AsymmetricKey = AsymmetricKey;
+    ns.crypto.AsymmetricKey = AsymmetricKey;
 
 }(DIMP);
 
-!function (dimp) {
+!function (ns) {
     'use strict';
 
-    var CryptographyKey = dimp.crypto.CryptographyKey;
-    var AsymmetricKey = dimp.crypto.AsymmetricKey;
-    var VerifyKey = dimp.crypto.VerifyKey;
+    var CryptographyKey = ns.crypto.CryptographyKey;
+    var AsymmetricKey = ns.crypto.AsymmetricKey;
+    var VerifyKey = ns.crypto.VerifyKey;
 
-    var promise = new dimp.type.String('Moky loves May Lee forever!');
+    var promise = new ns.type.String('Moky loves May Lee forever!');
     promise = promise.getBytes();
 
     var PublicKey = function () {
@@ -109,7 +105,7 @@ if (typeof DIMP !== 'object') {
     PublicKey.getInstance = function (key) {
         if (key === null) {
             return null;
-        } else if (key instanceof PublicKey) {
+        } else if (key.isinstanceof(PublicKey)) {
             return key;
         }
         var algorithm = key['algorithm'];
@@ -121,16 +117,16 @@ if (typeof DIMP !== 'object') {
     };
 
     //-------- namespace --------
-    dimp.crypto.PublicKey = PublicKey;
+    ns.crypto.PublicKey = PublicKey;
 
 }(DIMP);
 
-!function (dimp) {
+!function (ns) {
     'use strict';
 
-    var CryptographyKey = dimp.crypto.CryptographyKey;
-    var AsymmetricKey = dimp.crypto.AsymmetricKey;
-    var SignKey = dimp.crypto.SignKey;
+    var CryptographyKey = ns.crypto.CryptographyKey;
+    var AsymmetricKey = ns.crypto.AsymmetricKey;
+    var SignKey = ns.crypto.SignKey;
 
     var PrivateKey = function () {
     };
@@ -180,7 +176,7 @@ if (typeof DIMP !== 'object') {
     PrivateKey.getInstance = function (key) {
         if (key === null) {
             return null;
-        } else if (key instanceof PrivateKey) {
+        } else if (key.isinstanceof(PrivateKey)) {
             return key;
         }
         var algorithm = key['algorithm'];
@@ -192,6 +188,6 @@ if (typeof DIMP !== 'object') {
     };
 
     //-------- namespace --------
-    dimp.crypto.PrivateKey = PrivateKey;
+    ns.crypto.PrivateKey = PrivateKey;
 
 }(DIMP);
