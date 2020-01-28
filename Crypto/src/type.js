@@ -225,6 +225,21 @@
     };
 
     /**
+     *  Get inner dictionary
+     *
+     * @param copy - clone when true
+     * @returns {map}
+     */
+    map.prototype.getMap = function (copy) {
+        if (copy) {
+            var json = ns.format.JSON.encode(this.value);
+            return ns.format.JSON.decode(json);
+        } else {
+            return this.value;
+        }
+    };
+
+    /**
      *  Get all keys in dictionary
      *
      * @returns {string[]}

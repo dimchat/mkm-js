@@ -409,6 +409,14 @@ if (typeof DIMP !== "object") {
         }
         return arrays.equals(this.value, other)
     };
+    map.prototype.getMap = function (copy) {
+        if (copy) {
+            var json = ns.format.JSON.encode(this.value);
+            return ns.format.JSON.decode(json);
+        } else {
+            return this.value;
+        }
+    };
     map.prototype.allKeys = function() {
         return Object.keys(this.value)
     };
