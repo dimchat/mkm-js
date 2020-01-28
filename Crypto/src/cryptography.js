@@ -73,8 +73,8 @@
      * @returns {object}
      */
     CryptographyKey.createInstance = function (clazz, map) {
-        if (typeof clazz.createInstance === 'function') {
-            return clazz.createInstance(map);
+        if (typeof clazz.getInstance === 'function') {
+            return clazz.getInstance(map);
         } else {
             return new clazz(map);
         }

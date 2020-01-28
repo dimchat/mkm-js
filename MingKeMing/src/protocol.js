@@ -87,21 +87,7 @@
      *
      *      (All above are just some advices to help choosing numbers :P)
      */
-    var NetworkType = function (network) {
-        if (network instanceof NetworkType) {
-            ns.type.Object.call(this, network.value);
-        } else if (typeof network === 'number') {
-            ns.type.Object.call(this, network);
-        } else if (typeof network === 'string') {
-            ns.type.Object.call(this, network.charCodeAt(0));
-        } else {
-            console.assert(false, 'Network ID error: ' + value);
-            ns.type.Object.call(this, 0);
-        }
-    };
-    NetworkType.inherits(ns.type.Object);
-
-    Object.assign(NetworkType, {
+    var NetworkType = ns.type.Enum({
 
         BTCMain:        (0x00), // 0000 0000
         //BTCTest:      (0x6F), // 0110 1111
@@ -141,7 +127,7 @@
          *  Internet of Things
          */
         Thing:          (0x80), // 1000 0000 (IoT)
-        Robot:          (0xC8), // 1100 1000
+        Robot:          (0xC8)  // 1100 1000
     });
 
     NetworkType.prototype.toByte = function () {
@@ -149,33 +135,33 @@
     };
 
     NetworkType.prototype.isPerson = function () {
-        return (this.value === NetworkType.Main) ||
-            (this.value === NetworkType.BTCMain);
+        return (this.value === NetworkType.Main.value) ||
+            (this.value === NetworkType.BTCMain.value);
     };
 
     NetworkType.prototype.isUser = function () {
-        return ((this.value & NetworkType.Main) === NetworkType.Main) ||
-            (this.value === NetworkType.BTCMain);
+        return ((this.value & NetworkType.Main.value) === NetworkType.Main.value) ||
+            (this.value === NetworkType.BTCMain.value);
     };
 
     NetworkType.prototype.isGroup = function () {
-        return (this.value & NetworkType.Group) === NetworkType.Group;
+        return (this.value & NetworkType.Group.value) === NetworkType.Group.value;
     };
 
     NetworkType.prototype.isStation = function () {
-        return this.value === NetworkType.Station;
+        return this.value === NetworkType.Station.value;
     };
 
     NetworkType.prototype.isProvider = function () {
-        return this.value === NetworkType.Provider;
+        return this.value === NetworkType.Provider.value;
     };
 
     NetworkType.prototype.isThing = function () {
-        return (this.value & NetworkType.Thing) === NetworkType.Thing;
+        return (this.value & NetworkType.Thing.value) === NetworkType.Thing.value;
     };
 
     NetworkType.prototype.isRobot = function () {
-        return this.value === NetworkType.Robot;
+        return this.value === NetworkType.Robot.value;
     };
 
     //-------- namespace --------
@@ -212,16 +198,7 @@
      *      0000 0100 - this meta generate ETH address
      *      ...
      */
-    var MetaType = function (version) {
-        if (version instanceof MetaType) {
-            ns.type.Object.call(this, version.value);
-        } else {
-            ns.type.Object.call(this, version);
-        }
-    };
-    MetaType.inherits(ns.type.Object);
-
-    Object.assign(MetaType, {
+    var MetaType = ns.type.Enum({
 
         Default: (0x01),
         MKM:     (0x01),  // 0000 0001
@@ -230,11 +207,11 @@
         ExBTC:   (0x03),  // 0000 0011
 
         ETH:     (0x04),  // 0000 0100
-        ExETH:   (0x05),  // 0000 0101
+        ExETH:   (0x05)   // 0000 0101
     });
 
     MetaType.prototype.hasSeed = function () {
-        return (this.value & MetaType.MKM) === MetaType.MKM;
+        return (this.value & MetaType.MKM.value) === MetaType.MKM.value;
     };
 
     //-------- namespace --------

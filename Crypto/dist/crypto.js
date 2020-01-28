@@ -1,5 +1,5 @@
 /**
- * Cryptography JavaScript Library v0.1.0
+ * Cryptography JavaScript Library (v0.1.0)
  *
  * @author    moKy <albert.moky at gmail.com>
  * @date      Jan. 27, 2020
@@ -317,7 +317,11 @@ if (typeof DIMP !== "object") {
         }
     };
     var obj = function(value) {
-        this.value = value
+        if (value instanceof obj) {
+            this.value = value.value
+        } else {
+            this.value = value
+        }
     };
     obj.prototype.equals = function(other) {
         if (other instanceof obj) {
@@ -325,6 +329,9 @@ if (typeof DIMP !== "object") {
         } else {
             return this.value === other
         }
+    };
+    obj.prototype.valueOf = function () {
+        return this.value.valueOf();
     };
     obj.prototype.toString = function() {
         return this.value.toString()
@@ -393,7 +400,7 @@ if (typeof DIMP !== "object") {
                 }
             }
             return true
-        },
+        }
     };
     var map = function(map) {
         obj.call(this, map)
@@ -409,12 +416,12 @@ if (typeof DIMP !== "object") {
         }
         return arrays.equals(this.value, other)
     };
-    map.prototype.getMap = function (copy) {
+    map.prototype.getMap = function(copy) {
         if (copy) {
             var json = ns.format.JSON.encode(this.value);
-            return ns.format.JSON.decode(json);
+            return ns.format.JSON.decode(json)
         } else {
-            return this.value;
+            return this.value
         }
     };
     map.prototype.allKeys = function() {
@@ -426,13 +433,51 @@ if (typeof DIMP !== "object") {
     map.prototype.setValue = function(key, value) {
         this.value[key] = value
     };
+    var enu = function(map) {
+        var m = function(value, alias) {
+            if (value instanceof m) {
+                if (!alias) {
+                    alias = value.alias
+                }
+            } else {
+                if (!alias) {
+                    for (var k in m) {
+                        var e = m[k];
+                        if (e instanceof m) {
+                            if (e.equals(value)) {
+                                alias = e.alias;
+                                break
+                            }
+                        }
+                    }
+                    if (!alias) {
+                        throw RangeError("enum error: " + value)
+                    }
+                }
+            }
+            obj.call(this, value);
+            this.alias = alias
+        };
+        m.inherits(obj);
+        m.prototype.toString = m.prototype.toLocaleString = function () {
+            return '<' + this.alias + ': ' + this.value + '>';
+        };
+        var e, v;
+        for (var name in map) {
+            v = map[name];
+            e = new m(v, name);
+            m[name] = e
+        }
+        return m
+    };
     if (typeof ns.type !== "object") {
         ns.type = {}
     }
     ns.type.Object = obj;
     ns.type.String = str;
     ns.type.Dictionary = map;
-    ns.type.Arrays = arrays
+    ns.type.Arrays = arrays;
+    ns.type.Enum = enu
 }(DIMP);
 ! function(ns) {
     var CryptographyKey = function() {};
@@ -450,8 +495,8 @@ if (typeof DIMP !== "object") {
         return 0
     };
     CryptographyKey.createInstance = function(clazz, map) {
-        if (typeof clazz.createInstance === "function") {
-            return clazz.createInstance(map)
+        if (typeof clazz.getInstance === "function") {
+            return clazz.getInstance(map)
         } else {
             return new clazz(map)
         }

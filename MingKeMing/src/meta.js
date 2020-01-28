@@ -41,9 +41,10 @@
     var PublicKey = ns.crypto.PublicKey;
     var Base64 = ns.format.Base64;
 
-    var ID = ns.ID;
-    var Address = ns.Address;
     var MetaType = ns.protocol.MetaType;
+    var NetworkType = ns.protocol.NetworkType;
+    var Address = ns.Address;
+    var ID = ns.ID;
 
     /**
      *  User/Group Meta data
@@ -106,7 +107,7 @@
             return true;
         }
         other = Meta.getInstance(other);
-        var identifier = other.generateID(NetworkType.Main);
+        var identifier = other.generateIdentifier(NetworkType.Main);
         return this.matches(identifier);
     };
 
@@ -163,7 +164,7 @@
      * @returns {boolean}
      */
     var match_identifier = function (identifier) {
-        return this.generateID(identifier.getType()).equals(identifier);
+        return this.generateIdentifier(identifier.getType()).equals(identifier);
     };
 
     var match_address = function (address) {
@@ -185,7 +186,7 @@
         return false;
     };
 
-    Meta.prototype.generateID = function (network) {
+    Meta.prototype.generateIdentifier = function (network) {
         if (!(network instanceof NetworkType)) {
             network = new NetworkType(network);
         }
@@ -208,7 +209,7 @@
     Meta.generate = function (version, privateKey, seed) {
         var meta = {
             'version': version,
-            'key': privateKey.getPublicKey(),
+            'key': privateKey.getPublicKey()
         };
         if (!(version instanceof MetaType)) {
             version = new MetaType(version);

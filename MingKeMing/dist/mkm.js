@@ -1,5 +1,5 @@
 /**
- * MingKeMing - User Module v0.1.0
+ * MingKeMing - User Module (v0.1.0)
  *
  * @author    moKy <albert.moky at gmail.com>
  * @date      Jan. 28, 2020
@@ -7,24 +7,7 @@
  * @license   {@link https://mit-license.org | MIT License}
  */
 ! function(ns) {
-    var NetworkType = function(network) {
-        if (network instanceof NetworkType) {
-            ns.type.Object.call(this, network.value)
-        } else {
-            if (typeof network === "number") {
-                ns.type.Object.call(this, network)
-            } else {
-                if (typeof network === "string") {
-                    ns.type.Object.call(this, network.charCodeAt(0))
-                } else {
-                    console.assert(false, "Network ID error: " + value);
-                    ns.type.Object.call(this, 0)
-                }
-            }
-        }
-    };
-    NetworkType.inherits(ns.type.Object);
-    Object.assign(NetworkType, {
+    var NetworkType = ns.type.Enum({
         BTCMain: (0),
         Main: (8),
         Group: (16),
@@ -33,31 +16,31 @@
         Provider: (118),
         Station: (136),
         Thing: (128),
-        Robot: (200),
+        Robot: (200)
     });
     NetworkType.prototype.toByte = function() {
         return String.fromCharCode(this.value)
     };
     NetworkType.prototype.isPerson = function() {
-        return (this.value === NetworkType.Main) || (this.value === NetworkType.BTCMain)
+        return (this.value === NetworkType.Main.value) || (this.value === NetworkType.BTCMain.value)
     };
     NetworkType.prototype.isUser = function() {
-        return ((this.value & NetworkType.Main) === NetworkType.Main) || (this.value === NetworkType.BTCMain)
+        return ((this.value & NetworkType.Main.value) === NetworkType.Main.value) || (this.value === NetworkType.BTCMain.value)
     };
     NetworkType.prototype.isGroup = function() {
-        return (this.value & NetworkType.Group) === NetworkType.Group
+        return (this.value & NetworkType.Group.value) === NetworkType.Group.value
     };
     NetworkType.prototype.isStation = function() {
-        return this.value === NetworkType.Station
+        return this.value === NetworkType.Station.value
     };
     NetworkType.prototype.isProvider = function() {
-        return this.value === NetworkType.Provider
+        return this.value === NetworkType.Provider.value
     };
     NetworkType.prototype.isThing = function() {
-        return (this.value & NetworkType.Thing) === NetworkType.Thing
+        return (this.value & NetworkType.Thing.value) === NetworkType.Thing.value
     };
     NetworkType.prototype.isRobot = function() {
-        return this.value === NetworkType.Robot
+        return this.value === NetworkType.Robot.value
     };
     if (typeof ns.protocol !== "object") {
         ns.protocol = {}
@@ -65,24 +48,16 @@
     ns.protocol.NetworkType = NetworkType
 }(DIMP);
 ! function(ns) {
-    var MetaType = function(version) {
-        if (version instanceof MetaType) {
-            ns.type.Object.call(this, version.value)
-        } else {
-            ns.type.Object.call(this, version)
-        }
-    };
-    MetaType.inherits(ns.type.Object);
-    Object.assign(MetaType, {
+    var MetaType = ns.type.Enum({
         Default: (1),
         MKM: (1),
         BTC: (2),
         ExBTC: (3),
         ETH: (4),
-        ExETH: (5),
+        ExETH: (5)
     });
     MetaType.prototype.hasSeed = function() {
-        return (this.value & MetaType.MKM) === MetaType.MKM
+        return (this.value & MetaType.MKM.value) === MetaType.MKM.value
     };
     if (typeof ns.protocol !== "object") {
         ns.protocol = {}
@@ -145,7 +120,7 @@
     };
     var ConstantAddress = function(string, network, number) {
         Address.call(this, string);
-        this.network = new NetworkType(network);
+        this.network = network;
         this.number = number
     };
     ConstantAddress.inherits(Address);
@@ -258,9 +233,10 @@
     var Dictionary = ns.type.Dictionary;
     var PublicKey = ns.crypto.PublicKey;
     var Base64 = ns.format.Base64;
-    var ID = ns.ID;
-    var Address = ns.Address;
     var MetaType = ns.protocol.MetaType;
+    var NetworkType = ns.protocol.NetworkType;
+    var Address = ns.Address;
+    var ID = ns.ID;
     var Meta = function(map) {
         Dictionary.call(this, map);
         this.version = new MetaType(map["version"]);
@@ -284,7 +260,7 @@
             }
         }
         other = Meta.getInstance(other);
-        var identifier = other.generateID(NetworkType.Main);
+        var identifier = other.generateIdentifier(NetworkType.Main);
         return this.matches(identifier)
     };
     Meta.prototype.isValid = function() {
@@ -324,7 +300,7 @@
         }
     };
     var match_identifier = function(identifier) {
-        return this.generateID(identifier.getType()).equals(identifier)
+        return this.generateIdentifier(identifier.getType()).equals(identifier)
     };
     var match_address = function(address) {
         return this.generateAddress(address.getNetwork()).equals(address)
@@ -346,7 +322,7 @@
         }
         return false
     };
-    Meta.prototype.generateID = function(network) {
+    Meta.prototype.generateIdentifier = function(network) {
         if (!(network instanceof NetworkType)) {
             network = new NetworkType(network)
         }
@@ -361,7 +337,7 @@
     Meta.generate = function(version, privateKey, seed) {
         var meta = {
             "version": version,
-            "key": privateKey.getPublicKey(),
+            "key": privateKey.getPublicKey()
         };
         if (!(version instanceof MetaType)) {
             version = new MetaType(version)
@@ -653,46 +629,6 @@
     ns.Entity = Entity
 }(DIMP);
 ! function(ns) {
-    var EntityDataSource = ns.EntityDataSource;
-    var Entity = ns.Entity;
-    var GroupDataSource = function() {};
-    GroupDataSource.inherits(EntityDataSource);
-    GroupDataSource.prototype.getFounder = function(identifier) {
-        console.assert(identifier !== null, "ID empty");
-        console.assert(false, "implement me!");
-        return null
-    };
-    GroupDataSource.prototype.getOwner = function(identifier) {
-        console.assert(identifier !== null, "ID empty");
-        console.assert(false, "implement me!");
-        return null
-    };
-    GroupDataSource.prototype.getMembers = function(identifier) {
-        console.assert(identifier !== null, "ID empty");
-        console.assert(false, "implement me!");
-        return null
-    };
-    var Group = function(identifier) {
-        Entity.call(this, identifier);
-        this.founder = null
-    };
-    Group.inherits(Entity);
-    Group.prototype.getFounder = function() {
-        if (!this.founder) {
-            this.founder = this.delegate.getFounder(this.identifier)
-        }
-        return this.founder
-    };
-    Group.prototype.getOwner = function() {
-        return this.delegate.getOwner(this.identifier)
-    };
-    Group.prototype.getMembers = function() {
-        return this.delegate.getMembers(this.identifier)
-    };
-    ns.GroupDataSource = GroupDataSource;
-    ns.Group = Group
-}(DIMP);
-! function(ns) {
     var EncryptKey = ns.crypto.EncryptKey;
     var VerifyKey = ns.crypto.VerifyKey;
     var EntityDataSource = ns.EntityDataSource;
@@ -814,4 +750,44 @@
     };
     ns.UserDataSource = UserDataSource;
     ns.User = User
+}(DIMP);
+! function(ns) {
+    var EntityDataSource = ns.EntityDataSource;
+    var Entity = ns.Entity;
+    var GroupDataSource = function() {};
+    GroupDataSource.inherits(EntityDataSource);
+    GroupDataSource.prototype.getFounder = function(identifier) {
+        console.assert(identifier !== null, "ID empty");
+        console.assert(false, "implement me!");
+        return null
+    };
+    GroupDataSource.prototype.getOwner = function(identifier) {
+        console.assert(identifier !== null, "ID empty");
+        console.assert(false, "implement me!");
+        return null
+    };
+    GroupDataSource.prototype.getMembers = function(identifier) {
+        console.assert(identifier !== null, "ID empty");
+        console.assert(false, "implement me!");
+        return null
+    };
+    var Group = function(identifier) {
+        Entity.call(this, identifier);
+        this.founder = null
+    };
+    Group.inherits(Entity);
+    Group.prototype.getFounder = function() {
+        if (!this.founder) {
+            this.founder = this.delegate.getFounder(this.identifier)
+        }
+        return this.founder
+    };
+    Group.prototype.getOwner = function() {
+        return this.delegate.getOwner(this.identifier)
+    };
+    Group.prototype.getMembers = function() {
+        return this.delegate.getMembers(this.identifier)
+    };
+    ns.GroupDataSource = GroupDataSource;
+    ns.Group = Group
 }(DIMP);

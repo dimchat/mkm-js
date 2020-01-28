@@ -104,7 +104,11 @@
     //  Object wrapper
     //
     var obj = function (value) {
-        this.value = value;
+        if (value instanceof obj) {
+            this.value = value.value;
+        } else {
+            this.value = value;
+        }
     };
 
     obj.prototype.equals = function (other) {
@@ -113,6 +117,10 @@
         } else {
             return this.value === other;
         }
+    };
+
+    obj.prototype.valueOf = function () {
+        return this.value.valueOf();
     };
 
     obj.prototype.toString = function () {
@@ -204,7 +212,7 @@
                 }
             }
             return true;
-        },
+        }
     };
 
     //
@@ -268,6 +276,51 @@
         this.value[key] = value;
     };
 
+    //
+    //  Enumeration
+    //
+    var enu = function(map) {
+        var m = function (value, alias) {
+            if (value instanceof m) {
+                if (!alias) {
+                    alias = value.alias;
+                }
+            } else if (!alias) {
+                for (var k in m) {
+                    // noinspection JSUnfilteredForInLoop
+                    var e = m[k];
+                    if (e instanceof m) {
+                        // noinspection JSUnresolvedFunction
+                        if (e.equals(value)) {
+                            // noinspection JSUnresolvedVariable
+                            alias = e.alias;
+                            break;
+                        }
+                    }
+                }
+                if (!alias) {
+                    throw RangeError('enum error: ' + value);
+                }
+            }
+            obj.call(this, value);
+            this.alias = alias;
+        };
+        m.inherits(obj);
+        m.prototype.toString = m.prototype.toLocaleString = function () {
+            return '<' + this.alias + ': ' + this.value + '>';
+        };
+        var e, v;
+        for (var name in map) {
+            // noinspection JSUnfilteredForInLoop
+            v = map[name];
+            // noinspection JSUnfilteredForInLoop
+            e = new m(v, name);
+            // noinspection JSUnfilteredForInLoop
+            m[name] = e;
+        }
+        return m;
+    };
+
     //-------- namespace --------
     if (typeof ns.type !== 'object') {
         ns.type = {}
@@ -276,5 +329,6 @@
     ns.type.String = str;
     ns.type.Dictionary = map;
     ns.type.Arrays = arrays;
+    ns.type.Enum = enu;
 
 }(DIMP);

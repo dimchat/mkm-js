@@ -134,7 +134,7 @@
     //
     var ConstantAddress = function (string, network, number) {
         Address.call(this, string);
-        this.network = new NetworkType(network);
+        this.network = network;
         this.number = number;
     };
     ConstantAddress.inherits(Address);
