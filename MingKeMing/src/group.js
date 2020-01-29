@@ -34,55 +34,6 @@
 
 !function (ns) {
 
-    var EntityDataSource = ns.EntityDataSource;
-
-    var GroupDataSource = function () {
-    };
-    GroupDataSource.inherits(EntityDataSource);
-
-    /**
-     *  Get group founder
-     *
-     * @param identifier - group ID
-     * @returns {ID}
-     */
-    GroupDataSource.prototype.getFounder = function (identifier) {
-        console.assert(identifier !== null, 'ID empty');
-        console.assert(false, 'implement me!');
-        return null;
-    };
-
-    /**
-     *  Get group owner
-     *
-     * @param identifier - group ID
-     * @returns {ID}
-     */
-    GroupDataSource.prototype.getOwner = function (identifier) {
-        console.assert(identifier !== null, 'ID empty');
-        console.assert(false, 'implement me!');
-        return null;
-    };
-
-    /**
-     *  Get group members list
-     *
-     * @param identifier - group ID
-     * @returns {ID[]}
-     */
-    GroupDataSource.prototype.getMembers = function (identifier) {
-        console.assert(identifier !== null, 'ID empty');
-        console.assert(false, 'implement me!');
-        return null;
-    };
-
-    //-------- namespace --------
-    ns.GroupDataSource = GroupDataSource;
-
-}(DIMP);
-
-!function (ns) {
-
     var Entity = ns.Entity;
 
     var Group = function (identifier) {

@@ -33,40 +33,7 @@
 //! require 'identifier.js'
 //! require 'meta.js'
 //! require 'profile.js'
-
-!function (ns) {
-
-    var EntityDataSource = function () {
-    };
-
-    /**
-     *  Get meta for entity ID
-     *
-     * @param identifier
-     * @returns {Meta}
-     */
-    EntityDataSource.prototype.getMeta = function (identifier) {
-        console.assert(identifier !== null, 'ID empty');
-        console.assert(false, 'implement me!');
-        return null;
-    };
-
-    /**
-     *  Get profile for entity ID
-     *
-     * @param identifier
-     * @returns {Profile}
-     */
-    EntityDataSource.prototype.getProfile = function (identifier) {
-        console.assert(identifier !== null, 'ID empty');
-        console.assert(false, 'implement me!');
-        return null;
-    };
-
-    //-------- namespace --------
-    ns.EntityDataSource = EntityDataSource;
-
-}(DIMP);
+//! require 'delegate.js'
 
 !function (ns) {
 

@@ -34,8 +34,8 @@
 
 !function (ns) {
 
-    /*
-     *  @enum MKMNetworkID
+    /**
+     *  @enum NetworkType
      *
      *  @abstract A network type to indicate what kind the entity is.
      *
@@ -174,12 +174,12 @@
 
 !function (ns) {
 
-    /*
-     *  enum MKMMetaVersion
+    /**
+     *  @enum MetaType
      *
-     *  abstract Defined for algorithm that generating address.
+     *  @abstract Defined for algorithm that generating address.
      *
-     *  discussion Generate and check ID/Address
+     *  @discussion Generate and check ID/Address
      *
      *      MKMMetaVersion_MKM give a seed string first, and sign this seed to get
      *      fingerprint; after that, use the fingerprint to generate address.

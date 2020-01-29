@@ -187,9 +187,6 @@
     };
 
     Meta.prototype.generateIdentifier = function (network) {
-        if (!(network instanceof NetworkType)) {
-            network = new NetworkType(network);
-        }
         var address = this.generateAddress(network);
         return new ID(this.seed, address);
     };

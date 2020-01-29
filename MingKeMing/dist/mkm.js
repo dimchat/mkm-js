@@ -323,9 +323,6 @@
         return false
     };
     Meta.prototype.generateIdentifier = function(network) {
-        if (!(network instanceof NetworkType)) {
-            network = new NetworkType(network)
-        }
         var address = this.generateAddress(network);
         return new ID(this.seed, address)
     };
@@ -587,6 +584,56 @@
     ns.EntityDataSource = EntityDataSource
 }(DIMP);
 ! function(ns) {
+    var EntityDataSource = ns.EntityDataSource;
+    var UserDataSource = function() {};
+    UserDataSource.inherits(EntityDataSource);
+    UserDataSource.prototype.getContacts = function(identifier) {
+        console.assert(identifier !== null, "ID empty");
+        console.assert(false, "implement me!");
+        return null
+    };
+    UserDataSource.prototype.getPublicKeyForEncryption = function(identifier) {
+        console.assert(identifier !== null, "ID empty");
+        return null
+    };
+    UserDataSource.prototype.getPublicKeysForVerification = function(identifier) {
+        console.assert(identifier !== null, "ID empty");
+        return null
+    };
+    UserDataSource.prototype.getPrivateKeysForDecryption = function(identifier) {
+        console.assert(identifier !== null, "ID empty");
+        console.assert(false, "implement me!");
+        return null
+    };
+    UserDataSource.prototype.getPrivateKeyForSignature = function(identifier) {
+        console.assert(identifier !== null, "ID empty");
+        console.assert(false, "implement me!");
+        return null
+    };
+    ns.UserDataSource = UserDataSource
+}(DIMP);
+! function(ns) {
+    var EntityDataSource = ns.EntityDataSource;
+    var GroupDataSource = function() {};
+    GroupDataSource.inherits(EntityDataSource);
+    GroupDataSource.prototype.getFounder = function(identifier) {
+        console.assert(identifier !== null, "ID empty");
+        console.assert(false, "implement me!");
+        return null
+    };
+    GroupDataSource.prototype.getOwner = function(identifier) {
+        console.assert(identifier !== null, "ID empty");
+        console.assert(false, "implement me!");
+        return null
+    };
+    GroupDataSource.prototype.getMembers = function(identifier) {
+        console.assert(identifier !== null, "ID empty");
+        console.assert(false, "implement me!");
+        return null
+    };
+    ns.GroupDataSource = GroupDataSource
+}(DIMP);
+! function(ns) {
     var Entity = function(identifier) {
         this.identifier = identifier;
         this.delegate = null
@@ -637,35 +684,6 @@
         return this.delegate.getProfile(this.identifier)
     };
     ns.Entity = Entity
-}(DIMP);
-! function(ns) {
-    var EntityDataSource = ns.EntityDataSource;
-    var UserDataSource = function() {};
-    UserDataSource.inherits(EntityDataSource);
-    UserDataSource.prototype.getContacts = function(identifier) {
-        console.assert(identifier !== null, "ID empty");
-        console.assert(false, "implement me!");
-        return null
-    };
-    UserDataSource.prototype.getPublicKeyForEncryption = function(identifier) {
-        console.assert(identifier !== null, "ID empty");
-        return null
-    };
-    UserDataSource.prototype.getPublicKeysForVerification = function(identifier) {
-        console.assert(identifier !== null, "ID empty");
-        return null
-    };
-    UserDataSource.prototype.getPrivateKeysForDecryption = function(identifier) {
-        console.assert(identifier !== null, "ID empty");
-        console.assert(false, "implement me!");
-        return null
-    };
-    UserDataSource.prototype.getPrivateKeyForSignature = function(identifier) {
-        console.assert(identifier !== null, "ID empty");
-        console.assert(false, "implement me!");
-        return null
-    };
-    ns.UserDataSource = UserDataSource
 }(DIMP);
 ! function(ns) {
     var EncryptKey = ns.crypto.EncryptKey;
@@ -760,27 +778,6 @@
         return null
     };
     ns.User = User
-}(DIMP);
-! function(ns) {
-    var EntityDataSource = ns.EntityDataSource;
-    var GroupDataSource = function() {};
-    GroupDataSource.inherits(EntityDataSource);
-    GroupDataSource.prototype.getFounder = function(identifier) {
-        console.assert(identifier !== null, "ID empty");
-        console.assert(false, "implement me!");
-        return null
-    };
-    GroupDataSource.prototype.getOwner = function(identifier) {
-        console.assert(identifier !== null, "ID empty");
-        console.assert(false, "implement me!");
-        return null
-    };
-    GroupDataSource.prototype.getMembers = function(identifier) {
-        console.assert(identifier !== null, "ID empty");
-        console.assert(false, "implement me!");
-        return null
-    };
-    ns.GroupDataSource = GroupDataSource
 }(DIMP);
 ! function(ns) {
     var Entity = ns.Entity;
