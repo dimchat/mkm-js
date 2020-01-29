@@ -232,6 +232,14 @@
         return arrays.equals(this.value, other);
     };
 
+    map.prototype.toString = function () {
+        return this.toJSON();
+    };
+
+    map.prototype.toLocaleString = function () {
+        return this.toJSON();
+    };
+
     /**
      *  Get inner dictionary
      *
@@ -273,7 +281,11 @@
      * @param value
      */
     map.prototype.setValue = function (key, value) {
-        this.value[key] = value;
+        if (value) {
+            this.value[key] = value;
+        } else if (this.value.hasOwnProperty(key)) {
+            delete this.value[key];
+        }
     };
 
     //

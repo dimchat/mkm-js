@@ -78,7 +78,7 @@ if (typeof DIMP !== 'object') {
         // extends BaseClass
         extend.call(this, arguments[0]);
         // implements Interface(s)
-        for (var i = 1; i < arguments.length; ++i) {
+        for (var i = 0; i < arguments.length; ++i) {
             implement.call(this, arguments[i]);
         }
         return this;

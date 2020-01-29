@@ -47,7 +47,7 @@ if (typeof DIMP !== "object") {
     };
     var inherits = function() {
         extend.call(this, arguments[0]);
-        for (var i = 1; i < arguments.length; ++i) {
+        for (var i = 0; i < arguments.length; ++i) {
             implement.call(this, arguments[i])
         }
         return this
@@ -330,8 +330,8 @@ if (typeof DIMP !== "object") {
             return this.value === other
         }
     };
-    obj.prototype.valueOf = function () {
-        return this.value.valueOf();
+    obj.prototype.valueOf = function() {
+        return this.value.valueOf()
     };
     obj.prototype.toString = function() {
         return this.value.toString()
@@ -416,6 +416,12 @@ if (typeof DIMP !== "object") {
         }
         return arrays.equals(this.value, other)
     };
+    map.prototype.toString = function() {
+        return this.toJSON()
+    };
+    map.prototype.toLocaleString = function() {
+        return this.toJSON()
+    };
     map.prototype.getMap = function(copy) {
         if (copy) {
             var json = ns.format.JSON.encode(this.value);
@@ -431,7 +437,13 @@ if (typeof DIMP !== "object") {
         return this.value[key]
     };
     map.prototype.setValue = function(key, value) {
-        this.value[key] = value
+        if (value) {
+            this.value[key] = value
+        } else {
+            if (this.value.hasOwnProperty(key)) {
+                delete this.value[key]
+            }
+        }
     };
     var enu = function(map) {
         var m = function(value, alias) {
@@ -459,8 +471,8 @@ if (typeof DIMP !== "object") {
             this.alias = alias
         };
         m.inherits(obj);
-        m.prototype.toString = m.prototype.toLocaleString = function () {
-            return '<' + this.alias + ': ' + this.value + '>';
+        m.prototype.toString = m.prototype.toLocaleString = function() {
+            return "<" + this.alias + ": " + this.value + ">"
         };
         var e, v;
         for (var name in map) {
