@@ -296,25 +296,29 @@
     //
     //  Enumeration
     //
-    var enu = function(map) {
-        var m = function (value, alias) {
-            if (value instanceof m) {
-                if (!alias) {
-                    alias = value.alias;
-                }
-            } else if (!alias) {
-                for (var k in m) {
-                    // noinspection JSUnfilteredForInLoop
-                    var e = m[k];
-                    if (e instanceof m) {
-                        // noinspection JSUnresolvedFunction
-                        if (e.equals(value)) {
-                            // noinspection JSUnresolvedVariable
-                            alias = e.alias;
-                            break;
-                        }
+    var enu = function(elements) {
+        // get alias name from exist elements
+        var get_name = function (value, enumeration) {
+            if (value instanceof enumeration) {
+                return value.alias;
+            }
+            // searching exists elements for alias
+            var e;
+            for (var k in enumeration) {
+                // noinspection JSUnfilteredForInLoop
+                e = enumeration[k];
+                if (e instanceof enumeration) {
+                    if (e.equals(value)) {
+                        return e.alias;
                     }
                 }
+            }
+            return null;
+        };
+        // template for enumeration
+        var enumeration = function (value, alias) {
+            if (!alias) {
+                alias = get_name(value, enumeration);
                 if (!alias) {
                     throw RangeError('enum error: ' + value);
                 }
@@ -322,25 +326,28 @@
             obj.call(this, value);
             this.alias = alias;
         };
-        m.inherits(obj);
-        m.prototype.toString = function () {
+        enumeration.inherits(obj);
+        enumeration.prototype.toString = function () {
             return '<' + this.alias.toString()
                 + ': ' + this.value.toString() + '>';
         };
-        m.prototype.toLocaleString = function () {
+        enumeration.prototype.toLocaleString = function () {
             return '<' + this.alias.toLocaleString()
                 + ': ' + this.value.toLocaleString() + '>';
         };
         var e, v;
-        for (var name in map) {
+        for (var name in elements) {
             // noinspection JSUnfilteredForInLoop
-            v = map[name];
+            v = elements[name];
+            if (typeof v === 'function') {
+                continue;
+            }
             // noinspection JSUnfilteredForInLoop
-            e = new m(v, name);
+            e = new enumeration(v, name);
             // noinspection JSUnfilteredForInLoop
-            m[name] = e;
+            enumeration[name] = e;
         }
-        return m;
+        return enumeration;
     };
 
     //-------- namespace --------

@@ -469,45 +469,49 @@ if (typeof DIMP !== "object") {
             }
         }
     };
-    var enu = function(map) {
-        var m = function(value, alias) {
-            if (value instanceof m) {
-                if (!alias) {
-                    alias = value.alias
+    var enu = function(elements) {
+        var get_name = function(value, enumeration) {
+            if (value instanceof enumeration) {
+                return value.alias
+            }
+            var e;
+            for (var k in enumeration) {
+                e = enumeration[k];
+                if (e instanceof enumeration) {
+                    if (e.equals(value)) {
+                        return e.alias
+                    }
                 }
-            } else {
+            }
+            return null
+        };
+        var enumeration = function(value, alias) {
+            if (!alias) {
+                alias = get_name(value, enumeration);
                 if (!alias) {
-                    for (var k in m) {
-                        var e = m[k];
-                        if (e instanceof m) {
-                            if (e.equals(value)) {
-                                alias = e.alias;
-                                break
-                            }
-                        }
-                    }
-                    if (!alias) {
-                        throw RangeError("enum error: " + value)
-                    }
+                    throw RangeError("enum error: " + value)
                 }
             }
             obj.call(this, value);
             this.alias = alias
         };
-        m.inherits(obj);
-        m.prototype.toString = function() {
+        enumeration.inherits(obj);
+        enumeration.prototype.toString = function() {
             return "<" + this.alias.toString() + ": " + this.value.toString() + ">"
         };
-        m.prototype.toLocaleString = function() {
+        enumeration.prototype.toLocaleString = function() {
             return "<" + this.alias.toLocaleString() + ": " + this.value.toLocaleString() + ">"
         };
         var e, v;
-        for (var name in map) {
-            v = map[name];
-            e = new m(v, name);
-            m[name] = e
+        for (var name in elements) {
+            v = elements[name];
+            if (typeof v === "function") {
+                continue
+            }
+            e = new enumeration(v, name);
+            enumeration[name] = e
         }
-        return m
+        return enumeration
     };
     if (typeof ns.type !== "object") {
         ns.type = {}
