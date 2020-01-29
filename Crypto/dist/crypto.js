@@ -594,7 +594,7 @@ if (typeof DIMP !== "object") {
     SymmetricKey.prototype.equals = function(other) {
         var ciphertext = other.encrypt(promise);
         var plaintext = this.decrypt(ciphertext);
-        return Arrays.equals(ciphertext, plaintext)
+        return Arrays.equals(promise, plaintext)
     };
     SymmetricKey.generate = function(algorithm) {
         return this.getInstance({

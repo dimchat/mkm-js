@@ -58,7 +58,7 @@
         // check by encryption
         var ciphertext = other.encrypt(promise);
         var plaintext = this.decrypt(ciphertext);
-        return Arrays.equals(ciphertext, plaintext);
+        return Arrays.equals(promise, plaintext);
     };
 
     /**
