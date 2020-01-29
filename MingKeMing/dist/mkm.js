@@ -573,17 +573,20 @@
     ns.Profile = Profile
 }(DIMP);
 ! function(ns) {
-    var Delegate = function() {};
-    Delegate.prototype.getMeta = function(identifier) {
+    var EntityDataSource = function() {};
+    EntityDataSource.prototype.getMeta = function(identifier) {
         console.assert(identifier !== null, "ID empty");
         console.assert(false, "implement me!");
         return null
     };
-    Delegate.prototype.getProfile = function(identifier) {
+    EntityDataSource.prototype.getProfile = function(identifier) {
         console.assert(identifier !== null, "ID empty");
         console.assert(false, "implement me!");
         return null
     };
+    ns.EntityDataSource = EntityDataSource
+}(DIMP);
+! function(ns) {
     var Entity = function(identifier) {
         this.identifier = identifier;
         this.delegate = null
@@ -599,9 +602,17 @@
             }
         }
     };
-    Entity.prototype.toString = function() {
+    Entity.prototype.valueOf = function() {
         var clazz = Object.getPrototypeOf(this).constructor;
         return "<" + clazz.name + "|" + this.getType() + " " + this.identifier + " (" + this.getNumber() + ")" + ' "' + this.getName() + '">'
+    };
+    Entity.prototype.toString = function() {
+        var clazz = Object.getPrototypeOf(this).constructor;
+        return "<" + clazz.name + "|" + this.getType().toString() + " " + this.identifier + " (" + this.getNumber().toString() + ")" + ' "' + this.getName() + '">'
+    };
+    Entity.prototype.toLocaleString = function() {
+        var clazz = Object.getPrototypeOf(this).constructor;
+        return "<" + clazz.name + "|" + this.getType().toLocaleString() + " " + this.identifier + " (" + this.getNumber().toLocaleString() + ")" + ' "' + this.getName() + '">'
     };
     Entity.prototype.getType = function() {
         return this.identifier.getType()
@@ -625,14 +636,10 @@
     Entity.prototype.getProfile = function() {
         return this.delegate.getProfile(this.identifier)
     };
-    ns.EntityDataSource = Delegate;
     ns.Entity = Entity
 }(DIMP);
 ! function(ns) {
-    var EncryptKey = ns.crypto.EncryptKey;
-    var VerifyKey = ns.crypto.VerifyKey;
     var EntityDataSource = ns.EntityDataSource;
-    var Entity = ns.Entity;
     var UserDataSource = function() {};
     UserDataSource.inherits(EntityDataSource);
     UserDataSource.prototype.getContacts = function(identifier) {
@@ -642,7 +649,10 @@
     };
     UserDataSource.prototype.getPublicKeyForEncryption = function(identifier) {
         console.assert(identifier !== null, "ID empty");
-        console.assert(false, "implement me!");
+        return null
+    };
+    UserDataSource.prototype.getPublicKeysForVerification = function(identifier) {
+        console.assert(identifier !== null, "ID empty");
         return null
     };
     UserDataSource.prototype.getPrivateKeysForDecryption = function(identifier) {
@@ -655,11 +665,12 @@
         console.assert(false, "implement me!");
         return null
     };
-    UserDataSource.prototype.getPublicKeysForVerification = function(identifier) {
-        console.assert(identifier !== null, "ID empty");
-        console.assert(false, "implement me!");
-        return null
-    };
+    ns.UserDataSource = UserDataSource
+}(DIMP);
+! function(ns) {
+    var EncryptKey = ns.crypto.EncryptKey;
+    var VerifyKey = ns.crypto.VerifyKey;
+    var Entity = ns.Entity;
     var User = function(identifier) {
         Entity.call(this, identifier)
     };
@@ -748,12 +759,10 @@
         }
         return null
     };
-    ns.UserDataSource = UserDataSource;
     ns.User = User
 }(DIMP);
 ! function(ns) {
     var EntityDataSource = ns.EntityDataSource;
-    var Entity = ns.Entity;
     var GroupDataSource = function() {};
     GroupDataSource.inherits(EntityDataSource);
     GroupDataSource.prototype.getFounder = function(identifier) {
@@ -771,6 +780,10 @@
         console.assert(false, "implement me!");
         return null
     };
+    ns.GroupDataSource = GroupDataSource
+}(DIMP);
+! function(ns) {
+    var Entity = ns.Entity;
     var Group = function(identifier) {
         Entity.call(this, identifier);
         this.founder = null
@@ -788,6 +801,5 @@
     Group.prototype.getMembers = function() {
         return this.delegate.getMembers(this.identifier)
     };
-    ns.GroupDataSource = GroupDataSource;
     ns.Group = Group
 }(DIMP);

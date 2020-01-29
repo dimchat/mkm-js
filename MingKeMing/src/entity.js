@@ -36,7 +36,7 @@
 
 !function (ns) {
 
-    var Delegate = function () {
+    var EntityDataSource = function () {
     };
 
     /**
@@ -45,7 +45,7 @@
      * @param identifier
      * @returns {Meta}
      */
-    Delegate.prototype.getMeta = function (identifier) {
+    EntityDataSource.prototype.getMeta = function (identifier) {
         console.assert(identifier !== null, 'ID empty');
         console.assert(false, 'implement me!');
         return null;
@@ -57,11 +57,18 @@
      * @param identifier
      * @returns {Profile}
      */
-    Delegate.prototype.getProfile = function (identifier) {
+    EntityDataSource.prototype.getProfile = function (identifier) {
         console.assert(identifier !== null, 'ID empty');
         console.assert(false, 'implement me!');
         return null;
     };
+
+    //-------- namespace --------
+    ns.EntityDataSource = EntityDataSource;
+
+}(DIMP);
+
+!function (ns) {
 
     /**
      *  Entity (User/Group)
@@ -93,12 +100,28 @@
         }
     };
 
-    Entity.prototype.toString = function () {
+    Entity.prototype.valueOf = function () {
         var clazz = Object.getPrototypeOf(this).constructor;
         return '<' + clazz.name
             + '|' + this.getType()
             + ' ' + this.identifier
             + ' (' + this.getNumber() + ')'
+            + ' "' + this.getName() + '">';
+    };
+    Entity.prototype.toString = function () {
+        var clazz = Object.getPrototypeOf(this).constructor;
+        return '<' + clazz.name
+            + '|' + this.getType().toString()
+            + ' ' + this.identifier
+            + ' (' + this.getNumber().toString() + ')'
+            + ' "' + this.getName() + '">';
+    };
+    Entity.prototype.toLocaleString = function () {
+        var clazz = Object.getPrototypeOf(this).constructor;
+        return '<' + clazz.name
+            + '|' + this.getType().toLocaleString()
+            + ' ' + this.identifier
+            + ' (' + this.getNumber().toLocaleString() + ')'
             + ' "' + this.getName() + '">';
     };
 
@@ -142,7 +165,6 @@
     };
 
     //-------- namespace --------
-    ns.EntityDataSource = Delegate;
     ns.Entity = Entity;
 
 }(DIMP);

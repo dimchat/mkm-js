@@ -139,12 +139,31 @@
     //  String
     //
     var str = function (data, charset) {
-        if (charset === 'UTF-8') {
-            data = UTF8.decode(data);
+        if (data instanceof Array) {
+            // decode data array
+            if (!charset || charset === 'UTF-8') {
+                data = UTF8.decode(data);
+            } else {
+                throw Error('only UTF-8 now');
+            }
         }
         obj.call(this, data);
     };
     str.inherits(obj);
+
+    /**
+     *  Encode str to UTF8 data array
+     *
+     * @param charset
+     * @returns {*[]}
+     */
+    str.prototype.getBytes = function (charset) {
+        if (!charset || charset === 'UTF-8') {
+            return UTF8.encode(this.value);
+        }
+        // TODO: other charset
+        return this.value;
+    };
 
     str.prototype.equals = function (other) {
         if (!other) {
@@ -177,20 +196,6 @@
 
     str.prototype.getLength = function() {
         return this.value.length;
-    };
-
-    /**
-     *  Encode str to UTF8 data array
-     *
-     * @param charset
-     * @returns {*[]}
-     */
-    str.prototype.getBytes = function (charset) {
-        if (!charset || charset === 'UTF-8') {
-            return UTF8.encode(this.value);
-        }
-        // TODO: other charset
-        return this.value;
     };
 
     //
@@ -281,7 +286,7 @@
      * @param value
      */
     map.prototype.setValue = function (key, value) {
-        if (value) {
+        if (value !== null) {
             this.value[key] = value;
         } else if (this.value.hasOwnProperty(key)) {
             delete this.value[key];
@@ -318,8 +323,13 @@
             this.alias = alias;
         };
         m.inherits(obj);
-        m.prototype.toString = m.prototype.toLocaleString = function () {
-            return '<' + this.alias + ': ' + this.value + '>';
+        m.prototype.toString = function () {
+            return '<' + this.alias.toString()
+                + ': ' + this.value.toString() + '>';
+        };
+        m.prototype.toLocaleString = function () {
+            return '<' + this.alias.toLocaleString()
+                + ': ' + this.value.toLocaleString() + '>';
         };
         var e, v;
         for (var name in map) {

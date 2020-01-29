@@ -35,7 +35,6 @@
 !function (ns) {
 
     var EntityDataSource = ns.EntityDataSource;
-    var Entity = ns.Entity;
 
     var GroupDataSource = function () {
     };
@@ -77,19 +76,15 @@
         return null;
     };
 
-    /**
-     *  Entity (User/Group)
-     *  ~~~~~~~~~~~~~~~~~~~
-     *  Base class of User and Group, ...
-     *
-     *  properties:
-     *      identifier - entity ID
-     *      type       - entity type
-     *      number     - search number
-     *      meta       - meta for generate ID
-     *      profile    - entity profile
-     *      name       - nickname
-     */
+    //-------- namespace --------
+    ns.GroupDataSource = GroupDataSource;
+
+}(DIMP);
+
+!function (ns) {
+
+    var Entity = ns.Entity;
+
     var Group = function (identifier) {
         Entity.call(this, identifier);
         this.founder = null;
@@ -112,7 +107,6 @@
     };
 
     //-------- namespace --------
-    ns.GroupDataSource = GroupDataSource;
     ns.Group = Group;
 
 }(DIMP);

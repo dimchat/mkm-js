@@ -35,11 +35,7 @@
 
 !function (ns) {
 
-    var EncryptKey = ns.crypto.EncryptKey;
-    var VerifyKey = ns.crypto.VerifyKey;
-
     var EntityDataSource = ns.EntityDataSource;
-    var Entity = ns.Entity;
 
     /**
      *  User Data Source
@@ -82,7 +78,20 @@
      */
     UserDataSource.prototype.getPublicKeyForEncryption = function (identifier) {
         console.assert(identifier !== null, 'ID empty');
-        console.assert(false, 'implement me!');
+        // console.assert(false, 'implement me!');
+        return null;
+    };
+
+    /**
+     *  Get user's public keys for verification
+     *  [profile.key, meta.key]
+     *
+     * @param identifier
+     * @returns {VerifyKey[]}
+     */
+    UserDataSource.prototype.getPublicKeysForVerification = function (identifier) {
+        console.assert(identifier !== null, 'ID empty');
+        // console.assert(false, 'implement me!');
         return null;
     };
 
@@ -112,18 +121,17 @@
         return null;
     };
 
-    /**
-     *  Get user's public keys for verification
-     *  [profile.key, meta.key]
-     *
-     * @param identifier
-     * @returns {VerifyKey[]}
-     */
-    UserDataSource.prototype.getPublicKeysForVerification = function (identifier) {
-        console.assert(identifier !== null, 'ID empty');
-        console.assert(false, 'implement me!');
-        return null;
-    };
+    //-------- namespace --------
+    ns.UserDataSource = UserDataSource;
+
+}(DIMP);
+
+!function (ns) {
+
+    var EncryptKey = ns.crypto.EncryptKey;
+    var VerifyKey = ns.crypto.VerifyKey;
+
+    var Entity = ns.Entity;
 
     /**
      *  User account for communication
@@ -287,7 +295,6 @@
     };
 
     //-------- namespace --------
-    ns.UserDataSource = UserDataSource;
     ns.User = User;
 
 }(DIMP);

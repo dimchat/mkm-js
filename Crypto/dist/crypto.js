@@ -74,14 +74,34 @@ if (typeof DIMP !== "object") {
     var hex = function() {};
     hex.inherits(coder);
     hex.prototype.encode = function(data) {
-        console.assert(data != null, "data empty");
-        console.assert(false, "HEX encode not implemented");
-        return null
+        var i = 0;
+        var len = data.length;
+        var num;
+        var str = "";
+        for (; i < len; ++i) {
+            num = Number(data[i]);
+            str += num.toString(16)
+        }
+        return str
     };
-    hex.prototype.decode = function(string) {
-        console.assert(string != null, "string empty");
-        console.assert(false, "HEX decode not implemented");
-        return null
+    hex.prototype.decode = function(str) {
+        var i = 0;
+        var len = str.length;
+        if (len > 2) {
+            if (str[0] === "0") {
+                if (str[1] === "x" || str[1] === "X") {
+                    i += 2
+                }
+            }
+        }
+        var ch;
+        var data = [];
+        for (;
+            (i + 1) < len; i += 2) {
+            ch = str.substring(i, i + 2);
+            data.push(parseInt(ch, 16))
+        }
+        return data
     };
     var base58 = function() {};
     base58.inherits(coder);
@@ -343,12 +363,22 @@ if (typeof DIMP !== "object") {
         return ns.format.JSON.encode(this.value)
     };
     var str = function(data, charset) {
-        if (charset === "UTF-8") {
-            data = UTF8.decode(data)
+        if (data instanceof Array) {
+            if (!charset || charset === "UTF-8") {
+                data = UTF8.decode(data)
+            } else {
+                throw Error("only UTF-8 now")
+            }
         }
         obj.call(this, data)
     };
     str.inherits(obj);
+    str.prototype.getBytes = function(charset) {
+        if (!charset || charset === "UTF-8") {
+            return UTF8.encode(this.value)
+        }
+        return this.value
+    };
     str.prototype.equals = function(other) {
         if (!other) {
             return !this.value
@@ -379,12 +409,6 @@ if (typeof DIMP !== "object") {
     };
     str.prototype.getLength = function() {
         return this.value.length
-    };
-    str.prototype.getBytes = function(charset) {
-        if (!charset || charset === "UTF-8") {
-            return UTF8.encode(this.value)
-        }
-        return this.value
     };
     var arrays = {
         equals: function(a1, a2) {
@@ -437,7 +461,7 @@ if (typeof DIMP !== "object") {
         return this.value[key]
     };
     map.prototype.setValue = function(key, value) {
-        if (value) {
+        if (value !== null) {
             this.value[key] = value
         } else {
             if (this.value.hasOwnProperty(key)) {
@@ -471,8 +495,11 @@ if (typeof DIMP !== "object") {
             this.alias = alias
         };
         m.inherits(obj);
-        m.prototype.toString = m.prototype.toLocaleString = function() {
-            return "<" + this.alias + ": " + this.value + ">"
+        m.prototype.toString = function() {
+            return "<" + this.alias.toString() + ": " + this.value.toString() + ">"
+        };
+        m.prototype.toLocaleString = function() {
+            return "<" + this.alias.toLocaleString() + ": " + this.value.toLocaleString() + ">"
         };
         var e, v;
         for (var name in map) {

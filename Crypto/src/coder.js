@@ -65,14 +65,34 @@
     };
     hex.inherits(coder);
     hex.prototype.encode = function (data) {
-        console.assert(data != null, 'data empty');
-        console.assert(false, 'HEX encode not implemented');
-        return null;
+        var i = 0;
+        var len = data.length;
+        var num;
+        var str = '';
+        for (; i < len; ++i) {
+            num = Number(data[i]);
+            str += num.toString(16);
+        }
+        return str;
     };
-    hex.prototype.decode = function (string) {
-        console.assert(string != null, 'string empty');
-        console.assert(false, 'HEX decode not implemented');
-        return null;
+    hex.prototype.decode = function (str) {
+        var i = 0;
+        var len = str.length;
+        if (len > 2) {
+            // skip '0x'
+            if (str[0] === '0') {
+                if (str[1] === 'x' || str[1] === 'X') {
+                    i += 2;
+                }
+            }
+        }
+        var ch;
+        var data = [];
+        for (; (i+1) < len; i+=2) {
+            ch = str.substring(i, i+2);
+            data.push(parseInt(ch, 16));
+        }
+        return data;
     };
 
     //
