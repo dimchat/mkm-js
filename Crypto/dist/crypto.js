@@ -65,9 +65,15 @@ if (typeof DIMP !== "object") {
         var len = data.length;
         var num;
         var str = "";
+        var s;
         for (; i < len; ++i) {
             num = Number(data[i]);
-            str += num.toString(16)
+            s = num.toString(16);
+            if (s.length % 2) {
+                str += '0' + s;
+            } else {
+                str += s;
+            }
         }
         return str
     };
