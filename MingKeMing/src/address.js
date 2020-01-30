@@ -33,6 +33,7 @@
 //! require 'protocol.js'
 
 !function (ns) {
+    'use strict';
 
     var NetworkType = ns.protocol.NetworkType;
 

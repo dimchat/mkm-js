@@ -34,6 +34,7 @@
 //! require 'entity.js'
 
 !function (ns) {
+    'use strict';
 
     var EncryptKey = ns.crypto.EncryptKey;
     var VerifyKey = ns.crypto.VerifyKey;

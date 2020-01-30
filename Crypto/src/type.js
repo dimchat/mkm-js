@@ -32,6 +32,54 @@
     'use strict';
 
     //
+    //  Object wrapper
+    //
+    var obj = function (value) {
+        if (value instanceof obj) {
+            this.value = value.value;
+        } else {
+            this.value = value;
+        }
+    };
+
+    obj.prototype.equals = function (other) {
+        if (other instanceof obj) {
+            return this.value === other.value;
+        } else {
+            return this.value === other;
+        }
+    };
+
+    obj.prototype.valueOf = function () {
+        return this.value.valueOf();
+    };
+
+    obj.prototype.toString = function () {
+        return this.value.toString();
+    };
+
+    obj.prototype.toLocaleString = function () {
+        return this.value.toLocaleString();
+    };
+
+    obj.prototype.toJSON = function () {
+        return ns.format.JSON.encode(this.value);
+    };
+
+    //-------- namespace --------
+    if (typeof ns.type !== 'object') {
+        ns.type = {}
+    }
+    ns.type.Object = obj;
+
+}(DIMP);
+
+!function (ns) {
+    'use strict';
+
+    var obj = ns.type.Object;
+
+    //
     //  UTF-8
     //
     var UTF8 = {
@@ -101,41 +149,6 @@
     };
 
     //
-    //  Object wrapper
-    //
-    var obj = function (value) {
-        if (value instanceof obj) {
-            this.value = value.value;
-        } else {
-            this.value = value;
-        }
-    };
-
-    obj.prototype.equals = function (other) {
-        if (other instanceof obj) {
-            return this.value === other.value;
-        } else {
-            return this.value === other;
-        }
-    };
-
-    obj.prototype.valueOf = function () {
-        return this.value.valueOf();
-    };
-
-    obj.prototype.toString = function () {
-        return this.value.toString();
-    };
-
-    obj.prototype.toLocaleString = function () {
-        return this.value.toLocaleString();
-    };
-
-    obj.prototype.toJSON = function () {
-        return ns.format.JSON.encode(this.value);
-    };
-
-    //
     //  String
     //
     var str = function (data, charset) {
@@ -197,6 +210,16 @@
     str.prototype.getLength = function() {
         return this.value.length;
     };
+
+    //-------- namespace --------
+    ns.type.String = str;
+
+}(DIMP);
+
+!function (ns) {
+    'use strict';
+
+    var obj = ns.type.Object;
 
     //
     //  Array
@@ -293,6 +316,17 @@
         }
     };
 
+    //-------- namespace --------
+    ns.type.Dictionary = map;
+    ns.type.Arrays = arrays;
+
+}(DIMP);
+
+!function (ns) {
+    'use strict';
+
+    var obj = ns.type.Object;
+
     //
     //  Enumeration
     //
@@ -351,13 +385,6 @@
     };
 
     //-------- namespace --------
-    if (typeof ns.type !== 'object') {
-        ns.type = {}
-    }
-    ns.type.Object = obj;
-    ns.type.String = str;
-    ns.type.Dictionary = map;
-    ns.type.Arrays = arrays;
     ns.type.Enum = enu;
 
 }(DIMP);

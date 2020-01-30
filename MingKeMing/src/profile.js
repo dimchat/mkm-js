@@ -34,6 +34,7 @@
 //! require 'identifier.js'
 
 !function (ns) {
+    'use strict';
 
     /**
      *  The Additional Information
@@ -145,6 +146,7 @@
 // }(DIMP);
 //
 // !function (ns) {
+//    'use strict';
 
     var Dictionary = ns.type.Dictionary;
     var Base64 = ns.format.Base64;

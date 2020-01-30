@@ -33,6 +33,7 @@
 //! require <crypto.js>
 
 !function (ns) {
+    'use strict';
 
     /**
      *  @enum NetworkType
@@ -173,6 +174,7 @@
 }(DIMP);
 
 !function (ns) {
+    'use strict';
 
     /**
      *  @enum MetaType

@@ -33,6 +33,7 @@
 //! require 'address.js'
 
 !function (ns) {
+    'use strict';
 
     var Address = ns.Address;
 

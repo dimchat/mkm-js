@@ -35,6 +35,7 @@
 //! require 'profile.js'
 
 !function (ns) {
+    'use strict';
 
     var EntityDataSource = function () {
     };
@@ -69,6 +70,7 @@
 }(DIMP);
 
 !function (ns) {
+    'use strict';
 
     var EntityDataSource = ns.EntityDataSource;
 
@@ -162,6 +164,7 @@
 }(DIMP);
 
 !function (ns) {
+    'use strict';
 
     var EntityDataSource = ns.EntityDataSource;
 

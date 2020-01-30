@@ -36,6 +36,7 @@
 //! require 'delegate.js'
 
 !function (ns) {
+    'use strict';
 
     /**
      *  Entity (User/Group)

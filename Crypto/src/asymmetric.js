@@ -144,6 +144,7 @@
         console.assert(false, 'implement me!');
         return null;
     };
+
     /**
      *  Generate key with algorithm name
      *

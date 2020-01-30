@@ -60,20 +60,7 @@ if (typeof DIMP !== "object") {
     }
 }();
 ! function(ns) {
-    var coder = function() {};
-    coder.prototype.encode = function(data) {
-        console.assert(data != null, "data empty");
-        console.assert(false, "implement me!");
-        return null
-    };
-    coder.prototype.decode = function(string) {
-        console.assert(string != null, "string empty");
-        console.assert(false, "implement me!");
-        return null
-    };
-    var hex = function() {};
-    hex.inherits(coder);
-    hex.prototype.encode = function(data) {
+    var hex_encode = function(data) {
         var i = 0;
         var len = data.length;
         var num;
@@ -84,7 +71,7 @@ if (typeof DIMP !== "object") {
         }
         return str
     };
-    hex.prototype.decode = function(str) {
+    var hex_decode = function(str) {
         var i = 0;
         var len = str.length;
         if (len > 2) {
@@ -103,6 +90,108 @@ if (typeof DIMP !== "object") {
         }
         return data
     };
+    var base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    var base64_values = [];
+    ! function(chars, values) {
+        var i;
+        for (i = 0; i < 128; ++i) {
+            values[i] = -1
+        }
+        for (i = 0; i < chars.length; ++i) {
+            values[chars.charCodeAt(i)] = i
+        }
+        values[61] = 0
+    }(base64_chars, base64_values);
+    var base64_encode = function(data) {
+        var base64 = "";
+        var length = data.length;
+        var tail = "";
+        var remainder = length % 3;
+        if (remainder === 1) {
+            length -= 1;
+            tail = "=="
+        } else {
+            if (remainder === 2) {
+                length -= 2;
+                tail = "="
+            }
+        }
+        var x1, x2, x3;
+        var i;
+        for (i = 0; i < length; i += 3) {
+            x1 = data[i];
+            x2 = data[i + 1];
+            x3 = data[i + 2];
+            base64 += base64_chars.charAt((x1 & 252) >> 2);
+            base64 += base64_chars.charAt(((x1 & 3) << 4) | ((x2 & 240) >> 4));
+            base64 += base64_chars.charAt(((x2 & 15) << 2) | ((x3 & 192) >> 6));
+            base64 += base64_chars.charAt(x3 & 63)
+        }
+        if (remainder === 1) {
+            x1 = data[i];
+            base64 += base64_chars.charAt((x1 & 252) >> 2);
+            base64 += base64_chars.charAt((x1 & 3) << 4)
+        } else {
+            if (remainder === 2) {
+                x1 = data[i];
+                x2 = data[i + 1];
+                base64 += base64_chars.charAt((x1 & 252) >> 2);
+                base64 += base64_chars.charAt(((x1 & 3) << 4) | ((x2 & 240) >> 4));
+                base64 += base64_chars.charAt((x2 & 15) << 2)
+            }
+        }
+        return base64 + tail
+    };
+    var base64_decode = function(string) {
+        var str = string.replace(/[^A-Za-z0-9+\/=]/g, "");
+        var length = str.length;
+        if ((length % 4) !== 0 || !/^[A-Za-z0-9+\/]+={0,2}$/.test(str)) {
+            throw Error("base64 string error: " + string)
+        }
+        var array = [];
+        var ch1, ch2, ch3, ch4;
+        var i;
+        for (i = 0; i < length; i += 4) {
+            ch1 = base64_values[str.charCodeAt(i)];
+            ch2 = base64_values[str.charCodeAt(i + 1)];
+            ch3 = base64_values[str.charCodeAt(i + 2)];
+            ch4 = base64_values[str.charCodeAt(i + 3)];
+            array.push(((ch1 & 63) << 2) | ((ch2 & 48) >> 4));
+            array.push(((ch2 & 15) << 4) | ((ch3 & 60) >> 2));
+            array.push(((ch3 & 3) << 6) | ((ch4 & 63) >> 0))
+        }
+        while (str[--i] === "=") {
+            array.pop()
+        }
+        return array
+    };
+    var coder = function() {};
+    coder.prototype.encode = function(data) {
+        console.assert(data != null, "data empty");
+        console.assert(false, "implement me!");
+        return null
+    };
+    coder.prototype.decode = function(string) {
+        console.assert(string != null, "string empty");
+        console.assert(false, "implement me!");
+        return null
+    };
+    var hex = function() {};
+    hex.inherits(coder);
+    hex.prototype.encode = function(data) {
+        return hex_encode(data)
+    };
+    hex.prototype.decode = function(str) {
+        return hex_decode(str)
+    };
+    var base64 = function() {};
+    base64.inherits(coder);
+    base64.prototype.encode = function(data) {
+        return base64_encode(data)
+    };
+    base64.prototype.decode = function(string) {
+        return base64_decode(string)
+    };
     var base58 = function() {};
     base58.inherits(coder);
     base58.prototype.encode = function(data) {
@@ -113,18 +202,6 @@ if (typeof DIMP !== "object") {
     base58.prototype.decode = function(string) {
         console.assert(string != null, "string empty");
         console.assert(false, "Base58 decode not implemented");
-        return null
-    };
-    var base64 = function() {};
-    base64.inherits(coder);
-    base64.prototype.encode = function(data) {
-        console.assert(data != null, "data empty");
-        console.assert(false, "Base64 encode not implemented");
-        return null
-    };
-    base64.prototype.decode = function(string) {
-        console.assert(string != null, "string empty");
-        console.assert(false, "Base64 decode not implemented");
         return null
     };
     var C = function(lib) {
@@ -287,6 +364,39 @@ if (typeof DIMP !== "object") {
     ns.format.PEM = new P(new pem())
 }(DIMP);
 ! function(ns) {
+    var obj = function(value) {
+        if (value instanceof obj) {
+            this.value = value.value
+        } else {
+            this.value = value
+        }
+    };
+    obj.prototype.equals = function(other) {
+        if (other instanceof obj) {
+            return this.value === other.value
+        } else {
+            return this.value === other
+        }
+    };
+    obj.prototype.valueOf = function() {
+        return this.value.valueOf()
+    };
+    obj.prototype.toString = function() {
+        return this.value.toString()
+    };
+    obj.prototype.toLocaleString = function() {
+        return this.value.toLocaleString()
+    };
+    obj.prototype.toJSON = function() {
+        return ns.format.JSON.encode(this.value)
+    };
+    if (typeof ns.type !== "object") {
+        ns.type = {}
+    }
+    ns.type.Object = obj
+}(DIMP);
+! function(ns) {
+    var obj = ns.type.Object;
     var UTF8 = {
         encode: function(str) {
             var array = [];
@@ -336,32 +446,6 @@ if (typeof DIMP !== "object") {
             return string
         }
     };
-    var obj = function(value) {
-        if (value instanceof obj) {
-            this.value = value.value
-        } else {
-            this.value = value
-        }
-    };
-    obj.prototype.equals = function(other) {
-        if (other instanceof obj) {
-            return this.value === other.value
-        } else {
-            return this.value === other
-        }
-    };
-    obj.prototype.valueOf = function() {
-        return this.value.valueOf()
-    };
-    obj.prototype.toString = function() {
-        return this.value.toString()
-    };
-    obj.prototype.toLocaleString = function() {
-        return this.value.toLocaleString()
-    };
-    obj.prototype.toJSON = function() {
-        return ns.format.JSON.encode(this.value)
-    };
     var str = function(data, charset) {
         if (data instanceof Array) {
             if (!charset || charset === "UTF-8") {
@@ -410,6 +494,10 @@ if (typeof DIMP !== "object") {
     str.prototype.getLength = function() {
         return this.value.length
     };
+    ns.type.String = str
+}(DIMP);
+! function(ns) {
+    var obj = ns.type.Object;
     var arrays = {
         equals: function(a1, a2) {
             if (a1 === a2) {
@@ -469,6 +557,11 @@ if (typeof DIMP !== "object") {
             }
         }
     };
+    ns.type.Dictionary = map;
+    ns.type.Arrays = arrays
+}(DIMP);
+! function(ns) {
+    var obj = ns.type.Object;
     var enu = function(elements) {
         var get_name = function(value, enumeration) {
             if (value instanceof enumeration) {
@@ -513,13 +606,6 @@ if (typeof DIMP !== "object") {
         }
         return enumeration
     };
-    if (typeof ns.type !== "object") {
-        ns.type = {}
-    }
-    ns.type.Object = obj;
-    ns.type.String = str;
-    ns.type.Dictionary = map;
-    ns.type.Arrays = arrays;
     ns.type.Enum = enu
 }(DIMP);
 ! function(ns) {

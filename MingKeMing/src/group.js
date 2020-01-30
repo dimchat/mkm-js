@@ -33,6 +33,7 @@
 //! require 'entity.js'
 
 !function (ns) {
+    'use strict';
 
     var Entity = ns.Entity;
 
