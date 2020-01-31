@@ -224,6 +224,23 @@
     //
     //  Array
     //
+    if (typeof Array.prototype.indexOf !== 'function') {
+        Array.prototype.indexOf = function (item, start) {
+            var length = this.length;
+            for (var i = start; i < length; ++i) {
+                if (this[i] === item) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+    }
+    if (typeof Array.prototype.contains !== 'function') {
+        Array.prototype.contains = function (item) {
+            return this.indexOf(item) >= 0;
+        }
+    }
+
     var arrays = {
         equals: function (a1, a2) {
             if (a1 === a2) {
