@@ -349,6 +349,9 @@
     };
     var meta_classes = {};
     Meta.register = function(version, clazz) {
+        if (version instanceof MetaType) {
+            version = version.value
+        }
         meta_classes[version] = clazz
     };
     Meta.getInstance = function(meta) {
@@ -360,6 +363,9 @@
             }
         }
         var version = meta["version"];
+        if (version instanceof MetaType) {
+            version = version.value
+        }
         var clazz = meta_classes[version];
         if (typeof clazz !== "function") {
             throw TypeError("meta not supported: " + meta)
