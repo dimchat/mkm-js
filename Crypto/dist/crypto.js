@@ -70,9 +70,9 @@ if (typeof DIMP !== "object") {
             num = Number(data[i]);
             s = num.toString(16);
             if (s.length % 2) {
-                str += '0' + s;
+                str += "0" + s
             } else {
-                str += s;
+                str += s
             }
         }
         return str
@@ -504,20 +504,32 @@ if (typeof DIMP !== "object") {
 }(DIMP);
 ! function(ns) {
     var obj = ns.type.Object;
-    if (typeof Array.prototype.indexOf !== 'function') {
-        Array.prototype.indexOf = function (item, start) {
+    if (typeof Array.prototype.indexOf !== "function") {
+        Array.prototype.indexOf = function(item, start) {
+            if (!start) {
+                start = 0
+            }
             var length = this.length;
             for (var i = start; i < length; ++i) {
                 if (this[i] === item) {
-                    return i;
+                    return i
                 }
             }
-            return -1;
+            return -1
         }
     }
-    if (typeof Array.prototype.contains !== 'function') {
-        Array.prototype.contains = function (item) {
-            return this.indexOf(item) >= 0;
+    if (typeof Array.prototype.contains !== "function") {
+        Array.prototype.contains = function(item) {
+            return this.indexOf(item) >= 0
+        }
+    }
+    if (typeof Array.prototype.remove !== "function") {
+        Array.prototype.remove = function(item) {
+            var index = this.indexOf(item);
+            if (index < 0) {
+                return null
+            }
+            return this.splice(index, 1)
         }
     }
     var arrays = {
