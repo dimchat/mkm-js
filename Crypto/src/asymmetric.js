@@ -70,7 +70,7 @@
     PublicKey.inherits(AsymmetricKey, VerifyKey);
 
     PublicKey.prototype.matches = function (privateKey) {
-        if (privateKey === null) {
+        if (!privateKey) {
             return false;
         }
         // 1. if the SK has the same public key, return true
@@ -103,7 +103,7 @@
      * @returns {null|SymmetricKey}
      */
     PublicKey.getInstance = function (key) {
-        if (key === null) {
+        if (!key) {
             return null;
         } else if (key.isinstanceof(PublicKey)) {
             return key;
@@ -134,7 +134,7 @@
 
     PrivateKey.prototype.equals = function (other) {
         var publicKey = this.getPublicKey();
-        if (publicKey === null) {
+        if (!publicKey) {
             return false;
         }
         return publicKey.matches(other);
@@ -175,7 +175,7 @@
      * @returns {null|SymmetricKey}
      */
     PrivateKey.getInstance = function (key) {
-        if (key === null) {
+        if (!key) {
             return null;
         } else if (key.isinstanceof(PrivateKey)) {
             return key;

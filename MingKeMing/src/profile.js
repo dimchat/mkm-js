@@ -153,11 +153,21 @@
     var JSON = ns.format.JSON;
 
     var PublicKey = ns.crypto.PublicKey;
+    var ID = ns.ID;
 
 //    var TAI = ns.TAI;
 
-    var Profile = function (dict) {
-        Dictionary.call(this, dict);
+    var Profile = function (info) {
+        if (!info) {
+            // create empty profile
+            info = {};
+        } else if (typeof info === 'string' || info instanceof ID) {
+            // create profile with ID
+            info = {
+                'ID': info
+            };
+        }
+        Dictionary.call(this, info);
 
         this.identifier = null;
         this.key = null;

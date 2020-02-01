@@ -338,7 +338,7 @@
      * @param value
      */
     map.prototype.setValue = function (key, value) {
-        if (value !== null) {
+        if (value) {
             this.value[key] = value;
         } else if (this.value.hasOwnProperty(key)) {
             delete this.value[key];

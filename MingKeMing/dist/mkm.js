@@ -419,8 +419,18 @@
     var Base64 = ns.format.Base64;
     var JSON = ns.format.JSON;
     var PublicKey = ns.crypto.PublicKey;
-    var Profile = function(dict) {
-        Dictionary.call(this, dict);
+    var ID = ns.ID;
+    var Profile = function(info) {
+        if (!info) {
+            info = {}
+        } else {
+            if (typeof info === "string" || info instanceof ID) {
+                info = {
+                    "ID": info
+                }
+            }
+        }
+        Dictionary.call(this, info);
         this.identifier = null;
         this.key = null;
         this.data = null;

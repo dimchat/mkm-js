@@ -583,7 +583,7 @@ if (typeof DIMP !== "object") {
         return this.value[key]
     };
     map.prototype.setValue = function(key, value) {
-        if (value !== null) {
+        if (value) {
             this.value[key] = value
         } else {
             if (this.value.hasOwnProperty(key)) {
@@ -761,7 +761,7 @@ if (typeof DIMP !== "object") {
     var PublicKey = function() {};
     PublicKey.inherits(AsymmetricKey, VerifyKey);
     PublicKey.prototype.matches = function(privateKey) {
-        if (privateKey === null) {
+        if (!privateKey) {
             return false
         }
         var publicKey = privateKey.getPublicKey();
@@ -776,7 +776,7 @@ if (typeof DIMP !== "object") {
         public_key_classes[algorithm] = clazz
     };
     PublicKey.getInstance = function(key) {
-        if (key === null) {
+        if (!key) {
             return null
         } else {
             if (key.isinstanceof(PublicKey)) {
@@ -800,7 +800,7 @@ if (typeof DIMP !== "object") {
     PrivateKey.inherits(AsymmetricKey, SignKey);
     PrivateKey.prototype.equals = function(other) {
         var publicKey = this.getPublicKey();
-        if (publicKey === null) {
+        if (!publicKey) {
             return false
         }
         return publicKey.matches(other)
@@ -819,7 +819,7 @@ if (typeof DIMP !== "object") {
         private_key_classes[algorithm] = clazz
     };
     PrivateKey.getInstance = function(key) {
-        if (key === null) {
+        if (!key) {
             return null
         } else {
             if (key.isinstanceof(PrivateKey)) {
