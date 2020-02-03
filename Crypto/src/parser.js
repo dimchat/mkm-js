@@ -66,6 +66,9 @@
     };
     json.inherits(parser);
     json.prototype.encode = function (container) {
+        if (typeof container.toJSON === 'function') {
+            return container.toJSON();
+        }
         return JSON.stringify(container);
     };
     json.prototype.decode = function (string) {

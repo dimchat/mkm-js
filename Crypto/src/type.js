@@ -62,10 +62,6 @@
         return this.value.toLocaleString();
     };
 
-    obj.prototype.toJSON = function () {
-        return ns.format.JSON.encode(this.value);
-    };
-
     //-------- namespace --------
     if (typeof ns.type !== 'object') {
         ns.type = {}
@@ -207,6 +203,10 @@
         return equalsIgnoreCase(this.value, other);
     };
 
+    str.prototype.toJSON = function () {
+        return this.value;
+    };
+
     str.prototype.getLength = function() {
         return this.value.length;
     };
@@ -295,6 +295,10 @@
 
     map.prototype.toLocaleString = function () {
         return this.toJSON();
+    };
+
+    map.prototype.toJSON = function () {
+        return ns.format.JSON.encode(this.value);
     };
 
     /**
@@ -397,6 +401,9 @@
         enumeration.prototype.toLocaleString = function () {
             return '<' + this.alias.toLocaleString()
                 + ': ' + this.value.toLocaleString() + '>';
+        };
+        enumeration.prototype.toJSON = function () {
+            return this.value;
         };
         var e, v;
         for (var name in elements) {
