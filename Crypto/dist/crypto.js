@@ -649,7 +649,11 @@ if (typeof DIMP !== "object") {
                 }
             }
             obj.call(this);
-            this.value = value;
+            if (value instanceof enumeration) {
+                this.value = value.value;
+            } else {
+                this.value = value;
+            }
             this.alias = alias
         };
         enumeration.inherits(obj);
