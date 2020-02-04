@@ -34,32 +34,11 @@
     //
     //  Object wrapper
     //
-    var obj = function (value) {
-        if (value instanceof obj) {
-            this.value = value.value;
-        } else {
-            this.value = value;
-        }
+    var obj = function () {
     };
 
     obj.prototype.equals = function (other) {
-        if (other instanceof obj) {
-            return this.value === other.value;
-        } else {
-            return this.value === other;
-        }
-    };
-
-    obj.prototype.valueOf = function () {
-        return this.value.valueOf();
-    };
-
-    obj.prototype.toString = function () {
-        return this.value.toString();
-    };
-
-    obj.prototype.toLocaleString = function () {
-        return this.value.toLocaleString();
+        return this === other;
     };
 
     //-------- namespace --------
@@ -147,16 +126,23 @@
     //
     //  String
     //
-    var str = function (data, charset) {
-        if (data instanceof Array) {
+    var str = function (value, charset) {
+        if (!value) {
+            value = '';
+        } else if (value instanceof Array) {
             // decode data array
             if (!charset || charset === 'UTF-8') {
-                data = UTF8.decode(data);
+                value = UTF8.decode(value);
             } else {
                 throw Error('only UTF-8 now');
             }
+        } else if (value instanceof str) {
+            value = value.string;
+        } else if (typeof value !== 'string') {
+            throw Error('string value error: ' + value);
         }
-        obj.call(this, data);
+        obj.call(this);
+        this.string = value;
     };
     str.inherits(obj);
 
@@ -168,20 +154,20 @@
      */
     str.prototype.getBytes = function (charset) {
         if (!charset || charset === 'UTF-8') {
-            return UTF8.encode(this.value);
+            return UTF8.encode(this.string);
         }
-        // TODO: other charset
-        return this.value;
+        throw Error('unknown charset: ' + charset);
     };
 
     str.prototype.equals = function (other) {
         if (!other) {
-            return !this.value;
+            return !this.string;
         } else if (other instanceof str) {
-            return this.value === other.value;
+            return this.string === other.string;
+        } else {
+            // console.assert(other instanceof String, 'other string error');
+            return this.string === other;
         }
-        // console.assert(other instanceof String, 'other string error');
-        return this.value === other;
     };
 
     var equalsIgnoreCase = function (str1, str2) {
@@ -195,20 +181,33 @@
 
     str.prototype.equalsIgnoreCase = function (other) {
         if (!other) {
-            return !this.value;
+            return !this.string;
         } else if (other instanceof str) {
-            return equalsIgnoreCase(this.value, other.value);
+            return equalsIgnoreCase(this.string, other.string);
+        } else {
+            // console.assert(other instanceof String, 'other string error');
+            return equalsIgnoreCase(this.string, other);
         }
-        // console.assert(other instanceof String, 'other string error');
-        return equalsIgnoreCase(this.value, other);
+    };
+
+    str.prototype.valueOf = function () {
+        return this.string;
+    };
+
+    str.prototype.toString = function () {
+        return this.string;
+    };
+
+    str.prototype.toLocaleString = function () {
+        return this.string.toLocaleString();
     };
 
     str.prototype.toJSON = function () {
-        return this.value;
+        return this.string;
     };
 
     str.prototype.getLength = function() {
-        return this.value.length;
+        return this.string.length;
     };
 
     //-------- namespace --------
@@ -220,6 +219,7 @@
     'use strict';
 
     var obj = ns.type.Object;
+    var str = ns.type.String;
 
     //
     //  Array
@@ -275,30 +275,45 @@
     //
     //  Dictionary
     //
-    var map = function (map) {
-        obj.call(this, map);
+    var map = function (value) {
+        if (!value) {
+            value = {};
+        } else if (value instanceof map) {
+            value = value.dictionary;
+        } else if (value instanceof str) {
+            value = ns.format.JSON.decode(value.toString());
+        } else if (typeof value === 'string') {
+            value = ns.format.JSON.decode(value);
+        }
+        obj.call(this);
+        this.dictionary = value;
     };
     map.inherits(obj);
 
     map.prototype.equals = function (other) {
         if (!other) {
-            return !this.value;
+            return !this.dictionary;
         } else if (other instanceof map) {
-            return arrays.equals(this.value, other.value);
+            return arrays.equals(this.dictionary, other.dictionary);
+        } else {
+            return arrays.equals(this.dictionary, other);
         }
-        return arrays.equals(this.value, other);
+    };
+
+    map.prototype.valueOf = function () {
+        return this.dictionary;
     };
 
     map.prototype.toString = function () {
-        return this.toJSON();
+        return this.dictionary.toString();
     };
 
     map.prototype.toLocaleString = function () {
-        return this.toJSON();
+        return this.dictionary.toLocaleString();
     };
 
     map.prototype.toJSON = function () {
-        return ns.format.JSON.encode(this.value);
+        return this.dictionary;
     };
 
     /**
@@ -309,10 +324,10 @@
      */
     map.prototype.getMap = function (copy) {
         if (copy) {
-            var json = ns.format.JSON.encode(this.value);
+            var json = ns.format.JSON.encode(this.dictionary);
             return ns.format.JSON.decode(json);
         } else {
-            return this.value;
+            return this.dictionary;
         }
     };
 
@@ -322,7 +337,7 @@
      * @returns {string[]}
      */
     map.prototype.allKeys = function() {
-        return Object.keys(this.value);
+        return Object.keys(this.dictionary);
     };
 
     /**
@@ -332,7 +347,7 @@
      * @returns {*}
      */
     map.prototype.getValue = function (key) {
-        return this.value[key];
+        return this.dictionary[key];
     };
 
     /**
@@ -343,9 +358,9 @@
      */
     map.prototype.setValue = function (key, value) {
         if (value) {
-            this.value[key] = value;
-        } else if (this.value.hasOwnProperty(key)) {
-            delete this.value[key];
+            this.dictionary[key] = value;
+        } else if (this.dictionary.hasOwnProperty(key)) {
+            delete this.dictionary[key];
         }
     };
 
@@ -390,10 +405,23 @@
                     throw RangeError('enum error: ' + value);
                 }
             }
-            obj.call(this, value);
+            obj.call(this);
+            this.value = value;
             this.alias = alias;
         };
         enumeration.inherits(obj);
+        enumeration.prototype.equals = function (other) {
+            if (!other) {
+                return !this.value;
+            } else if (other instanceof enumeration) {
+                return this.value === other.value;
+            } else {
+                return this.value === other;
+            }
+        };
+        enumeration.prototype.valueOf = function () {
+            return this.value;
+        };
         enumeration.prototype.toString = function () {
             return '<' + this.alias.toString()
                 + ': ' + this.value.toString() + '>';

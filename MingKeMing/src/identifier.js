@@ -115,9 +115,9 @@
         // comparing without terminal
         var pair = other.split('/');
         if (!this.terminal) {
-            return pair[0] === this.value;
+            return pair[0] === this.string;
         } else {
-            return pair[0] === this.value.split('/')[0];
+            return pair[0] === this.string.split('/')[0];
         }
     };
 
