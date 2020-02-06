@@ -135,4 +135,6 @@
     //-------- namespace --------
     ns.Entity = Entity;
 
-}(DIMP);
+    ns.register('Entity');
+
+}(MingKeMing);

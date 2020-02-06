@@ -30,7 +30,7 @@
 // =============================================================================
 //
 
-//! require <crypto.js>
+//! require 'namespace.js'
 
 !function (ns) {
     'use strict';
@@ -166,12 +166,11 @@
     };
 
     //-------- namespace --------
-    if (typeof ns.protocol !== 'object') {
-        ns.protocol = {}
-    }
     ns.protocol.NetworkType = NetworkType;
 
-}(DIMP);
+    ns.protocol.register('NetworkType');
+
+}(MingKeMing);
 
 !function (ns) {
     'use strict';
@@ -217,9 +216,8 @@
     };
 
     //-------- namespace --------
-    if (typeof ns.protocol !== 'object') {
-        ns.protocol = {}
-    }
     ns.protocol.MetaType = MetaType;
 
-}(DIMP);
+    ns.protocol.register('MetaType');
+
+}(MingKeMing);

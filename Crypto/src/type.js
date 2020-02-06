@@ -42,10 +42,9 @@
     };
 
     //-------- namespace --------
-    if (typeof ns.type !== 'object') {
-        ns.type = {}
-    }
     ns.type.Object = obj;
+
+    ns.type.register('Object');
 
 }(DIMP);
 
@@ -213,6 +212,8 @@
     //-------- namespace --------
     ns.type.String = str;
 
+    ns.type.register('String');
+
 }(DIMP);
 
 !function (ns) {
@@ -224,35 +225,6 @@
     //
     //  Array
     //
-    if (typeof Array.prototype.indexOf !== 'function') {
-        Array.prototype.indexOf = function (item, start) {
-            if (!start) {
-                start = 0;
-            }
-            var length = this.length;
-            for (var i = start; i < length; ++i) {
-                if (this[i] === item) {
-                    return i;
-                }
-            }
-            return -1;
-        }
-    }
-    if (typeof Array.prototype.contains !== 'function') {
-        Array.prototype.contains = function (item) {
-            return this.indexOf(item) >= 0;
-        }
-    }
-    if (typeof Array.prototype.remove !== 'function') {
-        Array.prototype.remove = function (item) {
-            var index = this.indexOf(item);
-            if (index < 0) {
-                return null;
-            }
-            return this.splice(index, 1);
-        }
-    }
-
     var arrays = {
         equals: function (a1, a2) {
             if (a1 === a2) {
@@ -368,6 +340,9 @@
     ns.type.Dictionary = map;
     ns.type.Arrays = arrays;
 
+    ns.type.register('Dictionary');
+    ns.type.register('Arrays');
+
 }(DIMP);
 
 !function (ns) {
@@ -454,5 +429,7 @@
 
     //-------- namespace --------
     ns.type.Enum = enu;
+
+    ns.type.register('Enum');
 
 }(DIMP);

@@ -94,12 +94,14 @@
     };
 
     //-------- namespace --------
-    if (typeof ns.digest !== 'object') {
-        ns.digest = {}
-    }
     ns.digest.Hash = hash;
     ns.digest.MD5 = new H(new md5());
     ns.digest.SHA256 = new H(new sha256());
     ns.digest.RIPEMD160 = new H(new ripemd160());
+
+    ns.digest.register('Hash');
+    ns.digest.register('MD5');
+    ns.digest.register('SHA256');
+    ns.digest.register('RIPEMD160');
 
 }(DIMP);

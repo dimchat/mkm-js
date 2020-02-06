@@ -178,4 +178,6 @@
     //-------- namespace --------
     ns.ID = ID;
 
-}(DIMP);
+    ns.register('ID');
+
+}(MingKeMing);

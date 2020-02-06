@@ -159,4 +159,6 @@
     //-------- namespace --------
     ns.Address = Address;
 
-}(DIMP);
+    ns.register('Address')
+
+}(MingKeMing);

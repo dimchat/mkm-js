@@ -110,4 +110,6 @@
     //-------- namespace --------
     ns.crypto.SymmetricKey = SymmetricKey;
 
+    ns.crypto.register('SymmetricKey');
+
 }(DIMP);

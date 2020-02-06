@@ -86,11 +86,11 @@
     };
 
     //-------- namespace --------//
-    if (typeof ns.format !== 'object') {
-        ns.format = {}
-    }
     ns.format.DataParser = parser;
     ns.format.JSON = new P(new json());
+
+    ns.format.register('DataParser');
+    ns.format.register('JSON');
 
 }(DIMP);
 
@@ -194,10 +194,10 @@
     };
 
     //-------- namespace --------
-    if (typeof ns.format !== 'object') {
-        ns.format = {}
-    }
     ns.format.KeyParser = parser;
     ns.format.PEM = new P(new pem());
+
+    ns.format.register('KeyParser');
+    ns.format.register('PEM');
 
 }(DIMP);

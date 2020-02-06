@@ -145,13 +145,16 @@
     };
 
     //-------- namespace --------
-    if (typeof ns.crypto !== 'object') {
-        ns.crypto = {}
-    }
     ns.crypto.CryptographyKey = CryptographyKey;
     ns.crypto.EncryptKey = EncryptKey;
     ns.crypto.DecryptKey = DecryptKey;
     ns.crypto.SignKey = SignKey;
     ns.crypto.VerifyKey = VerifyKey;
+
+    // ns.crypto.register('CryptographyKey');
+    ns.crypto.register('EncryptKey');
+    ns.crypto.register('DecryptKey');
+    ns.crypto.register('SignKey');
+    ns.crypto.register('VerifyKey');
 
 }(DIMP);

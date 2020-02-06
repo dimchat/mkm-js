@@ -53,6 +53,8 @@
     //-------- namespace --------
     ns.crypto.AsymmetricKey = AsymmetricKey;
 
+    ns.crypto.register('AsymmetricKey');
+
 }(DIMP);
 
 !function (ns) {
@@ -118,6 +120,8 @@
 
     //-------- namespace --------
     ns.crypto.PublicKey = PublicKey;
+
+    ns.crypto.register('PublicKey');
 
 }(DIMP);
 
@@ -190,5 +194,7 @@
 
     //-------- namespace --------
     ns.crypto.PrivateKey = PrivateKey;
+
+    ns.crypto.register('PrivateKey');
 
 }(DIMP);

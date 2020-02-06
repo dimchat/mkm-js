@@ -6,6 +6,16 @@
  * @copyright (c) 2020 Albert Moky
  * @license   {@link https://mit-license.org | MIT License}
  */
+if (typeof MingKeMing !== "object") {
+    MingKeMing = {}
+}! function(ns) {
+    DIMP.exports(ns);
+    if (typeof ns.protocol !== "object") {
+        ns.protocol = {}
+    }
+    DIMP.namespace(ns.protocol);
+    ns.register("protocol")
+}(MingKeMing);
 ! function(ns) {
     var NetworkType = ns.type.Enum({
         BTCMain: (0),
@@ -42,11 +52,9 @@
     NetworkType.prototype.isRobot = function() {
         return this.value === NetworkType.Robot.value
     };
-    if (typeof ns.protocol !== "object") {
-        ns.protocol = {}
-    }
-    ns.protocol.NetworkType = NetworkType
-}(DIMP);
+    ns.protocol.NetworkType = NetworkType;
+    ns.protocol.register("NetworkType")
+}(MingKeMing);
 ! function(ns) {
     var MetaType = ns.type.Enum({
         Default: (1),
@@ -59,11 +67,9 @@
     MetaType.prototype.hasSeed = function() {
         return (this.value & MetaType.MKM.value) === MetaType.MKM.value
     };
-    if (typeof ns.protocol !== "object") {
-        ns.protocol = {}
-    }
-    ns.protocol.MetaType = MetaType
-}(DIMP);
+    ns.protocol.MetaType = MetaType;
+    ns.protocol.register("MetaType")
+}(MingKeMing);
 ! function(ns) {
     var NetworkType = ns.protocol.NetworkType;
     var Address = function(string) {
@@ -132,8 +138,9 @@
     };
     Address.ANYWHERE = new ConstantAddress("anywhere", ns.protocol.NetworkType.Main, 9527);
     Address.EVERYWHERE = new ConstantAddress("everywhere", ns.protocol.NetworkType.Group, 9527);
-    ns.Address = Address
-}(DIMP);
+    ns.Address = Address;
+    ns.register("Address")
+}(MingKeMing);
 ! function(ns) {
     var Address = ns.Address;
     var ID = function(name, address, terminal) {
@@ -227,8 +234,9 @@
         }
         return new ID(string)
     };
-    ns.ID = ID
-}(DIMP);
+    ns.ID = ID;
+    ns.register("ID")
+}(MingKeMing);
 ! function(ns) {
     var Dictionary = ns.type.Dictionary;
     var PublicKey = ns.crypto.PublicKey;
@@ -375,8 +383,9 @@
         }
         return new clazz(meta)
     };
-    ns.Meta = Meta
-}(DIMP);
+    ns.Meta = Meta;
+    ns.register("Meta")
+}(MingKeMing);
 ! function(ns) {
     var TAI = function() {};
     TAI.prototype.isValid = function() {
@@ -583,8 +592,9 @@
         }
         return new Profile(dict)
     };
-    ns.Profile = Profile
-}(DIMP);
+    ns.Profile = Profile;
+    ns.register("Profile")
+}(MingKeMing);
 ! function(ns) {
     var EntityDataSource = function() {};
     EntityDataSource.prototype.getMeta = function(identifier) {
@@ -597,8 +607,9 @@
         console.assert(false, "implement me!");
         return null
     };
-    ns.EntityDataSource = EntityDataSource
-}(DIMP);
+    ns.EntityDataSource = EntityDataSource;
+    ns.register("EntityDataSource")
+}(MingKeMing);
 ! function(ns) {
     var EntityDataSource = ns.EntityDataSource;
     var UserDataSource = function() {};
@@ -626,8 +637,9 @@
         console.assert(false, "implement me!");
         return null
     };
-    ns.UserDataSource = UserDataSource
-}(DIMP);
+    ns.UserDataSource = UserDataSource;
+    ns.register("UserDataSource")
+}(MingKeMing);
 ! function(ns) {
     var EntityDataSource = ns.EntityDataSource;
     var GroupDataSource = function() {};
@@ -647,8 +659,9 @@
         console.assert(false, "implement me!");
         return null
     };
-    ns.GroupDataSource = GroupDataSource
-}(DIMP);
+    ns.GroupDataSource = GroupDataSource;
+    ns.register("GroupDataSource")
+}(MingKeMing);
 ! function(ns) {
     var Entity = function(identifier) {
         this.identifier = identifier;
@@ -699,8 +712,9 @@
     Entity.prototype.getProfile = function() {
         return this.delegate.getProfile(this.identifier)
     };
-    ns.Entity = Entity
-}(DIMP);
+    ns.Entity = Entity;
+    ns.register("Entity")
+}(MingKeMing);
 ! function(ns) {
     var EncryptKey = ns.crypto.EncryptKey;
     var VerifyKey = ns.crypto.VerifyKey;
@@ -793,8 +807,9 @@
         }
         return null
     };
-    ns.User = User
-}(DIMP);
+    ns.User = User;
+    ns.register("User")
+}(MingKeMing);
 ! function(ns) {
     var Entity = ns.Entity;
     var Group = function(identifier) {
@@ -814,5 +829,6 @@
     Group.prototype.getMembers = function() {
         return this.delegate.getMembers(this.identifier)
     };
-    ns.Group = Group
-}(DIMP);
+    ns.Group = Group;
+    ns.register("Group")
+}(MingKeMing);

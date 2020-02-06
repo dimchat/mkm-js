@@ -67,7 +67,9 @@
     //-------- namespace --------
     ns.EntityDataSource = EntityDataSource;
 
-}(DIMP);
+    ns.register('EntityDataSource');
+
+}(MingKeMing);
 
 !function (ns) {
     'use strict';
@@ -161,7 +163,9 @@
     //-------- namespace --------
     ns.UserDataSource = UserDataSource;
 
-}(DIMP);
+    ns.register('UserDataSource');
+
+}(MingKeMing);
 
 !function (ns) {
     'use strict';
@@ -211,4 +215,6 @@
     //-------- namespace --------
     ns.GroupDataSource = GroupDataSource;
 
-}(DIMP);
+    ns.register('GroupDataSource');
+
+}(MingKeMing);

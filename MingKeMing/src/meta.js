@@ -30,7 +30,7 @@
 // =============================================================================
 //
 
-//! require <crypto.js>
+//! require 'namespace.js'
 //! require 'address.js'
 //! require 'identifier.js'
 
@@ -255,4 +255,6 @@
     //-------- namespace --------
     ns.Meta = Meta;
 
-}(DIMP);
+    ns.register('Meta');
+
+}(MingKeMing);

@@ -265,12 +265,14 @@
     };
 
     //-------- namespace --------
-    if (typeof ns.format !== 'object') {
-        ns.format = {}
-    }
     ns.format.BaseCoder = coder;
     ns.format.Hex = new C(new hex());
     ns.format.Base58 = new C(new base58());
     ns.format.Base64 = new C(new base64());
+
+    ns.format.register('BaseCoder');
+    ns.format.register('Hex');
+    ns.format.register('Base58');
+    ns.format.register('Base64');
 
 }(DIMP);

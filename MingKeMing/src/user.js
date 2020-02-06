@@ -30,7 +30,7 @@
 // =============================================================================
 //
 
-//! require <crypto.js>
+//! require 'namespace.js'
 //! require 'entity.js'
 
 !function (ns) {
@@ -205,4 +205,6 @@
     //-------- namespace --------
     ns.User = User;
 
-}(DIMP);
+    ns.register('User');
+
+}(MingKeMing);

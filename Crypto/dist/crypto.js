@@ -58,7 +58,112 @@ if (typeof DIMP !== "object") {
     if (typeof Function.prototype.inherits !== "function") {
         Function.prototype.inherits = inherits
     }
+    if (typeof Array.prototype.indexOf !== "function") {
+        Array.prototype.indexOf = function(item, start) {
+            if (!start) {
+                start = 0
+            }
+            var length = this.length;
+            for (var i = start; i < length; ++i) {
+                if (this[i] === item) {
+                    return i
+                }
+            }
+            return -1
+        }
+    }
+    if (typeof Array.prototype.contains !== "function") {
+        Array.prototype.contains = function(item) {
+            return this.indexOf(item) >= 0
+        }
+    }
+    if (typeof Array.prototype.remove !== "function") {
+        Array.prototype.remove = function(item) {
+            var index = this.indexOf(item);
+            if (index < 0) {
+                return null
+            }
+            return this.splice(index, 1)
+        }
+    }
 }();
+! function(ns) {
+    var is_space = function(space) {
+        if (typeof space.exports !== "function") {
+            return false
+        }
+        if (typeof space.register !== "function") {
+            return false
+        }
+        return space.__all__ instanceof Array
+    };
+    var register = function(name) {
+        if (this.__all__.contains(name)) {
+            return false
+        }
+        this.__all__.push(name);
+        return true
+    };
+    var exports = function(outerSpace) {
+        if (!is_space(outerSpace)) {
+            namespace(outerSpace)
+        }
+        var all = this.__all__;
+        var name, inner;
+        for (var i = 0; i < all.length; ++i) {
+            name = all[i];
+            inner = this[name];
+            if (!inner) {
+                throw Error("empty object: " + name)
+            }
+            if (is_space(inner)) {
+                if (typeof outerSpace[name] !== "object") {
+                    outerSpace[name] = {}
+                }
+                inner.exports(outerSpace[name])
+            } else {
+                if (outerSpace.hasOwnProperty(name)) {} else {
+                    outerSpace[name] = inner
+                }
+            }
+            outerSpace.register(name)
+        }
+        return outerSpace
+    };
+    var namespace = function(space) {
+        if (!space) {
+            space = {}
+        }
+        if (!(space.__all__ instanceof Array)) {
+            space.__all__ = []
+        }
+        space.register = register;
+        space.exports = exports;
+        return space
+    };
+    if (typeof ns.type !== "object") {
+        ns.type = {}
+    }
+    if (typeof ns.format !== "object") {
+        ns.format = {}
+    }
+    if (typeof ns.digest !== "object") {
+        ns.digest = {}
+    }
+    if (typeof ns.crypto !== "object") {
+        ns.crypto = {}
+    }
+    namespace(ns);
+    namespace(ns.type);
+    namespace(ns.format);
+    namespace(ns.digest);
+    namespace(ns.crypto);
+    ns.namespace = namespace;
+    ns.register("type");
+    ns.register("format");
+    ns.register("digest");
+    ns.register("crypto")
+}(DIMP);
 ! function(ns) {
     var hex_encode = function(data) {
         var i = 0;
@@ -219,13 +324,14 @@ if (typeof DIMP !== "object") {
     C.prototype.decode = function(string) {
         return this.coder.decode(string)
     };
-    if (typeof ns.format !== "object") {
-        ns.format = {}
-    }
     ns.format.BaseCoder = coder;
     ns.format.Hex = new C(new hex());
     ns.format.Base58 = new C(new base58());
-    ns.format.Base64 = new C(new base64())
+    ns.format.Base64 = new C(new base64());
+    ns.format.register("BaseCoder");
+    ns.format.register("Hex");
+    ns.format.register("Base58");
+    ns.format.register("Base64")
 }(DIMP);
 ! function(ns) {
     var hash = function() {};
@@ -261,13 +367,14 @@ if (typeof DIMP !== "object") {
     H.prototype.digest = function(data) {
         return this.hash.digest(data)
     };
-    if (typeof ns.digest !== "object") {
-        ns.digest = {}
-    }
     ns.digest.Hash = hash;
     ns.digest.MD5 = new H(new md5());
     ns.digest.SHA256 = new H(new sha256());
-    ns.digest.RIPEMD160 = new H(new ripemd160())
+    ns.digest.RIPEMD160 = new H(new ripemd160());
+    ns.digest.register("Hash");
+    ns.digest.register("MD5");
+    ns.digest.register("SHA256");
+    ns.digest.register("RIPEMD160")
 }(DIMP);
 ! function(ns) {
     var parser = function() {};
@@ -298,11 +405,10 @@ if (typeof DIMP !== "object") {
     P.prototype.decode = function(string) {
         return this.parser.decode(string)
     };
-    if (typeof ns.format !== "object") {
-        ns.format = {}
-    }
     ns.format.DataParser = parser;
-    ns.format.JSON = new P(new json())
+    ns.format.JSON = new P(new json());
+    ns.format.register("DataParser");
+    ns.format.register("JSON")
 }(DIMP);
 ! function(ns) {
     var parser = function() {};
@@ -363,21 +469,18 @@ if (typeof DIMP !== "object") {
     P.prototype.decodePrivateKey = function(pem) {
         return this.parser.decodePrivateKey(pem)
     };
-    if (typeof ns.format !== "object") {
-        ns.format = {}
-    }
     ns.format.KeyParser = parser;
-    ns.format.PEM = new P(new pem())
+    ns.format.PEM = new P(new pem());
+    ns.format.register("KeyParser");
+    ns.format.register("PEM")
 }(DIMP);
 ! function(ns) {
     var obj = function() {};
     obj.prototype.equals = function(other) {
         return this === other
     };
-    if (typeof ns.type !== "object") {
-        ns.type = {}
-    }
-    ns.type.Object = obj
+    ns.type.Object = obj;
+    ns.type.register("Object")
 }(DIMP);
 ! function(ns) {
     var obj = ns.type.Object;
@@ -505,39 +608,12 @@ if (typeof DIMP !== "object") {
     str.prototype.getLength = function() {
         return this.string.length
     };
-    ns.type.String = str
+    ns.type.String = str;
+    ns.type.register("String")
 }(DIMP);
 ! function(ns) {
     var obj = ns.type.Object;
     var str = ns.type.String;
-    if (typeof Array.prototype.indexOf !== "function") {
-        Array.prototype.indexOf = function(item, start) {
-            if (!start) {
-                start = 0
-            }
-            var length = this.length;
-            for (var i = start; i < length; ++i) {
-                if (this[i] === item) {
-                    return i
-                }
-            }
-            return -1
-        }
-    }
-    if (typeof Array.prototype.contains !== "function") {
-        Array.prototype.contains = function(item) {
-            return this.indexOf(item) >= 0
-        }
-    }
-    if (typeof Array.prototype.remove !== "function") {
-        Array.prototype.remove = function(item) {
-            var index = this.indexOf(item);
-            if (index < 0) {
-                return null
-            }
-            return this.splice(index, 1)
-        }
-    }
     var arrays = {
         equals: function(a1, a2) {
             if (a1 === a2) {
@@ -621,7 +697,9 @@ if (typeof DIMP !== "object") {
         }
     };
     ns.type.Dictionary = map;
-    ns.type.Arrays = arrays
+    ns.type.Arrays = arrays;
+    ns.type.register("Dictionary");
+    ns.type.register("Arrays")
 }(DIMP);
 ! function(ns) {
     var obj = ns.type.Object;
@@ -650,9 +728,9 @@ if (typeof DIMP !== "object") {
             }
             obj.call(this);
             if (value instanceof enumeration) {
-                this.value = value.value;
+                this.value = value.value
             } else {
-                this.value = value;
+                this.value = value
             }
             this.alias = alias
         };
@@ -691,7 +769,8 @@ if (typeof DIMP !== "object") {
         }
         return enumeration
     };
-    ns.type.Enum = enu
+    ns.type.Enum = enu;
+    ns.type.register("Enum")
 }(DIMP);
 ! function(ns) {
     var CryptographyKey = function() {};
@@ -744,14 +823,15 @@ if (typeof DIMP !== "object") {
         console.assert(false, "implement me!");
         return false
     };
-    if (typeof ns.crypto !== "object") {
-        ns.crypto = {}
-    }
     ns.crypto.CryptographyKey = CryptographyKey;
     ns.crypto.EncryptKey = EncryptKey;
     ns.crypto.DecryptKey = DecryptKey;
     ns.crypto.SignKey = SignKey;
-    ns.crypto.VerifyKey = VerifyKey
+    ns.crypto.VerifyKey = VerifyKey;
+    ns.crypto.register("EncryptKey");
+    ns.crypto.register("DecryptKey");
+    ns.crypto.register("SignKey");
+    ns.crypto.register("VerifyKey")
 }(DIMP);
 ! function(ns) {
     var CryptographyKey = ns.crypto.CryptographyKey;
@@ -793,7 +873,8 @@ if (typeof DIMP !== "object") {
     };
     SymmetricKey.AES = "AES";
     SymmetricKey.DES = "DES";
-    ns.crypto.SymmetricKey = SymmetricKey
+    ns.crypto.SymmetricKey = SymmetricKey;
+    ns.crypto.register("SymmetricKey")
 }(DIMP);
 ! function(ns) {
     var CryptographyKey = ns.crypto.CryptographyKey;
@@ -801,7 +882,8 @@ if (typeof DIMP !== "object") {
     AsymmetricKey.inherits(CryptographyKey);
     AsymmetricKey.RSA = "RSA";
     AsymmetricKey.ECC = "ECC";
-    ns.crypto.AsymmetricKey = AsymmetricKey
+    ns.crypto.AsymmetricKey = AsymmetricKey;
+    ns.crypto.register("AsymmetricKey")
 }(DIMP);
 ! function(ns) {
     var CryptographyKey = ns.crypto.CryptographyKey;
@@ -841,7 +923,8 @@ if (typeof DIMP !== "object") {
         }
         throw TypeError("key algorithm error: " + algorithm)
     };
-    ns.crypto.PublicKey = PublicKey
+    ns.crypto.PublicKey = PublicKey;
+    ns.crypto.register("PublicKey")
 }(DIMP);
 ! function(ns) {
     var CryptographyKey = ns.crypto.CryptographyKey;
@@ -884,5 +967,6 @@ if (typeof DIMP !== "object") {
         }
         throw TypeError("key algorithm error: " + algorithm)
     };
-    ns.crypto.PrivateKey = PrivateKey
+    ns.crypto.PrivateKey = PrivateKey;
+    ns.crypto.register("PrivateKey")
 }(DIMP);

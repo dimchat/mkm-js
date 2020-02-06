@@ -30,7 +30,7 @@
 // =============================================================================
 //
 
-//! require <crypto.js>
+//! require 'namespace.js'
 //! require 'identifier.js'
 
 !function (ns) {
@@ -143,7 +143,9 @@
 //     //-------- namespace --------
 //     ns.TAI = TAI;
 //
-// }(DIMP);
+//     ns.register('TAI');
+//
+// }(MingKeMing);
 //
 // !function (ns) {
 //    'use strict';
@@ -377,4 +379,6 @@
     //-------- namespace --------
     ns.Profile = Profile;
 
-}(DIMP);
+    ns.register('Profile');
+
+}(MingKeMing);

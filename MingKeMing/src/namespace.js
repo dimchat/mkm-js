@@ -30,37 +30,25 @@
 // =============================================================================
 //
 
-//! require 'entity.js'
+//! require <crypto.js>
+
+if (typeof MingKeMing !== 'object') {
+    MingKeMing = {};
+}
 
 !function (ns) {
     'use strict';
 
-    var Entity = ns.Entity;
-
-    var Group = function (identifier) {
-        Entity.call(this, identifier);
-        this.founder = null;
-    };
-    Group.inherits(Entity);
-
-    Group.prototype.getFounder = function () {
-        if (!this.founder) {
-            this.founder = this.delegate.getFounder(this.identifier);
-        }
-        return this.founder;
-    };
-
-    Group.prototype.getOwner = function () {
-        return this.delegate.getOwner(this.identifier);
-    };
-
-    Group.prototype.getMembers = function () {
-        return this.delegate.getMembers(this.identifier);
-    };
+    // exports namespace from Crypto
+    DIMP.exports(ns);
 
     //-------- namespace --------
-    ns.Group = Group;
+    if (typeof ns.protocol !== 'object') {
+        ns.protocol = {};
+    }
 
-    ns.register('Group');
+    DIMP.namespace(ns.protocol);
+
+    ns.register('protocol');
 
 }(MingKeMing);
