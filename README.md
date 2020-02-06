@@ -79,6 +79,10 @@ The **network type** of a person is ```8```, and group is ```16```:
 
 ```javascript
 var NetworkType = DIMP.type.Enum({
+
+    BTCMain:        (0x00), // 0000 0000
+    //BTCTest:      (0x6F), // 0110 1111
+
     /*
      *  Person Account
      */
@@ -88,8 +92,21 @@ var NetworkType = DIMP.type.Enum({
      *  Virtual Groups
      */
     Group:          (0x10), // 0001 0000 (Multi-Persons)
+
+    //Moments:      (0x18), // 0001 1000 (Twitter)
     Polylogue:      (0x10), // 0001 0000 (Multi-Persons Chat, N < 100)
     Chatroom:       (0x30), // 0011 0000 (Multi-Persons Chat, N >= 100)
+
+    /*
+     *  Social Entities in Reality
+     */
+    //SocialEntity: (0x50), // 0101 0000
+
+    //Organization: (0x74), // 0111 0100
+    //Company:      (0x76), // 0111 0110
+    //School:       (0x77), // 0111 0111
+    //Government:   (0x73), // 0111 0011
+    //Department:   (0x52), // 0101 0010
 
     /*
      *  Network
