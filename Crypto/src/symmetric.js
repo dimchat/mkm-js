@@ -35,8 +35,6 @@
     var EncryptKey = ns.crypto.EncryptKey;
     var DecryptKey = ns.crypto.DecryptKey;
 
-    var Arrays = ns.type.Arrays;
-
     var promise = new ns.type.String('Moky loves May Lee forever!');
     promise = promise.getBytes();
 
@@ -52,13 +50,13 @@
     //
     var SymmetricKey = function () {
     };
-    SymmetricKey.inherits(EncryptKey, DecryptKey);
+    ns.type.Interface(SymmetricKey, EncryptKey, DecryptKey);
 
     SymmetricKey.prototype.equals = function (other) {
         // check by encryption
         var ciphertext = other.encrypt(promise);
         var plaintext = this.decrypt(ciphertext);
-        return Arrays.equals(promise, plaintext);
+        return ns.type.Arrays.equals(promise, plaintext);
     };
 
     /**
@@ -93,7 +91,7 @@
     SymmetricKey.getInstance = function (key) {
         if (!key) {
             return null;
-        } else if (key.isinstanceof(SymmetricKey)) {
+        } else if (ns.type.Object.isinstance(key, SymmetricKey)) {
             return key;
         }
         var algorithm = key['algorithm'];

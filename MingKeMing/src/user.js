@@ -57,7 +57,7 @@
     var User = function (identifier) {
         Entity.call(this, identifier);
     };
-    User.inherits(Entity);
+    ns.type.Class(User, Entity);
 
     /**
      *  Get all contacts of the user
@@ -97,7 +97,7 @@
         }
         // 2. get key from meta
         key = meta_key.call(this);
-        if (key && key.isinstanceof(EncryptKey)) {
+        if (key && ns.type.Object.isinstance(key, EncryptKey)) {
             return key;
         }
         throw Error('failed to get encrypt key for user: ' + this.identifier);
@@ -114,7 +114,7 @@
         keys = [];
         // 1. get key from profile
         var key = profile_key.call(this);
-        if (key && key.isinstanceof(VerifyKey)) {
+        if (key && ns.type.Object.isinstance(key, VerifyKey)) {
             keys.push(key);
         }
         // 2. get key from meta

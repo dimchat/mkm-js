@@ -39,6 +39,7 @@
 
     var EntityDataSource = function () {
     };
+    ns.type.Interface(EntityDataSource);
 
     /**
      *  Get meta for entity ID
@@ -94,7 +95,7 @@
      */
     var UserDataSource = function () {
     };
-    UserDataSource.inherits(EntityDataSource);
+    ns.type.Interface(UserDataSource, EntityDataSource);
 
     /**
      *  Get contacts list
@@ -174,7 +175,7 @@
 
     var GroupDataSource = function () {
     };
-    GroupDataSource.inherits(EntityDataSource);
+    ns.type.Interface(GroupDataSource, EntityDataSource);
 
     /**
      *  Get group founder

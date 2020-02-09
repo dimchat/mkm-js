@@ -49,7 +49,7 @@
     var Address = function (string) {
         ns.type.String.call(this, string);
     };
-    Address.inherits(ns.type.String);
+    ns.type.Class(Address, ns.type.String);
 
     /**
      *  get address type
@@ -138,7 +138,7 @@
         this.network = network;
         this.number = number;
     };
-    ConstantAddress.inherits(Address);
+    ns.type.Class(ConstantAddress, Address);
 
     ConstantAddress.prototype.getNetwork = function () {
         return this.network;

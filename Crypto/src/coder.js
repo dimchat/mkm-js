@@ -185,6 +185,7 @@
     //
     var coder = function () {
     };
+    ns.type.Interface(coder);
     /**
      *  Encode binary data to text string
      *
@@ -213,7 +214,8 @@
     //
     var hex = function () {
     };
-    hex.inherits(coder);
+    ns.type.Class(hex, null, coder);
+
     hex.prototype.encode = function (data) {
         return hex_encode(data);
     };
@@ -226,7 +228,8 @@
     //
     var base64 = function () {
     };
-    base64.inherits(coder);
+    ns.type.Class(base64, null, coder);
+
     base64.prototype.encode = function (data) {
         return base64_encode(data);
     };
@@ -239,7 +242,8 @@
     //
     var base58 = function () {
     };
-    base58.inherits(coder);
+    ns.type.Class(base58, null, coder);
+
     base58.prototype.encode = function (data) {
         console.assert(data != null, 'data empty');
         console.assert(false, 'Base58 encode not implemented');
@@ -257,6 +261,8 @@
     var C = function (lib) {
         this.coder = lib;
     };
+    ns.type.Class(C, null, coder);
+
     C.prototype.encode = function (data) {
         return this.coder.encode(data);
     };

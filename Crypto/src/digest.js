@@ -35,6 +35,7 @@
     //
     var hash = function () {
     };
+    ns.type.Interface(hash);
     /**
      *  Get digest of data
      *
@@ -52,7 +53,8 @@
     //
     var md5 = function () {
     };
-    md5.inherits(hash);
+    ns.type.Class(md5, null, hash);
+
     md5.prototype.digest = function (data) {
         console.assert(data != null, 'data empty');
         console.assert(false, 'MD5 not implemented');
@@ -64,7 +66,8 @@
     //
     var sha256 = function () {
     };
-    sha256.inherits(hash);
+    ns.type.Class(sha256, null, hash);
+
     sha256.prototype.digest = function (data) {
         console.assert(data != null, 'data empty');
         console.assert(false, 'SHA256 not implemented');
@@ -76,7 +79,8 @@
     //
     var ripemd160 = function () {
     };
-    ripemd160.inherits(hash);
+    ns.type.Class(ripemd160, null, hash);
+
     ripemd160.prototype.digest = function (data) {
         console.assert(data != null, 'data empty');
         console.assert(false, 'RIPEMD160 not implemented');
@@ -89,6 +93,8 @@
     var H = function (lib) {
         this.hash = lib;
     };
+    ns.type.Class(H, null, hash);
+
     H.prototype.digest = function (data) {
         return this.hash.digest(data);
     };

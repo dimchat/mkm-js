@@ -25,7 +25,9 @@
 // =============================================================================
 //
 
-//! require 'class.js'
+if (typeof DIMP !== 'object') {
+    DIMP = {};
+}
 
 !function (ns) {
     "use strict";
@@ -46,13 +48,14 @@
      * @param name
      */
     var register = function (name/*, clazz*/) {
-        if (this.__all__.contains(name)) {
+        if (this.__all__.indexOf(name) < 0) {
+            this.__all__.push(name);
+            // space[name] = clazz;
+            return true;
+        } else {
             // throw Error('conflict name: ' + name);
             return false;
         }
-        this.__all__.push(name);
-        // space[name] = clazz;
-        return true;
     };
 
     /**

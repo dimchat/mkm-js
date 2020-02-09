@@ -45,7 +45,7 @@
     //
     var AsymmetricKey = function () {
     };
-    AsymmetricKey.inherits(CryptographyKey);
+    ns.type.Interface(AsymmetricKey, CryptographyKey);
 
     AsymmetricKey.RSA = 'RSA'; //-- "RSA/ECB/PKCS1Padding", "SHA256withRSA"
     AsymmetricKey.ECC = 'ECC';
@@ -69,7 +69,7 @@
 
     var PublicKey = function () {
     };
-    PublicKey.inherits(AsymmetricKey, VerifyKey);
+    ns.type.Interface(PublicKey, AsymmetricKey, VerifyKey);
 
     PublicKey.prototype.matches = function (privateKey) {
         if (!privateKey) {
@@ -107,7 +107,7 @@
     PublicKey.getInstance = function (key) {
         if (!key) {
             return null;
-        } else if (key.isinstanceof(PublicKey)) {
+        } else if (ns.type.Object.isinstance(key, PublicKey)) {
             return key;
         }
         var algorithm = key['algorithm'];
@@ -134,7 +134,7 @@
 
     var PrivateKey = function () {
     };
-    PrivateKey.inherits(AsymmetricKey, SignKey);
+    ns.type.Interface(PrivateKey, AsymmetricKey, SignKey);
 
     PrivateKey.prototype.equals = function (other) {
         var publicKey = this.getPublicKey();
@@ -181,7 +181,7 @@
     PrivateKey.getInstance = function (key) {
         if (!key) {
             return null;
-        } else if (key.isinstanceof(PrivateKey)) {
+        } else if (ns.type.Object.isinstance(key, PrivateKey)) {
             return key;
         }
         var algorithm = key['algorithm'];

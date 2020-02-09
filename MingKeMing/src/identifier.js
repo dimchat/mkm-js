@@ -59,7 +59,7 @@
             // new ID('name@address')
             string = name;
             // split ID string
-            var pair = string.split('/');
+            var pair = name.split('/');
             // terminal
             if (pair.length === 1) {
                 // no terminal
@@ -93,7 +93,7 @@
         this.address = address;
         this.terminal = terminal;
     };
-    ID.inherits(ns.type.String);
+    ns.type.Class(ID, ns.type.String);
 
     ID.prototype.equals = function (other) {
         if (!other) {

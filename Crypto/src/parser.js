@@ -36,6 +36,7 @@
     //
     var parser = function () {
     };
+    ns.type.Interface(parser);
     /**
      *  Encode container object to text string
      *
@@ -64,7 +65,8 @@
     //
     var json = function () {
     };
-    json.inherits(parser);
+    ns.type.Class(json, null, parser);
+
     json.prototype.encode = function (container) {
         return JSON.stringify(container);
     };
@@ -78,6 +80,8 @@
     var P = function (lib) {
         this.parser = lib;
     };
+    ns.type.Class(P, null, parser);
+
     P.prototype.encode = function (container) {
         return this.parser.encode(container);
     };
@@ -102,6 +106,7 @@
     //
     var parser = function () {
     };
+    ns.type.Interface(parser);
     /**
      *  Encode public key to PEM content
      *
@@ -152,7 +157,8 @@
     //
     var pem = function () {
     };
-    pem.inherits(parser);
+    ns.type.Class(pem, null, parser);
+
     pem.prototype.encodePublicKey = function (key) {
         console.assert(key != null, 'public key content empty');
         console.assert(false, 'PEM parser not implemented');
@@ -180,6 +186,8 @@
     var P = function (lib) {
         this.parser = lib;
     };
+    ns.type.Class(P, null, parser);
+
     P.prototype.encodePublicKey = function (key) {
         return this.parser.encodePublicKey(key);
     };

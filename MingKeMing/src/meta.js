@@ -99,7 +99,7 @@
         }
         this.status = 0;  // 1 for valid, -1 for invalid
     };
-    Meta.inherits(Dictionary);
+    ns.type.Class(Meta, Dictionary);
 
     Meta.prototype.equals = function (other) {
         if (!other) {
@@ -180,7 +180,7 @@
             return match_identifier.call(this, key_id_addr);
         } else if (key_id_addr instanceof Address) {
             return match_address.call(this, key_id_addr);
-        } else if (key_id_addr.isinstanceof(PublicKey)) {
+        } else if (ns.type.Object.isinstance(key_id_addr, PublicKey)) {
             return match_public_key.call(this, key_id_addr);
         }
         // console.assert(false, 'error: ' + key_id_addr);

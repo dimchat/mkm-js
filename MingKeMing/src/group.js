@@ -41,7 +41,7 @@
         Entity.call(this, identifier);
         this.founder = null;
     };
-    Group.inherits(Entity);
+    ns.type.Class(Group, Entity);
 
     Group.prototype.getFounder = function () {
         if (!this.founder) {

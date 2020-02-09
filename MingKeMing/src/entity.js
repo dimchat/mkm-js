@@ -55,6 +55,7 @@
         this.identifier = identifier;
         this.delegate = null;
     };
+    ns.type.Class(Entity);
 
     Entity.prototype.equals = function (other) {
         if (this === other) {

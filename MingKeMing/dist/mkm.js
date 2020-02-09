@@ -75,7 +75,7 @@ if (typeof MingKeMing !== "object") {
     var Address = function(string) {
         ns.type.String.call(this, string)
     };
-    Address.inherits(ns.type.String);
+    ns.type.Class(Address, ns.type.String);
     Address.prototype.getNetwork = function() {
         console.assert(false, "implement me!");
         return null
@@ -129,7 +129,7 @@ if (typeof MingKeMing !== "object") {
         this.network = network;
         this.number = number
     };
-    ConstantAddress.inherits(Address);
+    ns.type.Class(ConstantAddress, Address);
     ConstantAddress.prototype.getNetwork = function() {
         return this.network
     };
@@ -153,7 +153,7 @@ if (typeof MingKeMing !== "object") {
         } else {
             if (!address) {
                 string = name;
-                var pair = string.split("/");
+                var pair = name.split("/");
                 if (pair.length === 1) {
                     terminal = null
                 } else {
@@ -183,7 +183,7 @@ if (typeof MingKeMing !== "object") {
         this.address = address;
         this.terminal = terminal
     };
-    ID.inherits(ns.type.String);
+    ns.type.Class(ID, ns.type.String);
     ID.prototype.equals = function(other) {
         if (!other) {
             return false
@@ -258,7 +258,7 @@ if (typeof MingKeMing !== "object") {
         }
         this.status = 0
     };
-    Meta.inherits(Dictionary);
+    ns.type.Class(Meta, Dictionary);
     Meta.prototype.equals = function(other) {
         if (!other) {
             return false
@@ -323,7 +323,7 @@ if (typeof MingKeMing !== "object") {
             if (key_id_addr instanceof Address) {
                 return match_address.call(this, key_id_addr)
             } else {
-                if (key_id_addr.isinstanceof(PublicKey)) {
+                if (ns.type.Object.isinstance(key_id_addr, PublicKey)) {
                     return match_public_key.call(this, key_id_addr)
                 }
             }
@@ -388,6 +388,7 @@ if (typeof MingKeMing !== "object") {
 }(MingKeMing);
 ! function(ns) {
     var TAI = function() {};
+    ns.type.Interface(TAI);
     TAI.prototype.isValid = function() {
         console.assert(false, "implement me!");
         return false
@@ -447,7 +448,7 @@ if (typeof MingKeMing !== "object") {
         this.properties = null;
         this.status = 0
     };
-    Profile.inherits(Dictionary, TAI);
+    ns.type.Class(Profile, Dictionary, TAI);
     Profile.prototype.isValid = function() {
         return this.status >= 0
     };
@@ -597,6 +598,7 @@ if (typeof MingKeMing !== "object") {
 }(MingKeMing);
 ! function(ns) {
     var EntityDataSource = function() {};
+    ns.type.Interface(EntityDataSource);
     EntityDataSource.prototype.getMeta = function(identifier) {
         console.assert(identifier !== null, "ID empty");
         console.assert(false, "implement me!");
@@ -613,7 +615,7 @@ if (typeof MingKeMing !== "object") {
 ! function(ns) {
     var EntityDataSource = ns.EntityDataSource;
     var UserDataSource = function() {};
-    UserDataSource.inherits(EntityDataSource);
+    ns.type.Interface(UserDataSource, EntityDataSource);
     UserDataSource.prototype.getContacts = function(identifier) {
         console.assert(identifier !== null, "ID empty");
         console.assert(false, "implement me!");
@@ -643,7 +645,7 @@ if (typeof MingKeMing !== "object") {
 ! function(ns) {
     var EntityDataSource = ns.EntityDataSource;
     var GroupDataSource = function() {};
-    GroupDataSource.inherits(EntityDataSource);
+    ns.type.Interface(GroupDataSource, EntityDataSource);
     GroupDataSource.prototype.getFounder = function(identifier) {
         console.assert(identifier !== null, "ID empty");
         console.assert(false, "implement me!");
@@ -667,6 +669,7 @@ if (typeof MingKeMing !== "object") {
         this.identifier = identifier;
         this.delegate = null
     };
+    ns.type.Class(Entity);
     Entity.prototype.equals = function(other) {
         if (this === other) {
             return true
@@ -722,7 +725,7 @@ if (typeof MingKeMing !== "object") {
     var User = function(identifier) {
         Entity.call(this, identifier)
     };
-    User.inherits(Entity);
+    ns.type.Class(User, Entity);
     User.prototype.getContacts = function() {
         return this.delegate.getContacts(this.identifier)
     };
@@ -747,7 +750,7 @@ if (typeof MingKeMing !== "object") {
             return key
         }
         key = meta_key.call(this);
-        if (key && key.isinstanceof(EncryptKey)) {
+        if (key && ns.type.Object.isinstance(key, EncryptKey)) {
             return key
         }
         throw Error("failed to get encrypt key for user: " + this.identifier)
@@ -759,7 +762,7 @@ if (typeof MingKeMing !== "object") {
         }
         keys = [];
         var key = profile_key.call(this);
-        if (key && key.isinstanceof(VerifyKey)) {
+        if (key && ns.type.Object.isinstance(key, VerifyKey)) {
             keys.push(key)
         }
         key = meta_key.call(this);
@@ -816,7 +819,7 @@ if (typeof MingKeMing !== "object") {
         Entity.call(this, identifier);
         this.founder = null
     };
-    Group.inherits(Entity);
+    ns.type.Class(Group, Entity);
     Group.prototype.getFounder = function() {
         if (!this.founder) {
             this.founder = this.delegate.getFounder(this.identifier)

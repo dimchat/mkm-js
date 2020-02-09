@@ -46,6 +46,7 @@
      */
     var TAI = function () {
     };
+    ns.type.Interface(TAI);
 
     /**
      *  Check if signature matched
@@ -180,7 +181,7 @@
         this.properties = null;
         this.status = 0; // 1 for valid, -1 for invalid
     };
-    Profile.inherits(Dictionary, TAI);
+    ns.type.Class(Profile, Dictionary, TAI);
 
     Profile.prototype.isValid = function () {
         return this.status >= 0;

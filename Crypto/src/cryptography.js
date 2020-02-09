@@ -40,8 +40,15 @@
     //      ...
     //  }
     //
-    var CryptographyKey = function() {
+    var CryptographyKey = function () {
     };
+    ns.type.Interface(CryptographyKey);
+    /**
+     *  Check whether keys equal
+     *
+     * @param other
+     * @returns {boolean}
+     */
     CryptographyKey.prototype.equals = function (other) {
         console.assert(other != null, 'other key empty');
         console.assert(false, 'implement me!');
@@ -82,7 +89,7 @@
 
     var EncryptKey = function () {
     };
-    EncryptKey.inherits(CryptographyKey);
+    ns.type.Interface(EncryptKey, CryptographyKey);
     /**
      *  ciphertext = encrypt(plaintext, PW)
      *  ciphertext = encrypt(plaintext, PK)
@@ -98,7 +105,7 @@
 
     var DecryptKey = function () {
     };
-    DecryptKey.inherits(CryptographyKey);
+    ns.type.Interface(DecryptKey, CryptographyKey);
     /**
      *  plaintext = decrypt(ciphertext, PW);
      *  plaintext = decrypt(ciphertext, SK);
@@ -114,7 +121,7 @@
 
     var SignKey = function () {
     };
-    SignKey.inherits(CryptographyKey);
+    ns.type.Interface(SignKey, CryptographyKey);
     /**
      *  signature = sign(data, SK);
      *
@@ -129,7 +136,7 @@
 
     var VerifyKey = function () {
     };
-    VerifyKey.inherits(CryptographyKey);
+    ns.type.Interface(VerifyKey, CryptographyKey);
     /**
      *  OK = verify(data, signature, PK)
      *
