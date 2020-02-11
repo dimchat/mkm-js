@@ -172,7 +172,6 @@
         }
         Dictionary.call(this, info);
 
-        this.identifier = null;
         this.key = null;
 
         this.data = null;
@@ -188,10 +187,7 @@
     };
 
     Profile.prototype.getIdentifier = function () {
-        if (!this.identifier) {
-            this.identifier = this.getValue('ID');
-        }
-        return this.identifier;
+        return this.getValue('ID');
     };
 
     /**
