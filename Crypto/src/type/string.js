@@ -26,9 +26,12 @@
 //
 
 //! require 'class.js'
+//! require 'data.js'
 
 !function (ns) {
     'use strict';
+
+    var Data = ns.type.Data;
 
     //
     //  UTF-8
@@ -38,11 +41,11 @@
          *  Encode string to UTF8 data array
          *
          * @param str
-         * @returns {[]}
+         * @returns {Uint8Array}
          */
         encode: function (str) {
-            var array = [];
             var len = str.length;
+            var array = new Data(len);
             var c;
             for (var i = 0; i < len; ++i) {
                 c = str.charCodeAt(i);
@@ -63,12 +66,12 @@
                     array.push(0x80 | ((c >>  0) & 0x003F));
                 }
             }
-            return array;
+            return array.getBytes();
         },
         /**
          *  Decode UTF8 data array to string
          *
-         * @param array
+         * @param array - Uint8Array
          * @returns {string}
          */
         decode: function (array) {
@@ -105,7 +108,7 @@
     var str = function (value, charset) {
         if (!value) {
             value = '';
-        } else if (value instanceof Array) {
+        } else if (value instanceof Uint8Array) {
             // decode data array
             if (!charset || charset === 'UTF-8') {
                 value = UTF8.decode(value);
@@ -126,7 +129,7 @@
      *  Encode str to UTF8 data array
      *
      * @param charset
-     * @returns {*[]}
+     * @returns {Uint8Array}
      */
     str.prototype.getBytes = function (charset) {
         if (!charset || charset === 'UTF-8') {
@@ -185,6 +188,13 @@
 
     str.prototype.getLength = function() {
         return this.string.length;
+    };
+
+    str.from = function (string) {
+        if (string instanceof Array) {
+            string = new Uint8Array(string);
+        }
+        return new str(string);
     };
 
     //-------- namespace --------

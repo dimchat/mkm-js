@@ -49,7 +49,7 @@
         return null;
     };
     /**
-     *  Decode text string to object
+     *  Decode text string to container object
      *
      * @param string
      * @returns {null|object}

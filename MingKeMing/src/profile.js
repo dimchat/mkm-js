@@ -133,7 +133,7 @@
      *  Encode properties to 'data' and sign it to 'signature'
      *
      * @param privateKey
-     * @returns {*[]}
+     * @returns {Uint8Array}
      */
     TAI.prototype.sign = function (privateKey) {
         console.assert(privateKey !== null, 'private key empty');
@@ -193,14 +193,13 @@
     /**
      *  Get serialized properties
      *
-     * @returns {*[]}
+     * @returns {Uint8Array}
      */
     Profile.prototype.getData = function () {
         if (!this.data) {
             var string = this.getValue('data');
             if (string) {
-                var str = new ns.type.String(string);
-                this.data = str.getBytes();
+                this.data = ns.type.String.from(string).getBytes();
             }
         }
         return this.data;
@@ -209,7 +208,7 @@
     /**
      *  Get signature for serialized properties
      *
-     * @returns {*[]}
+     * @returns {Uint8Array}
      */
     Profile.prototype.getSignature = function () {
         if (!this.signature) {
@@ -307,8 +306,7 @@
         }
         this.status = 1;
         var string = JSON.encode(this.getProperties());
-        var str = new ns.type.String(string);
-        this.data = str.getBytes();
+        this.data = ns.type.String.from(string).getBytes();
         this.signature = privateKey.sign(this.data);
         this.setValue('data', string);
         this.setValue('signature', Base64.encode(this.signature));

@@ -168,6 +168,10 @@
         }
     };
 
+    map.from = function (dict) {
+        return new map(dict);
+    };
+
     //-------- namespace --------
     ns.type.Dictionary = map;
     ns.type.Arrays = arrays;

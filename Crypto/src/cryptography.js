@@ -57,7 +57,7 @@
     /**
      *  Get key data
      *
-     * @returns {*[]}
+     * @returns {Uint8Array}
      */
     CryptographyKey.prototype.getData = function () {
         console.assert(false, 'implement me!');
@@ -94,8 +94,8 @@
      *  ciphertext = encrypt(plaintext, PW)
      *  ciphertext = encrypt(plaintext, PK)
      *
-     * @param data - plaintext
-     * @returns {*[]}
+     * @param data - Uint8Array
+     * @returns {Uint8Array}
      */
     EncryptKey.prototype.encrypt = function (data) {
         console.assert(data != null, 'data empty');
@@ -110,8 +110,8 @@
      *  plaintext = decrypt(ciphertext, PW);
      *  plaintext = decrypt(ciphertext, SK);
      *
-     * @param data - ciphertext
-     * @returns {*[]}
+     * @param data - Uint8Array
+     * @returns {Uint8Array}
      */
     DecryptKey.prototype.decrypt = function (data) {
         console.assert(data != null, 'data empty');
@@ -125,8 +125,8 @@
     /**
      *  signature = sign(data, SK);
      *
-     * @param data - message data
-     * @returns {*[]}
+     * @param data - Uint8Array
+     * @returns {Uint8Array}
      */
     SignKey.prototype.sign = function (data) {
         console.assert(data != null, 'data empty');
@@ -140,8 +140,8 @@
     /**
      *  OK = verify(data, signature, PK)
      *
-     * @param data - message data
-     * @param signature - signature of message data
+     * @param data - Uint8Array
+     * @param signature - Uint8Array
      * @returns {boolean}
      */
     VerifyKey.prototype.verify = function (data, signature) {

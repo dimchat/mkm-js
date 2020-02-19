@@ -280,7 +280,7 @@ if (typeof MingKeMing !== "object") {
                     if (!this.seed || !this.fingerprint) {
                         this.status = -1
                     } else {
-                        var data = (new ns.type.String(this.seed)).getBytes();
+                        var data = ns.type.String.from(this.seed).getBytes();
                         var signature = this.fingerprint;
                         if (this.key.verify(data, signature)) {
                             this.status = 1
@@ -300,7 +300,7 @@ if (typeof MingKeMing !== "object") {
             return true
         }
         if (this.version.hasSeed()) {
-            var data = (new ns.type.String(this.seed)).getBytes();
+            var data = ns.type.String.from(this.seed).getBytes();
             var signature = this.fingerprint;
             return publicKey.verify(data, signature)
         } else {
@@ -348,7 +348,7 @@ if (typeof MingKeMing !== "object") {
             version = new MetaType(version)
         }
         if (version.hasSeed()) {
-            var data = (new ns.type.String(seed)).getBytes();
+            var data = ns.type.String.from(seed).getBytes();
             var fingerprint = privateKey.sign(data);
             meta["seed"] = seed;
             meta["fingerprint"] = Base64.encode(fingerprint)
@@ -458,8 +458,7 @@ if (typeof MingKeMing !== "object") {
         if (!this.data) {
             var string = this.getValue("data");
             if (string) {
-                var str = new ns.type.String(string);
-                this.data = str.getBytes()
+                this.data = ns.type.String.from(string).getBytes()
             }
         }
         return this.data
@@ -539,8 +538,7 @@ if (typeof MingKeMing !== "object") {
         }
         this.status = 1;
         var string = JSON.encode(this.getProperties());
-        var str = new ns.type.String(string);
-        this.data = str.getBytes();
+        this.data = ns.type.String.from(string).getBytes();
         this.signature = privateKey.sign(this.data);
         this.setValue("data", string);
         this.setValue("signature", Base64.encode(this.signature));

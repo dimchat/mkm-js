@@ -26,11 +26,20 @@
 //
 
 //! require 'class.js'
+//! require 'data.js'
 
 !function (ns) {
     'use strict';
 
+    var Data = ns.type.Data;
+
     //-------- HEX algorithm begin --------
+    /**
+     *  Encode data array to HEX string
+     *
+     * @param data - Uint8Array
+     * @returns {string}
+     */
     var hex_encode = function (data) {
         var i = 0;
         var len = data.length;
@@ -49,6 +58,12 @@
         return str;
     };
 
+    /**
+     *  Decode HEX string to data array
+     *
+     * @param str - HEX string
+     * @returns {Uint8Array}
+     */
     var hex_decode = function (str) {
         var i = 0;
         var len = str.length;
@@ -61,12 +76,12 @@
             }
         }
         var ch;
-        var data = [];
+        var data = new Data(len / 2);
         for (; (i+1) < len; i+=2) {
             ch = str.substring(i, i+2);
             data.push(parseInt(ch, 16));
         }
-        return data;
+        return data.getBytes();
     };
     //-------- HEX algorithm end --------
 
@@ -102,6 +117,12 @@
     // 111111 11,1111 1111,11 111111  111111 11,1111 1111,.. ......  (append =)
     // 111111 11,1111 1111,11 111111  111111 11,1111 1111,11 111111
 
+    /**
+     *  Encode data array to Base64 string
+     *
+     * @param data - Uint8Array
+     * @returns {string}
+     */
     var base64_encode = function (data) {
         var base64 = '';
         var length = data.length;
@@ -149,6 +170,12 @@
         return base64 + tail;
     };
 
+    /**
+     *  Decode Base64 string to data array
+     *
+     * @param string
+     * @returns {Uint8Array}
+     */
     var base64_decode = function (string) {
         // preprocess
         var str = string.replace(/[^A-Za-z0-9+\/=]/g, '');
@@ -156,7 +183,7 @@
         if ((length % 4) !== 0 || !/^[A-Za-z0-9+\/]+={0,2}$/.test(str)) {
             throw Error('base64 string error: ' + string)
         }
-        var array = [];
+        var array = new Data(length * 3 / 4);
         // parse each 4 chars to 3 bytes
         var ch1, ch2, ch3, ch4;
         var i;
@@ -176,7 +203,7 @@
         while (str[--i] === '=') {
             array.pop();
         }
-        return array;
+        return array.getBytes();
     };
     //-------- Base64 algorithm end --------
 
@@ -189,7 +216,7 @@
     /**
      *  Encode binary data to text string
      *
-     * @param data
+     * @param data - Uint8Array
      * @returns {null|string}
      */
     coder.prototype.encode = function (data) {
@@ -201,7 +228,7 @@
      *  Decode text string to binary data
      *
      * @param string
-     * @returns {*[]}
+     * @returns {Uint8Array}
      */
     coder.prototype.decode = function (string) {
         console.assert(string != null, 'string empty');

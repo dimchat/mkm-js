@@ -146,8 +146,8 @@
     /**
      *  Encrypt data, try profile.key first, if not found, use meta.key
      *
-     * @param plaintext
-     * @returns {*[]}
+     * @param plaintext - (Uint8Array)
+     * @returns {Uint8Array}
      */
     User.prototype.encrypt = function (plaintext) {
         var key = encrypt_key.call(this);
@@ -176,8 +176,8 @@
     /**
      *  Sign data with user's private key
      *
-     * @param data
-     * @returns {*[]}
+     * @param data - Uint8Array
+     * @returns {Uint8Array}
      */
     User.prototype.sign = function (data) {
         var key = sign_key.call(this);

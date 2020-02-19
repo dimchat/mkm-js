@@ -39,8 +39,8 @@
     /**
      *  Get digest of data
      *
-     * @param data
-     * @returns {*[]}
+     * @param data - Uint8Array
+     * @returns {Uint8Array}
      */
     hash.prototype.digest = function (data) {
         console.assert(data != null, 'data empty');
