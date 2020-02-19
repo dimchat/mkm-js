@@ -603,14 +603,11 @@ if (typeof DIMP !== "object") {
 ! function(ns) {
     var Data = ns.type.Data;
     var hex_encode = function(data) {
-        var i = 0;
         var len = data.length;
-        var num;
         var str = "";
         var s;
-        for (; i < len; ++i) {
-            num = Number(data[i]);
-            s = num.toString(16);
+        for (var i = 0; i < len; ++i) {
+            s = Number(data[i]).toString(16);
             if (s.length % 2) {
                 str += "0" + s
             } else {
@@ -631,9 +628,9 @@ if (typeof DIMP !== "object") {
         }
         var ch;
         var data = new Data(len / 2);
-        for (;
-            (i + 1) < len; i += 2) {
-            ch = str.substring(i, i + 2);
+        --len;
+        for (; i < len; i += 2) {
+            ch = str.substr(i, 2);
             data.push(parseInt(ch, 16))
         }
         return data.getBytes()
