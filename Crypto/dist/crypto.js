@@ -639,16 +639,12 @@ if (typeof DIMP !== "object") {
         return data.getBytes()
     };
     var base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-    var base64_values = [];
+    var base64_values = new Int8Array(128);
     ! function(chars, values) {
         var i;
-        for (i = 0; i < 128; ++i) {
-            values[i] = -1
-        }
         for (i = 0; i < chars.length; ++i) {
             values[chars.charCodeAt(i)] = i
         }
-        values[61] = 0
     }(base64_chars, base64_values);
     var base64_encode = function(data) {
         var base64 = "";

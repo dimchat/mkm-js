@@ -87,18 +87,18 @@
 
     //-------- Base64 algorithm begin --------
     var base64_chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-    var base64_values = [];
+    var base64_values = new Int8Array(128);
     !function (chars, values) {
         var i;
-        // init
-        for (i = 0; i < 128; ++i) {
-            values[i] = -1;
-        }
+        // // init map
+        // for (i = 0; i < 128; ++i) {
+        //     values[i] = -1;
+        // }
         // set value
         for (i = 0; i < chars.length; ++i) {
             values[chars.charCodeAt(i)] = i;
         }
-        values[0x3D] = 0; // special value: '='
+        // values[0x3D] = 0; // special value: '='
     }(base64_chars, base64_values);
 
     //
