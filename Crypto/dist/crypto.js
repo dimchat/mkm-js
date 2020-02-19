@@ -261,20 +261,16 @@ if (typeof DIMP !== "object") {
             this.length = 0
         } else {
             if (value instanceof bytes) {
-                this.array = value.getBytes();
+                this.array = value.array;
                 this.length = value.length
             } else {
                 if (value instanceof Uint8Array) {
                     this.array = value;
                     this.length = value.length
                 } else {
-                    if (value instanceof Array) {
-                        value = new Uint8Array(value);
-                        this.array = value;
-                        this.length = value.length
-                    } else {
-                        throw Error("bytes length error: " + value)
-                    }
+                    value = new Uint8Array(value);
+                    this.array = value;
+                    this.length = value.length
                 }
             }
         }
@@ -338,7 +334,7 @@ if (typeof DIMP !== "object") {
             if (value instanceof bytes) {
                 array = value.getBytes()
             } else {
-                throw TypeError("bytes value error: " + value)
+                array = new Uint8Array(value)
             }
         }
         for (var i = 0; i < array.length; ++i) {
@@ -346,7 +342,7 @@ if (typeof DIMP !== "object") {
         }
     };
     bytes.prototype.pop = function() {
-        if (this.length === 0) {
+        if (this.length < 1) {
             throw RangeError("bytes empty")
         }
         this.length -= 1;

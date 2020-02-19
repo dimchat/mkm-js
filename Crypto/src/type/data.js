@@ -47,19 +47,19 @@
             this.length = 0;
         } else if (value instanceof bytes) {
             // create from another object
-            this.array = value.getBytes();
+            // this will share the same ArrayBuffer
+            this.array = value.array;
             this.length = value.length;
         } else if (value instanceof Uint8Array) {
             // create with another array
-            this.array = value;
-            this.length = value.length;
-        } else if (value instanceof Array) {
-            // create with array
-            value = new Uint8Array(value);
+            // this will share the same ArrayBuffer
             this.array = value;
             this.length = value.length;
         } else {
-            throw Error('bytes length error: ' + value);
+            // try to convert array
+            value = new Uint8Array(value);
+            this.array = value;
+            this.length = value.length;
         }
     };
     ns.type.Class(bytes, ns.type.Object);
@@ -131,19 +131,20 @@
         } else if (value instanceof bytes) {
             array = value.getBytes();
         } else {
-            throw TypeError('bytes value error: ' + value);
+            // try to convert array
+            array = new Uint8Array(value);
         }
         for (var i = 0; i < array.length; ++i) {
             add_one.call(this, array[i]);
         }
     };
     bytes.prototype.pop = function () {
-        if (this.length === 0) {
+        if (this.length < 1) {
             throw RangeError('bytes empty');
         }
         this.length -= 1;
         var last = this.array[this.length];
-        this.array[this.length] = 0;
+        this.array[this.length] = 0; // erase it
         return last;
     };
 
