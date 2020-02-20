@@ -34,6 +34,20 @@
     var Data = ns.type.Data;
 
     //-------- HEX algorithm begin --------
+    var hex_chars = '0123456789abcdef';
+    var hex_values = new Int8Array(128);
+    !function (chars, values) {
+        for (var i = 0; i < chars.length; ++i) {
+            values[chars.charCodeAt(i)] = i;
+        }
+        values['A'.charCodeAt(0)] = 0x0A;
+        values['B'.charCodeAt(0)] = 0x0B;
+        values['C'.charCodeAt(0)] = 0x0C;
+        values['D'.charCodeAt(0)] = 0x0D;
+        values['E'.charCodeAt(0)] = 0x0E;
+        values['F'.charCodeAt(0)] = 0x0F;
+    }(hex_chars, hex_values);
+
     /**
      *  Encode data array to HEX string
      *
@@ -43,14 +57,11 @@
     var hex_encode = function (data) {
         var len = data.length;
         var str = '';
-        var s;
+        var byt;
         for (var i = 0; i < len; ++i) {
-            s = Number(data[i]).toString(16);
-            if (s.length % 2) {
-                str += '0' + s;
-            } else {
-                str += s;
-            }
+            byt = data[i];
+            str += hex_chars[byt >> 4];   // hi
+            str += hex_chars[byt & 0x0F]; // lo
         }
         return str;
     };
@@ -72,12 +83,14 @@
                 }
             }
         }
-        var ch;
-        var data = new Data(len / 2);
+        var size = Math.floor(len / 2);
+        var data = new Data(size);
         --len; // for condition: i < (len - 1)
+        var hi, lo;
         for (; i < len; i+=2) {
-            ch = str.substr(i, 2);
-            data.push(parseInt(ch, 16));
+            hi = hex_values[str.charCodeAt(i)];
+            lo = hex_values[str.charCodeAt(i+1)];
+            data.push((hi << 4) | lo);
         }
         return data.getBytes();
     };
@@ -87,16 +100,9 @@
     var base64_chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
     var base64_values = new Int8Array(128);
     !function (chars, values) {
-        var i;
-        // // init map
-        // for (i = 0; i < 128; ++i) {
-        //     values[i] = -1;
-        // }
-        // set value
-        for (i = 0; i < chars.length; ++i) {
+        for (var i = 0; i < chars.length; ++i) {
             values[chars.charCodeAt(i)] = i;
         }
-        // values[0x3D] = 0; // special value: '='
     }(base64_chars, base64_values);
 
     //
