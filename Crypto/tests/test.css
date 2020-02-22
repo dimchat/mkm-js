@@ -7,13 +7,13 @@ h2 {
     border-bottom: 1px solid lightblue;
 }
 
-#crypto_tests dl {
+dl {
     clear: both;
     margin: 2px 20px;
     padding: 4px;
 }
 
-#crypto_tests dt {
+dt {
     float: left;
     padding: 4px 16px;
     border: 1px solid #e0e0f5;
@@ -23,20 +23,20 @@ h2 {
     text-align: center;
 }
 
-#crypto_tests dd {
+dd {
     float: left;
     margin-left: 4px;
     padding: 4px 16px;
     border: 1px solid #e0e0f5;
 }
 
-#crypto_tests .warning dd {
+.warning dd {
     border: 1px;
     background-color: yellow;
     color: green;
 }
 
-#crypto_tests .error dd {
+.error dd {
     border: 1px;
     background-color: lightpink;
     color: red;

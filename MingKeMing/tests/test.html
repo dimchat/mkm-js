@@ -2,32 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>Crypto Test Cases</title>
+    <title>MingKeMing Test Cases</title>
     <link href="test.css" type="text/css" rel="stylesheet" />
     <script src="../libs/loader.js"></script>
     <script src="../libs/runner.js"></script>
     <script src="../libs/utils.js"></script>
+
+    <script src="../libs/crypto.js"></script>
+
     <script>
         !function (ns) {
             var sources = [
+
                 'src/namespace.js',
 
-                'src/type/class.js',
-                'src/type/enum.js',
-                'src/type/data.js',
-                'src/type/string.js',
-                'src/type/dictionary.js',
+                'src/protocol.js',
+                'src/address.js',
+                'src/identifier.js',
+                'src/meta.js',
+                'src/profile.js',
 
-                'src/coder.js',
-                'src/digest.js',
-                'src/parser.js',
-                'src/cryptography.js',
-                'src/symmetric.js',
-                'src/asymmetric.js'
+                'src/delegate.js',
+                'src/entity.js',
+                'src/user.js',
+                'src/group.js'
             ];
-            var dist = 'dist/crypto.js';
+            var dist = 'dist/mkm.js';
 
-            var tests = ['tests/crypto_tests.js'];
+            var tests = ['tests/crypto_tests.js', 'tests/mkm_tests.js'];
 
             var base = window.location.href;
             base = base.substring(0, base.indexOf('tests/test.html'));
@@ -48,12 +50,21 @@
             var runner = new Runner('crypto_tests');
             runner.run(crypto_tests);
         });
+
+        $(function () {
+            var runner = new Runner('mkm_tests');
+            runner.run(mkm_tests);
+        });
     </script>
 </head>
 <body>
 
     <h2>Crypto Tests</h2>
     <div id="crypto_tests">Testing ...</div>
+    <div>&nbsp;</div>
+
+    <h2>MingKeMing Tests</h2>
+    <div id="mkm_tests">Testing ...</div>
     <div>&nbsp;</div>
 
     <h2>Makefile</h2>
