@@ -64,11 +64,22 @@
             if (a1.length !== a2.length) {
                 return false;
             }
+            var v1, v2;
             for (var k in a1) {
                 if (!a1.hasOwnProperty(k)) {
                     continue;
                 }
-                if (a1[k] !== a2[k]) {
+                v1 = a1[k];
+                v2 = a2[k];
+                if (typeof v1['equals'] === 'function') {
+                    if (!v1.equals(v2)) {
+                        return false;
+                    }
+                } else if (typeof v2['equals'] === 'function') {
+                    if (!v2.equals(v1)) {
+                        return false;
+                    }
+                } else if (v1 !== v2) {
                     return false;
                 }
             }

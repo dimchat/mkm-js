@@ -110,8 +110,8 @@
     /**
      *  Encode public key to PEM content
      *
-     * @param key
-     * @returns {null|string}
+     * @param key - key data (Uint8Array)
+     * @returns {String}
      */
     parser.prototype.encodePublicKey = function (key) {
         console.assert(key != null, 'public key empty');
@@ -121,8 +121,8 @@
     /**
      *  Encode private key to PEM content
      *
-     * @param key
-     * @returns {null|string}
+     * @param key - key data (Uint8Array)
+     * @returns {String}
      */
     parser.prototype.encodePrivateKey = function (key) {
         console.assert(key != null, 'private key empty');
@@ -133,7 +133,7 @@
      *  Decode PEM content to public key
      *
      * @param pem
-     * @returns {null|object}
+     * @returns {Uint8Array}
      */
     parser.prototype.decodePublicKey = function (pem) {
         console.assert(pem != null, 'pem content empty');
@@ -144,7 +144,7 @@
      *  Decode PEM content to private key
      *
      * @param pem
-     * @returns {null|object}
+     * @returns {Uint8Array}
      */
     parser.prototype.decodePrivateKey = function (pem) {
         console.assert(pem != null, 'pem content empty');

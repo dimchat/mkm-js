@@ -23,7 +23,7 @@ mkm_tests = [];
     var test_id = function () {
         var moky = ID.getInstance('moky@4DnqXWdTV8wuZgfqSCX9GjE2kNq7HJrUgQ');
         log('moky', moky);
-        assert(moky.getType() === NetworkType.Main, 'ID type error');
+        assert(moky.getType().isUser() === true, 'ID type error');
     };
     mkm_tests.push(test_id);
 
@@ -51,9 +51,9 @@ mkm_tests = [];
     var AsymmetricKey = DIMP.crypto.AsymmetricKey;
     var PrivateKey = DIMP.crypto.PrivateKey;
 
-    var NetworkType = ns.NetworkType;
+    var NetworkType = ns.protocol.NetworkType;
 
-    var MetaType = ns.MetaType;
+    var MetaType = ns.protocol.MetaType;
     var Meta = ns.Meta;
 
     var test_meta = function () {
