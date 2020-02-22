@@ -64,6 +64,30 @@
     };
     ns.type.Class(bytes, ns.type.Object);
 
+    bytes.prototype.equals = function (other) {
+        if (!other) {
+            // empty array
+            return this.length === 0;
+        // } else if (ns.type.Object.prototype.equals.call(this, other)) {
+        //     return true;
+        } else if (other instanceof bytes) {
+            if (this.length !== other.length) {
+                // check before get bytes
+                return false;
+            } else if (this.array === other.array) {
+                // same object
+                return true;
+            }
+            return ns.type.Arrays.equals(this.getBytes(), other.getBytes());
+        // } else if (other instanceof Uint8Array) {
+        //     return ns.type.Arrays.equals(this.getBytes(), other);
+        } else {
+            // // try to convert to Uint8Array
+            // other = new Uint8Array(other);
+            return ns.type.Arrays.equals(this.getBytes(), other);
+        }
+    };
+
     /**
      *  Get inner array
      *

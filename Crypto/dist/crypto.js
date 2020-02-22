@@ -276,6 +276,24 @@ if (typeof DIMP !== "object") {
         }
     };
     ns.type.Class(bytes, ns.type.Object);
+    bytes.prototype.equals = function(other) {
+        if (!other) {
+            return this.length === 0
+        } else {
+            if (other instanceof bytes) {
+                if (this.length !== other.length) {
+                    return false
+                } else {
+                    if (this.array === other.array) {
+                        return true
+                    }
+                }
+                return ns.type.Arrays.equals(this.getBytes(), other.getBytes())
+            } else {
+                return ns.type.Arrays.equals(this.getBytes(), other)
+            }
+        }
+    };
     bytes.prototype.getBytes = function(copy) {
         if (this.length < 1) {
             return null
@@ -515,6 +533,9 @@ if (typeof DIMP !== "object") {
                 return false
             }
             for (var k in a1) {
+                if (!a1.hasOwnProperty(k)) {
+                    continue
+                }
                 if (a1[k] !== a2[k]) {
                     return false
                 }
@@ -639,7 +660,7 @@ if (typeof DIMP !== "object") {
         for (; i < len; i += 2) {
             hi = hex_values[str.charCodeAt(i)];
             lo = hex_values[str.charCodeAt(i + 1)];
-            data.push(hi << 4 | lo)
+            data.push((hi << 4) | lo)
         }
         return data.getBytes()
     };

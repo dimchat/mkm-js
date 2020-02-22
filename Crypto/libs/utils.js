@@ -5,6 +5,7 @@ log = function () {
 };
 
 assert = function (condition, message) {
+    console.assert(condition, message);
     if (!condition) {
         throw Error(message);
     }

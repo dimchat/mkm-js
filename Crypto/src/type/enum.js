@@ -47,6 +47,8 @@
     base_enum.prototype.equals = function (other) {
         if (!other) {
             return !this.value;
+        // } else if (ns.type.Object.prototype.equals.call(this, other)) {
+        //     return true;
         } else if (other instanceof base_enum) {
             return this.value === other.value;
         } else {

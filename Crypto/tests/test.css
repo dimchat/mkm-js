@@ -1,4 +1,12 @@
 
+h2 {
+    padding: 4px 8px;
+    border-left: 16px solid lightblue;
+    border-top: 1px solid lightblue;
+    border-right: 1px solid lightblue;
+    border-bottom: 1px solid lightblue;
+}
+
 #crypto_tests dl {
     clear: both;
     margin: 2px 20px;
@@ -34,7 +42,7 @@
     color: red;
 }
 
-#building {
+.console {
     margin: 2px 10px;
     padding: 10px 20px;
     background-color: black;

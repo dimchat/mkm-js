@@ -65,7 +65,9 @@
                 return false;
             }
             for (var k in a1) {
-                // noinspection JSUnfilteredForInLoop
+                if (!a1.hasOwnProperty(k)) {
+                    continue;
+                }
                 if (a1[k] !== a2[k]) {
                     return false;
                 }
@@ -95,6 +97,8 @@
     map.prototype.equals = function (other) {
         if (!other) {
             return !this.dictionary;
+        // } else if (ns.type.Object.prototype.equals.call(this, other)) {
+        //     return true;
         } else if (other instanceof map) {
             return arrays.equals(this.dictionary, other.dictionary);
         } else {

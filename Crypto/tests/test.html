@@ -28,13 +28,13 @@
             var dist = 'dist/crypto.js';
             var main = 'tests/crypto_tests.js';
 
-            var base = window.location.href.replace('tests/test.html', '');
+            var base = window.location.href;
+            base = base.substring(0, base.indexOf('tests/test.html'));
             var loader = new Loader(base);
 
             for (var i = 0; i < sources.length; ++i) {
                 loader.importJS(sources[i]);
             }
-
             loader.importJS(main);
 
             ns.sources = sources;
@@ -53,7 +53,7 @@
     <div>&nbsp;</div>
 
     <h2>Makefile</h2>
-    <p id="building">
+    <p class="console">
         <script>
             !(function () {
                 var text = 'cat';
