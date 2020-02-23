@@ -21,6 +21,10 @@ crypto_tests = [];
         assert(bytes.length === 4, 'bytes length error');
         var exp = [0x0F, 0xFF, 0xFF, 0xFF];
         assert(data.equals(exp) === true, 'bytes values error');
+        // test concat
+        var merged = data.concat([1, 2], 3).toArray();
+        log('merged: ', merged);
+        assert(merged.length === 7, 'concat error');
     };
     crypto_tests.push(test_bytes);
 
