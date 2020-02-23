@@ -359,22 +359,23 @@ if (typeof DIMP !== "object") {
         this.array.set(array, this.length);
         this.length = size
     };
-    bytes.prototype.push = function(value) {
-        if (typeof value === "number") {
-            add_item.call(this, value)
+    bytes.prototype.push = function(items) {
+        if (typeof items === "number") {
+            add_item.call(this, items)
         } else {
             var array;
-            if (value instanceof Uint8Array) {
-                array = value
+            if (items instanceof Uint8Array) {
+                array = items
             } else {
-                if (value instanceof bytes) {
-                    array = value.getBytes()
+                if (items instanceof bytes) {
+                    array = items.getBytes()
                 } else {
-                    array = new Uint8Array(value)
+                    array = new Uint8Array(items)
                 }
             }
             add_array.call(this, array)
         }
+        return this.length
     };
     bytes.prototype.pop = function() {
         if (this.length < 1) {
@@ -385,11 +386,11 @@ if (typeof DIMP !== "object") {
         this.array[this.length] = 0;
         return last
     };
-    bytes.prototype.clone = function() {
+    bytes.prototype.copy = function() {
         return new bytes(this.getBytes(true))
     };
-    bytes.prototype.concat = function(array) {
-        var clone = this.clone();
+    bytes.prototype.concat = function(items) {
+        var clone = this.copy();
         for (var i = 0; i < arguments.length; ++i) {
             clone.push(arguments[i])
         }

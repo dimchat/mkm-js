@@ -165,22 +165,33 @@
         this.length = size;
     };
 
-    bytes.prototype.push = function (value) {
-        if (typeof value === 'number') {
-            add_item.call(this, value);
+    /**
+     *  Appends new elements to an array, and returns the new length of the array.
+     *
+     * @param items New elements of the Array.
+     * @returns {number}
+     */
+    bytes.prototype.push = function (items) {
+        if (typeof items === 'number') {
+            add_item.call(this, items);
         } else {
             var array;
-            if (value instanceof Uint8Array) {
-                array = value;
-            } else if (value instanceof bytes) {
-                array = value.getBytes();
+            if (items instanceof Uint8Array) {
+                array = items;
+            } else if (items instanceof bytes) {
+                array = items.getBytes();
             } else {
                 // try to convert array
-                array = new Uint8Array(value);
+                array = new Uint8Array(items);
             }
             add_array.call(this, array);
         }
+        return this.length;
     };
+
+    /**
+     *  Removes the last element from an array and returns it.
+     */
     bytes.prototype.pop = function () {
         if (this.length < 1) {
             throw RangeError('bytes empty');
@@ -191,18 +202,18 @@
         return last;
     };
 
-    bytes.prototype.clone = function () {
+    bytes.prototype.copy = function () {
         return new bytes(this.getBytes(true));
     };
 
     /**
-     *  Concat arrays and return a new bytes array
+     *  Combines two or more arrays.
      *
-     * @param array - ArrayLike<number>, number
+     * @param items Additional items to add to the end of new array.
      * @returns {bytes}
      */
-    bytes.prototype.concat = function (array) {
-        var clone = this.clone();
+    bytes.prototype.concat = function (items) {
+        var clone = this.copy();
         for (var i = 0; i < arguments.length; ++i) {
             clone.push(arguments[i]);
         }
@@ -223,6 +234,12 @@
         }
     };
 
+    /**
+     *  Creates bytes from an array-like or iterable object.
+     *
+     * @param array An array-like or iterable object to convert to Uint8Array.
+     * @returns {bytes}
+     */
     bytes.from = function (array) {
         return new bytes(array);
     };
