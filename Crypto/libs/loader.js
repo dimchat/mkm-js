@@ -30,8 +30,20 @@
     };
 
     Loader.prototype.importJS = function (src) {
-        var url = src;
-        if (src.indexOf('://') < 0) {
+        if (!src) {
+            return;
+        }
+        var url;
+        if (src.indexOf('://') > 0) {
+            // absolute URL
+            url = src;
+        } else if (src[0] === '/') {
+            // absolute path
+            var pos = this.base.indexOf('://');
+            pos = this.base.indexOf('/', pos + 3);
+            url = this.base.substring(0, pos) + src;
+        } else {
+            // relative path
             url = this.base + src;
         }
         loadJS(url);

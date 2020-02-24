@@ -15,7 +15,6 @@
     <script>
         !function (ns) {
             var sources = [
-
                 'src/namespace.js',
 
                 'src/protocol.js',
@@ -27,11 +26,16 @@
                 'src/delegate.js',
                 'src/entity.js',
                 'src/user.js',
-                'src/group.js'
+                'src/group.js',
+                null
             ];
             var dist = 'dist/mkm.js';
 
-            var tests = ['../../Crypto/tests/crypto_tests.js', 'tests/mkm_tests.js'];
+            var tests = [
+                '../../Crypto/tests/crypto_tests.js',
+                'tests/mkm_tests.js',
+                null
+            ];
 
             var base = window.location.href;
             base = base.substring(0, base.indexOf('tests/test.html'));

@@ -25,11 +25,15 @@
                 'src/parser.js',
                 'src/cryptography.js',
                 'src/symmetric.js',
-                'src/asymmetric.js'
+                'src/asymmetric.js',
+                null
             ];
             var dist = 'dist/crypto.js';
 
-            var tests = ['tests/crypto_tests.js'];
+            var tests = [
+                'tests/crypto_tests.js',
+                null
+            ];
 
             var base = window.location.href;
             base = base.substring(0, base.indexOf('tests/test.html'));
