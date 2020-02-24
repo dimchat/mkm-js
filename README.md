@@ -146,12 +146,7 @@ The **Address** field was created with the **Fingerprint** in Meta and a **Netwo
     
     var check_code = function (data) {
         var sha256d = SHA256.digest(SHA256.digest(data));
-        var cc = []; // size: 4
-        var i;
-        for (i = 0; i < 4; ++i) {
-            cc.push(sha256d[i]);
-        }
-        return cc;
+        return sha256d.subarray(0, 4);
     };
 
     var search_number = function (cc) {
@@ -166,23 +161,16 @@ The **Address** field was created with the **Fingerprint** in Meta and a **Netwo
         // 1. digest = ripemd160(sha256(fingerprint))
         var digest = RIPEMD160.digest(SHA256.digest(fingerprint));
         // 2. head = network + digest
-        var head = []; // size: 21
+        var head = new Data(21);
         head.push(network.value);
-        var i;
-        for (i = 0; i < 20; ++i) {
-            head.push(digest[i]);
-        }
+        head.push(digest);
         // 3. cc = sha256(sha256(head)).prefix(4)
-        var cc = check_code(head);
+        var cc = check_code(head.getBytes());
         // 4. data = base58_encode(head + cc)
-        var data = []; // size: 25
-        for (i = 0; i < 21; ++i) {
-            data.push(head[i]);
-        }
-        for (i = 0; i < 4; ++i) {
-            data.push(cc[i]);
-        }
-        return new DefaultAddress(Base58.encode(data));
+        var data = new Data(25);
+        data.push(head);
+        data.push(cc);
+        return new DefaultAddress(Base58.encode(data.getBytes()));
     };
 ```
 
