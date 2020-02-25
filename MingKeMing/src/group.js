@@ -41,8 +41,13 @@
         Entity.call(this, identifier);
         this.founder = null;
     };
-    ns.Class(Group, Entity);
+    ns.Class(Group, Entity, null);
 
+    /**
+     *  Get founder of this group
+     *
+     * @returns {ID}
+     */
     Group.prototype.getFounder = function () {
         if (!this.founder) {
             this.founder = this.delegate.getFounder(this.identifier);
@@ -50,10 +55,20 @@
         return this.founder;
     };
 
+    /**
+     *  Get owner of this group
+     *
+     * @returns {ID}
+     */
     Group.prototype.getOwner = function () {
         return this.delegate.getOwner(this.identifier);
     };
 
+    /**
+     *  Get members in this group
+     *
+     * @returns {ID[]}
+     */
     Group.prototype.getMembers = function () {
         return this.delegate.getMembers(this.identifier);
     };

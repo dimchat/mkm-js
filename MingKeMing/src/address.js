@@ -49,7 +49,7 @@
     var Address = function (string) {
         ns.type.String.call(this, string);
     };
-    ns.Class(Address, ns.type.String);
+    ns.Class(Address, ns.type.String, null);
 
     /**
      *  get address type
@@ -71,6 +71,11 @@
         return 0;
     };
 
+    /**
+     *  Is broadcast address?
+     *
+     * @returns {boolean}
+     */
     Address.prototype.isBroadcast = function () {
         var network = this.getNetwork();
         if (Address.EVERYWHERE.getNetwork().equals(network)) {
@@ -138,7 +143,7 @@
         this.network = network;
         this.number = number;
     };
-    ns.Class(ConstantAddress, Address);
+    ns.Class(ConstantAddress, Address, null);
 
     ConstantAddress.prototype.getNetwork = function () {
         return this.network;

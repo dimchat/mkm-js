@@ -38,6 +38,8 @@
 !function (ns) {
     'use strict';
 
+    var ID = ns.ID;
+
     /**
      *  Entity (User/Group)
      *  ~~~~~~~~~~~~~~~~~~~
@@ -55,14 +57,22 @@
         this.identifier = identifier;
         this.delegate = null;
     };
-    ns.Class(Entity);
+    ns.Class(Entity, ns.type.Object, null);
 
+    /**
+     *  Check whether the same user/group
+     *
+     * @param other {Entity|ID}
+     * @returns {boolean}
+     */
     Entity.prototype.equals = function (other) {
         if (this === other) {
             return true;
         } else if (other instanceof Entity) {
-            // check with ID
+            // check with entity ID
             return this.identifier.equals(other.identifier);
+        } else if (other instanceof ID) {
+            return this.identifier.equals(other);
         } else {
             // null or unknown object
             return false;
@@ -112,6 +122,11 @@
         return this.identifier.getNumber();
     };
 
+    /**
+     *  Get profile name or ID.name
+     *
+     * @returns {String}
+     */
     Entity.prototype.getName = function () {
         // get from profile
         var profile = this.getProfile();
@@ -125,10 +140,20 @@
         return this.identifier.name;
     };
 
+    /**
+     *  Get meta for this entity
+     *
+     * @returns {Meta}
+     */
     Entity.prototype.getMeta = function () {
         return this.delegate.getMeta(this.identifier);
     };
 
+    /**
+     *  Get profile for this entity
+     *
+     * @returns {Profile}
+     */
     Entity.prototype.getProfile = function () {
         return this.delegate.getProfile(this.identifier);
     };

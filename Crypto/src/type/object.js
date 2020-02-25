@@ -62,6 +62,16 @@
         return this === other;
     };
 
+    /**
+     *  Check whether inherits from the class/interface
+     *
+     * @param clazz {Class} - class or interface
+     * @returns {boolean}
+     */
+    obj.prototype.isinstance = function (clazz) {
+        return is_instance(this, clazz);
+    };
+
     obj.isinstance = is_instance;
 
     //-------- namespace --------

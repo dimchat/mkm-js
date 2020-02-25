@@ -93,8 +93,14 @@
         this.address = address;
         this.terminal = terminal;
     };
-    ns.Class(ID, ns.type.String);
+    ns.Class(ID, ns.type.String, null);
 
+    /**
+     *  Check whether IDs equal
+     *
+     * @param other {ID|String}
+     * @returns {boolean}
+     */
     ID.prototype.equals = function (other) {
         if (!other) {
             return false;
@@ -148,6 +154,11 @@
         return this.getNumber() > 0;
     };
 
+    /**
+     *  Is broadcast ID?
+     *
+     * @returns {boolean}
+     */
     ID.prototype.isBroadcast = function () {
         return this.address.isBroadcast();
     };

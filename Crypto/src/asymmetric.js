@@ -64,13 +64,19 @@
     var AsymmetricKey = ns.crypto.AsymmetricKey;
     var VerifyKey = ns.crypto.VerifyKey;
 
-    var promise = new ns.type.String('Moky loves May Lee forever!');
-    promise = promise.getBytes(null);
+    var promise = 'Moky loves May Lee forever!';
+    promise = ns.type.String.from(promise).getBytes(null);
 
     var PublicKey = function () {
     };
     ns.Interface(PublicKey, AsymmetricKey, VerifyKey);
 
+    /**
+     *  Check if this pubic key paired with the private key
+     *
+     * @param privateKey
+     * @returns {boolean}
+     */
     PublicKey.prototype.matches = function (privateKey) {
         if (!privateKey) {
             return false;
@@ -101,7 +107,7 @@
     /**
      *  Create symmetric key
      *
-     * @param key {{String: *}|PublicKey} - key info (with algorithm='AES')
+     * @param key {{}|PublicKey} - key info (with algorithm='AES')
      * @returns {PublicKey}
      */
     PublicKey.getInstance = function (key) {
@@ -137,6 +143,12 @@
     };
     ns.Interface(PrivateKey, AsymmetricKey, SignKey);
 
+    /**
+     *  Check whether keys equal
+     *
+     * @param other {PrivateKey}
+     * @returns {boolean}
+     */
     PrivateKey.prototype.equals = function (other) {
         var publicKey = this.getPublicKey();
         if (!publicKey) {
@@ -145,6 +157,11 @@
         return publicKey.matches(other);
     };
 
+    /**
+     *  Create public key from this private key
+     *
+     * @returns {PublicKey}
+     */
     PrivateKey.prototype.getPublicKey = function () {
         console.assert(false, 'implement me!');
         return null;
@@ -176,7 +193,7 @@
     /**
      *  Create symmetric key
      *
-     * @param key {{String: *}|PrivateKey} - key info (with algorithm='AES')
+     * @param key {{}|PrivateKey} - key info (with algorithm='AES')
      * @returns {PrivateKey}
      */
     PrivateKey.getInstance = function (key) {

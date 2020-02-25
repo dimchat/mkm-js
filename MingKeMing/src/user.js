@@ -57,7 +57,7 @@
     var User = function (identifier) {
         Entity.call(this, identifier);
     };
-    ns.Class(User, Entity);
+    ns.Class(User, Entity, null);
 
     /**
      *  Get all contacts of the user
@@ -184,6 +184,12 @@
         return key.sign(data);
     };
 
+    /**
+     *  Decrypt data, try PrivateKey(profile.key) first, if not set, use PrivateKey(meta.key)
+     *
+     * @param ciphertext {Uint8Array}
+     * @returns {Uint8Array}
+     */
     User.prototype.decrypt = function (ciphertext) {
         var plaintext;
         var keys = decrypt_keys.call(this);

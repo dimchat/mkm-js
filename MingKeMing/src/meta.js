@@ -99,8 +99,14 @@
         }
         this.status = 0;  // 1 for valid, -1 for invalid
     };
-    ns.Class(Meta, Dictionary);
+    ns.Class(Meta, Dictionary, null);
 
+    /**
+     *  Check whether meta equal
+     *
+     * @param other {Meta}
+     * @returns {boolean}
+     */
     Meta.prototype.equals = function (other) {
         if (!other) {
             return false;
@@ -112,6 +118,11 @@
         return this.matches(identifier);
     };
 
+    /**
+     *  Check whether meta.key valid
+     *
+     * @returns {boolean}
+     */
     Meta.prototype.isValid = function () {
         if (this.status === 0) {
             if (!this.key) {
@@ -157,13 +168,6 @@
         }
     };
 
-    /**
-     *  Check whether meta match with entity ID
-     *  (must call this when received a new meta from network)
-     *
-     * @param identifier {ID}
-     * @returns {boolean}
-     */
     var match_identifier = function (identifier) {
         var network = identifier.getType();
         return this.generateIdentifier(network).equals(identifier);
@@ -176,6 +180,7 @@
 
     /**
      *  Check whether meta matches Public Key, ID, or Address
+     *  (must call this when received a new meta from network)
      *
      * @param key_id_addr {PublicKey|ID|Address}
      * @returns {boolean}
@@ -195,6 +200,12 @@
         return false;
     };
 
+    /**
+     *  Generate ID with meta info and network type
+     *
+     * @param network {NetworkType}
+     * @returns {ID}
+     */
     Meta.prototype.generateIdentifier = function (network) {
         var address = this.generateAddress(network);
         return new ID(this.seed, address);
@@ -212,14 +223,19 @@
         return null;
     };
 
+    /**
+     *  Generate meta with private key and seed
+     *
+     * @param version {MetaType}
+     * @param privateKey
+     * @param seed {String}
+     * @returns {Meta}
+     */
     Meta.generate = function (version, privateKey, seed) {
         var meta = {
             'version': version,
             'key': privateKey.getPublicKey()
         };
-        if (!(version instanceof MetaType)) {
-            version = new MetaType(version);
-        }
         if (version.hasSeed()) {
             // generate fingerprint with private key
             var data = ns.type.String.from(seed).getBytes();
@@ -233,13 +249,28 @@
     //-------- Runtime --------
     var meta_classes = {};
 
+    /**
+     *  Register meta class with type
+     *
+     * @param version {MetaType}
+     * @param clazz {Class}
+     */
     Meta.register = function (version, clazz) {
+        var value;
         if (version instanceof MetaType) {
-            version = version.value;
+            value = version.valueOf();
+        } else {
+            value = version;
         }
-        meta_classes[version] = clazz;
+        meta_classes[value] = clazz;
     };
 
+    /**
+     *  Create meta
+     *
+     * @param meta {{}|Meta}
+     * @returns {Meta}
+     */
     Meta.getInstance = function (meta) {
         if (!meta) {
             return null;
@@ -248,7 +279,7 @@
         }
         var version = meta['version'];
         if (version instanceof MetaType) {
-            version = version.value;
+            version = version.valueOf();
         }
         var clazz = meta_classes[version];
         if (typeof clazz !== 'function') {

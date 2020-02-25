@@ -105,20 +105,29 @@
     //
     //  String
     //
+
+    /**
+     *  Create String with data array or another string
+     *
+     * @param value {Uint8Array|uint[]|str|String}
+     * @param charset {String}
+     */
     var str = function (value, charset) {
         if (!value) {
             value = '';
-        } else if (value instanceof Uint8Array) {
+        } else if (value instanceof str) {
+            value = value.valueOf();
+        } else if (typeof value !== 'string') {
+            // array?
+            if (!(value instanceof Uint8Array)) {
+                value = new Uint8Array(value);
+            }
             // decode data array
             if (!charset || charset === 'UTF-8') {
                 value = UTF8.decode(value);
             } else {
                 throw Error('only UTF-8 now');
             }
-        } else if (value instanceof str) {
-            value = value.string;
-        } else if (typeof value !== 'string') {
-            throw Error('string value error: ' + value);
         }
         ns.type.Object.call(this);
         this.string = value;
@@ -197,14 +206,14 @@
     /**
      *  Create str from Array
      *
-     * @param array {Array<Number>|Uint8Array}
+     * @param array {Uint8Array|uint[]|str|String}
      * @returns {str}
      */
     str.from = function (array) {
         if (array instanceof Array) {
             array = new Uint8Array(array);
         }
-        return new str(array);
+        return new str(array, null);
     };
 
     //-------- namespace --------

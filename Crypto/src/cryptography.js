@@ -66,7 +66,7 @@
     /**
      *  Get key size
      *
-     * @returns {number}
+     * @returns {Number}
      */
     CryptographyKey.prototype.getSize = function () {
         console.assert(false, 'implement me!');
@@ -76,9 +76,9 @@
     /**
      *  Create key with info
      *
-     * @param clazz - key class name
-     * @param map {{String: *}} - key info
-     * @returns {CryptographyKey}
+     * @param clazz - key class
+     * @param map {{}} - key info
+     * @returns {*} CryptographyKey
      */
     CryptographyKey.createInstance = function (clazz, map) {
         if (typeof clazz.getInstance === 'function') {

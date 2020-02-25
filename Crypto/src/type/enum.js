@@ -43,7 +43,7 @@
     var base_enum = function (value, alias) {
         ns.type.Object.call(this);
         if (value instanceof base_enum) {
-            this.value = value.value;
+            this.value = value.valueOf();
         } else {
             this.value = value;
         }
@@ -51,13 +51,19 @@
     };
     ns.Class(base_enum, ns.type.Object, null);
 
+    /**
+     *  Check whether values equal
+     *
+     * @param other {base_enum|Number}
+     * @returns {boolean}
+     */
     base_enum.prototype.equals = function (other) {
         if (!other) {
             return !this.value;
         // } else if (ns.type.Object.prototype.equals.call(this, other)) {
         //     return true;
         } else if (other instanceof base_enum) {
-            return this.value === other.value;
+            return this.value === other.valueOf();
         } else {
             return this.value === other;
         }
@@ -84,10 +90,10 @@
     /**
      *  Define Enum with elements names & values
      *
-     * @param elements {{String: Number}}
+     * @param elements {{}}
      * @returns {Class}
      */
-    var enu = function(elements) {
+    var create = function(elements) {
         // template for enumeration
         var enumeration = function (value, alias) {
             if (!alias) {
@@ -134,7 +140,7 @@
     };
 
     //-------- namespace --------
-    ns.type.Enum = enu;
+    ns.type.Enum = create;
 
     ns.type.register('Enum');
 

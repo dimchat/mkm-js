@@ -101,7 +101,7 @@
         if (!entries) {
             entries = {};
         } else if (entries instanceof map) {
-            entries = entries.dictionary;
+            entries = entries.getMap(false);
         } else if (entries instanceof ns.type.String) {
             entries = ns.format.JSON.decode(entries.toString());
         } else if (typeof entries === 'string') {
@@ -112,6 +112,12 @@
     };
     ns.Class(map, ns.type.Object, null);
 
+    /**
+     *  Check whether all entities equal
+     *
+     * @param other {map|{}}
+     * @returns {boolean}
+     */
     map.prototype.equals = function (other) {
         if (!other) {
             return !this.dictionary;
@@ -144,7 +150,7 @@
      *  Get inner dictionary
      *
      * @param copy {boolean} - clone when true
-     * @returns {{String: *}}
+     * @returns {{}}
      */
     map.prototype.getMap = function (copy) {
         if (copy) {
@@ -188,6 +194,12 @@
         }
     };
 
+    /**
+     *  Create a map with entities from another object or JSON string
+     *
+     * @param dict {{}|map|String}
+     * @returns {map}
+     */
     map.from = function (dict) {
         return new map(dict);
     };

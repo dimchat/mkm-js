@@ -211,6 +211,11 @@
         ExETH:   (0x05)   // 0000 0101
     });
 
+    /**
+     *  Indicates whether this meta contains seed string
+     *
+     * @returns {boolean}
+     */
     MetaType.prototype.hasSeed = function () {
         return (this.value & MetaType.MKM.value) === MetaType.MKM.value;
     };

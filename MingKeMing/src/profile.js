@@ -46,7 +46,7 @@
      */
     var TAI = function () {
     };
-    ns.Interface(TAI);
+    ns.Interface(TAI, null);
 
     /**
      *  Check if signature matched
@@ -160,6 +160,12 @@
 
 //    var TAI = ns.TAI;
 
+    /**
+     *  Create profile
+     *
+     * @param info {{}|ID}
+     * @constructor
+     */
     var Profile = function (info) {
         if (!info) {
             // create empty profile
@@ -182,10 +188,12 @@
     };
     ns.Class(Profile, Dictionary, TAI);
 
+    // @override
     Profile.prototype.isValid = function () {
         return this.status >= 0;
     };
 
+    // @override
     Profile.prototype.getIdentifier = function () {
         return this.getValue('ID');
     };
@@ -222,6 +230,11 @@
 
     //-------- properties --------
 
+    /**
+     *  Get all properties
+     *
+     * @returns {{}}
+     */
     Profile.prototype.getProperties = function () {
         if (this.status < 0) {
             // invalid
@@ -238,6 +251,7 @@
         return this.properties;
     };
 
+    // @override
     Profile.prototype.allPropertyNames = function () {
         var dict = this.getProperties();
         if (!dict) {
@@ -246,6 +260,7 @@
         return Object.keys(dict);
     };
 
+    // @override
     Profile.prototype.getProperty = function (name) {
         var dict = this.getProperties();
         if (!dict) {
@@ -254,6 +269,7 @@
         return dict[name];
     };
 
+    // @override
     Profile.prototype.setProperty = function (name, value) {
         // 1. reset status
         // console.assert(this.status >= 0, 'status error: ' + this);
@@ -271,6 +287,7 @@
 
     //-------- signature --------
 
+    // @override
     Profile.prototype.verify = function (publicKey) {
         if (this.status > 0) {
             // already verify OK
@@ -299,6 +316,7 @@
         return this.status > 0;
     };
 
+    // @override
     Profile.prototype.sign = function (privateKey) {
         if (this.status > 0) {
             // already signed/verified
@@ -324,10 +342,16 @@
         return this.getProperty('name');
     };
 
+    /**
+     *  Set entity name
+     *
+     * @param name {String}
+     */
     Profile.prototype.setName = function (name) {
         this.setProperty('name', name);
     };
 
+    // @override
     Profile.prototype.getKey = function () {
         if (!this.key) {
             var key = this.getProperty('key');
@@ -338,6 +362,11 @@
         return this.key;
     };
 
+    /**
+     *  Set public key for encryption
+     *
+     * @param publicKey {EncryptKey}
+     */
     Profile.prototype.setKey = function (publicKey) {
         this.key = publicKey;
         this.setProperty('key', publicKey);
@@ -346,10 +375,21 @@
     //-------- Runtime --------
     var tai_classes = [];
 
+    /**
+     *  Register profile class
+     *
+     * @param clazz {Class}
+     */
     Profile.register = function (clazz) {
         tai_classes.push(clazz);
     };
 
+    /**
+     *  Create profile
+     *
+     * @param dict {{}|Profile}
+     * @returns {Profile}
+     */
     Profile.getInstance = function (dict) {
         if (!dict) {
             return null;

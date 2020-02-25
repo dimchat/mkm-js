@@ -35,8 +35,8 @@
     var EncryptKey = ns.crypto.EncryptKey;
     var DecryptKey = ns.crypto.DecryptKey;
 
-    var promise = new ns.type.String('Moky loves May Lee forever!');
-    promise = promise.getBytes(null);
+    var promise = 'Moky loves May Lee forever!';
+    promise = ns.type.String.from(promise).getBytes(null);
 
     //
     //  Symmetric Cryptography Key
@@ -85,7 +85,7 @@
     /**
      *  Create symmetric key
      *
-     * @param key {{String: *}|SymmetricKey} - key info (with algorithm='AES')
+     * @param key {{}|SymmetricKey} - key info (with algorithm='AES')
      * @returns {SymmetricKey}
      */
     SymmetricKey.getInstance = function (key) {
@@ -97,7 +97,6 @@
         var algorithm = key['algorithm'];
         var clazz = key_classes[algorithm];
         if (typeof clazz === 'function') {
-            // noinspection JSValidateTypes
             return CryptographyKey.createInstance(clazz, key);
         }
         throw TypeError('key algorithm error: ' + algorithm);

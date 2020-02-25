@@ -75,7 +75,7 @@ if (typeof MingKeMing !== "object") {
     var Address = function(string) {
         ns.type.String.call(this, string)
     };
-    ns.Class(Address, ns.type.String);
+    ns.Class(Address, ns.type.String, null);
     Address.prototype.getNetwork = function() {
         console.assert(false, "implement me!");
         return null
@@ -129,7 +129,7 @@ if (typeof MingKeMing !== "object") {
         this.network = network;
         this.number = number
     };
-    ns.Class(ConstantAddress, Address);
+    ns.Class(ConstantAddress, Address, null);
     ConstantAddress.prototype.getNetwork = function() {
         return this.network
     };
@@ -183,7 +183,7 @@ if (typeof MingKeMing !== "object") {
         this.address = address;
         this.terminal = terminal
     };
-    ns.Class(ID, ns.type.String);
+    ns.Class(ID, ns.type.String, null);
     ID.prototype.equals = function(other) {
         if (!other) {
             return false
@@ -258,7 +258,7 @@ if (typeof MingKeMing !== "object") {
         }
         this.status = 0
     };
-    ns.Class(Meta, Dictionary);
+    ns.Class(Meta, Dictionary, null);
     Meta.prototype.equals = function(other) {
         if (!other) {
             return false
@@ -346,9 +346,6 @@ if (typeof MingKeMing !== "object") {
             "version": version,
             "key": privateKey.getPublicKey()
         };
-        if (!(version instanceof MetaType)) {
-            version = new MetaType(version)
-        }
         if (version.hasSeed()) {
             var data = ns.type.String.from(seed).getBytes();
             var fingerprint = privateKey.sign(data);
@@ -359,10 +356,13 @@ if (typeof MingKeMing !== "object") {
     };
     var meta_classes = {};
     Meta.register = function(version, clazz) {
+        var value;
         if (version instanceof MetaType) {
-            version = version.value
+            value = version.valueOf()
+        } else {
+            value = version
         }
-        meta_classes[version] = clazz
+        meta_classes[value] = clazz
     };
     Meta.getInstance = function(meta) {
         if (!meta) {
@@ -374,7 +374,7 @@ if (typeof MingKeMing !== "object") {
         }
         var version = meta["version"];
         if (version instanceof MetaType) {
-            version = version.value
+            version = version.valueOf()
         }
         var clazz = meta_classes[version];
         if (typeof clazz !== "function") {
@@ -390,7 +390,7 @@ if (typeof MingKeMing !== "object") {
 }(MingKeMing);
 ! function(ns) {
     var TAI = function() {};
-    ns.Interface(TAI);
+    ns.Interface(TAI, null);
     TAI.prototype.isValid = function() {
         console.assert(false, "implement me!");
         return false
@@ -594,7 +594,7 @@ if (typeof MingKeMing !== "object") {
 }(MingKeMing);
 ! function(ns) {
     var EntityDataSource = function() {};
-    ns.Interface(EntityDataSource);
+    ns.Interface(EntityDataSource, null);
     EntityDataSource.prototype.getMeta = function(identifier) {
         console.assert(identifier !== null, "ID empty");
         console.assert(false, "implement me!");
@@ -661,11 +661,12 @@ if (typeof MingKeMing !== "object") {
     ns.register("GroupDataSource")
 }(MingKeMing);
 ! function(ns) {
+    var ID = ns.ID;
     var Entity = function(identifier) {
         this.identifier = identifier;
         this.delegate = null
     };
-    ns.Class(Entity);
+    ns.Class(Entity, ns.type.Object, null);
     Entity.prototype.equals = function(other) {
         if (this === other) {
             return true
@@ -673,7 +674,11 @@ if (typeof MingKeMing !== "object") {
             if (other instanceof Entity) {
                 return this.identifier.equals(other.identifier)
             } else {
-                return false
+                if (other instanceof ID) {
+                    return this.identifier.equals(other)
+                } else {
+                    return false
+                }
             }
         }
     };
@@ -721,7 +726,7 @@ if (typeof MingKeMing !== "object") {
     var User = function(identifier) {
         Entity.call(this, identifier)
     };
-    ns.Class(User, Entity);
+    ns.Class(User, Entity, null);
     User.prototype.getContacts = function() {
         return this.delegate.getContacts(this.identifier)
     };
@@ -815,7 +820,7 @@ if (typeof MingKeMing !== "object") {
         Entity.call(this, identifier);
         this.founder = null
     };
-    ns.Class(Group, Entity);
+    ns.Class(Group, Entity, null);
     Group.prototype.getFounder = function() {
         if (!this.founder) {
             this.founder = this.delegate.getFounder(this.identifier)

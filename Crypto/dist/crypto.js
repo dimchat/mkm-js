@@ -179,6 +179,9 @@ if (typeof DIMP !== "object") {
     obj.prototype.equals = function(other) {
         return this === other
     };
+    obj.prototype.isinstance = function(clazz) {
+        return is_instance(this, clazz)
+    };
     obj.isinstance = is_instance;
     ns.type.Object = obj;
     ns.type.register("Object")
@@ -187,7 +190,7 @@ if (typeof DIMP !== "object") {
     var base_enum = function(value, alias) {
         ns.type.Object.call(this);
         if (value instanceof base_enum) {
-            this.value = value.value
+            this.value = value.valueOf()
         } else {
             this.value = value
         }
@@ -199,7 +202,7 @@ if (typeof DIMP !== "object") {
             return !this.value
         } else {
             if (other instanceof base_enum) {
-                return this.value === other.value
+                return this.value === other.valueOf()
             } else {
                 return this.value === other
             }
@@ -217,7 +220,7 @@ if (typeof DIMP !== "object") {
     base_enum.prototype.toJSON = function() {
         return this.value
     };
-    var enu = function(elements) {
+    var create = function(elements) {
         var enumeration = function(value, alias) {
             if (!alias) {
                 alias = get_name(value, enumeration);
@@ -257,7 +260,7 @@ if (typeof DIMP !== "object") {
         }
         return null
     };
-    ns.type.Enum = enu;
+    ns.type.Enum = create;
     ns.type.register("Enum")
 }(DIMP);
 ! function(ns) {
@@ -476,18 +479,17 @@ if (typeof DIMP !== "object") {
         if (!value) {
             value = ""
         } else {
-            if (value instanceof Uint8Array) {
-                if (!charset || charset === "UTF-8") {
-                    value = UTF8.decode(value)
-                } else {
-                    throw Error("only UTF-8 now")
-                }
+            if (value instanceof str) {
+                value = value.valueOf()
             } else {
-                if (value instanceof str) {
-                    value = value.string
-                } else {
-                    if (typeof value !== "string") {
-                        throw Error("string value error: " + value)
+                if (typeof value !== "string") {
+                    if (!(value instanceof Uint8Array)) {
+                        value = new Uint8Array(value)
+                    }
+                    if (!charset || charset === "UTF-8") {
+                        value = UTF8.decode(value)
+                    } else {
+                        throw Error("only UTF-8 now")
                     }
                 }
             }
@@ -551,7 +553,7 @@ if (typeof DIMP !== "object") {
         if (array instanceof Array) {
             array = new Uint8Array(array)
         }
-        return new str(array)
+        return new str(array, null)
     };
     ns.type.String = str;
     ns.type.register("String")
@@ -603,7 +605,7 @@ if (typeof DIMP !== "object") {
             entries = {}
         } else {
             if (entries instanceof map) {
-                entries = entries.dictionary
+                entries = entries.getMap(false)
             } else {
                 if (entries instanceof ns.type.String) {
                     entries = ns.format.JSON.decode(entries.toString())
@@ -1061,8 +1063,8 @@ if (typeof DIMP !== "object") {
     var CryptographyKey = ns.crypto.CryptographyKey;
     var EncryptKey = ns.crypto.EncryptKey;
     var DecryptKey = ns.crypto.DecryptKey;
-    var promise = new ns.type.String("Moky loves May Lee forever!");
-    promise = promise.getBytes(null);
+    var promise = "Moky loves May Lee forever!";
+    promise = ns.type.String.from(promise).getBytes(null);
     var SymmetricKey = function() {};
     ns.Interface(SymmetricKey, EncryptKey, DecryptKey);
     SymmetricKey.prototype.equals = function(other) {
@@ -1112,8 +1114,8 @@ if (typeof DIMP !== "object") {
     var CryptographyKey = ns.crypto.CryptographyKey;
     var AsymmetricKey = ns.crypto.AsymmetricKey;
     var VerifyKey = ns.crypto.VerifyKey;
-    var promise = new ns.type.String("Moky loves May Lee forever!");
-    promise = promise.getBytes(null);
+    var promise = "Moky loves May Lee forever!";
+    promise = ns.type.String.from(promise).getBytes(null);
     var PublicKey = function() {};
     ns.Interface(PublicKey, AsymmetricKey, VerifyKey);
     PublicKey.prototype.matches = function(privateKey) {

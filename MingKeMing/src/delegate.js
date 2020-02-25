@@ -39,7 +39,7 @@
 
     var EntityDataSource = function () {
     };
-    ns.Interface(EntityDataSource);
+    ns.Interface(EntityDataSource, null);
 
     /**
      *  Get meta for entity ID

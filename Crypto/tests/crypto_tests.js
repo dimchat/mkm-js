@@ -11,12 +11,12 @@ crypto_tests = [];
     var Data = ns.type.Data;
 
     var test_bytes = function () {
-        var data = new Data();
+        var data = new Data(4);
         data.push(0x000F);
         data.push(0x00FF);
         data.push(0x0FFF);
         data.push(0xFFFF);
-        var bytes = data.getBytes();
+        var bytes = data.getBytes(false);
         log('bytes: ', bytes);
         assert(bytes.length === 4, 'bytes length error');
         var exp = [0x0F, 0xFF, 0xFF, 0xFF];
@@ -25,8 +25,43 @@ crypto_tests = [];
         var merged = data.concat([1, 2], 3).toArray();
         log('merged: ', merged);
         assert(merged.length === 7, 'concat error');
+        data.setByte(4, 0xF4);
+        assert(data.getByte(4) === 0xF4, 'data error');
+        var array = data.toArray();
+        log('array after set: ', array);
+        ns.type.Arrays.remove(array, 0xF4);
+        log('array after removed: ', array);
     };
     crypto_tests.push(test_bytes);
+
+    var test_enum = function () {
+        var MetaType = ns.type.Enum({
+
+            Default: (0x01),
+            MKM:     (0x01),  // 0000 0001
+
+            BTC:     (0x02),  // 0000 0010
+            ExBTC:   (0x03),  // 0000 0011
+
+            ETH:     (0x04),  // 0000 0100
+            ExETH:   (0x05)   // 0000 0101
+        });
+        log('enum: ' + MetaType);
+
+        /**
+         *
+         * @param version {MetaType}
+         */
+        var gen = function (version) {
+            log('version: ', version.valueOf());
+        };
+        gen(MetaType.Default);
+
+        var ver = new MetaType(0x02);
+        log('ver:' , ver);
+        gen(ver);
+    };
+    crypto_tests.push(test_enum);
 
     var test_string = function () {
         var data = 'Moky';
@@ -40,7 +75,7 @@ crypto_tests = [];
         var data = '《道德经》';
         var str = new ns.type.String(data);
         console.assert(str.getLength() === 5, 'UTF-8 length error');
-        var bytes = str.getBytes();
+        var bytes = str.getBytes(null);
         log('utf-8: ', bytes);
         assert(bytes.length === 15, 'bytes length error');
         var exp = [-29, -128, -118, -23, -127, -109, -27, -66, -73, -25, -69, -113, -29, -128, -117];
@@ -62,9 +97,10 @@ crypto_tests = [];
     var Base64 = ns.format.Base64;
     var Base58 = ns.format.Base58;
 
+    var str = new ns.type.String('moky');
+    var bytes = str.getBytes(null);
+
     var test_hex = function () {
-        var str = ns.type.String.from('moky');
-        var bytes = str.getBytes();
         var enc = Hex.encode(bytes);
         log('hex: ' , enc);
         var exp = '6d6f6b79';
@@ -79,8 +115,6 @@ crypto_tests = [];
 
     // base64(moky) = bW9reQ==
     var test_base64 = function () {
-        var str = ns.type.String.from('moky');
-        var bytes = str.getBytes();
         var enc = Base64.encode(bytes);
         log('base64: ', enc);
         var exp = 'bW9reQ==';
@@ -95,8 +129,6 @@ crypto_tests = [];
 
     // base58(moky) = 3oF5MJ
     var test_base58 = function () {
-        var str = ns.type.String.from('moky');
-        var bytes = str.getBytes();
         var enc = Base58.encode(bytes);
         log('base58: ', enc);
         var exp = '3oF5MJ';
@@ -120,10 +152,11 @@ crypto_tests = [];
     var SHA256 = ns.digest.SHA256;
     var RIPEMD160 = ns.digest.RIPEMD160;
 
+    var str = new ns.type.String('moky');
+    var bytes = str.getBytes(null);
+
     // md5(moky) = d0e5edd3fd12b89154bbe7a5e4c82569
     var test_md5 = function () {
-        var str = ns.type.String.from('moky');
-        var bytes = str.getBytes();
         var hash = MD5.digest(bytes);
         if (!hash) {
             return 'not implemented';
@@ -136,8 +169,6 @@ crypto_tests = [];
 
     // sha256(moky）= cb98b739dd699aa44bb6ebba128d20f2d1e10bb3b4aa5ff4e79295b47e9ed76d
     var test_sha256 = function () {
-        var str = ns.type.String.from('moky');
-        var bytes = str.getBytes();
         var hash = SHA256.digest(bytes);
         if (!hash) {
             return 'not implemented';
@@ -150,8 +181,6 @@ crypto_tests = [];
 
     // ripemd160(moky) = 44bd174123aee452c6ec23a6ab7153fa30fa3b91
     var test_ripemd160 = function () {
-        var str = ns.type.String.from('moky');
-        var bytes = str.getBytes();
         var hash = RIPEMD160.digest(bytes);
         if (!hash) {
             return 'not implemented';
@@ -194,18 +223,19 @@ crypto_tests = [];
     var PrivateKey = ns.crypto.PrivateKey;
     var PublicKey = ns.crypto.PublicKey;
 
+    var str = new ns.type.String('moky');
+    var bytes = str.getBytes(null);
+
     var test_rsa = function () {
-        var str = ns.type.String.from('moky');
-        var data = str.getBytes();
         var SK = PrivateKey.generate(AsymmetricKey.RSA);
         var PK = SK.getPublicKey();
         // test encryption
-        var ciphertext = PK.encrypt(data);
+        var ciphertext = PK.encrypt(bytes);
         var plaintext = SK.decrypt(ciphertext);
-        assert(Arrays.equals(plaintext, data) === true, 'RSA encryption error');
+        assert(Arrays.equals(plaintext, bytes) === true, 'RSA encryption error');
         // test signature
-        var signature = SK.sign(data);
-        assert(PK.verify(data, signature) === true, 'RSA signature error');
+        var signature = SK.sign(bytes);
+        assert(PK.verify(bytes, signature) === true, 'RSA signature error');
 
         // test with key data
         var key;
@@ -245,27 +275,23 @@ crypto_tests = [];
         PK = SK.getPublicKey();
         log('PublicKey: ', PK);
 
-        str = 'moky';
-        str = new ns.type.String(str);
-        data = str.getBytes('UTF-8');
-
         //
         //  sign/verify
         //
         var expect = 'Najk0Lv7/DGedw9LXP2lPhZZMKnuR9C5Z1JPun6NQxe98XoZu4puZAi0K7UFsFMHKjKwY26XF8sjakD9dlU8yoXrn8IJg/Ye+O2l6DzyYlW2NQEVbabpS3Wl4g4vEBe2aCqGMaib/wdnGxm5h6h0m35YUtk7pW7yVFlGTvyTgpk=';
 
-        signature = SK.sign(data);
+        signature = SK.sign(bytes);
         log('RSA sign(', str, '): ', Hex.encode(signature));
         log('RSA sign(', str, '): ', Base64.encode(signature));
         assert(expect === Base64.encode(signature), 'RSA signature error');
-        assert(PK.verify(data, signature) === true, 'RSA verify error');
+        assert(PK.verify(bytes, signature) === true, 'RSA verify error');
 
         //
         //  encrypt/decrypt
         //
         expect = 'PGsWtfUm3m236XHT1QK/lkiG8ZEtn9WpAIdMO9Q3z/qI0pzujSn60rCc/1AFHUAPn7J9S/kqNVXtQwhRTdfLHFL6jWn6N8Id1xAeUVxQGkJRDudRQxbxkbqCuj+T8LjEEA24wq2j6Ekrz0x3tt5QUaD6WeLdcVQPh2SF9DJY3ZY=';
 
-        var enc = PK.encrypt(data);
+        var enc = PK.encrypt(bytes);
         log('RSA encrypt:(', str, '): ', Base64.encode(enc));
         var dec = SK.decrypt(enc);
         var result = new ns.type.String(dec);
@@ -291,14 +317,15 @@ crypto_tests = [];
 
     var SymmetricKey = ns.crypto.SymmetricKey;
 
+    var str = new ns.type.String('moky');
+    var bytes = str.getBytes(null);
+
     var test_aes = function () {
-        var str = ns.type.String.from('moky');
-        var data = str.getBytes();
         var password = SymmetricKey.generate(SymmetricKey.AES);
         // test encryption
-        var ciphertext = password.encrypt(data);
+        var ciphertext = password.encrypt(bytes);
         var plaintext = password.decrypt(ciphertext);
-        assert(Arrays.equals(plaintext, data) === true, 'AES encryption error');
+        assert(Arrays.equals(plaintext, bytes) === true, 'AES encryption error');
 
         // test with key data
         var key = {
@@ -308,18 +335,16 @@ crypto_tests = [];
         };
         var pwd = new SymmetricKey.getInstance(key);
 
-        str = new ns.type.String('moky');
-        data = str.getBytes('UTF-8');
         var expect = '0xtbqZN6x2aWTZn0DpCoCA==';
 
-        var enc = pwd.encrypt(data);
+        var enc = pwd.encrypt(bytes);
         log('AES encrypt(', str, '): ', Hex.encode(enc));
         log('AES encrypt(', str, '): ', Base64.encode(enc));
         assert(Base64.encode(enc) === expect, 'AES encrypt error');
 
         var dec = pwd.decrypt(enc);
         var result = new ns.type.String(dec);
-        log('AES decrypt: "' + result, '"');
+        log('AES decrypt("' + expect + '"): "' + result + '"');
         assert(result.equals(str) === true, 'AES decrypt error');
     };
     crypto_tests.push(test_aes);
