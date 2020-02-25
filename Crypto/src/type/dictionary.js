@@ -38,9 +38,9 @@
         /**
          *  Remove the item from array
          *
-         * @param array
-         * @param item
-         * @returns {*[]}
+         * @param array {[]}
+         * @param item {*}
+         * @returns {[]}
          */
         remove: function (array, item) {
             var index = array.indexOf(item);
@@ -52,25 +52,26 @@
 
         /**
          *  Check whether the two arrays are equal
-         * @param a1
-         * @param a2
+         *
+         * @param array1 {[]|Uint8Array|{}}
+         * @param array2 {[]|Uint8Array|{}}
          * @returns {boolean}
          */
-        equals: function (a1, a2) {
-            if (a1 === a2) {
+        equals: function (array1, array2) {
+            if (array1 === array2) {
                 // same object
                 return true;
             }
-            if (a1.length !== a2.length) {
+            if (array1.length !== array2.length) {
                 return false;
             }
             var v1, v2;
-            for (var k in a1) {
-                if (!a1.hasOwnProperty(k)) {
+            for (var k in array1) {
+                if (!array1.hasOwnProperty(k)) {
                     continue;
                 }
-                v1 = a1[k];
-                v2 = a2[k];
+                v1 = array1[k];
+                v2 = array2[k];
                 if (typeof v1['equals'] === 'function') {
                     if (!v1.equals(v2)) {
                         return false;
@@ -90,20 +91,26 @@
     //
     //  Dictionary
     //
-    var map = function (value) {
-        if (!value) {
-            value = {};
-        } else if (value instanceof map) {
-            value = value.dictionary;
-        } else if (value instanceof ns.type.String) {
-            value = ns.format.JSON.decode(value.toString());
-        } else if (typeof value === 'string') {
-            value = ns.format.JSON.decode(value);
+
+    /**
+     *  Create dictionary with values or JSON string
+     *
+     * @param entries {{}|map|String}
+     */
+    var map = function (entries) {
+        if (!entries) {
+            entries = {};
+        } else if (entries instanceof map) {
+            entries = entries.dictionary;
+        } else if (entries instanceof ns.type.String) {
+            entries = ns.format.JSON.decode(entries.toString());
+        } else if (typeof entries === 'string') {
+            entries = ns.format.JSON.decode(entries);
         }
         ns.type.Object.call(this);
-        this.dictionary = value;
+        this.dictionary = entries;
     };
-    ns.type.Class(map, ns.type.Object);
+    ns.Class(map, ns.type.Object, null);
 
     map.prototype.equals = function (other) {
         if (!other) {
@@ -117,7 +124,6 @@
         }
     };
 
-    // noinspection JSUnusedGlobalSymbols
     map.prototype.valueOf = function () {
         return this.dictionary;
     };
@@ -130,7 +136,6 @@
         return this.dictionary.toLocaleString();
     };
 
-    // noinspection JSUnusedGlobalSymbols
     map.prototype.toJSON = function () {
         return this.dictionary;
     };
@@ -138,8 +143,8 @@
     /**
      *  Get inner dictionary
      *
-     * @param copy - clone when true
-     * @returns {map}
+     * @param copy {boolean} - clone when true
+     * @returns {{String: *}}
      */
     map.prototype.getMap = function (copy) {
         if (copy) {
@@ -153,7 +158,7 @@
     /**
      *  Get all keys in dictionary
      *
-     * @returns {string[]}
+     * @returns {String[]}
      */
     map.prototype.allKeys = function() {
         return Object.keys(this.dictionary);
@@ -162,7 +167,7 @@
     /**
      *  Get value for key
      *
-     * @param key
+     * @param key {String}
      * @returns {*}
      */
     map.prototype.getValue = function (key) {
@@ -172,8 +177,8 @@
     /**
      *  Set value for key
      *
-     * @param key
-     * @param value
+     * @param key {String}
+     * @param value {Object}
      */
     map.prototype.setValue = function (key, value) {
         if (value) {

@@ -99,7 +99,7 @@
         }
         this.status = 0;  // 1 for valid, -1 for invalid
     };
-    ns.type.Class(Meta, Dictionary);
+    ns.Class(Meta, Dictionary);
 
     Meta.prototype.equals = function (other) {
         if (!other) {
@@ -161,17 +161,25 @@
      *  Check whether meta match with entity ID
      *  (must call this when received a new meta from network)
      *
-     * @param identifier
+     * @param identifier {ID}
      * @returns {boolean}
      */
     var match_identifier = function (identifier) {
-        return this.generateIdentifier(identifier.getType()).equals(identifier);
+        var network = identifier.getType();
+        return this.generateIdentifier(network).equals(identifier);
     };
 
     var match_address = function (address) {
-        return this.generateAddress(address.getNetwork()).equals(address);
+        var network = address.getNetwork();
+        return this.generateAddress(network).equals(address);
     };
 
+    /**
+     *  Check whether meta matches Public Key, ID, or Address
+     *
+     * @param key_id_addr {PublicKey|ID|Address}
+     * @returns {boolean}
+     */
     Meta.prototype.matches = function (key_id_addr) {
         if (!this.isValid()) {
             return false;
@@ -195,8 +203,8 @@
     /**
      *  Generate address with meta info and address type
      *
-     * @param network
-     * @returns {Address|null}
+     * @param network {NetworkType}
+     * @returns {Address}
      */
     Meta.prototype.generateAddress = function (network) {
         console.assert(network instanceof NetworkType, 'network error: ' + network);

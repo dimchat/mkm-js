@@ -46,7 +46,7 @@
      */
     var TAI = function () {
     };
-    ns.type.Interface(TAI);
+    ns.Interface(TAI);
 
     /**
      *  Check if signature matched
@@ -71,7 +71,7 @@
     /**
      *  Get public key to encrypt message for user
      *
-     * @returns {EncryptKey|null}
+     * @returns {EncryptKey}
      */
     TAI.prototype.getKey = function () {
         console.assert(false, 'implement me!');
@@ -93,8 +93,8 @@
     /**
      *  Get profile property data with key
      *
-     * @param name
-     * @returns {*}
+     * @param name {String}
+     * @returns {Object}
      */
     TAI.prototype.getProperty = function (name) {
         console.assert(name !== null, 'property name empty');
@@ -106,8 +106,8 @@
      *  Update profile property with key and data
      *  (this will reset 'data' and 'signature')
      *
-     * @param name
-     * @param value
+     * @param name {String}
+     * @param value {Object}
      */
     TAI.prototype.setProperty = function (name, value) {
         console.assert(name !== null, 'property name empty');
@@ -120,7 +120,7 @@
     /**
      *  Verify 'data' and 'signature' with public key
      *
-     * @param publicKey
+     * @param publicKey {VerifyKey}
      * @returns {boolean}
      */
     TAI.prototype.verify = function (publicKey) {
@@ -132,7 +132,7 @@
     /**
      *  Encode properties to 'data' and sign it to 'signature'
      *
-     * @param privateKey
+     * @param privateKey {SignKey}
      * @returns {Uint8Array}
      */
     TAI.prototype.sign = function (privateKey) {
@@ -180,7 +180,7 @@
         this.properties = null;
         this.status = 0; // 1 for valid, -1 for invalid
     };
-    ns.type.Class(Profile, Dictionary, TAI);
+    ns.Class(Profile, Dictionary, TAI);
 
     Profile.prototype.isValid = function () {
         return this.status >= 0;
@@ -318,7 +318,7 @@
     /**
      *  Get entity name
      *
-     * @returns {string}
+     * @returns {String}
      */
     Profile.prototype.getName = function () {
         return this.getProperty('name');

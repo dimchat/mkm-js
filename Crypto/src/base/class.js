@@ -31,31 +31,10 @@
     'use strict';
 
     /**
-     *  Check whether the object is an instance of the class
-     *
-     * @param object
-     * @param clazz
-     * @returns {boolean}
-     */
-    var is_instance = function (object, clazz) {
-        if (object instanceof clazz) {
-            return true;
-        }
-        var child = Object.getPrototypeOf(object);
-        var names = Object.getOwnPropertyNames(clazz.prototype);
-        for (var i = 0; i < names.length; ++i) {
-            if (!child.hasOwnProperty(names[i])) {
-                return false;
-            }
-        }
-        return true;
-    };
-
-    /**
      *  Inherits from an interface
      *
-     * @param clazz
-     * @param protocol
+     * @param clazz {Class} - sub class
+     * @param protocol {Class} - class or interface
      * @returns {Class}
      */
     var inherit = function (clazz, protocol) {
@@ -78,8 +57,8 @@
     /**
      *  Inherits from interfaces
      *
-     * @param clazz
-     * @param interfaces
+     * @param clazz {Class} - subclass
+     * @param interfaces {Class[]} - parent class or interfaces
      * @returns {Class}
      */
     var inherits = function (clazz, interfaces) {
@@ -92,10 +71,10 @@
     /**
      *  Create an interface inherits from other interfaces
      *
-     * @param child
-     * @param parent
+     * @param child {Class} - sub interface
+     * @param parent {Class[]} - parent interfaces
      */
-    var face = function (child, parent) {
+    var interfacefy = function (child, parent) {
         if (!child) {
             child = function () {
             };
@@ -117,13 +96,13 @@
     /**
      *  Create a child class inherits from parent class and interfaces
      *
-     * @param child - constructor
-     * @param parent - super class
-     * @param interfaces
+     * @param child {Class} - subclass
+     * @param parent {Class} - super class
+     * @param interfaces {Class[]} - interfaces
      * @returns {Class}
      * @constructor
      */
-    var clazz = function (child, parent, interfaces) {
+    var classify = function (child, parent, interfaces) {
         if (!child) {
             child = function () {
             };
@@ -151,24 +130,11 @@
         return child;
     };
 
-    //
-    //  Object
-    //
-    var obj = clazz();
-
-    obj.prototype.equals = function (other) {
-        return this === other;
-    };
-
-    obj.isinstance = is_instance;
-
     //-------- namespace --------
-    ns.type.Interface = face;
-    ns.type.Class = clazz;
-    ns.type.Object = obj;
+    ns.Interface = interfacefy;
+    ns.Class = classify;
 
-    ns.type.register('Interface');
-    ns.type.register('Class');
-    ns.type.register('Object');
+    ns.register('Interface');
+    ns.register('Class');
 
 }(DIMP);

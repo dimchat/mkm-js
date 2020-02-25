@@ -33,6 +33,13 @@
     //
     //  Enumeration
     //
+
+    /**
+     *  Create Enum with value & alias
+     *
+     * @param value {Number|base_enum}
+     * @param alias {String}
+     */
     var base_enum = function (value, alias) {
         ns.type.Object.call(this);
         if (value instanceof base_enum) {
@@ -42,7 +49,7 @@
         }
         this.alias = alias;
     };
-    ns.type.Class(base_enum, ns.type.Object);
+    ns.Class(base_enum, ns.type.Object, null);
 
     base_enum.prototype.equals = function (other) {
         if (!other) {
@@ -56,7 +63,6 @@
         }
     };
 
-    // noinspection JSUnusedGlobalSymbols
     base_enum.prototype.valueOf = function () {
         return this.value;
     };
@@ -71,7 +77,6 @@
             + ': ' + this.value.toLocaleString() + '>';
     };
 
-    // noinspection JSUnusedGlobalSymbols
     base_enum.prototype.toJSON = function () {
         return this.value;
     };
@@ -79,7 +84,7 @@
     /**
      *  Define Enum with elements names & values
      *
-     * @param elements
+     * @param elements {{String: Number}}
      * @returns {Class}
      */
     var enu = function(elements) {
@@ -93,7 +98,7 @@
             }
             base_enum.call(this, value, alias);
         };
-        ns.type.Class(enumeration, base_enum);
+        ns.Class(enumeration, base_enum, null);
         var e, v;
         for (var name in elements) {
             if (!elements.hasOwnProperty(name)) {

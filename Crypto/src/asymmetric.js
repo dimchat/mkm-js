@@ -45,7 +45,7 @@
     //
     var AsymmetricKey = function () {
     };
-    ns.type.Interface(AsymmetricKey, CryptographyKey);
+    ns.Interface(AsymmetricKey, CryptographyKey);
 
     AsymmetricKey.RSA = 'RSA'; //-- "RSA/ECB/PKCS1Padding", "SHA256withRSA"
     AsymmetricKey.ECC = 'ECC';
@@ -65,11 +65,11 @@
     var VerifyKey = ns.crypto.VerifyKey;
 
     var promise = new ns.type.String('Moky loves May Lee forever!');
-    promise = promise.getBytes();
+    promise = promise.getBytes(null);
 
     var PublicKey = function () {
     };
-    ns.type.Interface(PublicKey, AsymmetricKey, VerifyKey);
+    ns.Interface(PublicKey, AsymmetricKey, VerifyKey);
 
     PublicKey.prototype.matches = function (privateKey) {
         if (!privateKey) {
@@ -91,8 +91,8 @@
     /**
      *  Register symmetric key class with algorithm
      *
-     * @param algorithm - key algorithm
-     * @param clazz - if key class is None, then remove with algorithm
+     * @param algorithm {String} - key algorithm
+     * @param clazz {Class} - if key class is None, then remove with algorithm
      */
     PublicKey.register = function (algorithm, clazz) {
         public_key_classes[algorithm] = clazz;
@@ -101,8 +101,8 @@
     /**
      *  Create symmetric key
      *
-     * @param key - key info (with algorithm='AES')
-     * @returns {null|SymmetricKey}
+     * @param key {{String: *}|PublicKey} - key info (with algorithm='AES')
+     * @returns {PublicKey}
      */
     PublicKey.getInstance = function (key) {
         if (!key) {
@@ -113,6 +113,7 @@
         var algorithm = key['algorithm'];
         var clazz = public_key_classes[algorithm];
         if (typeof clazz === 'function') {
+            // noinspection JSValidateTypes
             return CryptographyKey.createInstance(clazz, key);
         }
         throw TypeError('key algorithm error: ' + algorithm);
@@ -134,7 +135,7 @@
 
     var PrivateKey = function () {
     };
-    ns.type.Interface(PrivateKey, AsymmetricKey, SignKey);
+    ns.Interface(PrivateKey, AsymmetricKey, SignKey);
 
     PrivateKey.prototype.equals = function (other) {
         var publicKey = this.getPublicKey();
@@ -152,8 +153,8 @@
     /**
      *  Generate key with algorithm name
      *
-     * @param algorithm - algorithm name ('AES')
-     * @returns {SymmetricKey}
+     * @param algorithm {String} - algorithm name ('AES')
+     * @returns {PrivateKey}
      */
     PrivateKey.generate = function (algorithm) {
         return this.getInstance({algorithm: algorithm});
@@ -165,8 +166,8 @@
     /**
      *  Register symmetric key class with algorithm
      *
-     * @param algorithm - key algorithm
-     * @param clazz - if key class is None, then remove with algorithm
+     * @param algorithm {String} - key algorithm
+     * @param clazz {Class} - if key class is None, then remove with algorithm
      */
     PrivateKey.register = function (algorithm, clazz) {
         private_key_classes[algorithm] = clazz;
@@ -175,8 +176,8 @@
     /**
      *  Create symmetric key
      *
-     * @param key - key info (with algorithm='AES')
-     * @returns {null|SymmetricKey}
+     * @param key {{String: *}|PrivateKey} - key info (with algorithm='AES')
+     * @returns {PrivateKey}
      */
     PrivateKey.getInstance = function (key) {
         if (!key) {
@@ -187,6 +188,7 @@
         var algorithm = key['algorithm'];
         var clazz = private_key_classes[algorithm];
         if (typeof clazz === 'function') {
+            // noinspection JSValidateTypes
             return CryptographyKey.createInstance(clazz, key);
         }
         throw TypeError('key algorithm error: ' + algorithm);

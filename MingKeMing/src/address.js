@@ -49,12 +49,12 @@
     var Address = function (string) {
         ns.type.String.call(this, string);
     };
-    ns.type.Class(Address, ns.type.String);
+    ns.Class(Address, ns.type.String);
 
     /**
      *  get address type
      *
-     * @returns {NetworkType|null}
+     * @returns {NetworkType}
      */
     Address.prototype.getNetwork = function () {
         console.assert(false, 'implement me!');
@@ -64,7 +64,7 @@
     /**
      *  get search number
      *
-     * @returns {number}
+     * @returns {Number}
      */
     Address.prototype.getCode = function () {
         console.assert(false, 'implement me!');
@@ -88,7 +88,7 @@
     /**
      *  Add extended Address class to process new format
      *
-     * @param clazz - extended Address class
+     * @param clazz {Class} - extended Address class
      */
     Address.register = function (clazz) {
         address_classes.push(clazz);
@@ -97,8 +97,8 @@
     /**
      *  Create/get instance of Address
      *
-     * @param string - address string/object
-     * @returns {null|object}
+     * @param string {String} - address string/object
+     * @returns {Address}
      */
     Address.getInstance = function (string) {
         if (!string) {
@@ -108,11 +108,11 @@
         }
         // address for broadcast
         if (Address.ANYWHERE.equalsIgnoreCase(string)) {
-            // anywhere
+            // noinspection JSValidateTypes
             return Address.ANYWHERE;
         }
         if (Address.EVERYWHERE.equalsIgnoreCase(string)) {
-            // everywhere
+            // noinspection JSValidateTypes
             return Address.EVERYWHERE;
         }
         // try each subclass to parse address
@@ -138,7 +138,7 @@
         this.network = network;
         this.number = number;
     };
-    ns.type.Class(ConstantAddress, Address);
+    ns.Class(ConstantAddress, Address);
 
     ConstantAddress.prototype.getNetwork = function () {
         return this.network;

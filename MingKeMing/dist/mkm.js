@@ -13,7 +13,7 @@ if (typeof MingKeMing !== "object") {
     if (typeof ns.protocol !== "object") {
         ns.protocol = {}
     }
-    DIMP.namespace(ns.protocol);
+    DIMP.Namespace(ns.protocol);
     ns.register("protocol")
 }(MingKeMing);
 ! function(ns) {
@@ -75,7 +75,7 @@ if (typeof MingKeMing !== "object") {
     var Address = function(string) {
         ns.type.String.call(this, string)
     };
-    ns.type.Class(Address, ns.type.String);
+    ns.Class(Address, ns.type.String);
     Address.prototype.getNetwork = function() {
         console.assert(false, "implement me!");
         return null
@@ -129,7 +129,7 @@ if (typeof MingKeMing !== "object") {
         this.network = network;
         this.number = number
     };
-    ns.type.Class(ConstantAddress, Address);
+    ns.Class(ConstantAddress, Address);
     ConstantAddress.prototype.getNetwork = function() {
         return this.network
     };
@@ -183,7 +183,7 @@ if (typeof MingKeMing !== "object") {
         this.address = address;
         this.terminal = terminal
     };
-    ns.type.Class(ID, ns.type.String);
+    ns.Class(ID, ns.type.String);
     ID.prototype.equals = function(other) {
         if (!other) {
             return false
@@ -258,7 +258,7 @@ if (typeof MingKeMing !== "object") {
         }
         this.status = 0
     };
-    ns.type.Class(Meta, Dictionary);
+    ns.Class(Meta, Dictionary);
     Meta.prototype.equals = function(other) {
         if (!other) {
             return false
@@ -308,10 +308,12 @@ if (typeof MingKeMing !== "object") {
         }
     };
     var match_identifier = function(identifier) {
-        return this.generateIdentifier(identifier.getType()).equals(identifier)
+        var network = identifier.getType();
+        return this.generateIdentifier(network).equals(identifier)
     };
     var match_address = function(address) {
-        return this.generateAddress(address.getNetwork()).equals(address)
+        var network = address.getNetwork();
+        return this.generateAddress(network).equals(address)
     };
     Meta.prototype.matches = function(key_id_addr) {
         if (!this.isValid()) {
@@ -388,7 +390,7 @@ if (typeof MingKeMing !== "object") {
 }(MingKeMing);
 ! function(ns) {
     var TAI = function() {};
-    ns.type.Interface(TAI);
+    ns.Interface(TAI);
     TAI.prototype.isValid = function() {
         console.assert(false, "implement me!");
         return false
@@ -447,7 +449,7 @@ if (typeof MingKeMing !== "object") {
         this.properties = null;
         this.status = 0
     };
-    ns.type.Class(Profile, Dictionary, TAI);
+    ns.Class(Profile, Dictionary, TAI);
     Profile.prototype.isValid = function() {
         return this.status >= 0
     };
@@ -592,7 +594,7 @@ if (typeof MingKeMing !== "object") {
 }(MingKeMing);
 ! function(ns) {
     var EntityDataSource = function() {};
-    ns.type.Interface(EntityDataSource);
+    ns.Interface(EntityDataSource);
     EntityDataSource.prototype.getMeta = function(identifier) {
         console.assert(identifier !== null, "ID empty");
         console.assert(false, "implement me!");
@@ -609,7 +611,7 @@ if (typeof MingKeMing !== "object") {
 ! function(ns) {
     var EntityDataSource = ns.EntityDataSource;
     var UserDataSource = function() {};
-    ns.type.Interface(UserDataSource, EntityDataSource);
+    ns.Interface(UserDataSource, EntityDataSource);
     UserDataSource.prototype.getContacts = function(identifier) {
         console.assert(identifier !== null, "ID empty");
         console.assert(false, "implement me!");
@@ -639,7 +641,7 @@ if (typeof MingKeMing !== "object") {
 ! function(ns) {
     var EntityDataSource = ns.EntityDataSource;
     var GroupDataSource = function() {};
-    ns.type.Interface(GroupDataSource, EntityDataSource);
+    ns.Interface(GroupDataSource, EntityDataSource);
     GroupDataSource.prototype.getFounder = function(identifier) {
         console.assert(identifier !== null, "ID empty");
         console.assert(false, "implement me!");
@@ -663,7 +665,7 @@ if (typeof MingKeMing !== "object") {
         this.identifier = identifier;
         this.delegate = null
     };
-    ns.type.Class(Entity);
+    ns.Class(Entity);
     Entity.prototype.equals = function(other) {
         if (this === other) {
             return true
@@ -719,7 +721,7 @@ if (typeof MingKeMing !== "object") {
     var User = function(identifier) {
         Entity.call(this, identifier)
     };
-    ns.type.Class(User, Entity);
+    ns.Class(User, Entity);
     User.prototype.getContacts = function() {
         return this.delegate.getContacts(this.identifier)
     };
@@ -813,7 +815,7 @@ if (typeof MingKeMing !== "object") {
         Entity.call(this, identifier);
         this.founder = null
     };
-    ns.type.Class(Group, Entity);
+    ns.Class(Group, Entity);
     Group.prototype.getFounder = function() {
         if (!this.founder) {
             this.founder = this.delegate.getFounder(this.identifier)

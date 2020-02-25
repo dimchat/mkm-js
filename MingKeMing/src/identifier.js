@@ -93,7 +93,7 @@
         this.address = address;
         this.terminal = terminal;
     };
-    ns.type.Class(ID, ns.type.String);
+    ns.Class(ID, ns.type.String);
 
     ID.prototype.equals = function (other) {
         if (!other) {
@@ -133,7 +133,7 @@
     /**
      *  Get Search Number
      *
-     * @returns {number}
+     * @returns {Number}
      */
     ID.prototype.getNumber = function () {
         return this.address.getCode();
@@ -163,8 +163,8 @@
     /**
      *  Create/get instance of ID
      *
-     * @param string
-     * @returns {null|ID}
+     * @param string {String}
+     * @returns {ID}
      */
     ID.getInstance = function (string) {
         if (!string) {

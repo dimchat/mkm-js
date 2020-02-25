@@ -42,11 +42,11 @@
     //
     var CryptographyKey = function () {
     };
-    ns.type.Interface(CryptographyKey);
+    ns.Interface(CryptographyKey, null);
     /**
      *  Check whether keys equal
      *
-     * @param other
+     * @param other {CryptographyKey}
      * @returns {boolean}
      */
     CryptographyKey.prototype.equals = function (other) {
@@ -72,12 +72,13 @@
         console.assert(false, 'implement me!');
         return 0;
     };
+
     /**
      *  Create key with info
      *
      * @param clazz - key class name
-     * @param map - key info
-     * @returns {object}
+     * @param map {{String: *}} - key info
+     * @returns {CryptographyKey}
      */
     CryptographyKey.createInstance = function (clazz, map) {
         if (typeof clazz.getInstance === 'function') {
@@ -89,12 +90,12 @@
 
     var EncryptKey = function () {
     };
-    ns.type.Interface(EncryptKey, CryptographyKey);
+    ns.Interface(EncryptKey, CryptographyKey);
     /**
      *  ciphertext = encrypt(plaintext, PW)
      *  ciphertext = encrypt(plaintext, PK)
      *
-     * @param data - Uint8Array
+     * @param data {Uint8Array}
      * @returns {Uint8Array}
      */
     EncryptKey.prototype.encrypt = function (data) {
@@ -105,12 +106,12 @@
 
     var DecryptKey = function () {
     };
-    ns.type.Interface(DecryptKey, CryptographyKey);
+    ns.Interface(DecryptKey, CryptographyKey);
     /**
      *  plaintext = decrypt(ciphertext, PW);
      *  plaintext = decrypt(ciphertext, SK);
      *
-     * @param data - Uint8Array
+     * @param data {Uint8Array}
      * @returns {Uint8Array}
      */
     DecryptKey.prototype.decrypt = function (data) {
@@ -121,11 +122,11 @@
 
     var SignKey = function () {
     };
-    ns.type.Interface(SignKey, CryptographyKey);
+    ns.Interface(SignKey, CryptographyKey);
     /**
      *  signature = sign(data, SK);
      *
-     * @param data - Uint8Array
+     * @param data {Uint8Array}
      * @returns {Uint8Array}
      */
     SignKey.prototype.sign = function (data) {
@@ -136,12 +137,12 @@
 
     var VerifyKey = function () {
     };
-    ns.type.Interface(VerifyKey, CryptographyKey);
+    ns.Interface(VerifyKey, CryptographyKey);
     /**
      *  OK = verify(data, signature, PK)
      *
-     * @param data - Uint8Array
-     * @param signature - Uint8Array
+     * @param data {Uint8Array}
+     * @param signature {Uint8Array}
      * @returns {boolean}
      */
     VerifyKey.prototype.verify = function (data, signature) {

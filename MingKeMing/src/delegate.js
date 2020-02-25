@@ -39,12 +39,12 @@
 
     var EntityDataSource = function () {
     };
-    ns.type.Interface(EntityDataSource);
+    ns.Interface(EntityDataSource);
 
     /**
      *  Get meta for entity ID
      *
-     * @param identifier
+     * @param identifier {ID}
      * @returns {Meta}
      */
     EntityDataSource.prototype.getMeta = function (identifier) {
@@ -56,7 +56,7 @@
     /**
      *  Get profile for entity ID
      *
-     * @param identifier
+     * @param identifier {ID}
      * @returns {Profile}
      */
     EntityDataSource.prototype.getProfile = function (identifier) {
@@ -95,12 +95,12 @@
      */
     var UserDataSource = function () {
     };
-    ns.type.Interface(UserDataSource, EntityDataSource);
+    ns.Interface(UserDataSource, EntityDataSource);
 
     /**
      *  Get contacts list
      *
-     * @param identifier - user ID
+     * @param identifier {ID} - user ID
      * @returns {ID[]}
      */
     UserDataSource.prototype.getContacts = function (identifier) {
@@ -113,7 +113,7 @@
      *  Get user's public key for encryption
      *  (profile.key or meta.key)
      *
-     * @param identifier - user ID
+     * @param identifier {ID} - user ID
      * @returns {EncryptKey}
      */
     UserDataSource.prototype.getPublicKeyForEncryption = function (identifier) {
@@ -126,7 +126,7 @@
      *  Get user's public keys for verification
      *  [profile.key, meta.key]
      *
-     * @param identifier
+     * @param identifier {ID}
      * @returns {VerifyKey[]}
      */
     UserDataSource.prototype.getPublicKeysForVerification = function (identifier) {
@@ -139,7 +139,7 @@
      *  Get user's private keys for decryption
      *  (which paired with [profile.key, meta.key])
      *
-     * @param identifier - user ID
+     * @param identifier {ID} - user ID
      * @returns {DecryptKey[]}
      */
     UserDataSource.prototype.getPrivateKeysForDecryption = function (identifier) {
@@ -152,7 +152,7 @@
      *  Get user's private key for signature
      *  (which paired with profile.key or meta.key)
      *
-     * @param identifier - user ID
+     * @param identifier {ID} - user ID
      * @returns {SignKey}
      */
     UserDataSource.prototype.getPrivateKeyForSignature = function (identifier) {
@@ -175,12 +175,12 @@
 
     var GroupDataSource = function () {
     };
-    ns.type.Interface(GroupDataSource, EntityDataSource);
+    ns.Interface(GroupDataSource, EntityDataSource);
 
     /**
      *  Get group founder
      *
-     * @param identifier - group ID
+     * @param identifier {ID} - group ID
      * @returns {ID}
      */
     GroupDataSource.prototype.getFounder = function (identifier) {
@@ -192,7 +192,7 @@
     /**
      *  Get group owner
      *
-     * @param identifier - group ID
+     * @param identifier {ID} - group ID
      * @returns {ID}
      */
     GroupDataSource.prototype.getOwner = function (identifier) {
@@ -204,7 +204,7 @@
     /**
      *  Get group members list
      *
-     * @param identifier - group ID
+     * @param identifier {ID} - group ID
      * @returns {ID[]}
      */
     GroupDataSource.prototype.getMembers = function (identifier) {

@@ -57,7 +57,7 @@
     var User = function (identifier) {
         Entity.call(this, identifier);
     };
-    ns.type.Class(User, Entity);
+    ns.Class(User, Entity);
 
     /**
      *  Get all contacts of the user
@@ -126,8 +126,8 @@
     /**
      *  Verify data and signature with user's public keys
      *
-     * @param data
-     * @param signature
+     * @param data {Uint8Array}
+     * @param signature {Uint8Array}
      * @returns {boolean}
      */
     User.prototype.verify = function (data, signature) {
@@ -146,7 +146,7 @@
     /**
      *  Encrypt data, try profile.key first, if not found, use meta.key
      *
-     * @param plaintext - (Uint8Array)
+     * @param plaintext {Uint8Array}
      * @returns {Uint8Array}
      */
     User.prototype.encrypt = function (plaintext) {
@@ -176,7 +176,7 @@
     /**
      *  Sign data with user's private key
      *
-     * @param data - Uint8Array
+     * @param data {Uint8Array}
      * @returns {Uint8Array}
      */
     User.prototype.sign = function (data) {

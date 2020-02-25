@@ -12,17 +12,19 @@
     <script>
         !function (ns) {
             var sources = [
-                'src/namespace.js',
+                'src/base/namespace.js',
+                'src/base/class.js',
 
-                'src/type/class.js',
+                'src/type/object.js',
                 'src/type/enum.js',
                 'src/type/data.js',
                 'src/type/string.js',
                 'src/type/dictionary.js',
 
-                'src/coder.js',
+                'src/format/coder.js',
+                'src/format/parser.js',
+
                 'src/digest.js',
-                'src/parser.js',
                 'src/cryptography.js',
                 'src/symmetric.js',
                 'src/asymmetric.js',
@@ -67,8 +69,13 @@
         <script>
             !(function () {
                 var text = 'cat';
+                var file;
                 for (var i = 0; i < sources.length; ++i) {
-                    text += ' ' + sources[i];
+                    file = sources[i];
+                    if (!file) {
+                        continue;
+                    }
+                    text += ' ' + file;
                 }
                 text += ' >> ' + dist;
                 document.writeln(text);

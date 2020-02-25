@@ -55,7 +55,7 @@
         this.identifier = identifier;
         this.delegate = null;
     };
-    ns.type.Class(Entity);
+    ns.Class(Entity);
 
     Entity.prototype.equals = function (other) {
         if (this === other) {
@@ -106,7 +106,7 @@
     /**
      *  Get Search Number
      *
-     * @returns {number}
+     * @returns {Number}
      */
     Entity.prototype.getNumber = function () {
         return this.identifier.getNumber();

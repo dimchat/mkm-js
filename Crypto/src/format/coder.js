@@ -51,8 +51,8 @@
     /**
      *  Encode data array to HEX string
      *
-     * @param data - Uint8Array
-     * @returns {string}
+     * @param data {Uint8Array}
+     * @returns {String}
      */
     var hex_encode = function (data) {
         var len = data.length;
@@ -69,7 +69,7 @@
     /**
      *  Decode HEX string to data array
      *
-     * @param str - HEX string
+     * @param str {String}
      * @returns {Uint8Array}
      */
     var hex_decode = function (str) {
@@ -92,7 +92,7 @@
             lo = hex_values[str.charCodeAt(i+1)];
             data.push((hi << 4) | lo);
         }
-        return data.getBytes();
+        return data.getBytes(false);
     };
     //-------- HEX algorithm end --------
 
@@ -124,8 +124,8 @@
     /**
      *  Encode data array to Base64 string
      *
-     * @param data - Uint8Array
-     * @returns {string}
+     * @param data {Uint8Array}
+     * @returns {String}
      */
     var base64_encode = function (data) {
         var base64 = '';
@@ -177,7 +177,7 @@
     /**
      *  Decode Base64 string to data array
      *
-     * @param string
+     * @param string {String}
      * @returns {Uint8Array}
      */
     var base64_decode = function (string) {
@@ -207,7 +207,7 @@
         while (str[--i] === '=') {
             array.pop();
         }
-        return array.getBytes();
+        return array.getBytes(false);
     };
     //-------- Base64 algorithm end --------
 
@@ -216,12 +216,12 @@
     //
     var coder = function () {
     };
-    ns.type.Interface(coder);
+    ns.Interface(coder, null);
     /**
      *  Encode binary data to text string
      *
-     * @param data - Uint8Array
-     * @returns {null|string}
+     * @param data {Uint8Array}
+     * @returns {String}
      */
     coder.prototype.encode = function (data) {
         console.assert(data != null, 'data empty');
@@ -231,7 +231,7 @@
     /**
      *  Decode text string to binary data
      *
-     * @param string
+     * @param string {String}
      * @returns {Uint8Array}
      */
     coder.prototype.decode = function (string) {
@@ -245,7 +245,7 @@
     //
     var hex = function () {
     };
-    ns.type.Class(hex, null, coder);
+    ns.Class(hex, null, coder);
 
     hex.prototype.encode = function (data) {
         return hex_encode(data);
@@ -259,7 +259,7 @@
     //
     var base64 = function () {
     };
-    ns.type.Class(base64, null, coder);
+    ns.Class(base64, null, coder);
 
     base64.prototype.encode = function (data) {
         return base64_encode(data);
@@ -273,7 +273,7 @@
     //
     var base58 = function () {
     };
-    ns.type.Class(base58, null, coder);
+    ns.Class(base58, null, coder);
 
     base58.prototype.encode = function (data) {
         console.assert(data != null, 'data empty');
@@ -292,7 +292,7 @@
     var C = function (lib) {
         this.coder = lib;
     };
-    ns.type.Class(C, null, coder);
+    ns.Class(C, null, coder);
 
     C.prototype.encode = function (data) {
         return this.coder.encode(data);

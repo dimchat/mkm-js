@@ -1,10 +1,5 @@
 ;
 // license: https://mit-license.org
-//
-//  Ming-Ke-Ming : Decentralized User Identity Authentication
-//
-//                               Written in 2020 by Moky <albert.moky@gmail.com>
-//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -30,25 +25,48 @@
 // =============================================================================
 //
 
-//! require <crypto.js>
-
-if (typeof MingKeMing !== 'object') {
-    MingKeMing = {};
-}
+//! require 'namespace.js'
 
 !function (ns) {
     'use strict';
 
-    // exports namespace from Crypto
-    DIMP.exports(ns);
+    /**
+     *  Check whether the object is an instance of the class
+     *
+     * @param object {Object} - instance
+     * @param clazz {Class} - class or interface
+     * @returns {boolean}
+     */
+    var is_instance = function (object, clazz) {
+        if (object instanceof clazz) {
+            return true;
+        }
+        var child = Object.getPrototypeOf(object);
+        var names = Object.getOwnPropertyNames(clazz.prototype);
+        for (var i = 0; i < names.length; ++i) {
+            if (!child.hasOwnProperty(names[i])) {
+                return false;
+            }
+        }
+        return true;
+    };
+
+    //
+    //  Object
+    //
+    var obj = function () {
+    };
+    ns.Class(obj, Object, null);
+
+    obj.prototype.equals = function (other) {
+        return this === other;
+    };
+
+    obj.isinstance = is_instance;
 
     //-------- namespace --------
-    if (typeof ns.protocol !== 'object') {
-        ns.protocol = {};
-    }
+    ns.type.Object = obj;
 
-    DIMP.Namespace(ns.protocol);
+    ns.type.register('Object');
 
-    ns.register('protocol');
-
-}(MingKeMing);
+}(DIMP);

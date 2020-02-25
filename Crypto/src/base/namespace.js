@@ -32,7 +32,27 @@ if (typeof DIMP !== 'object') {
 !function (ns) {
     "use strict";
 
+    /**
+     *  Make an object to be a namespace
+     *
+     * @param space {namespace}
+     * @returns {namespace}
+     */
+    var namespacefy = function (space) {
+        if (!space) {
+            space = new namespace();
+        } else if (!is_space(space)) {
+            space.__all__ = [];
+            space.register = namespace.prototype.register;
+            space.exports = namespace.prototype.exports;
+        }
+        return space;
+    };
+
     var is_space = function (space) {
+        if (space instanceof namespace) {
+            return true;
+        }
         if (typeof space.exports !== 'function') {
             return false;
         }
@@ -42,12 +62,20 @@ if (typeof DIMP !== 'object') {
         return space.__all__ instanceof Array;
     };
 
+    //
+    //  Namespace
+    //
+    var namespace = function () {
+        // all registered names
+        this.__all__ = [];  // Array<String>
+    };
+
     /**
      *  Register a class into current namespace with name
      *
-     * @param name
+     * @param name {String}
      */
-    var register = function (name/*, clazz*/) {
+    namespace.prototype.register = function (name/*, clazz*/) {
         if (this.__all__.indexOf(name) < 0) {
             this.__all__.push(name);
             // space[name] = clazz;
@@ -61,13 +89,11 @@ if (typeof DIMP !== 'object') {
     /**
      *  Export from classes in current namespace
      *
-     * @param outerSpace - namespace
+     * @param outerSpace {namespace} - namespace
      */
-    var exports = function (outerSpace) {
-        if (!is_space(outerSpace)) {
-            // make sure the outer is a namespace
-            namespace(outerSpace);
-        }
+    namespace.prototype.exports = function (outerSpace) {
+        // make sure the outer is a namespace
+        namespacefy(outerSpace);
         // copy all registered objects from inner space to outer space
         var all = this.__all__;
         var name, inner;
@@ -80,7 +106,7 @@ if (typeof DIMP !== 'object') {
             if (is_space(inner)) {
                 // inner space
                 if (typeof outerSpace[name] !== 'object') {
-                    outerSpace[name] = {};
+                    outerSpace[name] = new namespace();
                 }
                 inner.exports(outerSpace[name]);
             } else if (outerSpace.hasOwnProperty(name)) {
@@ -93,22 +119,17 @@ if (typeof DIMP !== 'object') {
         return outerSpace;
     };
 
-    /**
-     *  Make an object to be a namespace
-     *
-     * @param space
-     */
-    var namespace = function (space) {
-        if (!space) {
-            space = {};
-        }
-        if (!(space.__all__ instanceof Array)) {
-            space.__all__ = [];
-        }
-        space.register = register;
-        space.exports = exports;
-        return space;
-    };
+    //-------- namespace --------
+    ns.Namespace = namespacefy;
+
+    namespacefy(ns);
+
+    ns.register('Namespace');
+
+}(DIMP);
+
+!function (ns) {
+    "use strict";
 
     //-------- namespace --------
     if (typeof ns.type !== 'object') {
@@ -124,13 +145,11 @@ if (typeof DIMP !== 'object') {
         ns.crypto = {};
     }
 
-    namespace(ns);
-    namespace(ns.type);
-    namespace(ns.format);
-    namespace(ns.digest);
-    namespace(ns.crypto);
+    ns.Namespace(ns.type);
+    ns.Namespace(ns.format);
+    ns.Namespace(ns.digest);
+    ns.Namespace(ns.crypto);
 
-    ns.namespace = namespace;
     ns.register('type');
     ns.register('format');
     ns.register('digest');

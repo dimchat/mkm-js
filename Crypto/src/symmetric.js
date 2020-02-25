@@ -36,7 +36,7 @@
     var DecryptKey = ns.crypto.DecryptKey;
 
     var promise = new ns.type.String('Moky loves May Lee forever!');
-    promise = promise.getBytes();
+    promise = promise.getBytes(null);
 
     //
     //  Symmetric Cryptography Key
@@ -50,7 +50,7 @@
     //
     var SymmetricKey = function () {
     };
-    ns.type.Interface(SymmetricKey, EncryptKey, DecryptKey);
+    ns.Interface(SymmetricKey, EncryptKey, DecryptKey);
 
     SymmetricKey.prototype.equals = function (other) {
         // check by encryption
@@ -62,7 +62,7 @@
     /**
      *  Generate key with algorithm name
      *
-     * @param algorithm - algorithm name ('AES')
+     * @param algorithm {String} - algorithm name ('AES')
      * @returns {SymmetricKey}
      */
     SymmetricKey.generate = function (algorithm) {
@@ -75,8 +75,8 @@
     /**
      *  Register symmetric key class with algorithm
      *
-     * @param algorithm - key algorithm
-     * @param clazz - if key class is None, then remove with algorithm
+     * @param algorithm {String} - key algorithm
+     * @param clazz {Class} - if key class is None, then remove with algorithm
      */
     SymmetricKey.register = function (algorithm, clazz) {
         key_classes[algorithm] = clazz;
@@ -85,7 +85,7 @@
     /**
      *  Create symmetric key
      *
-     * @param key - key info (with algorithm='AES')
+     * @param key {{String: *}|SymmetricKey} - key info (with algorithm='AES')
      * @returns {SymmetricKey}
      */
     SymmetricKey.getInstance = function (key) {
@@ -97,6 +97,7 @@
         var algorithm = key['algorithm'];
         var clazz = key_classes[algorithm];
         if (typeof clazz === 'function') {
+            // noinspection JSValidateTypes
             return CryptographyKey.createInstance(clazz, key);
         }
         throw TypeError('key algorithm error: ' + algorithm);

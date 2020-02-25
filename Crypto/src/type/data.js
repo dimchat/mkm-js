@@ -31,13 +31,13 @@
     'use strict';
 
     /**
-     *  Create data bytes with capacity length, or another data bytes
+     *  Create data bytes with capacity, or another data bytes
      *
-     * @param length - capacity
+     * @param capacity {Number|bytes|Uint8Array|Number[]} - capacity or data array
      */
-    var bytes = function (length) {
+    var bytes = function (capacity) {
         ns.type.Object.call(this);
-        var value = length ? arguments[0] : 0;
+        var value = capacity ? arguments[0] : 0;
         if (typeof value === 'number') {
             // create empty array with capacity
             if (value < 1) {
@@ -62,8 +62,14 @@
             this.length = value.length;
         }
     };
-    ns.type.Class(bytes, ns.type.Object);
+    ns.Class(bytes, ns.type.Object, null);
 
+    /**
+     *  Check whether bytes equal
+     *
+     * @param other {bytes|Uint8Array|Number[]} - another array
+     * @returns {boolean}
+     */
     bytes.prototype.equals = function (other) {
         if (!other) {
             // empty array
@@ -78,20 +84,20 @@
                 // same object
                 return true;
             }
-            return ns.type.Arrays.equals(this.getBytes(), other.getBytes());
+            return ns.type.Arrays.equals(this.getBytes(false), other.getBytes(false));
         // } else if (other instanceof Uint8Array) {
         //     return ns.type.Arrays.equals(this.getBytes(), other);
         } else {
             // // try to convert to Uint8Array
             // other = new Uint8Array(other);
-            return ns.type.Arrays.equals(this.getBytes(), other);
+            return ns.type.Arrays.equals(this.getBytes(false), other);
         }
     };
 
     /**
      *  Get inner array
      *
-     * @param copy
+     * @param copy {boolean}
      * @returns {Uint8Array}
      */
     bytes.prototype.getBytes = function (copy) {
@@ -112,6 +118,13 @@
             return view;
         }
     };
+
+    /**
+     *  Get value with index
+     *
+     * @param index {Number}
+     * @returns {uint}
+     */
     bytes.prototype.getByte = function (index) {
         if (index < this.length) {
             return this.array[index];
@@ -119,6 +132,12 @@
             return 0;
         }
     };
+    /**
+     *  Set value with index
+     *
+     * @param index {Number}
+     * @param value {uint}
+     */
     bytes.prototype.setByte = function (index, value) {
         if (index >= this.array.length) {
             // expand the inner array
@@ -168,7 +187,7 @@
     /**
      *  Appends new elements to an array, and returns the new length of the array.
      *
-     * @param items New elements of the Array.
+     * @param items {Number|bytes|Uint8Array|Number[]} - New elements of the Array.
      * @returns {number}
      */
     bytes.prototype.push = function (items) {
@@ -179,7 +198,7 @@
             if (items instanceof Uint8Array) {
                 array = items;
             } else if (items instanceof bytes) {
-                array = items.getBytes();
+                array = items.getBytes(false);
             } else {
                 // try to convert array
                 array = new Uint8Array(items);
@@ -191,6 +210,8 @@
 
     /**
      *  Removes the last element from an array and returns it.
+     *
+     * @returns {uint}
      */
     bytes.prototype.pop = function () {
         if (this.length < 1) {
@@ -202,6 +223,11 @@
         return last;
     };
 
+    /**
+     *  Clone bytes
+     *
+     * @returns {bytes}
+     */
     bytes.prototype.copy = function () {
         return new bytes(this.getBytes(true));
     };
@@ -209,7 +235,7 @@
     /**
      *  Combines two or more arrays.
      *
-     * @param items Additional items to add to the end of new array.
+     * @param items {bytes|Uint8Array|Number[]} - Additional items to add to the end of new array.
      * @returns {bytes}
      */
     bytes.prototype.concat = function (items) {
@@ -223,10 +249,10 @@
     /**
      *  Convert Uint8Array to Array
      *
-     * @returns {int[]}
+     * @returns {Number[]}
      */
     bytes.prototype.toArray = function () {
-        var array = this.getBytes();
+        var array = this.getBytes(false);
         if (typeof Array.from === 'function') {
             return Array.from(array);
         } else {
@@ -237,7 +263,7 @@
     /**
      *  Creates bytes from an array-like or iterable object.
      *
-     * @param array An array-like or iterable object to convert to Uint8Array.
+     * @param array {Uint8Array|Number[]} - An array-like or iterable object to convert to Uint8Array.
      * @returns {bytes}
      */
     bytes.from = function (array) {

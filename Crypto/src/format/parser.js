@@ -36,12 +36,12 @@
     //
     var parser = function () {
     };
-    ns.type.Interface(parser);
+    ns.Interface(parser, null);
     /**
      *  Encode container object to text string
      *
-     * @param container
-     * @returns {null|string}
+     * @param container {{}|[]}
+     * @returns {String}
      */
     parser.prototype.encode = function (container) {
         console.assert(container != null, 'container empty');
@@ -51,8 +51,8 @@
     /**
      *  Decode text string to container object
      *
-     * @param string
-     * @returns {null|object}
+     * @param string {String}
+     * @returns {{}|[]}
      */
     parser.prototype.decode = function (string) {
         console.assert(string != null, 'string empty');
@@ -65,7 +65,7 @@
     //
     var json = function () {
     };
-    ns.type.Class(json, null, parser);
+    ns.Class(json, null, parser);
 
     json.prototype.encode = function (container) {
         return JSON.stringify(container);
@@ -80,7 +80,7 @@
     var P = function (lib) {
         this.parser = lib;
     };
-    ns.type.Class(P, null, parser);
+    ns.Class(P, null, parser);
 
     P.prototype.encode = function (container) {
         return this.parser.encode(container);
@@ -106,11 +106,11 @@
     //
     var parser = function () {
     };
-    ns.type.Interface(parser);
+    ns.Interface(parser, null);
     /**
      *  Encode public key to PEM content
      *
-     * @param key - key data (Uint8Array)
+     * @param key {Uint8Array}
      * @returns {String}
      */
     parser.prototype.encodePublicKey = function (key) {
@@ -121,7 +121,7 @@
     /**
      *  Encode private key to PEM content
      *
-     * @param key - key data (Uint8Array)
+     * @param key {Uint8Array}
      * @returns {String}
      */
     parser.prototype.encodePrivateKey = function (key) {
@@ -132,7 +132,7 @@
     /**
      *  Decode PEM content to public key
      *
-     * @param pem
+     * @param pem {String}
      * @returns {Uint8Array}
      */
     parser.prototype.decodePublicKey = function (pem) {
@@ -143,7 +143,7 @@
     /**
      *  Decode PEM content to private key
      *
-     * @param pem
+     * @param pem {String}
      * @returns {Uint8Array}
      */
     parser.prototype.decodePrivateKey = function (pem) {
@@ -157,7 +157,7 @@
     //
     var pem = function () {
     };
-    ns.type.Class(pem, null, parser);
+    ns.Class(pem, null, parser);
 
     pem.prototype.encodePublicKey = function (key) {
         console.assert(key != null, 'public key content empty');
@@ -186,7 +186,7 @@
     var P = function (lib) {
         this.parser = lib;
     };
-    ns.type.Class(P, null, parser);
+    ns.Class(P, null, parser);
 
     P.prototype.encodePublicKey = function (key) {
         return this.parser.encodePublicKey(key);

@@ -40,15 +40,15 @@
         /**
          *  Encode string to UTF8 data array
          *
-         * @param str
+         * @param string {String}
          * @returns {Uint8Array}
          */
-        encode: function (str) {
-            var len = str.length;
+        encode: function (string) {
+            var len = string.length;
             var array = new Data(len);
             var c;
             for (var i = 0; i < len; ++i) {
-                c = str.charCodeAt(i);
+                c = string.charCodeAt(i);
                 if (c <= 0) {
                     // end
                     break;
@@ -66,13 +66,13 @@
                     array.push(0x80 | ((c >>  0) & 0x003F));
                 }
             }
-            return array.getBytes();
+            return array.getBytes(false);
         },
         /**
          *  Decode UTF8 data array to string
          *
-         * @param array - Uint8Array
-         * @returns {string}
+         * @param array {Uint8Array}
+         * @returns {String}
          */
         decode: function (array) {
             var string = '';
@@ -123,12 +123,12 @@
         ns.type.Object.call(this);
         this.string = value;
     };
-    ns.type.Class(str, ns.type.Object);
+    ns.Class(str, ns.type.Object, null);
 
     /**
      *  Encode str to UTF8 data array
      *
-     * @param charset
+     * @param charset {String}
      * @returns {Uint8Array}
      */
     str.prototype.getBytes = function (charset) {
@@ -138,6 +138,12 @@
         throw Error('unknown charset: ' + charset);
     };
 
+    /**
+     *  Check whether strings equal
+     *
+     * @param other {str|String}
+     * @returns {boolean}
+     */
     str.prototype.equals = function (other) {
         if (!other) {
             return !this.string;
@@ -157,7 +163,6 @@
         var low2 = str2.toLowerCase();
         return low1 === low2;
     };
-
     str.prototype.equalsIgnoreCase = function (other) {
         if (!other) {
             return !this.string;
@@ -169,7 +174,6 @@
         }
     };
 
-    // noinspection JSUnusedGlobalSymbols
     str.prototype.valueOf = function () {
         return this.string;
     };
@@ -190,11 +194,17 @@
         return this.string.length;
     };
 
-    str.from = function (string) {
-        if (string instanceof Array) {
-            string = new Uint8Array(string);
+    /**
+     *  Create str from Array
+     *
+     * @param array {Array<Number>|Uint8Array}
+     * @returns {str}
+     */
+    str.from = function (array) {
+        if (array instanceof Array) {
+            array = new Uint8Array(array);
         }
-        return new str(string);
+        return new str(array);
     };
 
     //-------- namespace --------
