@@ -109,7 +109,7 @@
     /**
      *  Create String with data array or another string
      *
-     * @param value {Uint8Array|uint[]|str|String}
+     * @param value {Uint8Array|String|str}
      * @param charset {String}
      */
     var str = function (value, charset) {

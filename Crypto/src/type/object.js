@@ -30,27 +30,6 @@
 !function (ns) {
     'use strict';
 
-    /**
-     *  Check whether the object is an instance of the class
-     *
-     * @param object {Object} - instance
-     * @param clazz {Class} - class or interface
-     * @returns {boolean}
-     */
-    var is_instance = function (object, clazz) {
-        if (object instanceof clazz) {
-            return true;
-        }
-        var child = Object.getPrototypeOf(object);
-        var names = Object.getOwnPropertyNames(clazz.prototype);
-        for (var i = 0; i < names.length; ++i) {
-            if (!child.hasOwnProperty(names[i])) {
-                return false;
-            }
-        }
-        return true;
-    };
-
     //
     //  Object
     //
@@ -61,18 +40,6 @@
     obj.prototype.equals = function (other) {
         return this === other;
     };
-
-    /**
-     *  Check whether inherits from the class/interface
-     *
-     * @param clazz {Class} - class or interface
-     * @returns {boolean}
-     */
-    obj.prototype.isinstance = function (clazz) {
-        return is_instance(this, clazz);
-    };
-
-    obj.isinstance = is_instance;
 
     //-------- namespace --------
     ns.type.Object = obj;

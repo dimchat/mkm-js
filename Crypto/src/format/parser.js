@@ -65,7 +65,7 @@
     //
     var json = function () {
     };
-    ns.Class(json, null, parser);
+    ns.Class(json, ns.type.Object, parser);
 
     json.prototype.encode = function (container) {
         return JSON.stringify(container);
@@ -80,7 +80,7 @@
     var P = function (lib) {
         this.parser = lib;
     };
-    ns.Class(P, null, parser);
+    ns.Class(P, ns.type.Object, parser);
 
     P.prototype.encode = function (container) {
         return this.parser.encode(container);
@@ -157,7 +157,7 @@
     //
     var pem = function () {
     };
-    ns.Class(pem, null, parser);
+    ns.Class(pem, ns.type.Object, parser);
 
     pem.prototype.encodePublicKey = function (key) {
         console.assert(key != null, 'public key content empty');
@@ -186,7 +186,7 @@
     var P = function (lib) {
         this.parser = lib;
     };
-    ns.Class(P, null, parser);
+    ns.Class(P, ns.type.Object, parser);
 
     P.prototype.encodePublicKey = function (key) {
         return this.parser.encodePublicKey(key);

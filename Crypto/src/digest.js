@@ -53,7 +53,7 @@
     //
     var md5 = function () {
     };
-    ns.Class(md5, null, hash);
+    ns.Class(md5, ns.type.Object, hash);
 
     md5.prototype.digest = function (data) {
         console.assert(data != null, 'data empty');
@@ -66,7 +66,7 @@
     //
     var sha256 = function () {
     };
-    ns.Class(sha256, null, hash);
+    ns.Class(sha256, ns.type.Object, hash);
 
     sha256.prototype.digest = function (data) {
         console.assert(data != null, 'data empty');
@@ -79,7 +79,7 @@
     //
     var ripemd160 = function () {
     };
-    ns.Class(ripemd160, null, hash);
+    ns.Class(ripemd160, ns.type.Object, hash);
 
     ripemd160.prototype.digest = function (data) {
         console.assert(data != null, 'data empty');
@@ -93,7 +93,7 @@
     var H = function (lib) {
         this.hash = lib;
     };
-    ns.Class(H, null, hash);
+    ns.Class(H, ns.type.Object, hash);
 
     H.prototype.digest = function (data) {
         return this.hash.digest(data);

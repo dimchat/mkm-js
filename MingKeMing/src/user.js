@@ -37,7 +37,7 @@
     'use strict';
 
     var EncryptKey = ns.crypto.EncryptKey;
-    var VerifyKey = ns.crypto.VerifyKey;
+    var PublicKey = ns.crypto.PublicKey;
 
     var Entity = ns.Entity;
 
@@ -97,7 +97,7 @@
         }
         // 2. get key from meta
         key = meta_key.call(this);
-        if (key && ns.type.Object.isinstance(key, EncryptKey)) {
+        if (key && ns.Interface.conforms(key, EncryptKey)) {
             return key;
         }
         throw Error('failed to get encrypt key for user: ' + this.identifier);
@@ -114,7 +114,7 @@
         keys = [];
         // 1. get key from profile
         var key = profile_key.call(this);
-        if (key && ns.type.Object.isinstance(key, VerifyKey)) {
+        if (key && (key instanceof PublicKey)) {
             keys.push(key);
         }
         // 2. get key from meta

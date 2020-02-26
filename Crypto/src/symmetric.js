@@ -48,9 +48,10 @@
     //      ...
     //  }
     //
-    var SymmetricKey = function () {
+    var SymmetricKey = function (key) {
+        CryptographyKey.call(this, key);
     };
-    ns.Interface(SymmetricKey, EncryptKey, DecryptKey);
+    ns.Class(SymmetricKey, CryptographyKey, EncryptKey, DecryptKey);
 
     SymmetricKey.prototype.equals = function (other) {
         // check by encryption
@@ -91,7 +92,7 @@
     SymmetricKey.getInstance = function (key) {
         if (!key) {
             return null;
-        } else if (ns.type.Object.isinstance(key, SymmetricKey)) {
+        } else if (key instanceof SymmetricKey) {
             return key;
         }
         var algorithm = key['algorithm'];

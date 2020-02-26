@@ -31,6 +31,7 @@ crypto_tests = [];
         log('array after set: ', array);
         ns.type.Arrays.remove(array, 0xF4);
         log('array after removed: ', array);
+        assert(data instanceof ns.type.Object, 'super class error');
     };
     crypto_tests.push(test_bytes);
 

@@ -193,7 +193,7 @@
             return match_identifier.call(this, key_id_addr);
         } else if (key_id_addr instanceof Address) {
             return match_address.call(this, key_id_addr);
-        } else if (ns.type.Object.isinstance(key_id_addr, PublicKey)) {
+        } else if (key_id_addr instanceof PublicKey) {
             return match_public_key.call(this, key_id_addr);
         }
         // console.assert(false, 'error: ' + key_id_addr);

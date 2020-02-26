@@ -2,7 +2,7 @@
  * MingKeMing - User Module (v0.1.0)
  *
  * @author    moKy <albert.moky at gmail.com>
- * @date      Jan. 28, 2020
+ * @date      Feb. 27, 2020
  * @copyright (c) 2020 Albert Moky
  * @license   {@link https://mit-license.org | MIT License}
  */
@@ -325,7 +325,7 @@ if (typeof MingKeMing !== "object") {
             if (key_id_addr instanceof Address) {
                 return match_address.call(this, key_id_addr)
             } else {
-                if (ns.type.Object.isinstance(key_id_addr, PublicKey)) {
+                if (key_id_addr instanceof PublicKey) {
                     return match_public_key.call(this, key_id_addr)
                 }
             }
@@ -721,7 +721,7 @@ if (typeof MingKeMing !== "object") {
 }(MingKeMing);
 ! function(ns) {
     var EncryptKey = ns.crypto.EncryptKey;
-    var VerifyKey = ns.crypto.VerifyKey;
+    var PublicKey = ns.crypto.PublicKey;
     var Entity = ns.Entity;
     var User = function(identifier) {
         Entity.call(this, identifier)
@@ -751,7 +751,7 @@ if (typeof MingKeMing !== "object") {
             return key
         }
         key = meta_key.call(this);
-        if (key && ns.type.Object.isinstance(key, EncryptKey)) {
+        if (key && ns.Interface.conforms(key, EncryptKey)) {
             return key
         }
         throw Error("failed to get encrypt key for user: " + this.identifier)
@@ -763,7 +763,7 @@ if (typeof MingKeMing !== "object") {
         }
         keys = [];
         var key = profile_key.call(this);
-        if (key && ns.type.Object.isinstance(key, VerifyKey)) {
+        if (key && (key instanceof PublicKey)) {
             keys.push(key)
         }
         key = meta_key.call(this);

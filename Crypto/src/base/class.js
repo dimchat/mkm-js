@@ -31,6 +31,27 @@
     'use strict';
 
     /**
+     *  Check whether the object is an instance of the interface
+     *
+     * @param object {Object} - instance
+     * @param protocol {Class} - interface
+     * @returns {boolean}
+     */
+    var conforms = function (object, protocol) {
+        if (object instanceof protocol) {
+            return true;
+        }
+        var child = Object.getPrototypeOf(object);
+        var names = Object.getOwnPropertyNames(protocol.prototype);
+        for (var i = 0; i < names.length; ++i) {
+            if (!child.hasOwnProperty(names[i])) {
+                return false;
+            }
+        }
+        return true;
+    };
+
+    /**
      *  Inherits from an interface
      *
      * @param clazz {Class} - sub class
@@ -92,6 +113,8 @@
         }
         return child;
     };
+
+    interfacefy.conforms = conforms;
 
     /**
      *  Create a child class inherits from parent class and interfaces

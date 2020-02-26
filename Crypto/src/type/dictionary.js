@@ -124,7 +124,7 @@
         // } else if (ns.type.Object.prototype.equals.call(this, other)) {
         //     return true;
         } else if (other instanceof map) {
-            return arrays.equals(this.dictionary, other.dictionary);
+            return arrays.equals(this.dictionary, other.getMap(false));
         } else {
             return arrays.equals(this.dictionary, other);
         }

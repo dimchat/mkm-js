@@ -26,9 +26,12 @@
 //
 
 //! require 'class.js'
+//! require 'dictionary.js'
 
 !function (ns) {
     'use strict';
+
+    var Dictionary = ns.type.Dictionary;
 
     //
     //  Cryptography Key
@@ -40,20 +43,11 @@
     //      ...
     //  }
     //
-    var CryptographyKey = function () {
+    var CryptographyKey = function (key) {
+        Dictionary.call(this, key);
     };
-    ns.Interface(CryptographyKey, null);
-    /**
-     *  Check whether keys equal
-     *
-     * @param other {CryptographyKey}
-     * @returns {boolean}
-     */
-    CryptographyKey.prototype.equals = function (other) {
-        console.assert(other != null, 'other key empty');
-        console.assert(false, 'implement me!');
-        return false;
-    };
+    ns.Class(CryptographyKey, Dictionary, null);
+
     /**
      *  Get key data
      *
@@ -88,9 +82,19 @@
         }
     };
 
+    //-------- namespace --------
+    ns.crypto.CryptographyKey = CryptographyKey;
+
+    // ns.crypto.register('CryptographyKey');
+
+}(DIMP);
+
+!function (ns) {
+    'use strict';
+
     var EncryptKey = function () {
     };
-    ns.Interface(EncryptKey, CryptographyKey);
+    ns.Interface(EncryptKey, null);
     /**
      *  ciphertext = encrypt(plaintext, PW)
      *  ciphertext = encrypt(plaintext, PK)
@@ -106,7 +110,7 @@
 
     var DecryptKey = function () {
     };
-    ns.Interface(DecryptKey, CryptographyKey);
+    ns.Interface(DecryptKey, null);
     /**
      *  plaintext = decrypt(ciphertext, PW);
      *  plaintext = decrypt(ciphertext, SK);
@@ -122,7 +126,7 @@
 
     var SignKey = function () {
     };
-    ns.Interface(SignKey, CryptographyKey);
+    ns.Interface(SignKey, null);
     /**
      *  signature = sign(data, SK);
      *
@@ -137,7 +141,7 @@
 
     var VerifyKey = function () {
     };
-    ns.Interface(VerifyKey, CryptographyKey);
+    ns.Interface(VerifyKey, null);
     /**
      *  OK = verify(data, signature, PK)
      *
@@ -153,13 +157,11 @@
     };
 
     //-------- namespace --------
-    ns.crypto.CryptographyKey = CryptographyKey;
     ns.crypto.EncryptKey = EncryptKey;
     ns.crypto.DecryptKey = DecryptKey;
     ns.crypto.SignKey = SignKey;
     ns.crypto.VerifyKey = VerifyKey;
 
-    // ns.crypto.register('CryptographyKey');
     ns.crypto.register('EncryptKey');
     ns.crypto.register('DecryptKey');
     ns.crypto.register('SignKey');

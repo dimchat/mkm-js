@@ -43,9 +43,10 @@
     //      ...
     //  }
     //
-    var AsymmetricKey = function () {
+    var AsymmetricKey = function (key) {
+        CryptographyKey.call(this, key);
     };
-    ns.Interface(AsymmetricKey, CryptographyKey);
+    ns.Class(AsymmetricKey, CryptographyKey, null);
 
     AsymmetricKey.RSA = 'RSA'; //-- "RSA/ECB/PKCS1Padding", "SHA256withRSA"
     AsymmetricKey.ECC = 'ECC';
@@ -67,9 +68,10 @@
     var promise = 'Moky loves May Lee forever!';
     promise = ns.type.String.from(promise).getBytes(null);
 
-    var PublicKey = function () {
+    var PublicKey = function (key) {
+        AsymmetricKey.call(this, key);
     };
-    ns.Interface(PublicKey, AsymmetricKey, VerifyKey);
+    ns.Class(PublicKey, AsymmetricKey, VerifyKey);
 
     /**
      *  Check if this pubic key paired with the private key
@@ -113,7 +115,7 @@
     PublicKey.getInstance = function (key) {
         if (!key) {
             return null;
-        } else if (ns.type.Object.isinstance(key, PublicKey)) {
+        } else if (key instanceof PublicKey) {
             return key;
         }
         var algorithm = key['algorithm'];
@@ -139,9 +141,10 @@
     var AsymmetricKey = ns.crypto.AsymmetricKey;
     var SignKey = ns.crypto.SignKey;
 
-    var PrivateKey = function () {
+    var PrivateKey = function (key) {
+        AsymmetricKey.call(this, key);
     };
-    ns.Interface(PrivateKey, AsymmetricKey, SignKey);
+    ns.Class(PrivateKey, AsymmetricKey, SignKey);
 
     /**
      *  Check whether keys equal
@@ -199,7 +202,7 @@
     PrivateKey.getInstance = function (key) {
         if (!key) {
             return null;
-        } else if (ns.type.Object.isinstance(key, PrivateKey)) {
+        } else if (key instanceof PrivateKey) {
             return key;
         }
         var algorithm = key['algorithm'];
