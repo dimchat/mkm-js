@@ -90,53 +90,50 @@
         return null;
     };
 
+    // noinspection JSUnusedLocalSymbols
     /**
      *  Get profile property data with key
      *
-     * @param name {String}
+     * @param {String} name - property name
      * @returns {Object}
      */
     TAI.prototype.getProperty = function (name) {
-        console.assert(name !== null, 'property name empty');
         console.assert(false, 'implement me!');
         return null;
     };
-
+    // noinspection JSUnusedLocalSymbols
     /**
      *  Update profile property with key and data
      *  (this will reset 'data' and 'signature')
      *
-     * @param name {String}
-     * @param value {Object}
+     * @param {String} name - property name
+     * @param {Object} value - property value
      */
     TAI.prototype.setProperty = function (name, value) {
-        console.assert(name !== null, 'property name empty');
-        console.assert(value !== null, 'property value empty');
         console.assert(false, 'implement me!');
     };
 
     //-------- signature --------
 
+    // noinspection JSUnusedLocalSymbols
     /**
      *  Verify 'data' and 'signature' with public key
      *
-     * @param publicKey {VerifyKey}
+     * @param {VerifyKey} publicKey
      * @returns {boolean}
      */
     TAI.prototype.verify = function (publicKey) {
-        console.assert(publicKey !== null, 'public key empty');
         console.assert(false, 'implement me!');
         return false;
     };
-
+    // noinspection JSUnusedLocalSymbols
     /**
      *  Encode properties to 'data' and sign it to 'signature'
      *
-     * @param privateKey {SignKey}
+     * @param {SignKey} privateKey
      * @returns {Uint8Array}
      */
     TAI.prototype.sign = function (privateKey) {
-        console.assert(privateKey !== null, 'private key empty');
         console.assert(false, 'implement me!');
         return null;
     };
@@ -163,7 +160,7 @@
     /**
      *  Create profile
      *
-     * @param info {{}|ID}
+     * @param {{}|ID} info - ID or Profile info
      * @constructor
      */
     var Profile = function (info) {
@@ -345,7 +342,7 @@
     /**
      *  Set entity name
      *
-     * @param name {String}
+     * @param {String} name - Nickname
      */
     Profile.prototype.setName = function (name) {
         this.setProperty('name', name);
@@ -365,7 +362,7 @@
     /**
      *  Set public key for encryption
      *
-     * @param publicKey {EncryptKey}
+     * @param {EncryptKey} publicKey
      */
     Profile.prototype.setKey = function (publicKey) {
         this.key = publicKey;
@@ -378,7 +375,7 @@
     /**
      *  Register profile class
      *
-     * @param clazz {Class}
+     * @param {Class} clazz
      */
     Profile.register = function (clazz) {
         tai_classes.push(clazz);
@@ -387,7 +384,7 @@
     /**
      *  Create profile
      *
-     * @param dict {{}|Profile}
+     * @param {{}|Profile} dict - Profile info
      * @returns {Profile}
      */
     Profile.getInstance = function (dict) {

@@ -135,34 +135,15 @@
         return String.fromCharCode(this.value);
     };
 
-    NetworkType.prototype.isPerson = function () {
-        return (this.value === NetworkType.Main.value) ||
-            (this.value === NetworkType.BTCMain.value);
+    NetworkType.isUser = function (network) {
+        var main = NetworkType.Main.valueOf();
+        var btcMain = NetworkType.BTCMain.valueOf();
+        return ((network & main) === main) || (network === btcMain);
     };
 
-    NetworkType.prototype.isUser = function () {
-        return ((this.value & NetworkType.Main.value) === NetworkType.Main.value) ||
-            (this.value === NetworkType.BTCMain.value);
-    };
-
-    NetworkType.prototype.isGroup = function () {
-        return (this.value & NetworkType.Group.value) === NetworkType.Group.value;
-    };
-
-    NetworkType.prototype.isStation = function () {
-        return this.value === NetworkType.Station.value;
-    };
-
-    NetworkType.prototype.isProvider = function () {
-        return this.value === NetworkType.Provider.value;
-    };
-
-    NetworkType.prototype.isThing = function () {
-        return (this.value & NetworkType.Thing.value) === NetworkType.Thing.value;
-    };
-
-    NetworkType.prototype.isRobot = function () {
-        return this.value === NetworkType.Robot.value;
+    NetworkType.isGroup = function (network) {
+        var group = NetworkType.Group.valueOf();
+        return (network & group) === group;
     };
 
     //-------- namespace --------
@@ -210,15 +191,6 @@
         ETH:     (0x04),  // 0000 0100
         ExETH:   (0x05)   // 0000 0101
     });
-
-    /**
-     *  Indicates whether this meta contains seed string
-     *
-     * @returns {boolean}
-     */
-    MetaType.prototype.hasSeed = function () {
-        return (this.value & MetaType.MKM.value) === MetaType.MKM.value;
-    };
 
     //-------- namespace --------
     ns.protocol.MetaType = MetaType;

@@ -35,7 +35,7 @@ if (typeof DIMP !== 'object') {
     /**
      *  Make an object to be a namespace
      *
-     * @param space {namespace}
+     * @param {namespace} space
      * @returns {namespace}
      */
     var namespacefy = function (space) {
@@ -73,7 +73,7 @@ if (typeof DIMP !== 'object') {
     /**
      *  Register a class into current namespace with name
      *
-     * @param name {String}
+     * @param {String} name to export from ths space
      */
     namespace.prototype.register = function (name/*, clazz*/) {
         if (this.__all__.indexOf(name) < 0) {
@@ -89,7 +89,7 @@ if (typeof DIMP !== 'object') {
     /**
      *  Export from classes in current namespace
      *
-     * @param outerSpace {namespace} - namespace
+     * @param {namespace} outerSpace - outer namespace
      */
     namespace.prototype.exports = function (outerSpace) {
         // make sure the outer is a namespace

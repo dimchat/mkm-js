@@ -99,8 +99,8 @@
     /**
      *  Register symmetric key class with algorithm
      *
-     * @param algorithm {String} - key algorithm
-     * @param clazz {Class} - if key class is None, then remove with algorithm
+     * @param {String} algorithm - key algorithm
+     * @param {Class} clazz - if key class is None, then remove with algorithm
      */
     PublicKey.register = function (algorithm, clazz) {
         public_key_classes[algorithm] = clazz;
@@ -109,7 +109,7 @@
     /**
      *  Create symmetric key
      *
-     * @param key {{}|PublicKey} - key info (with algorithm='AES')
+     * @param {{}|PublicKey} key - key info (with algorithm='AES')
      * @returns {PublicKey}
      */
     PublicKey.getInstance = function (key) {
@@ -149,7 +149,7 @@
     /**
      *  Check whether keys equal
      *
-     * @param other {PrivateKey}
+     * @param {PrivateKey} other - another private key
      * @returns {boolean}
      */
     PrivateKey.prototype.equals = function (other) {
@@ -173,7 +173,7 @@
     /**
      *  Generate key with algorithm name
      *
-     * @param algorithm {String} - algorithm name ('AES')
+     * @param {String} algorithm - algorithm name ('RSA')
      * @returns {PrivateKey}
      */
     PrivateKey.generate = function (algorithm) {
@@ -186,8 +186,8 @@
     /**
      *  Register symmetric key class with algorithm
      *
-     * @param algorithm {String} - key algorithm
-     * @param clazz {Class} - if key class is None, then remove with algorithm
+     * @param {String} algorithm - key algorithm
+     * @param {Class} clazz - if key class is None, then remove with algorithm
      */
     PrivateKey.register = function (algorithm, clazz) {
         private_key_classes[algorithm] = clazz;
@@ -196,7 +196,7 @@
     /**
      *  Create symmetric key
      *
-     * @param key {{}|PrivateKey} - key info (with algorithm='AES')
+     * @param {{}|PrivateKey} key - key info (with algorithm='AES')
      * @returns {PrivateKey}
      */
     PrivateKey.getInstance = function (key) {

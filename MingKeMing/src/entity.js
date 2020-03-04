@@ -62,7 +62,7 @@
     /**
      *  Check whether the same user/group
      *
-     * @param other {Entity|ID}
+     * @param {Entity|ID} other - another entity
      * @returns {boolean}
      */
     Entity.prototype.equals = function (other) {
@@ -90,7 +90,7 @@
     Entity.prototype.toString = function () {
         var clazz = Object.getPrototypeOf(this).constructor;
         return '<' + clazz.name
-            + '|' + this.getType().toString()
+            + '|' + this.getType()
             + ' ' + this.identifier
             + ' (' + this.getNumber().toString() + ')'
             + ' "' + this.getName() + '">';
@@ -98,7 +98,7 @@
     Entity.prototype.toLocaleString = function () {
         var clazz = Object.getPrototypeOf(this).constructor;
         return '<' + clazz.name
-            + '|' + this.getType().toLocaleString()
+            + '|' + this.getType()
             + ' ' + this.identifier
             + ' (' + this.getNumber().toLocaleString() + ')'
             + ' "' + this.getName() + '">';
@@ -107,7 +107,7 @@
     /**
      *  Get entity type
      *
-     * @returns {NetworkType}
+     * @returns {char} 0 ~ 255
      */
     Entity.prototype.getType = function () {
         return this.identifier.getType();
@@ -116,7 +116,7 @@
     /**
      *  Get Search Number
      *
-     * @returns {Number}
+     * @returns {int} 1 ~ 4294967295 (2^32-1)
      */
     Entity.prototype.getNumber = function () {
         return this.identifier.getNumber();

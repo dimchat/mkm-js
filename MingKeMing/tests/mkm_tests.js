@@ -16,14 +16,14 @@ mkm_tests = [];
     var test_broadcast_id = function () {
         var anyone = ID.ANYONE;
         log('anyone: ' , anyone);
-        assert(anyone.getType() === NetworkType.Main, 'ID type error');
+        assert(NetworkType.Main.equals(anyone.getType()) === true, 'ID type error');
     };
     mkm_tests.push(test_broadcast_id);
 
     var test_id = function () {
         var moky = ID.getInstance('moky@4DnqXWdTV8wuZgfqSCX9GjE2kNq7HJrUgQ');
         log('moky', moky);
-        assert(moky.getType().isUser() === true, 'ID type error');
+        assert(moky.isUser() === true, 'ID type error');
     };
     mkm_tests.push(test_id);
 
@@ -31,7 +31,7 @@ mkm_tests = [];
         var moky = ID.getInstance('moky@4DnqXWdTV8wuZgfqSCX9GjE2kNq7HJrUgQ');
         var user = new User(moky);
         log('moky', user);
-        assert(user.getType().isUser() === true, 'user ID type error');
+        assert(user.identifier.isUser() === true, 'user ID type error');
     };
     mkm_tests.push(test_user);
 
@@ -39,7 +39,7 @@ mkm_tests = [];
         var id = ID.getInstance('Group-Naruto@7ThVZeDuQAdG3eSDF6NeFjMDPjKN5SbrnM');
         var group = new Group(id);
         log('group', group);
-        assert(group.getType().isGroup() === true, 'group ID type error');
+        assert(group.identifier.isGroup() === true, 'group ID type error');
     };
     mkm_tests.push(test_group);
 

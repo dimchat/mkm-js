@@ -51,7 +51,7 @@
     /**
      *  Encode data array to HEX string
      *
-     * @param data {Uint8Array}
+     * @param {Uint8Array} data
      * @returns {String}
      */
     var hex_encode = function (data) {
@@ -69,16 +69,16 @@
     /**
      *  Decode HEX string to data array
      *
-     * @param str {String}
+     * @param {String} string
      * @returns {Uint8Array}
      */
-    var hex_decode = function (str) {
+    var hex_decode = function (string) {
         var i = 0;
-        var len = str.length;
+        var len = string.length;
         if (len > 2) {
             // skip '0x'
-            if (str[0] === '0') {
-                if (str[1] === 'x' || str[1] === 'X') {
+            if (string[0] === '0') {
+                if (string[1] === 'x' || string[1] === 'X') {
                     i += 2;
                 }
             }
@@ -88,8 +88,8 @@
         --len; // for condition: i < (len - 1)
         var hi, lo;
         for (; i < len; i+=2) {
-            hi = hex_values[str.charCodeAt(i)];
-            lo = hex_values[str.charCodeAt(i+1)];
+            hi = hex_values[string.charCodeAt(i)];
+            lo = hex_values[string.charCodeAt(i+1)];
             data.push((hi << 4) | lo);
         }
         return data.getBytes(false);
@@ -124,7 +124,7 @@
     /**
      *  Encode data array to Base64 string
      *
-     * @param data {Uint8Array}
+     * @param {Uint8Array} data
      * @returns {String}
      */
     var base64_encode = function (data) {
@@ -177,7 +177,7 @@
     /**
      *  Decode Base64 string to data array
      *
-     * @param string {String}
+     * @param {String} string
      * @returns {Uint8Array}
      */
     var base64_decode = function (string) {
@@ -217,25 +217,25 @@
     var coder = function () {
     };
     ns.Interface(coder, null);
+    // noinspection JSUnusedLocalSymbols
     /**
      *  Encode binary data to text string
      *
-     * @param data {Uint8Array}
+     * @param {Uint8Array} data
      * @returns {String}
      */
     coder.prototype.encode = function (data) {
-        console.assert(data != null, 'data empty');
         console.assert(false, 'implement me!');
         return null;
     };
+    // noinspection JSUnusedLocalSymbols
     /**
      *  Decode text string to binary data
      *
-     * @param string {String}
+     * @param {String} string
      * @returns {Uint8Array}
      */
     coder.prototype.decode = function (string) {
-        console.assert(string != null, 'string empty');
         console.assert(false, 'implement me!');
         return null;
     };
@@ -274,14 +274,13 @@
     var base58 = function () {
     };
     ns.Class(base58, ns.type.Object, coder);
-
+    // noinspection JSUnusedLocalSymbols
     base58.prototype.encode = function (data) {
-        console.assert(data != null, 'data empty');
         console.assert(false, 'Base58 encode not implemented');
         return null;
     };
+    // noinspection JSUnusedLocalSymbols
     base58.prototype.decode = function (string) {
-        console.assert(string != null, 'string empty');
         console.assert(false, 'Base58 decode not implemented');
         return null;
     };

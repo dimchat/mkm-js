@@ -36,14 +36,14 @@
     var hash = function () {
     };
     ns.Interface(hash, null);
+    // noinspection JSUnusedLocalSymbols
     /**
      *  Get digest of data
      *
-     * @param data {Uint8Array}
+     * @param {Uint8Array} data
      * @returns {Uint8Array}
      */
     hash.prototype.digest = function (data) {
-        console.assert(data != null, 'data empty');
         console.assert(false, 'implement me!');
         return null;
     };
@@ -54,9 +54,8 @@
     var md5 = function () {
     };
     ns.Class(md5, ns.type.Object, hash);
-
+    // noinspection JSUnusedLocalSymbols
     md5.prototype.digest = function (data) {
-        console.assert(data != null, 'data empty');
         console.assert(false, 'MD5 not implemented');
         return null;
     };
@@ -67,9 +66,8 @@
     var sha256 = function () {
     };
     ns.Class(sha256, ns.type.Object, hash);
-
+    // noinspection JSUnusedLocalSymbols
     sha256.prototype.digest = function (data) {
-        console.assert(data != null, 'data empty');
         console.assert(false, 'SHA256 not implemented');
         return null;
     };
@@ -80,9 +78,8 @@
     var ripemd160 = function () {
     };
     ns.Class(ripemd160, ns.type.Object, hash);
-
+    // noinspection JSUnusedLocalSymbols
     ripemd160.prototype.digest = function (data) {
-        console.assert(data != null, 'data empty');
         console.assert(false, 'RIPEMD160 not implemented');
         return null;
     };

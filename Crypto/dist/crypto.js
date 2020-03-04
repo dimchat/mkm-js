@@ -135,14 +135,16 @@ if (typeof DIMP !== "object") {
             child = function() {}
         }
         if (parent) {
-            if (!(parent instanceof Array)) {
-                var list = [];
+            var ancestors;
+            if (parent instanceof Array) {
+                ancestors = parent
+            } else {
+                ancestors = [];
                 for (var i = 1; i < arguments.length; ++i) {
-                    list.push(arguments[i])
+                    ancestors.push(arguments[i])
                 }
-                parent = list
             }
-            child = inherits(child, parent)
+            child = inherits(child, ancestors)
         }
         return child
     };
@@ -157,14 +159,16 @@ if (typeof DIMP !== "object") {
         child.prototype = Object.create(parent.prototype);
         inherit(child, parent);
         if (interfaces) {
-            if (!(interfaces instanceof Array)) {
-                var list = [];
+            var ancestors;
+            if (interfaces instanceof Array) {
+                ancestors = interfaces
+            } else {
+                ancestors = [];
                 for (var i = 2; i < arguments.length; ++i) {
-                    list.push(arguments[i])
+                    ancestors.push(arguments[i])
                 }
-                interfaces = list
             }
-            child = inherits(child, interfaces)
+            child = inherits(child, ancestors)
         }
         child.prototype.constructor = child;
         return child
@@ -697,12 +701,12 @@ if (typeof DIMP !== "object") {
         }
         return str
     };
-    var hex_decode = function(str) {
+    var hex_decode = function(string) {
         var i = 0;
-        var len = str.length;
+        var len = string.length;
         if (len > 2) {
-            if (str[0] === "0") {
-                if (str[1] === "x" || str[1] === "X") {
+            if (string[0] === "0") {
+                if (string[1] === "x" || string[1] === "X") {
                     i += 2
                 }
             }
@@ -712,8 +716,8 @@ if (typeof DIMP !== "object") {
         --len;
         var hi, lo;
         for (; i < len; i += 2) {
-            hi = hex_values[str.charCodeAt(i)];
-            lo = hex_values[str.charCodeAt(i + 1)];
+            hi = hex_values[string.charCodeAt(i)];
+            lo = hex_values[string.charCodeAt(i + 1)];
             data.push((hi << 4) | lo)
         }
         return data.getBytes(false)
@@ -791,12 +795,10 @@ if (typeof DIMP !== "object") {
     var coder = function() {};
     ns.Interface(coder, null);
     coder.prototype.encode = function(data) {
-        console.assert(data != null, "data empty");
         console.assert(false, "implement me!");
         return null
     };
     coder.prototype.decode = function(string) {
-        console.assert(string != null, "string empty");
         console.assert(false, "implement me!");
         return null
     };
@@ -819,12 +821,10 @@ if (typeof DIMP !== "object") {
     var base58 = function() {};
     ns.Class(base58, ns.type.Object, coder);
     base58.prototype.encode = function(data) {
-        console.assert(data != null, "data empty");
         console.assert(false, "Base58 encode not implemented");
         return null
     };
     base58.prototype.decode = function(string) {
-        console.assert(string != null, "string empty");
         console.assert(false, "Base58 decode not implemented");
         return null
     };
@@ -851,12 +851,10 @@ if (typeof DIMP !== "object") {
     var parser = function() {};
     ns.Interface(parser, null);
     parser.prototype.encode = function(container) {
-        console.assert(container != null, "container empty");
         console.assert(false, "implement me!");
         return null
     };
     parser.prototype.decode = function(string) {
-        console.assert(string != null, "string empty");
         console.assert(false, "implement me!");
         return null
     };
@@ -887,44 +885,36 @@ if (typeof DIMP !== "object") {
     var parser = function() {};
     ns.Interface(parser, null);
     parser.prototype.encodePublicKey = function(key) {
-        console.assert(key != null, "public key empty");
         console.assert(false, "implement me!");
         return null
     };
     parser.prototype.encodePrivateKey = function(key) {
-        console.assert(key != null, "private key empty");
         console.assert(false, "implement me!");
         return null
     };
     parser.prototype.decodePublicKey = function(pem) {
-        console.assert(pem != null, "pem content empty");
         console.assert(false, "implement me!");
         return null
     };
     parser.prototype.decodePrivateKey = function(pem) {
-        console.assert(pem != null, "pem content empty");
         console.assert(false, "implement me!");
         return null
     };
     var pem = function() {};
     ns.Class(pem, ns.type.Object, parser);
     pem.prototype.encodePublicKey = function(key) {
-        console.assert(key != null, "public key content empty");
         console.assert(false, "PEM parser not implemented");
         return null
     };
     pem.prototype.encodePrivateKey = function(key) {
-        console.assert(key != null, "private key content empty");
         console.assert(false, "PEM parser not implemented");
         return null
     };
     pem.prototype.decodePublicKey = function(pem) {
-        console.assert(pem != null, "pem content empty");
         console.assert(false, "PEM parser not implemented");
         return null
     };
     pem.prototype.decodePrivateKey = function(pem) {
-        console.assert(pem != null, "pem content empty");
         console.assert(false, "PEM parser not implemented");
         return null
     };
@@ -953,28 +943,24 @@ if (typeof DIMP !== "object") {
     var hash = function() {};
     ns.Interface(hash, null);
     hash.prototype.digest = function(data) {
-        console.assert(data != null, "data empty");
         console.assert(false, "implement me!");
         return null
     };
     var md5 = function() {};
     ns.Class(md5, ns.type.Object, hash);
     md5.prototype.digest = function(data) {
-        console.assert(data != null, "data empty");
         console.assert(false, "MD5 not implemented");
         return null
     };
     var sha256 = function() {};
     ns.Class(sha256, ns.type.Object, hash);
     sha256.prototype.digest = function(data) {
-        console.assert(data != null, "data empty");
         console.assert(false, "SHA256 not implemented");
         return null
     };
     var ripemd160 = function() {};
     ns.Class(ripemd160, ns.type.Object, hash);
     ripemd160.prototype.digest = function(data) {
-        console.assert(data != null, "data empty");
         console.assert(false, "RIPEMD160 not implemented");
         return null
     };
@@ -1020,30 +1006,25 @@ if (typeof DIMP !== "object") {
 ! function(ns) {
     var EncryptKey = function() {};
     ns.Interface(EncryptKey, null);
-    EncryptKey.prototype.encrypt = function(data) {
-        console.assert(data != null, "data empty");
+    EncryptKey.prototype.encrypt = function(plaintext) {
         console.assert(false, "implement me!");
         return null
     };
     var DecryptKey = function() {};
     ns.Interface(DecryptKey, null);
-    DecryptKey.prototype.decrypt = function(data) {
-        console.assert(data != null, "data empty");
+    DecryptKey.prototype.decrypt = function(ciphertext) {
         console.assert(false, "implement me!");
         return null
     };
     var SignKey = function() {};
     ns.Interface(SignKey, null);
     SignKey.prototype.sign = function(data) {
-        console.assert(data != null, "data empty");
         console.assert(false, "implement me!");
         return null
     };
     var VerifyKey = function() {};
     ns.Interface(VerifyKey, null);
     VerifyKey.prototype.verify = function(data, signature) {
-        console.assert(data != null, "data empty");
-        console.assert(signature != null, "signature empty");
         console.assert(false, "implement me!");
         return false
     };

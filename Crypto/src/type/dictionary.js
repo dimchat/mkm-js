@@ -38,8 +38,8 @@
         /**
          *  Remove the item from array
          *
-         * @param array {[]}
-         * @param item {*}
+         * @param {[]} array
+         * @param {*} item
          * @returns {[]}
          */
         remove: function (array, item) {
@@ -53,8 +53,8 @@
         /**
          *  Check whether the two arrays are equal
          *
-         * @param array1 {[]|Uint8Array|{}}
-         * @param array2 {[]|Uint8Array|{}}
+         * @param {Uint8Array|[]|{}} array1
+         * @param {Uint8Array|[]|{}} array2
          * @returns {boolean}
          */
         equals: function (array1, array2) {
@@ -95,7 +95,7 @@
     /**
      *  Create dictionary with values or JSON string
      *
-     * @param entries {{}|map|String}
+     * @param {{}|map|String} entries
      */
     var map = function (entries) {
         if (!entries) {
@@ -115,7 +115,7 @@
     /**
      *  Check whether all entities equal
      *
-     * @param other {map|{}}
+     * @param {map|{}} other - another map
      * @returns {boolean}
      */
     map.prototype.equals = function (other) {
@@ -149,7 +149,7 @@
     /**
      *  Get inner dictionary
      *
-     * @param copy {boolean} - clone when true
+     * @param {boolean} copy - clone when true
      * @returns {{}}
      */
     map.prototype.getMap = function (copy) {
@@ -173,7 +173,7 @@
     /**
      *  Get value for key
      *
-     * @param key {String}
+     * @param {String} key
      * @returns {*}
      */
     map.prototype.getValue = function (key) {
@@ -183,8 +183,8 @@
     /**
      *  Set value for key
      *
-     * @param key {String}
-     * @param value {Object}
+     * @param {String} key
+     * @param {Object} value
      */
     map.prototype.setValue = function (key, value) {
         if (value) {
@@ -197,7 +197,7 @@
     /**
      *  Create a map with entities from another object or JSON string
      *
-     * @param dict {{}|map|String}
+     * @param {{}|map|String} dict
      * @returns {map}
      */
     map.from = function (dict) {

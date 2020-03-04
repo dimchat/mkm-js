@@ -54,17 +54,17 @@
     /**
      *  get address type
      *
-     * @returns {NetworkType}
+     * @returns {int} 0 ~ 255
      */
     Address.prototype.getNetwork = function () {
         console.assert(false, 'implement me!');
-        return null;
+        return 0;
     };
 
     /**
      *  get search number
      *
-     * @returns {Number}
+     * @returns {int} 1 ~ 4294967295 (2^32-1)
      */
     Address.prototype.getCode = function () {
         console.assert(false, 'implement me!');
@@ -77,14 +77,28 @@
      * @returns {boolean}
      */
     Address.prototype.isBroadcast = function () {
-        var network = this.getNetwork();
-        if (Address.EVERYWHERE.getNetwork().equals(network)) {
-            return this.equals(Address.EVERYWHERE);
+        if (this.getCode() !== BROADCAST_CODE) {
+            return false;
         }
-        if (Address.ANYWHERE.getNetwork().equals(network)) {
-            return this.equals(Address.ANYWHERE);
+        var network = this.getNetwork();
+        if (network === NetworkType.Group.valueOf()) {
+            // group address
+            return this.equals(EVERYWHERE);
+        }
+        if (network === NetworkType.Main.valueOf()) {
+            // user address
+            return this.equals(ANYWHERE);
         }
         return false;
+    };
+
+    Address.prototype.isUser = function () {
+        var network = this.getNetwork();
+        return NetworkType.isUser(network);
+    };
+    Address.prototype.isGroup = function () {
+        var network = this.getNetwork();
+        return NetworkType.isGroup(network);
     };
 
     //-------- runtime --------
@@ -93,7 +107,7 @@
     /**
      *  Add extended Address class to process new format
      *
-     * @param clazz {Class} - extended Address class
+     * @param {Class} clazz - extended Address class
      */
     Address.register = function (clazz) {
         address_classes.push(clazz);
@@ -102,7 +116,7 @@
     /**
      *  Create/get instance of Address
      *
-     * @param string {String} - address string/object
+     * @param {String} string - address string/object
      * @returns {Address}
      */
     Address.getInstance = function (string) {
@@ -112,13 +126,13 @@
             return string;
         }
         // address for broadcast
-        if (Address.ANYWHERE.equalsIgnoreCase(string)) {
+        if (ANYWHERE.equalsIgnoreCase(string)) {
             // noinspection JSValidateTypes
-            return Address.ANYWHERE;
+            return ANYWHERE;
         }
-        if (Address.EVERYWHERE.equalsIgnoreCase(string)) {
+        if (EVERYWHERE.equalsIgnoreCase(string)) {
             // noinspection JSValidateTypes
-            return Address.EVERYWHERE;
+            return EVERYWHERE;
         }
         // try each subclass to parse address
         var clazz;
@@ -140,6 +154,9 @@
     //
     var ConstantAddress = function (string, network, number) {
         Address.call(this, string);
+        if (network instanceof NetworkType) {
+            network = network.valueOf();
+        }
         this.network = network;
         this.number = number;
     };
@@ -156,10 +173,11 @@
     /**
      *  Address for broadcast
      */
-    Address.ANYWHERE = new ConstantAddress('anywhere',
-        ns.protocol.NetworkType.Main, 9527);
-    Address.EVERYWHERE = new ConstantAddress('everywhere',
-        ns.protocol.NetworkType.Group, 9527);
+    var BROADCAST_CODE = 9527;
+    var ANYWHERE = new ConstantAddress('anywhere', NetworkType.Main, BROADCAST_CODE);
+    var EVERYWHERE = new ConstantAddress('everywhere', NetworkType.Group, BROADCAST_CODE);
+    Address.ANYWHERE = ANYWHERE;
+    Address.EVERYWHERE = EVERYWHERE;
 
     //-------- namespace --------
     ns.Address = Address;

@@ -126,8 +126,8 @@
     /**
      *  Verify data and signature with user's public keys
      *
-     * @param data {Uint8Array}
-     * @param signature {Uint8Array}
+     * @param {Uint8Array} data
+     * @param {Uint8Array} signature
      * @returns {boolean}
      */
     User.prototype.verify = function (data, signature) {
@@ -146,7 +146,7 @@
     /**
      *  Encrypt data, try profile.key first, if not found, use meta.key
      *
-     * @param plaintext {Uint8Array}
+     * @param {Uint8Array} plaintext
      * @returns {Uint8Array}
      */
     User.prototype.encrypt = function (plaintext) {
@@ -176,7 +176,7 @@
     /**
      *  Sign data with user's private key
      *
-     * @param data {Uint8Array}
+     * @param {Uint8Array} data
      * @returns {Uint8Array}
      */
     User.prototype.sign = function (data) {
@@ -187,7 +187,7 @@
     /**
      *  Decrypt data, try PrivateKey(profile.key) first, if not set, use PrivateKey(meta.key)
      *
-     * @param ciphertext {Uint8Array}
+     * @param {Uint8Array} ciphertext
      * @returns {Uint8Array}
      */
     User.prototype.decrypt = function (ciphertext) {

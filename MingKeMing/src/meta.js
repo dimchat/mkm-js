@@ -48,6 +48,15 @@
     var ID = ns.ID;
 
     /**
+     *  Indicates whether this meta contains seed string
+     *
+     * @returns {boolean}
+     */
+    var contains_seed = function (version) {
+        return (version & MetaType.MKM.value) === MetaType.MKM.value;
+    };
+
+    /**
      *  User/Group Meta data
      *  ~~~~~~~~~~~~~~~~~~~~
      *  This class is used to generate entity ID
@@ -71,7 +80,11 @@
          *      0x02 - btc_address
          *      0x03 - username@btc_address
          */
-        this.version = new MetaType(map['version']);
+        var version = map['version'];
+        if (version instanceof MetaType) {
+            version = version.valueOf();
+        }
+        this.version = version;
         /**
          *  Public key (used for signature)
          *
@@ -79,7 +92,7 @@
          */
         this.key = PublicKey.getInstance(map['key']);
         // seed & fingerprint
-        if (this.version.hasSeed()) {
+        if (contains_seed(version)) {
             /**
              *  Seed to generate fingerprint
              *
@@ -104,7 +117,7 @@
     /**
      *  Check whether meta equal
      *
-     * @param other {Meta}
+     * @param {Meta} other - another meta
      * @returns {boolean}
      */
     Meta.prototype.equals = function (other) {
@@ -128,7 +141,7 @@
             if (!this.key) {
                 // meta.key should not be empty
                 this.status = -1;
-            } else if (this.version.hasSeed()) {
+            } else if (contains_seed(this.version)) {
                 if (!this.seed || !this.fingerprint) {
                     // seed and fingerprint should not be empty
                     this.status = -1;
@@ -156,7 +169,7 @@
             return true;
         }
         // check with seed & fingerprint
-        if (this.version.hasSeed()) {
+        if (contains_seed(this.version)) {
             // check whether keys equal by verifying signature
             var data = ns.type.String.from(this.seed).getBytes();
             var signature = this.fingerprint;
@@ -182,7 +195,7 @@
      *  Check whether meta matches Public Key, ID, or Address
      *  (must call this when received a new meta from network)
      *
-     * @param key_id_addr {PublicKey|ID|Address}
+     * @param {PublicKey|ID|Address} key_id_addr - public key or ID or address
      * @returns {boolean}
      */
     Meta.prototype.matches = function (key_id_addr) {
@@ -203,7 +216,7 @@
     /**
      *  Generate ID with meta info and network type
      *
-     * @param network {NetworkType}
+     * @param {NetworkType|int} network - Network ID (0 ~ 255)
      * @returns {ID}
      */
     Meta.prototype.generateIdentifier = function (network) {
@@ -211,14 +224,14 @@
         return new ID(this.seed, address);
     };
 
+    // noinspection JSUnusedLocalSymbols
     /**
      *  Generate address with meta info and address type
      *
-     * @param network {NetworkType}
+     * @param {NetworkType|int} network - Network ID (0 ~ 255)
      * @returns {Address}
      */
     Meta.prototype.generateAddress = function (network) {
-        console.assert(network instanceof NetworkType, 'network error: ' + network);
         console.assert(false, 'implement me!');
         return null;
     };
@@ -226,9 +239,9 @@
     /**
      *  Generate meta with private key and seed
      *
-     * @param version {MetaType}
+     * @param {MetaType} version - Meta algorithm version
      * @param privateKey
-     * @param seed {String}
+     * @param {String} seed - Seed string for generating ID
      * @returns {Meta}
      */
     Meta.generate = function (version, privateKey, seed) {
@@ -236,7 +249,7 @@
             'version': version,
             'key': privateKey.getPublicKey()
         };
-        if (version.hasSeed()) {
+        if (contains_seed(version)) {
             // generate fingerprint with private key
             var data = ns.type.String.from(seed).getBytes();
             var fingerprint = privateKey.sign(data);
@@ -252,8 +265,8 @@
     /**
      *  Register meta class with type
      *
-     * @param version {MetaType}
-     * @param clazz {Class}
+     * @param {MetaType} version - Meta algorithm version
+     * @param {Class} clazz - Meta class
      */
     Meta.register = function (version, clazz) {
         var value;
@@ -268,7 +281,7 @@
     /**
      *  Create meta
      *
-     * @param meta {{}|Meta}
+     * @param {{}|Meta} meta - Meta info
      * @returns {Meta}
      */
     Meta.getInstance = function (meta) {

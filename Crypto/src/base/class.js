@@ -33,8 +33,8 @@
     /**
      *  Check whether the object is an instance of the interface
      *
-     * @param object {Object} - instance
-     * @param protocol {Class} - interface
+     * @param {Object} object - instance
+     * @param {Class} protocol - interface
      * @returns {boolean}
      */
     var conforms = function (object, protocol) {
@@ -54,8 +54,8 @@
     /**
      *  Inherits from an interface
      *
-     * @param clazz {Class} - sub class
-     * @param protocol {Class} - class or interface
+     * @param {Class} clazz - sub class
+     * @param {Class} protocol - class or interface
      * @returns {Class}
      */
     var inherit = function (clazz, protocol) {
@@ -78,8 +78,8 @@
     /**
      *  Inherits from interfaces
      *
-     * @param clazz {Class} - subclass
-     * @param interfaces {Class[]} - parent class or interfaces
+     * @param {Class} clazz
+     * @param {Class[]} interfaces
      * @returns {Class}
      */
     var inherits = function (clazz, interfaces) {
@@ -92,8 +92,8 @@
     /**
      *  Create an interface inherits from other interfaces
      *
-     * @param child {Class} - sub interface
-     * @param parent {Class[]} - parent interfaces
+     * @param {Class} child - sub interface
+     * @param {Class[]} parent - parent interfaces
      */
     var interfacefy = function (child, parent) {
         if (!child) {
@@ -101,15 +101,16 @@
             };
         }
         if (parent) {
-            if (!(parent instanceof Array)) {
-                // convert arguments to list
-                var list = [];
+            var ancestors;
+            if (parent instanceof Array) {
+                ancestors = parent;
+            } else {
+                ancestors = [];
                 for (var i = 1; i < arguments.length; ++i) {
-                    list.push(arguments[i]);
+                    ancestors.push(arguments[i]);
                 }
-                parent = list;
             }
-            child = inherits(child, parent);
+            child = inherits(child, ancestors);
         }
         return child;
     };
@@ -119,9 +120,9 @@
     /**
      *  Create a child class inherits from parent class and interfaces
      *
-     * @param child {Class} - subclass
-     * @param parent {Class} - super class
-     * @param interfaces {Class[]} - interfaces
+     * @param {Class} child - subclass
+     * @param {Class} parent - super class
+     * @param {Class[]} interfaces
      * @returns {Class}
      * @constructor
      */
@@ -138,15 +139,16 @@
         inherit(child, parent);
         // implements Interface(s)
         if (interfaces) {
-            if (!(interfaces instanceof Array)) {
-                // convert arguments to list
-                var list = [];
+            var ancestors;
+            if (interfaces instanceof Array) {
+                ancestors = interfaces;
+            } else {
+                ancestors = [];
                 for (var i = 2; i < arguments.length; ++i) {
-                    list.push(arguments[i]);
+                    ancestors.push(arguments[i]);
                 }
-                interfaces = list;
             }
-            child = inherits(child, interfaces);
+            child = inherits(child, ancestors);
         }
         // noinspection JSUnusedGlobalSymbols
         child.prototype.constructor = child;

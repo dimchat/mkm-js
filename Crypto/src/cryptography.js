@@ -71,7 +71,7 @@
      *  Create key with info
      *
      * @param clazz - key class
-     * @param map {{}} - key info
+     * @param {{}} map - key info
      * @returns {*} CryptographyKey
      */
     CryptographyKey.createInstance = function (clazz, map) {
@@ -95,15 +95,15 @@
     var EncryptKey = function () {
     };
     ns.Interface(EncryptKey, null);
+    // noinspection JSUnusedLocalSymbols
     /**
      *  ciphertext = encrypt(plaintext, PW)
      *  ciphertext = encrypt(plaintext, PK)
      *
-     * @param data {Uint8Array}
+     * @param {Uint8Array} plaintext
      * @returns {Uint8Array}
      */
-    EncryptKey.prototype.encrypt = function (data) {
-        console.assert(data != null, 'data empty');
+    EncryptKey.prototype.encrypt = function (plaintext) {
         console.assert(false, 'implement me!');
         return null;
     };
@@ -111,15 +111,15 @@
     var DecryptKey = function () {
     };
     ns.Interface(DecryptKey, null);
+    // noinspection JSUnusedLocalSymbols
     /**
      *  plaintext = decrypt(ciphertext, PW);
      *  plaintext = decrypt(ciphertext, SK);
      *
-     * @param data {Uint8Array}
+     * @param {Uint8Array} ciphertext
      * @returns {Uint8Array}
      */
-    DecryptKey.prototype.decrypt = function (data) {
-        console.assert(data != null, 'data empty');
+    DecryptKey.prototype.decrypt = function (ciphertext) {
         console.assert(false, 'implement me!');
         return null;
     };
@@ -127,14 +127,14 @@
     var SignKey = function () {
     };
     ns.Interface(SignKey, null);
+    // noinspection JSUnusedLocalSymbols
     /**
      *  signature = sign(data, SK);
      *
-     * @param data {Uint8Array}
+     * @param {Uint8Array} data
      * @returns {Uint8Array}
      */
     SignKey.prototype.sign = function (data) {
-        console.assert(data != null, 'data empty');
         console.assert(false, 'implement me!');
         return null;
     };
@@ -142,16 +142,15 @@
     var VerifyKey = function () {
     };
     ns.Interface(VerifyKey, null);
+    // noinspection JSUnusedLocalSymbols
     /**
      *  OK = verify(data, signature, PK)
      *
-     * @param data {Uint8Array}
-     * @param signature {Uint8Array}
+     * @param {Uint8Array} data
+     * @param {Uint8Array} signature
      * @returns {boolean}
      */
     VerifyKey.prototype.verify = function (data, signature) {
-        console.assert(data != null, 'data empty');
-        console.assert(signature != null, 'signature empty');
         console.assert(false, 'implement me!');
         return false;
     };

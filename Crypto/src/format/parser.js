@@ -37,25 +37,25 @@
     var parser = function () {
     };
     ns.Interface(parser, null);
+    // noinspection JSUnusedLocalSymbols
     /**
      *  Encode container object to text string
      *
-     * @param container {{}|[]}
+     * @param {{}|[]} container
      * @returns {String}
      */
     parser.prototype.encode = function (container) {
-        console.assert(container != null, 'container empty');
         console.assert(false, 'implement me!');
         return null;
     };
+    // noinspection JSUnusedLocalSymbols
     /**
      *  Decode text string to container object
      *
-     * @param string {String}
+     * @param {String} string
      * @returns {{}|[]}
      */
     parser.prototype.decode = function (string) {
-        console.assert(string != null, 'string empty');
         console.assert(false, 'implement me!');
         return null;
     };
@@ -107,47 +107,47 @@
     var parser = function () {
     };
     ns.Interface(parser, null);
+    // noinspection JSUnusedLocalSymbols
     /**
-     *  Encode public key to PEM content
+     *  Encode public key data to PEM content
      *
-     * @param key {Uint8Array}
-     * @returns {String}
+     * @param {Uint8Array} key - key data
+     * @returns {String} PEM string
      */
     parser.prototype.encodePublicKey = function (key) {
-        console.assert(key != null, 'public key empty');
         console.assert(false, 'implement me!');
         return null;
     };
+    // noinspection JSUnusedLocalSymbols
     /**
-     *  Encode private key to PEM content
+     *  Encode private key data to PEM content
      *
-     * @param key {Uint8Array}
-     * @returns {String}
+     * @param {Uint8Array} key - key data
+     * @returns {String} PEM string
      */
     parser.prototype.encodePrivateKey = function (key) {
-        console.assert(key != null, 'private key empty');
         console.assert(false, 'implement me!');
         return null;
     };
+    // noinspection JSUnusedLocalSymbols
     /**
-     *  Decode PEM content to public key
+     *  Decode PEM content to public key data
      *
-     * @param pem {String}
-     * @returns {Uint8Array}
+     * @param {String} pem - key data in PEM format
+     * @returns {Uint8Array} key data
      */
     parser.prototype.decodePublicKey = function (pem) {
-        console.assert(pem != null, 'pem content empty');
         console.assert(false, 'implement me!');
         return null;
     };
+    // noinspection JSUnusedLocalSymbols
     /**
-     *  Decode PEM content to private key
+     *  Decode PEM content to private key data
      *
-     * @param pem {String}
-     * @returns {Uint8Array}
+     * @param {String} pem - key data in PEM format
+     * @returns {Uint8Array} key data
      */
     parser.prototype.decodePrivateKey = function (pem) {
-        console.assert(pem != null, 'pem content empty');
         console.assert(false, 'implement me!');
         return null;
     };
@@ -158,24 +158,23 @@
     var pem = function () {
     };
     ns.Class(pem, ns.type.Object, parser);
-
+    // noinspection JSUnusedLocalSymbols
     pem.prototype.encodePublicKey = function (key) {
-        console.assert(key != null, 'public key content empty');
         console.assert(false, 'PEM parser not implemented');
         return null;
     };
+    // noinspection JSUnusedLocalSymbols
     pem.prototype.encodePrivateKey = function (key) {
-        console.assert(key != null, 'private key content empty');
         console.assert(false, 'PEM parser not implemented');
         return null;
     };
+    // noinspection JSUnusedLocalSymbols
     pem.prototype.decodePublicKey = function (pem) {
-        console.assert(pem != null, 'pem content empty');
         console.assert(false, 'PEM parser not implemented');
         return null;
     };
+    // noinspection JSUnusedLocalSymbols
     pem.prototype.decodePrivateKey = function (pem) {
-        console.assert(pem != null, 'pem content empty');
         console.assert(false, 'PEM parser not implemented');
         return null;
     };

@@ -63,7 +63,7 @@
     /**
      *  Generate key with algorithm name
      *
-     * @param algorithm {String} - algorithm name ('AES')
+     * @param {String} algorithm - algorithm name ('AES')
      * @returns {SymmetricKey}
      */
     SymmetricKey.generate = function (algorithm) {
@@ -76,8 +76,8 @@
     /**
      *  Register symmetric key class with algorithm
      *
-     * @param algorithm {String} - key algorithm
-     * @param clazz {Class} - if key class is None, then remove with algorithm
+     * @param {String} algorithm - key algorithm
+     * @param {Class} clazz - if key class is None, then remove with algorithm
      */
     SymmetricKey.register = function (algorithm, clazz) {
         key_classes[algorithm] = clazz;
@@ -86,7 +86,7 @@
     /**
      *  Create symmetric key
      *
-     * @param key {{}|SymmetricKey} - key info (with algorithm='AES')
+     * @param {{}|SymmetricKey} key - key info (with algorithm='AES')
      * @returns {SymmetricKey}
      */
     SymmetricKey.getInstance = function (key) {

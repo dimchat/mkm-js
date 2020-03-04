@@ -37,8 +37,8 @@
     /**
      *  Create Enum with value & alias
      *
-     * @param value {Number|base_enum}
-     * @param alias {String}
+     * @param {Number|base_enum} value
+     * @param {String} alias
      */
     var base_enum = function (value, alias) {
         ns.type.Object.call(this);
@@ -54,7 +54,7 @@
     /**
      *  Check whether values equal
      *
-     * @param other {base_enum|Number}
+     * @param {base_enum|Number} other
      * @returns {boolean}
      */
     base_enum.prototype.equals = function (other) {
@@ -90,7 +90,7 @@
     /**
      *  Define Enum with elements names & values
      *
-     * @param elements {{}}
+     * @param {{}} elements
      * @returns {Class}
      */
     var create = function(elements) {

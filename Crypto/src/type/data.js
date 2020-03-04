@@ -33,7 +33,7 @@
     /**
      *  Create data bytes with capacity, or another data bytes
      *
-     * @param capacity {Number|bytes|Uint8Array|Number[]} - capacity or data array
+     * @param {Number|bytes|Uint8Array|Number[]} capacity - capacity or data array
      */
     var bytes = function (capacity) {
         ns.type.Object.call(this);
@@ -67,7 +67,7 @@
     /**
      *  Check whether bytes equal
      *
-     * @param other {bytes|Uint8Array} - another array
+     * @param {bytes|Uint8Array} other - another array
      * @returns {boolean}
      */
     bytes.prototype.equals = function (other) {
@@ -97,7 +97,7 @@
     /**
      *  Get inner array
      *
-     * @param copy {boolean}
+     * @param {boolean} copy - whether copy data to new buffer
      * @returns {Uint8Array}
      */
     bytes.prototype.getBytes = function (copy) {
@@ -122,7 +122,7 @@
     /**
      *  Get value with index
      *
-     * @param index {Number}
+     * @param {Number} index
      * @returns {uint}
      */
     bytes.prototype.getByte = function (index) {
@@ -135,8 +135,8 @@
     /**
      *  Set value with index
      *
-     * @param index {Number}
-     * @param value {uint}
+     * @param {Number} index
+     * @param {uint} value
      */
     bytes.prototype.setByte = function (index, value) {
         if (index >= this.array.length) {
@@ -187,7 +187,7 @@
     /**
      *  Appends new elements to an array, and returns the new length of the array.
      *
-     * @param items {Number|bytes|Uint8Array|Number[]} - New elements of the Array.
+     * @param {Number|bytes|Uint8Array|Number[]} items - New elements of the Array.
      * @returns {number}
      */
     bytes.prototype.push = function (items) {
@@ -235,7 +235,7 @@
     /**
      *  Combines two or more arrays.
      *
-     * @param items {bytes|Uint8Array|Number[]} - Additional items to add to the end of new array.
+     * @param {bytes|Uint8Array|Number[]} items - Additional items to add to the end of new array.
      * @returns {bytes}
      */
     bytes.prototype.concat = function (items) {
@@ -263,7 +263,7 @@
     /**
      *  Creates bytes from an array-like or iterable object.
      *
-     * @param array {Uint8Array|Number[]} - An array-like or iterable object to convert to Uint8Array.
+     * @param {Uint8Array|Number[]} array - An array-like or iterable object to convert to Uint8Array.
      * @returns {bytes}
      */
     bytes.from = function (array) {

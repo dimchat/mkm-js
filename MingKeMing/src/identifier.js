@@ -98,7 +98,7 @@
     /**
      *  Check whether IDs equal
      *
-     * @param other {ID|String}
+     * @param {ID|String} other - another ID
      * @returns {boolean}
      */
     ID.prototype.equals = function (other) {
@@ -130,7 +130,7 @@
     /**
      *  Get Network ID
      *
-     * @returns {NetworkType}
+     * @returns {char} 0 ~ 255
      */
     ID.prototype.getType = function () {
         return this.address.getNetwork();
@@ -139,7 +139,7 @@
     /**
      *  Get Search Number
      *
-     * @returns {Number}
+     * @returns {int} 1 ~ 4294967295 (2^32-1)
      */
     ID.prototype.getNumber = function () {
         return this.address.getCode();
@@ -163,6 +163,13 @@
         return this.address.isBroadcast();
     };
 
+    ID.prototype.isUser = function () {
+        return this.address.isUser();
+    };
+    ID.prototype.isGroup = function () {
+        return this.address.isGroup();
+    };
+
     /**
      *  ID for broadcast
      */
@@ -174,7 +181,7 @@
     /**
      *  Create/get instance of ID
      *
-     * @param string {String}
+     * @param {String} string - ID string
      * @returns {ID}
      */
     ID.getInstance = function (string) {

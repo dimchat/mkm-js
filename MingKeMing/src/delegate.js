@@ -41,26 +41,26 @@
     };
     ns.Interface(EntityDataSource, null);
 
+    // noinspection JSUnusedLocalSymbols
     /**
      *  Get meta for entity ID
      *
-     * @param identifier {ID}
+     * @param {ID} identifier - entity ID
      * @returns {Meta}
      */
     EntityDataSource.prototype.getMeta = function (identifier) {
-        console.assert(identifier !== null, 'ID empty');
         console.assert(false, 'implement me!');
         return null;
     };
 
+    // noinspection JSUnusedLocalSymbols
     /**
      *  Get profile for entity ID
      *
-     * @param identifier {ID}
+     * @param {ID} identifier - entity ID
      * @returns {Profile}
      */
     EntityDataSource.prototype.getProfile = function (identifier) {
-        console.assert(identifier !== null, 'ID empty');
         console.assert(false, 'implement me!');
         return null;
     };
@@ -97,66 +97,66 @@
     };
     ns.Interface(UserDataSource, EntityDataSource);
 
+    // noinspection JSUnusedLocalSymbols
     /**
      *  Get contacts list
      *
-     * @param identifier {ID} - user ID
+     * @param {ID} identifier - user ID
      * @returns {ID[]}
      */
     UserDataSource.prototype.getContacts = function (identifier) {
-        console.assert(identifier !== null, 'ID empty');
         console.assert(false, 'implement me!');
         return null;
     };
 
+    // noinspection JSUnusedLocalSymbols
     /**
      *  Get user's public key for encryption
      *  (profile.key or meta.key)
      *
-     * @param identifier {ID} - user ID
+     * @param {ID} identifier - user ID
      * @returns {EncryptKey}
      */
     UserDataSource.prototype.getPublicKeyForEncryption = function (identifier) {
-        console.assert(identifier !== null, 'ID empty');
         // console.assert(false, 'implement me!');
         return null;
     };
 
+    // noinspection JSUnusedLocalSymbols
     /**
      *  Get user's public keys for verification
      *  [profile.key, meta.key]
      *
-     * @param identifier {ID}
+     * @param {ID} identifier - user ID
      * @returns {VerifyKey[]}
      */
     UserDataSource.prototype.getPublicKeysForVerification = function (identifier) {
-        console.assert(identifier !== null, 'ID empty');
         // console.assert(false, 'implement me!');
         return null;
     };
 
+    // noinspection JSUnusedLocalSymbols
     /**
      *  Get user's private keys for decryption
      *  (which paired with [profile.key, meta.key])
      *
-     * @param identifier {ID} - user ID
+     * @param {ID} identifier - user ID
      * @returns {DecryptKey[]}
      */
     UserDataSource.prototype.getPrivateKeysForDecryption = function (identifier) {
-        console.assert(identifier !== null, 'ID empty');
         console.assert(false, 'implement me!');
         return null;
     };
 
+    // noinspection JSUnusedLocalSymbols
     /**
      *  Get user's private key for signature
      *  (which paired with profile.key or meta.key)
      *
-     * @param identifier {ID} - user ID
+     * @param {ID} identifier - user ID
      * @returns {SignKey}
      */
     UserDataSource.prototype.getPrivateKeyForSignature = function (identifier) {
-        console.assert(identifier !== null, 'ID empty');
         console.assert(false, 'implement me!');
         return null;
     };
@@ -177,38 +177,38 @@
     };
     ns.Interface(GroupDataSource, EntityDataSource);
 
+    // noinspection JSUnusedLocalSymbols
     /**
      *  Get group founder
      *
-     * @param identifier {ID} - group ID
+     * @param {ID} identifier - group ID
      * @returns {ID}
      */
     GroupDataSource.prototype.getFounder = function (identifier) {
-        console.assert(identifier !== null, 'ID empty');
         console.assert(false, 'implement me!');
         return null;
     };
 
+    // noinspection JSUnusedLocalSymbols
     /**
      *  Get group owner
      *
-     * @param identifier {ID} - group ID
+     * @param {ID} identifier - group ID
      * @returns {ID}
      */
     GroupDataSource.prototype.getOwner = function (identifier) {
-        console.assert(identifier !== null, 'ID empty');
         console.assert(false, 'implement me!');
         return null;
     };
 
+    // noinspection JSUnusedLocalSymbols
     /**
      *  Get group members list
      *
-     * @param identifier {ID} - group ID
+     * @param {ID} identifier - group ID
      * @returns {ID[]}
      */
     GroupDataSource.prototype.getMembers = function (identifier) {
-        console.assert(identifier !== null, 'ID empty');
         console.assert(false, 'implement me!');
         return null;
     };

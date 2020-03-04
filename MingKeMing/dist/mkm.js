@@ -31,26 +31,14 @@ if (typeof MingKeMing !== "object") {
     NetworkType.prototype.toByte = function() {
         return String.fromCharCode(this.value)
     };
-    NetworkType.prototype.isPerson = function() {
-        return (this.value === NetworkType.Main.value) || (this.value === NetworkType.BTCMain.value)
+    NetworkType.isUser = function(network) {
+        var main = NetworkType.Main.valueOf();
+        var btcMain = NetworkType.BTCMain.valueOf();
+        return ((network & main) === main) || (network === btcMain)
     };
-    NetworkType.prototype.isUser = function() {
-        return ((this.value & NetworkType.Main.value) === NetworkType.Main.value) || (this.value === NetworkType.BTCMain.value)
-    };
-    NetworkType.prototype.isGroup = function() {
-        return (this.value & NetworkType.Group.value) === NetworkType.Group.value
-    };
-    NetworkType.prototype.isStation = function() {
-        return this.value === NetworkType.Station.value
-    };
-    NetworkType.prototype.isProvider = function() {
-        return this.value === NetworkType.Provider.value
-    };
-    NetworkType.prototype.isThing = function() {
-        return (this.value & NetworkType.Thing.value) === NetworkType.Thing.value
-    };
-    NetworkType.prototype.isRobot = function() {
-        return this.value === NetworkType.Robot.value
+    NetworkType.isGroup = function(network) {
+        var group = NetworkType.Group.valueOf();
+        return (network & group) === group
     };
     ns.protocol.NetworkType = NetworkType;
     ns.protocol.register("NetworkType")
@@ -64,9 +52,6 @@ if (typeof MingKeMing !== "object") {
         ETH: (4),
         ExETH: (5)
     });
-    MetaType.prototype.hasSeed = function() {
-        return (this.value & MetaType.MKM.value) === MetaType.MKM.value
-    };
     ns.protocol.MetaType = MetaType;
     ns.protocol.register("MetaType")
 }(MingKeMing);
@@ -78,21 +63,32 @@ if (typeof MingKeMing !== "object") {
     ns.Class(Address, ns.type.String, null);
     Address.prototype.getNetwork = function() {
         console.assert(false, "implement me!");
-        return null
+        return 0
     };
     Address.prototype.getCode = function() {
         console.assert(false, "implement me!");
         return 0
     };
     Address.prototype.isBroadcast = function() {
-        var network = this.getNetwork();
-        if (Address.EVERYWHERE.getNetwork().equals(network)) {
-            return this.equals(Address.EVERYWHERE)
+        if (this.getCode() !== BROADCAST_CODE) {
+            return false
         }
-        if (Address.ANYWHERE.getNetwork().equals(network)) {
-            return this.equals(Address.ANYWHERE)
+        var network = this.getNetwork();
+        if (network === NetworkType.Group.valueOf()) {
+            return this.equals(EVERYWHERE)
+        }
+        if (network === NetworkType.Main.valueOf()) {
+            return this.equals(ANYWHERE)
         }
         return false
+    };
+    Address.prototype.isUser = function() {
+        var network = this.getNetwork();
+        return NetworkType.isUser(network)
+    };
+    Address.prototype.isGroup = function() {
+        var network = this.getNetwork();
+        return NetworkType.isGroup(network)
     };
     var address_classes = [];
     Address.register = function(clazz) {
@@ -106,11 +102,11 @@ if (typeof MingKeMing !== "object") {
                 return string
             }
         }
-        if (Address.ANYWHERE.equalsIgnoreCase(string)) {
-            return Address.ANYWHERE
+        if (ANYWHERE.equalsIgnoreCase(string)) {
+            return ANYWHERE
         }
-        if (Address.EVERYWHERE.equalsIgnoreCase(string)) {
-            return Address.EVERYWHERE
+        if (EVERYWHERE.equalsIgnoreCase(string)) {
+            return EVERYWHERE
         }
         var clazz;
         for (var i = address_classes.length - 1; i >= 0; --i) {
@@ -126,6 +122,9 @@ if (typeof MingKeMing !== "object") {
     };
     var ConstantAddress = function(string, network, number) {
         Address.call(this, string);
+        if (network instanceof NetworkType) {
+            network = network.valueOf()
+        }
         this.network = network;
         this.number = number
     };
@@ -136,8 +135,11 @@ if (typeof MingKeMing !== "object") {
     ConstantAddress.prototype.getCode = function() {
         return this.number
     };
-    Address.ANYWHERE = new ConstantAddress("anywhere", ns.protocol.NetworkType.Main, 9527);
-    Address.EVERYWHERE = new ConstantAddress("everywhere", ns.protocol.NetworkType.Group, 9527);
+    var BROADCAST_CODE = 9527;
+    var ANYWHERE = new ConstantAddress("anywhere", NetworkType.Main, BROADCAST_CODE);
+    var EVERYWHERE = new ConstantAddress("everywhere", NetworkType.Group, BROADCAST_CODE);
+    Address.ANYWHERE = ANYWHERE;
+    Address.EVERYWHERE = EVERYWHERE;
     ns.Address = Address;
     ns.register("Address")
 }(MingKeMing);
@@ -222,6 +224,12 @@ if (typeof MingKeMing !== "object") {
     ID.prototype.isBroadcast = function() {
         return this.address.isBroadcast()
     };
+    ID.prototype.isUser = function() {
+        return this.address.isUser()
+    };
+    ID.prototype.isGroup = function() {
+        return this.address.isGroup()
+    };
     ID.ANYONE = new ID("anyone", Address.ANYWHERE);
     ID.EVERYONE = new ID("everyone", Address.EVERYWHERE);
     ID.getInstance = function(string) {
@@ -245,11 +253,18 @@ if (typeof MingKeMing !== "object") {
     var NetworkType = ns.protocol.NetworkType;
     var Address = ns.Address;
     var ID = ns.ID;
+    var contains_seed = function(version) {
+        return (version & MetaType.MKM.value) === MetaType.MKM.value
+    };
     var Meta = function(map) {
         Dictionary.call(this, map);
-        this.version = new MetaType(map["version"]);
+        var version = map["version"];
+        if (version instanceof MetaType) {
+            version = version.valueOf()
+        }
+        this.version = version;
         this.key = PublicKey.getInstance(map["key"]);
-        if (this.version.hasSeed()) {
+        if (contains_seed(version)) {
             this.seed = map["seed"];
             this.fingerprint = Base64.decode(map["fingerprint"])
         } else {
@@ -276,7 +291,7 @@ if (typeof MingKeMing !== "object") {
             if (!this.key) {
                 this.status = -1
             } else {
-                if (this.version.hasSeed()) {
+                if (contains_seed(this.version)) {
                     if (!this.seed || !this.fingerprint) {
                         this.status = -1
                     } else {
@@ -299,7 +314,7 @@ if (typeof MingKeMing !== "object") {
         if (this.key.equals(publicKey)) {
             return true
         }
-        if (this.version.hasSeed()) {
+        if (contains_seed(this.version)) {
             var data = ns.type.String.from(this.seed).getBytes();
             var signature = this.fingerprint;
             return publicKey.verify(data, signature)
@@ -337,7 +352,6 @@ if (typeof MingKeMing !== "object") {
         return new ID(this.seed, address)
     };
     Meta.prototype.generateAddress = function(network) {
-        console.assert(network instanceof NetworkType, "network error: " + network);
         console.assert(false, "implement me!");
         return null
     };
@@ -346,7 +360,7 @@ if (typeof MingKeMing !== "object") {
             "version": version,
             "key": privateKey.getPublicKey()
         };
-        if (version.hasSeed()) {
+        if (contains_seed(version)) {
             var data = ns.type.String.from(seed).getBytes();
             var fingerprint = privateKey.sign(data);
             meta["seed"] = seed;
@@ -408,22 +422,17 @@ if (typeof MingKeMing !== "object") {
         return null
     };
     TAI.prototype.getProperty = function(name) {
-        console.assert(name !== null, "property name empty");
         console.assert(false, "implement me!");
         return null
     };
     TAI.prototype.setProperty = function(name, value) {
-        console.assert(name !== null, "property name empty");
-        console.assert(value !== null, "property value empty");
         console.assert(false, "implement me!")
     };
     TAI.prototype.verify = function(publicKey) {
-        console.assert(publicKey !== null, "public key empty");
         console.assert(false, "implement me!");
         return false
     };
     TAI.prototype.sign = function(privateKey) {
-        console.assert(privateKey !== null, "private key empty");
         console.assert(false, "implement me!");
         return null
     };
@@ -596,12 +605,10 @@ if (typeof MingKeMing !== "object") {
     var EntityDataSource = function() {};
     ns.Interface(EntityDataSource, null);
     EntityDataSource.prototype.getMeta = function(identifier) {
-        console.assert(identifier !== null, "ID empty");
         console.assert(false, "implement me!");
         return null
     };
     EntityDataSource.prototype.getProfile = function(identifier) {
-        console.assert(identifier !== null, "ID empty");
         console.assert(false, "implement me!");
         return null
     };
@@ -613,25 +620,20 @@ if (typeof MingKeMing !== "object") {
     var UserDataSource = function() {};
     ns.Interface(UserDataSource, EntityDataSource);
     UserDataSource.prototype.getContacts = function(identifier) {
-        console.assert(identifier !== null, "ID empty");
         console.assert(false, "implement me!");
         return null
     };
     UserDataSource.prototype.getPublicKeyForEncryption = function(identifier) {
-        console.assert(identifier !== null, "ID empty");
         return null
     };
     UserDataSource.prototype.getPublicKeysForVerification = function(identifier) {
-        console.assert(identifier !== null, "ID empty");
         return null
     };
     UserDataSource.prototype.getPrivateKeysForDecryption = function(identifier) {
-        console.assert(identifier !== null, "ID empty");
         console.assert(false, "implement me!");
         return null
     };
     UserDataSource.prototype.getPrivateKeyForSignature = function(identifier) {
-        console.assert(identifier !== null, "ID empty");
         console.assert(false, "implement me!");
         return null
     };
@@ -643,17 +645,14 @@ if (typeof MingKeMing !== "object") {
     var GroupDataSource = function() {};
     ns.Interface(GroupDataSource, EntityDataSource);
     GroupDataSource.prototype.getFounder = function(identifier) {
-        console.assert(identifier !== null, "ID empty");
         console.assert(false, "implement me!");
         return null
     };
     GroupDataSource.prototype.getOwner = function(identifier) {
-        console.assert(identifier !== null, "ID empty");
         console.assert(false, "implement me!");
         return null
     };
     GroupDataSource.prototype.getMembers = function(identifier) {
-        console.assert(identifier !== null, "ID empty");
         console.assert(false, "implement me!");
         return null
     };
@@ -688,11 +687,11 @@ if (typeof MingKeMing !== "object") {
     };
     Entity.prototype.toString = function() {
         var clazz = Object.getPrototypeOf(this).constructor;
-        return "<" + clazz.name + "|" + this.getType().toString() + " " + this.identifier + " (" + this.getNumber().toString() + ")" + ' "' + this.getName() + '">'
+        return "<" + clazz.name + "|" + this.getType() + " " + this.identifier + " (" + this.getNumber().toString() + ")" + ' "' + this.getName() + '">'
     };
     Entity.prototype.toLocaleString = function() {
         var clazz = Object.getPrototypeOf(this).constructor;
-        return "<" + clazz.name + "|" + this.getType().toLocaleString() + " " + this.identifier + " (" + this.getNumber().toLocaleString() + ")" + ' "' + this.getName() + '">'
+        return "<" + clazz.name + "|" + this.getType() + " " + this.identifier + " (" + this.getNumber().toLocaleString() + ")" + ' "' + this.getName() + '">'
     };
     Entity.prototype.getType = function() {
         return this.identifier.getType()

@@ -40,7 +40,7 @@
         /**
          *  Encode string to UTF8 data array
          *
-         * @param string {String}
+         * @param {String} string
          * @returns {Uint8Array}
          */
         encode: function (string) {
@@ -71,7 +71,7 @@
         /**
          *  Decode UTF8 data array to string
          *
-         * @param array {Uint8Array}
+         * @param {Uint8Array} array
          * @returns {String}
          */
         decode: function (array) {
@@ -109,8 +109,8 @@
     /**
      *  Create String with data array or another string
      *
-     * @param value {Uint8Array|String|str}
-     * @param charset {String}
+     * @param {Uint8Array|String|str} value
+     * @param {String} charset - 'UTF-8'
      */
     var str = function (value, charset) {
         if (!value) {
@@ -137,7 +137,7 @@
     /**
      *  Encode str to UTF8 data array
      *
-     * @param charset {String}
+     * @param {String} charset - 'UTF-8'
      * @returns {Uint8Array}
      */
     str.prototype.getBytes = function (charset) {
@@ -150,7 +150,7 @@
     /**
      *  Check whether strings equal
      *
-     * @param other {str|String}
+     * @param {str|String} other - another string
      * @returns {boolean}
      */
     str.prototype.equals = function (other) {
@@ -206,7 +206,7 @@
     /**
      *  Create str from Array
      *
-     * @param array {Uint8Array|uint[]|str|String}
+     * @param {Uint8Array|uint[]|str|String} array
      * @returns {str}
      */
     str.from = function (array) {
