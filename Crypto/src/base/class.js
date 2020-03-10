@@ -93,7 +93,7 @@
      *  Create an interface inherits from other interfaces
      *
      * @param {Class} child - sub interface
-     * @param {Class[]} parent - parent interfaces
+     * @param {Class|Array} parent - parent interfaces
      */
     var interfacefy = function (child, parent) {
         if (!child) {
@@ -122,7 +122,7 @@
      *
      * @param {Class} child - subclass
      * @param {Class} parent - super class
-     * @param {Class[]} interfaces
+     * @param {Class|Array} interfaces
      * @returns {Class}
      * @constructor
      */

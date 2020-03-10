@@ -95,7 +95,7 @@
      */
     var UserDataSource = function () {
     };
-    ns.Interface(UserDataSource, EntityDataSource);
+    ns.Interface(UserDataSource, [EntityDataSource]);
 
     // noinspection JSUnusedLocalSymbols
     /**
@@ -175,7 +175,7 @@
 
     var GroupDataSource = function () {
     };
-    ns.Interface(GroupDataSource, EntityDataSource);
+    ns.Interface(GroupDataSource, [EntityDataSource]);
 
     // noinspection JSUnusedLocalSymbols
     /**

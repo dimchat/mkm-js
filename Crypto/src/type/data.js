@@ -67,7 +67,7 @@
     /**
      *  Check whether bytes equal
      *
-     * @param {bytes|Uint8Array} other - another array
+     * @param {bytes|Uint8Array|Array} other - another array
      * @returns {boolean}
      */
     bytes.prototype.equals = function (other) {

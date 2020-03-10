@@ -34,6 +34,24 @@
     //  Enumeration
     //
 
+    var get_alias = function (value) {
+        // searching exists elements for alias
+        var enumeration = this.constructor;
+        var e;
+        for (var k in enumeration) {
+            if (!enumeration.hasOwnProperty(k)) {
+                continue;
+            }
+            e = enumeration[k];
+            if (e instanceof enumeration) {
+                if (e.equals(value)) {
+                    return e.alias;
+                }
+            }
+        }
+        return null;
+    };
+
     /**
      *  Create Enum with value & alias
      *
@@ -42,11 +60,17 @@
      */
     var base_enum = function (value, alias) {
         ns.type.Object.call(this);
-        if (value instanceof base_enum) {
-            this.value = value.valueOf();
-        } else {
-            this.value = value;
+        if (!alias) {
+            if (value instanceof base_enum) {
+                alias = value.alias;
+            } else {
+                alias = get_alias.call(this, value);
+            }
         }
+        if (value instanceof base_enum) {
+            value = value.value;
+        }
+        this.value = value;
         this.alias = alias;
     };
     ns.Class(base_enum, ns.type.Object, null);
@@ -90,20 +114,16 @@
     /**
      *  Define Enum with elements names & values
      *
+     * @param {*} enumeration - enum constructor
      * @param {{}} elements
      * @returns {Class}
      */
-    var create = function(elements) {
-        // template for enumeration
-        var enumeration = function (value, alias) {
-            if (!alias) {
-                alias = get_name(value, enumeration);
-                if (!alias) {
-                    throw RangeError('enum error: ' + value);
-                }
+    var enumify = function(enumeration, elements) {
+        if (!enumeration) {
+            enumeration = function (value, alias) {
+                base_enum.call(this, value, alias);
             }
-            base_enum.call(this, value, alias);
-        };
+        }
         ns.Class(enumeration, base_enum, null);
         var e, v;
         for (var name in elements) {
@@ -111,8 +131,8 @@
                 continue;
             }
             v = elements[name];
-            if (typeof v === 'function') {
-                continue;
+            if (typeof v !== 'number') {
+                throw TypeError('Enum value must be a number!');
             }
             e = new enumeration(v, name);
             enumeration[name] = e;
@@ -120,28 +140,11 @@
         return enumeration;
     };
 
-    // get alias name from exist elements
-    var get_name = function (value, enumeration) {
-        if (value instanceof enumeration) {
-            return value.alias;
-        }
-        // searching exists elements for alias
-        var e;
-        for (var k in enumeration) {
-            // noinspection JSUnfilteredForInLoop
-            e = enumeration[k];
-            if (e instanceof enumeration) {
-                if (e.equals(value)) {
-                    return e.alias;
-                }
-            }
-        }
-        return null;
-    };
-
     //-------- namespace --------
-    ns.type.Enum = create;
+    ns.type.BaseEnum = base_enum;
+    ns.type.Enum = enumify;
 
+    ns.type.register('BaseEnum');
     ns.type.register('Enum');
 
 }(DIMP);

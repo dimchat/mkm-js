@@ -2,7 +2,7 @@
  * MingKeMing - User Module (v0.1.0)
  *
  * @author    moKy <albert.moky at gmail.com>
- * @date      Feb. 27, 2020
+ * @date      Mar. 10, 2020
  * @copyright (c) 2020 Albert Moky
  * @license   {@link https://mit-license.org | MIT License}
  */
@@ -17,7 +17,7 @@ if (typeof MingKeMing !== "object") {
     ns.register("protocol")
 }(MingKeMing);
 ! function(ns) {
-    var NetworkType = ns.type.Enum({
+    var NetworkType = ns.type.Enum(null, {
         BTCMain: (0),
         Main: (8),
         Group: (16),
@@ -28,9 +28,6 @@ if (typeof MingKeMing !== "object") {
         Thing: (128),
         Robot: (200)
     });
-    NetworkType.prototype.toByte = function() {
-        return String.fromCharCode(this.value)
-    };
     NetworkType.isUser = function(network) {
         var main = NetworkType.Main.valueOf();
         var btcMain = NetworkType.BTCMain.valueOf();
@@ -44,7 +41,7 @@ if (typeof MingKeMing !== "object") {
     ns.protocol.register("NetworkType")
 }(MingKeMing);
 ! function(ns) {
-    var MetaType = ns.type.Enum({
+    var MetaType = ns.type.Enum(null, {
         Default: (1),
         MKM: (1),
         BTC: (2),
@@ -52,6 +49,10 @@ if (typeof MingKeMing !== "object") {
         ETH: (4),
         ExETH: (5)
     });
+    MetaType.hasSeed = function(version) {
+        var mkm = MetaType.MKM.valueOf();
+        return (version & mkm) === mkm
+    };
     ns.protocol.MetaType = MetaType;
     ns.protocol.register("MetaType")
 }(MingKeMing);
@@ -253,9 +254,6 @@ if (typeof MingKeMing !== "object") {
     var NetworkType = ns.protocol.NetworkType;
     var Address = ns.Address;
     var ID = ns.ID;
-    var contains_seed = function(version) {
-        return (version & MetaType.MKM.value) === MetaType.MKM.value
-    };
     var Meta = function(map) {
         Dictionary.call(this, map);
         var version = map["version"];
@@ -264,7 +262,7 @@ if (typeof MingKeMing !== "object") {
         }
         this.version = version;
         this.key = PublicKey.getInstance(map["key"]);
-        if (contains_seed(version)) {
+        if (this.hasSeed()) {
             this.seed = map["seed"];
             this.fingerprint = Base64.decode(map["fingerprint"])
         } else {
@@ -282,16 +280,19 @@ if (typeof MingKeMing !== "object") {
                 return true
             }
         }
-        other = Meta.getInstance(other);
-        var identifier = other.generateIdentifier(NetworkType.Main);
+        var meta = Meta.getInstance(other);
+        var identifier = meta.generateIdentifier(NetworkType.Main);
         return this.matches(identifier)
+    };
+    Meta.prototype.hasSeed = function() {
+        return MetaType.hasSeed(this.version)
     };
     Meta.prototype.isValid = function() {
         if (this.status === 0) {
             if (!this.key) {
                 this.status = -1
             } else {
-                if (contains_seed(this.version)) {
+                if (this.hasSeed()) {
                     if (!this.seed || !this.fingerprint) {
                         this.status = -1
                     } else {
@@ -314,7 +315,7 @@ if (typeof MingKeMing !== "object") {
         if (this.key.equals(publicKey)) {
             return true
         }
-        if (contains_seed(this.version)) {
+        if (this.hasSeed()) {
             var data = ns.type.String.from(this.seed).getBytes();
             var signature = this.fingerprint;
             return publicKey.verify(data, signature)
@@ -355,12 +356,18 @@ if (typeof MingKeMing !== "object") {
         console.assert(false, "implement me!");
         return null
     };
-    Meta.generate = function(version, privateKey, seed) {
+    Meta.generate = function(type, privateKey, seed) {
+        var version;
+        if (type instanceof MetaType) {
+            version = type.valueOf()
+        } else {
+            version = type
+        }
         var meta = {
             "version": version,
             "key": privateKey.getPublicKey()
         };
-        if (contains_seed(version)) {
+        if (MetaType.hasSeed(version)) {
             var data = ns.type.String.from(seed).getBytes();
             var fingerprint = privateKey.sign(data);
             meta["seed"] = seed;
@@ -369,14 +376,14 @@ if (typeof MingKeMing !== "object") {
         return Meta.getInstance(meta)
     };
     var meta_classes = {};
-    Meta.register = function(version, clazz) {
-        var value;
-        if (version instanceof MetaType) {
-            value = version.valueOf()
+    Meta.register = function(type, clazz) {
+        var version;
+        if (type instanceof MetaType) {
+            version = type.valueOf()
         } else {
-            value = version
+            version = type
         }
-        meta_classes[value] = clazz
+        meta_classes[version] = clazz
     };
     Meta.getInstance = function(meta) {
         if (!meta) {
@@ -458,7 +465,7 @@ if (typeof MingKeMing !== "object") {
         this.properties = null;
         this.status = 0
     };
-    ns.Class(Profile, Dictionary, TAI);
+    ns.Class(Profile, Dictionary, [TAI]);
     Profile.prototype.isValid = function() {
         return this.status >= 0
     };
@@ -618,7 +625,7 @@ if (typeof MingKeMing !== "object") {
 ! function(ns) {
     var EntityDataSource = ns.EntityDataSource;
     var UserDataSource = function() {};
-    ns.Interface(UserDataSource, EntityDataSource);
+    ns.Interface(UserDataSource, [EntityDataSource]);
     UserDataSource.prototype.getContacts = function(identifier) {
         console.assert(false, "implement me!");
         return null
@@ -643,7 +650,7 @@ if (typeof MingKeMing !== "object") {
 ! function(ns) {
     var EntityDataSource = ns.EntityDataSource;
     var GroupDataSource = function() {};
-    ns.Interface(GroupDataSource, EntityDataSource);
+    ns.Interface(GroupDataSource, [EntityDataSource]);
     GroupDataSource.prototype.getFounder = function(identifier) {
         console.assert(false, "implement me!");
         return null

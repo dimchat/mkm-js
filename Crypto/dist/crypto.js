@@ -2,7 +2,7 @@
  * Cryptography JavaScript Library (v0.1.0)
  *
  * @author    moKy <albert.moky at gmail.com>
- * @date      Feb. 27, 2020
+ * @date      Mar. 10, 2020
  * @copyright (c) 2020 Albert Moky
  * @license   {@link https://mit-license.org | MIT License}
  */
@@ -188,13 +188,35 @@ if (typeof DIMP !== "object") {
     ns.type.register("Object")
 }(DIMP);
 ! function(ns) {
+    var get_alias = function(value) {
+        var enumeration = this.constructor;
+        var e;
+        for (var k in enumeration) {
+            if (!enumeration.hasOwnProperty(k)) {
+                continue
+            }
+            e = enumeration[k];
+            if (e instanceof enumeration) {
+                if (e.equals(value)) {
+                    return e.alias
+                }
+            }
+        }
+        return null
+    };
     var base_enum = function(value, alias) {
         ns.type.Object.call(this);
-        if (value instanceof base_enum) {
-            this.value = value.valueOf()
-        } else {
-            this.value = value
+        if (!alias) {
+            if (value instanceof base_enum) {
+                alias = value.alias
+            } else {
+                alias = get_alias.call(this, value)
+            }
         }
+        if (value instanceof base_enum) {
+            value = value.value
+        }
+        this.value = value;
         this.alias = alias
     };
     ns.Class(base_enum, ns.type.Object, null);
@@ -221,16 +243,12 @@ if (typeof DIMP !== "object") {
     base_enum.prototype.toJSON = function() {
         return this.value
     };
-    var create = function(elements) {
-        var enumeration = function(value, alias) {
-            if (!alias) {
-                alias = get_name(value, enumeration);
-                if (!alias) {
-                    throw RangeError("enum error: " + value)
-                }
+    var enumify = function(enumeration, elements) {
+        if (!enumeration) {
+            enumeration = function(value, alias) {
+                base_enum.call(this, value, alias)
             }
-            base_enum.call(this, value, alias)
-        };
+        }
         ns.Class(enumeration, base_enum, null);
         var e, v;
         for (var name in elements) {
@@ -238,30 +256,17 @@ if (typeof DIMP !== "object") {
                 continue
             }
             v = elements[name];
-            if (typeof v === "function") {
-                continue
+            if (typeof v !== "number") {
+                throw TypeError("Enum value must be a number!")
             }
             e = new enumeration(v, name);
             enumeration[name] = e
         }
         return enumeration
     };
-    var get_name = function(value, enumeration) {
-        if (value instanceof enumeration) {
-            return value.alias
-        }
-        var e;
-        for (var k in enumeration) {
-            e = enumeration[k];
-            if (e instanceof enumeration) {
-                if (e.equals(value)) {
-                    return e.alias
-                }
-            }
-        }
-        return null
-    };
-    ns.type.Enum = create;
+    ns.type.BaseEnum = base_enum;
+    ns.type.Enum = enumify;
+    ns.type.register("BaseEnum");
     ns.type.register("Enum")
 }(DIMP);
 ! function(ns) {
@@ -803,7 +808,7 @@ if (typeof DIMP !== "object") {
         return null
     };
     var hex = function() {};
-    ns.Class(hex, ns.type.Object, coder);
+    ns.Class(hex, ns.type.Object, [coder]);
     hex.prototype.encode = function(data) {
         return hex_encode(data)
     };
@@ -811,7 +816,7 @@ if (typeof DIMP !== "object") {
         return hex_decode(str)
     };
     var base64 = function() {};
-    ns.Class(base64, ns.type.Object, coder);
+    ns.Class(base64, ns.type.Object, [coder]);
     base64.prototype.encode = function(data) {
         return base64_encode(data)
     };
@@ -819,7 +824,7 @@ if (typeof DIMP !== "object") {
         return base64_decode(string)
     };
     var base58 = function() {};
-    ns.Class(base58, ns.type.Object, coder);
+    ns.Class(base58, ns.type.Object, [coder]);
     base58.prototype.encode = function(data) {
         console.assert(false, "Base58 encode not implemented");
         return null
@@ -831,7 +836,7 @@ if (typeof DIMP !== "object") {
     var C = function(lib) {
         this.coder = lib
     };
-    ns.Class(C, ns.type.Object, coder);
+    ns.Class(C, ns.type.Object, [coder]);
     C.prototype.encode = function(data) {
         return this.coder.encode(data)
     };
@@ -859,7 +864,7 @@ if (typeof DIMP !== "object") {
         return null
     };
     var json = function() {};
-    ns.Class(json, ns.type.Object, parser);
+    ns.Class(json, ns.type.Object, [parser]);
     json.prototype.encode = function(container) {
         return JSON.stringify(container)
     };
@@ -869,7 +874,7 @@ if (typeof DIMP !== "object") {
     var P = function(lib) {
         this.parser = lib
     };
-    ns.Class(P, ns.type.Object, parser);
+    ns.Class(P, ns.type.Object, [parser]);
     P.prototype.encode = function(container) {
         return this.parser.encode(container)
     };
@@ -901,7 +906,7 @@ if (typeof DIMP !== "object") {
         return null
     };
     var pem = function() {};
-    ns.Class(pem, ns.type.Object, parser);
+    ns.Class(pem, ns.type.Object, [parser]);
     pem.prototype.encodePublicKey = function(key) {
         console.assert(false, "PEM parser not implemented");
         return null
@@ -921,7 +926,7 @@ if (typeof DIMP !== "object") {
     var P = function(lib) {
         this.parser = lib
     };
-    ns.Class(P, ns.type.Object, parser);
+    ns.Class(P, ns.type.Object, [parser]);
     P.prototype.encodePublicKey = function(key) {
         return this.parser.encodePublicKey(key)
     };
@@ -947,19 +952,19 @@ if (typeof DIMP !== "object") {
         return null
     };
     var md5 = function() {};
-    ns.Class(md5, ns.type.Object, hash);
+    ns.Class(md5, ns.type.Object, [hash]);
     md5.prototype.digest = function(data) {
         console.assert(false, "MD5 not implemented");
         return null
     };
     var sha256 = function() {};
-    ns.Class(sha256, ns.type.Object, hash);
+    ns.Class(sha256, ns.type.Object, [hash]);
     sha256.prototype.digest = function(data) {
         console.assert(false, "SHA256 not implemented");
         return null
     };
     var ripemd160 = function() {};
-    ns.Class(ripemd160, ns.type.Object, hash);
+    ns.Class(ripemd160, ns.type.Object, [hash]);
     ripemd160.prototype.digest = function(data) {
         console.assert(false, "RIPEMD160 not implemented");
         return null
@@ -967,7 +972,7 @@ if (typeof DIMP !== "object") {
     var H = function(lib) {
         this.hash = lib
     };
-    ns.Class(H, ns.type.Object, hash);
+    ns.Class(H, ns.type.Object, [hash]);
     H.prototype.digest = function(data) {
         return this.hash.digest(data)
     };
@@ -1046,7 +1051,7 @@ if (typeof DIMP !== "object") {
     var SymmetricKey = function(key) {
         CryptographyKey.call(this, key)
     };
-    ns.Class(SymmetricKey, CryptographyKey, EncryptKey, DecryptKey);
+    ns.Class(SymmetricKey, CryptographyKey, [EncryptKey, DecryptKey]);
     SymmetricKey.prototype.equals = function(other) {
         var ciphertext = other.encrypt(promise);
         var plaintext = this.decrypt(ciphertext);
@@ -1101,7 +1106,7 @@ if (typeof DIMP !== "object") {
     var PublicKey = function(key) {
         AsymmetricKey.call(this, key)
     };
-    ns.Class(PublicKey, AsymmetricKey, VerifyKey);
+    ns.Class(PublicKey, AsymmetricKey, [VerifyKey]);
     PublicKey.prototype.matches = function(privateKey) {
         if (!privateKey) {
             return false
@@ -1142,7 +1147,7 @@ if (typeof DIMP !== "object") {
     var PrivateKey = function(key) {
         AsymmetricKey.call(this, key)
     };
-    ns.Class(PrivateKey, AsymmetricKey, SignKey);
+    ns.Class(PrivateKey, AsymmetricKey, [SignKey]);
     PrivateKey.prototype.equals = function(other) {
         var publicKey = this.getPublicKey();
         if (!publicKey) {

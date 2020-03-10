@@ -88,7 +88,7 @@
      *
      *      (All above are just some advices to help choosing numbers :P)
      */
-    var NetworkType = ns.type.Enum({
+    var NetworkType = ns.type.Enum(null, {
 
         BTCMain:        (0x00), // 0000 0000
         //BTCTest:      (0x6F), // 0110 1111
@@ -131,16 +131,28 @@
         Robot:          (0xC8)  // 1100 1000
     });
 
-    NetworkType.prototype.toByte = function () {
-        return String.fromCharCode(this.value);
-    };
+    // NetworkType.prototype.toByte = function () {
+    //     return String.fromCharCode(this.value);
+    // };
 
+    /**
+     *  Indicates whether this is a user type
+     *
+     * @param {uint} network - network ID
+     * @returns {boolean}
+     */
     NetworkType.isUser = function (network) {
         var main = NetworkType.Main.valueOf();
         var btcMain = NetworkType.BTCMain.valueOf();
         return ((network & main) === main) || (network === btcMain);
     };
 
+    /**
+     *  Indicates whether this is a group type
+     *
+     * @param {uint} network - network ID
+     * @returns {boolean}
+     */
     NetworkType.isGroup = function (network) {
         var group = NetworkType.Group.valueOf();
         return (network & group) === group;
@@ -180,7 +192,7 @@
      *      0000 0100 - this meta generate ETH address
      *      ...
      */
-    var MetaType = ns.type.Enum({
+    var MetaType = ns.type.Enum(null, {
 
         Default: (0x01),
         MKM:     (0x01),  // 0000 0001
@@ -191,6 +203,16 @@
         ETH:     (0x04),  // 0000 0100
         ExETH:   (0x05)   // 0000 0101
     });
+
+    /**
+     *  Indicates whether this meta contains seed string & fingerprint
+     *
+     * @returns {boolean}
+     */
+    MetaType.hasSeed = function (version) {
+        var mkm = MetaType.MKM.valueOf();
+        return (version & mkm) === mkm;
+    };
 
     //-------- namespace --------
     ns.protocol.MetaType = MetaType;

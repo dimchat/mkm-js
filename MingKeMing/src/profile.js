@@ -183,7 +183,7 @@
         this.properties = null;
         this.status = 0; // 1 for valid, -1 for invalid
     };
-    ns.Class(Profile, Dictionary, TAI);
+    ns.Class(Profile, Dictionary, [TAI]);
 
     // @override
     Profile.prototype.isValid = function () {

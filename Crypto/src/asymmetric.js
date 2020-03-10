@@ -71,7 +71,7 @@
     var PublicKey = function (key) {
         AsymmetricKey.call(this, key);
     };
-    ns.Class(PublicKey, AsymmetricKey, VerifyKey);
+    ns.Class(PublicKey, AsymmetricKey, [VerifyKey]);
 
     /**
      *  Check if this pubic key paired with the private key
@@ -144,7 +144,7 @@
     var PrivateKey = function (key) {
         AsymmetricKey.call(this, key);
     };
-    ns.Class(PrivateKey, AsymmetricKey, SignKey);
+    ns.Class(PrivateKey, AsymmetricKey, [SignKey]);
 
     /**
      *  Check whether keys equal

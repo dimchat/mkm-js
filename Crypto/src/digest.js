@@ -53,7 +53,7 @@
     //
     var md5 = function () {
     };
-    ns.Class(md5, ns.type.Object, hash);
+    ns.Class(md5, ns.type.Object, [hash]);
     // noinspection JSUnusedLocalSymbols
     md5.prototype.digest = function (data) {
         console.assert(false, 'MD5 not implemented');
@@ -65,7 +65,7 @@
     //
     var sha256 = function () {
     };
-    ns.Class(sha256, ns.type.Object, hash);
+    ns.Class(sha256, ns.type.Object, [hash]);
     // noinspection JSUnusedLocalSymbols
     sha256.prototype.digest = function (data) {
         console.assert(false, 'SHA256 not implemented');
@@ -77,7 +77,7 @@
     //
     var ripemd160 = function () {
     };
-    ns.Class(ripemd160, ns.type.Object, hash);
+    ns.Class(ripemd160, ns.type.Object, [hash]);
     // noinspection JSUnusedLocalSymbols
     ripemd160.prototype.digest = function (data) {
         console.assert(false, 'RIPEMD160 not implemented');
@@ -90,7 +90,7 @@
     var H = function (lib) {
         this.hash = lib;
     };
-    ns.Class(H, ns.type.Object, hash);
+    ns.Class(H, ns.type.Object, [hash]);
 
     H.prototype.digest = function (data) {
         return this.hash.digest(data);

@@ -48,15 +48,6 @@
     var ID = ns.ID;
 
     /**
-     *  Indicates whether this meta contains seed string
-     *
-     * @returns {boolean}
-     */
-    var contains_seed = function (version) {
-        return (version & MetaType.MKM.value) === MetaType.MKM.value;
-    };
-
-    /**
      *  User/Group Meta data
      *  ~~~~~~~~~~~~~~~~~~~~
      *  This class is used to generate entity ID
@@ -92,7 +83,7 @@
          */
         this.key = PublicKey.getInstance(map['key']);
         // seed & fingerprint
-        if (contains_seed(version)) {
+        if (this.hasSeed()) {
             /**
              *  Seed to generate fingerprint
              *
@@ -126,9 +117,13 @@
         } else if (Dictionary.prototype.equals.call(this, other)) {
             return true;
         }
-        other = Meta.getInstance(other);
-        var identifier = other.generateIdentifier(NetworkType.Main);
+        var meta = Meta.getInstance(other);
+        var identifier = meta.generateIdentifier(NetworkType.Main);
         return this.matches(identifier);
+    };
+
+    Meta.prototype.hasSeed = function () {
+        return MetaType.hasSeed(this.version);
     };
 
     /**
@@ -141,7 +136,7 @@
             if (!this.key) {
                 // meta.key should not be empty
                 this.status = -1;
-            } else if (contains_seed(this.version)) {
+            } else if (this.hasSeed()) {
                 if (!this.seed || !this.fingerprint) {
                     // seed and fingerprint should not be empty
                     this.status = -1;
@@ -169,7 +164,7 @@
             return true;
         }
         // check with seed & fingerprint
-        if (contains_seed(this.version)) {
+        if (this.hasSeed()) {
             // check whether keys equal by verifying signature
             var data = ns.type.String.from(this.seed).getBytes();
             var signature = this.fingerprint;
@@ -239,17 +234,23 @@
     /**
      *  Generate meta with private key and seed
      *
-     * @param {MetaType} version - Meta algorithm version
+     * @param {MetaType} type - Meta algorithm version
      * @param privateKey
      * @param {String} seed - Seed string for generating ID
      * @returns {Meta}
      */
-    Meta.generate = function (version, privateKey, seed) {
+    Meta.generate = function (type, privateKey, seed) {
+        var version;
+        if (type instanceof MetaType) {
+            version = type.valueOf();
+        } else {
+            version = type;
+        }
         var meta = {
             'version': version,
             'key': privateKey.getPublicKey()
         };
-        if (contains_seed(version)) {
+        if (MetaType.hasSeed(version)) {
             // generate fingerprint with private key
             var data = ns.type.String.from(seed).getBytes();
             var fingerprint = privateKey.sign(data);
@@ -265,17 +266,17 @@
     /**
      *  Register meta class with type
      *
-     * @param {MetaType} version - Meta algorithm version
+     * @param {MetaType} type - Meta algorithm version
      * @param {Class} clazz - Meta class
      */
-    Meta.register = function (version, clazz) {
-        var value;
-        if (version instanceof MetaType) {
-            value = version.valueOf();
+    Meta.register = function (type, clazz) {
+        var version;
+        if (type instanceof MetaType) {
+            version = type.valueOf();
         } else {
-            value = version;
+            version = type;
         }
-        meta_classes[value] = clazz;
+        meta_classes[version] = clazz;
     };
 
     /**

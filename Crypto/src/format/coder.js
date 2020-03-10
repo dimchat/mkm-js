@@ -245,7 +245,7 @@
     //
     var hex = function () {
     };
-    ns.Class(hex, ns.type.Object, coder);
+    ns.Class(hex, ns.type.Object, [coder]);
 
     hex.prototype.encode = function (data) {
         return hex_encode(data);
@@ -259,7 +259,7 @@
     //
     var base64 = function () {
     };
-    ns.Class(base64, ns.type.Object, coder);
+    ns.Class(base64, ns.type.Object, [coder]);
 
     base64.prototype.encode = function (data) {
         return base64_encode(data);
@@ -273,7 +273,7 @@
     //
     var base58 = function () {
     };
-    ns.Class(base58, ns.type.Object, coder);
+    ns.Class(base58, ns.type.Object, [coder]);
     // noinspection JSUnusedLocalSymbols
     base58.prototype.encode = function (data) {
         console.assert(false, 'Base58 encode not implemented');
@@ -291,7 +291,7 @@
     var C = function (lib) {
         this.coder = lib;
     };
-    ns.Class(C, ns.type.Object, coder);
+    ns.Class(C, ns.type.Object, [coder]);
 
     C.prototype.encode = function (data) {
         return this.coder.encode(data);

@@ -51,7 +51,7 @@
     var SymmetricKey = function (key) {
         CryptographyKey.call(this, key);
     };
-    ns.Class(SymmetricKey, CryptographyKey, EncryptKey, DecryptKey);
+    ns.Class(SymmetricKey, CryptographyKey, [EncryptKey, DecryptKey]);
 
     SymmetricKey.prototype.equals = function (other) {
         // check by encryption

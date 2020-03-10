@@ -36,7 +36,7 @@ crypto_tests = [];
     crypto_tests.push(test_bytes);
 
     var test_enum = function () {
-        var MetaType = ns.type.Enum({
+        var MetaType = ns.type.Enum(null, {
 
             Default: (0x01),
             MKM:     (0x01),  // 0000 0001
@@ -66,7 +66,7 @@ crypto_tests = [];
 
     var test_string = function () {
         var data = 'Moky';
-        var str = new ns.type.String(data);
+        var str = new ns.type.String(data, 'UTF-8');
         log('string: ', str);
         assert(str.equalsIgnoreCase('moky') === true, 'String comparing error');
     };
@@ -74,7 +74,7 @@ crypto_tests = [];
 
     var test_utf8 = function () {
         var data = '《道德经》';
-        var str = new ns.type.String(data);
+        var str = new ns.type.String(data, 'UTF-8');
         console.assert(str.getLength() === 5, 'UTF-8 length error');
         var bytes = str.getBytes(null);
         log('utf-8: ', bytes);
@@ -83,7 +83,7 @@ crypto_tests = [];
         exp = new Uint8Array(exp);
         assert(bytes.toString() === exp.toString(), 'UTF-8 bytes value error');
 
-        var dec = new ns.type.String(exp);
+        var dec = new ns.type.String(exp, 'UTF-8');
         assert(dec.equals(str) === true, 'UTF-8 decode error');
         assert(dec.toString() === data, 'UTF-8 string value error');
     };
@@ -98,7 +98,7 @@ crypto_tests = [];
     var Base64 = ns.format.Base64;
     var Base58 = ns.format.Base58;
 
-    var str = new ns.type.String('moky');
+    var str = new ns.type.String('moky', 'UTF-8');
     var bytes = str.getBytes(null);
 
     var test_hex = function () {
@@ -108,7 +108,7 @@ crypto_tests = [];
         assert(enc === exp, 'encode error');
 
         var dec = Hex.decode(exp);
-        var str2 = new ns.type.String(dec);
+        var str2 = new ns.type.String(dec, 'UTF-8');
         log('str2: ', str2);
         assert(str2.equals(str) === true, 'Hex decode error');
     };
@@ -122,7 +122,7 @@ crypto_tests = [];
         assert(enc === exp, 'encode error');
 
         var dec = Base64.decode(enc);
-        var str2 = new ns.type.String(dec);
+        var str2 = new ns.type.String(dec, 'UTF-8');
         log('str2: ', str2);
         assert(str2.equals(str) === true, 'BASE-64 decode error');
     };
@@ -136,7 +136,7 @@ crypto_tests = [];
         assert(enc === exp, 'Base-58 encode error');
 
         var dec = Base58.decode(enc);
-        var str2 = new ns.type.String(dec);
+        var str2 = new ns.type.String(dec, 'UTF-8');
         log('str2: ', str2);
         assert(str2.equals(str) === true, 'BASE-58 decode error');
     };
@@ -153,7 +153,7 @@ crypto_tests = [];
     var SHA256 = ns.digest.SHA256;
     var RIPEMD160 = ns.digest.RIPEMD160;
 
-    var str = new ns.type.String('moky');
+    var str = new ns.type.String('moky', 'UTF-8');
     var bytes = str.getBytes(null);
 
     // md5(moky) = d0e5edd3fd12b89154bbe7a5e4c82569
@@ -224,7 +224,7 @@ crypto_tests = [];
     var PrivateKey = ns.crypto.PrivateKey;
     var PublicKey = ns.crypto.PublicKey;
 
-    var str = new ns.type.String('moky');
+    var str = new ns.type.String('moky', 'UTF-8');
     var bytes = str.getBytes(null);
 
     var test_rsa = function () {
@@ -295,12 +295,12 @@ crypto_tests = [];
         var enc = PK.encrypt(bytes);
         log('RSA encrypt:(', str, '): ', Base64.encode(enc));
         var dec = SK.decrypt(enc);
-        var result = new ns.type.String(dec);
+        var result = new ns.type.String(dec, 'UTF-8');
         log('RSA decrypt:', result);
         assert(str.toString() === result.toString(), 'RSA encrypt error');
 
         dec = SK.decrypt(Base64.decode(expect));
-        result = new ns.type.String(dec);
+        result = new ns.type.String(dec, 'UTF-8');
         log('RSA decrypt:', result);
         assert(str.toString() === result.toString(), 'RSA decrypt error');
     };
@@ -318,7 +318,7 @@ crypto_tests = [];
 
     var SymmetricKey = ns.crypto.SymmetricKey;
 
-    var str = new ns.type.String('moky');
+    var str = new ns.type.String('moky', 'UTF-8');
     var bytes = str.getBytes(null);
 
     var test_aes = function () {
@@ -344,7 +344,7 @@ crypto_tests = [];
         assert(Base64.encode(enc) === expect, 'AES encrypt error');
 
         var dec = pwd.decrypt(enc);
-        var result = new ns.type.String(dec);
+        var result = new ns.type.String(dec, 'UTF-8');
         log('AES decrypt("' + expect + '"): "' + result + '"');
         assert(result.equals(str) === true, 'AES decrypt error');
     };
