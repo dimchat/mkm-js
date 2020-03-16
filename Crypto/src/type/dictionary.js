@@ -31,62 +31,7 @@
 !function (ns) {
     'use strict';
 
-    //
-    //  Array
-    //
-    var arrays = {
-        /**
-         *  Remove the item from array
-         *
-         * @param {[]} array
-         * @param {*} item
-         * @returns {[]}
-         */
-        remove: function (array, item) {
-            var index = array.indexOf(item);
-            if (index < 0) {
-                return null;
-            }
-            return array.splice(index, 1);
-        },
-
-        /**
-         *  Check whether the two arrays are equal
-         *
-         * @param {Uint8Array|[]|{}} array1
-         * @param {Uint8Array|[]|{}} array2
-         * @returns {boolean}
-         */
-        equals: function (array1, array2) {
-            if (array1 === array2) {
-                // same object
-                return true;
-            }
-            if (array1.length !== array2.length) {
-                return false;
-            }
-            var v1, v2;
-            for (var k in array1) {
-                if (!array1.hasOwnProperty(k)) {
-                    continue;
-                }
-                v1 = array1[k];
-                v2 = array2[k];
-                if (typeof v1['equals'] === 'function') {
-                    if (!v1.equals(v2)) {
-                        return false;
-                    }
-                } else if (typeof v2['equals'] === 'function') {
-                    if (!v2.equals(v1)) {
-                        return false;
-                    }
-                } else if (v1 !== v2) {
-                    return false;
-                }
-            }
-            return true;
-        }
-    };
+    var Arrays = ns.type.Arrays;
 
     //
     //  Dictionary
@@ -124,9 +69,9 @@
         // } else if (ns.type.Object.prototype.equals.call(this, other)) {
         //     return true;
         } else if (other instanceof map) {
-            return arrays.equals(this.dictionary, other.getMap(false));
+            return Arrays.equals(this.dictionary, other.getMap(false));
         } else {
-            return arrays.equals(this.dictionary, other);
+            return Arrays.equals(this.dictionary, other);
         }
     };
 
@@ -206,9 +151,7 @@
 
     //-------- namespace --------
     ns.type.Dictionary = map;
-    ns.type.Arrays = arrays;
 
     ns.type.register('Dictionary');
-    ns.type.register('Arrays');
 
 }(DIMP);

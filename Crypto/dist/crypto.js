@@ -2,7 +2,7 @@
  * Cryptography JavaScript Library (v0.1.0)
  *
  * @author    moKy <albert.moky at gmail.com>
- * @date      Mar. 10, 2020
+ * @date      Mar. 16, 2020
  * @copyright (c) 2020 Albert Moky
  * @license   {@link https://mit-license.org | MIT License}
  */
@@ -186,6 +186,121 @@ if (typeof DIMP !== "object") {
     };
     ns.type.Object = obj;
     ns.type.register("Object")
+}(DIMP);
+! function(ns) {
+    var is_array = function(obj) {
+        if (obj instanceof Array) {
+            return true
+        } else {
+            if (obj instanceof Uint8Array) {
+                return true
+            } else {
+                if (obj instanceof Int8Array) {
+                    return true
+                } else {
+                    if (obj instanceof Uint8ClampedArray) {
+                        return true
+                    } else {
+                        if (obj instanceof Uint16Array) {
+                            return true
+                        } else {
+                            if (obj instanceof Int16Array) {
+                                return true
+                            } else {
+                                if (obj instanceof Uint32Array) {
+                                    return true
+                                } else {
+                                    if (obj instanceof Int32Array) {
+                                        return true
+                                    } else {
+                                        if (obj instanceof Float32Array) {
+                                            return true
+                                        } else {
+                                            if (obj instanceof Float64Array) {
+                                                return true
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false
+    };
+    var is_arrays_equal = function(array1, array2) {
+        if (array1.length !== array2.length) {
+            return false
+        }
+        for (var i = 0; i < array1.length; ++i) {
+            if (!is_objects_equal(array1[i], array2[i])) {
+                return false
+            }
+        }
+        return true
+    };
+    var is_dictionary_equal = function(dict1, dict2) {
+        var keys1 = Object.keys(dict1);
+        var keys2 = Object.keys(dict2);
+        if (keys1.length !== keys2.length) {
+            return false
+        }
+        var k;
+        for (var i = 0; i < keys1.length; ++i) {
+            k = keys1[i];
+            if (!is_objects_equal(dict1[k], dict2[k])) {
+                return false
+            }
+        }
+        return true
+    };
+    var is_objects_equal = function(obj1, obj2) {
+        if (obj1 === obj2) {
+            return true
+        } else {
+            if (!obj1) {
+                return !obj2
+            } else {
+                if (!obj2) {
+                    return false
+                } else {
+                    if (typeof obj1["equals"] === "function") {
+                        return obj1.equals(obj2)
+                    } else {
+                        if (typeof obj2["equals"] === "function") {
+                            return obj2.equals(obj1)
+                        }
+                    }
+                }
+            }
+        }
+        if (is_array(obj1)) {
+            if (is_array(obj2)) {
+                return is_arrays_equal(obj1, obj2)
+            } else {
+                return false
+            }
+        } else {
+            if (is_array(obj2)) {
+                return false
+            }
+        }
+        return is_dictionary_equal(obj1, obj2)
+    };
+    var arrays = {
+        remove: function(array, item) {
+            var index = array.indexOf(item);
+            if (index < 0) {
+                return null
+            }
+            return array.splice(index, 1)
+        },
+        equals: is_objects_equal
+    };
+    ns.type.Arrays = arrays;
+    ns.type.register("Arrays")
 }(DIMP);
 ! function(ns) {
     var get_alias = function(value) {
@@ -565,47 +680,7 @@ if (typeof DIMP !== "object") {
     ns.type.register("String")
 }(DIMP);
 ! function(ns) {
-    var arrays = {
-        remove: function(array, item) {
-            var index = array.indexOf(item);
-            if (index < 0) {
-                return null
-            }
-            return array.splice(index, 1)
-        },
-        equals: function(array1, array2) {
-            if (array1 === array2) {
-                return true
-            }
-            if (array1.length !== array2.length) {
-                return false
-            }
-            var v1, v2;
-            for (var k in array1) {
-                if (!array1.hasOwnProperty(k)) {
-                    continue
-                }
-                v1 = array1[k];
-                v2 = array2[k];
-                if (typeof v1["equals"] === "function") {
-                    if (!v1.equals(v2)) {
-                        return false
-                    }
-                } else {
-                    if (typeof v2["equals"] === "function") {
-                        if (!v2.equals(v1)) {
-                            return false
-                        }
-                    } else {
-                        if (v1 !== v2) {
-                            return false
-                        }
-                    }
-                }
-            }
-            return true
-        }
-    };
+    var Arrays = ns.type.Arrays;
     var map = function(entries) {
         if (!entries) {
             entries = {}
@@ -631,9 +706,9 @@ if (typeof DIMP !== "object") {
             return !this.dictionary
         } else {
             if (other instanceof map) {
-                return arrays.equals(this.dictionary, other.getMap(false))
+                return Arrays.equals(this.dictionary, other.getMap(false))
             } else {
-                return arrays.equals(this.dictionary, other)
+                return Arrays.equals(this.dictionary, other)
             }
         }
     };
@@ -676,9 +751,7 @@ if (typeof DIMP !== "object") {
         return new map(dict)
     };
     ns.type.Dictionary = map;
-    ns.type.Arrays = arrays;
-    ns.type.register("Dictionary");
-    ns.type.register("Arrays")
+    ns.type.register("Dictionary")
 }(DIMP);
 ! function(ns) {
     var Data = ns.type.Data;

@@ -9,6 +9,23 @@ crypto_tests = [];
     'use strict';
 
     var Data = ns.type.Data;
+    var Dictionary = ns.type.Dictionary;
+
+    var test_dictionary = function () {
+        var obj1 = {
+            name: 'Moky',
+            age: 18
+        };
+        var obj2 = {
+            name: 'Moky',
+            age: 18
+        };
+        var dict1 = new Dictionary(obj1);
+        var dict2 = new Dictionary(obj2);
+        var equals = ns.type.Arrays.equals(dict1, dict2);
+        assert(equals === true, 'dictionary compare error');
+    };
+    crypto_tests.push(test_dictionary);
 
     var test_bytes = function () {
         var data = new Data(4);
