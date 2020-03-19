@@ -112,6 +112,8 @@
             return !obj2; // object1 is undefined but object2 is not
         } else if (!obj2) {
             return false; // object2 is undefined but object1 is not
+        } else if (typeof obj1 === 'string' || typeof obj2 === 'string') {
+            return false; // obj1 === obj2;
         } else if (typeof obj1['equals'] === 'function') {
             return obj1.equals(obj2);
         } else if (typeof obj2['equals'] === 'function') {
