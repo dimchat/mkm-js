@@ -143,14 +143,76 @@
          *
          * @param {[]} array
          * @param {*} item
-         * @returns {[]}
+         * @returns {boolean}
          */
         remove: function (array, item) {
             var index = array.indexOf(item);
-            if (index < 0) {
-                return null;
+            if (index < 0/* || index >= array.length*/) {
+                return false;
+            } else if (index === 0) {
+                // remove head
+                array.shift();
+            } else if ((index+1) === array.length) {
+                // remove tail
+                array.pop();
+            } else {
+                array.splice(index, 1);
             }
-            return array.splice(index, 1);
+            return true;
+        },
+
+        /**
+         *  Update the position of array with item
+         *
+         * @param {[]} array
+         * @param {Number} index
+         * @param {*} item
+         * @returns {boolean}
+         */
+        update: function (array, index, item) {
+            if (index < 0) {
+                index += array.length;
+                if (index < 0) {
+                    return false;
+                }
+            }
+            // skip empty spaces
+            array[index] = item;
+            return true;
+        },
+
+        /**
+         *  Insert the item in the position of array,
+         *  all items after this position (includes) will be moved
+         *
+         * @param {[]} array
+         * @param {Number} index
+         * @param {*} item
+         * @returns {boolean}
+         */
+        insert: function (array, index, item) {
+            if (index < 0) {
+                // for update the same position after inserted,
+                // here should add 1 because array.length increased
+                index += array.length + 1;
+                if (index < 0) {
+                    return false;
+                }
+            }
+            if (index === 0) {
+                // insert to head
+                array.unshift(item);
+            } else if (index === array.length) {
+                // push to tail
+                array.push(item);
+            } else if (index > array.length) {
+                // NOTICE: this function will skip empty spaces
+                array[index] = item;
+            } else {
+                // NOTICE: this will push the item to tail if index > array.length
+                array.splice(index, 0, item);
+            }
+            return true;
         },
 
         /**
