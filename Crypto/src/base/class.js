@@ -38,6 +38,9 @@
      * @returns {boolean}
      */
     var conforms = function (object, protocol) {
+        if (!object) {
+            return false;
+        }
         if (object instanceof protocol) {
             return true;
         }
@@ -45,6 +48,7 @@
         var names = Object.getOwnPropertyNames(protocol.prototype);
         for (var i = 0; i < names.length; ++i) {
             if (!child.hasOwnProperty(names[i])) {
+                // TODO: check properties in ancestors' prototype?
                 return false;
             }
         }

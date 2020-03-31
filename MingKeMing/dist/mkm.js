@@ -757,7 +757,7 @@ if (typeof MingKeMing !== "object") {
             return key
         }
         key = meta_key.call(this);
-        if (key && ns.Interface.conforms(key, EncryptKey)) {
+        if (ns.Interface.conforms(key, EncryptKey)) {
             return key
         }
         throw Error("failed to get encrypt key for user: " + this.identifier)

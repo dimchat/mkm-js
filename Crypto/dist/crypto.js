@@ -96,6 +96,9 @@ if (typeof DIMP !== "object") {
 }(DIMP);
 ! function(ns) {
     var conforms = function(object, protocol) {
+        if (!object) {
+            return false
+        }
         if (object instanceof protocol) {
             return true
         }
