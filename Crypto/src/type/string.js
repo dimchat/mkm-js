@@ -46,9 +46,14 @@
         encode: function (string) {
             var len = string.length;
             var array = new Data(len);
-            var c;
+            var c, l;
             for (var i = 0; i < len; ++i) {
                 c = string.charCodeAt(i);
+                if (0xD800 <= c && c <= 0xDBFF) {
+                    // Unicode SMP (Supplementary Multilingual Plane)
+                    l = string.charCodeAt(++i);
+                    c = ((c - 0xD800) << 10) + 0x10000 + l - 0xDC00;
+                }
                 if (c <= 0) {
                     // end
                     break;
@@ -57,13 +62,19 @@
                     array.push(c);
                 } else if (c < 0x0800) {
                     // 110x xxxx, 10xx xxxx
-                    array.push(0xC0 | ((c >>  6) & 0x001F));
-                    array.push(0x80 | ((c >>  0) & 0x003F));
-                } else {
+                    array.push(0xC0 | ((c >>  6) & 0x1F));
+                    array.push(0x80 | ((c >>  0) & 0x3F));
+                } else if (c < 0x10000) {
                     // 1110 xxxx, 10xx xxxx, 10xx xxxx
-                    array.push(0xE0 | ((c >> 12) & 0x000F));
-                    array.push(0x80 | ((c >>  6) & 0x003F));
-                    array.push(0x80 | ((c >>  0) & 0x003F));
+                    array.push(0xE0 | ((c >> 12) & 0x0F));
+                    array.push(0x80 | ((c >>  6) & 0x3F));
+                    array.push(0x80 | ((c >>  0) & 0x3F));
+                } else {
+                    // 1111 0xxx, 10xx xxxx, 10xx xxxx, 10xx xxxx
+                    array.push(0xF0 | ((c >> 18) & 0x07));
+                    array.push(0x80 | ((c >> 12) & 0x3F));
+                    array.push(0x80 | ((c >>  6) & 0x3F));
+                    array.push(0x80 | ((c >>  0) & 0x3F));
                 }
             }
             return array.getBytes(false);
@@ -77,7 +88,7 @@
         decode: function (array) {
             var string = '';
             var len = array.length;
-            var c, c2, c3;
+            var c, c2, c3, c4;
             for (var i = 0; i < len; ++i) {
                 c = array[i];
                 switch (c >> 4) {
@@ -95,8 +106,22 @@
                         c3 = array[++i];
                         c = ((c & 0x0F) << 12) | ((c2 & 0x3F) << 6) | (c3 & 0x3F);
                         break;
+                    case 15:
+                        c2 = array[++i];
+                        c3 = array[++i];
+                        c4 = array[++i];
+                        // 1111 0xxx, 10xx xxxx, 10xx xxxx, 10xx xxxx
+                        c = ((c & 0x07) << 18) | ((c2 & 0x3F) << 12) | ((c3 & 0x3F) << 6) | (c4 & 0x3F);
+                        break;
                 }
-                string += String.fromCharCode(c);
+                if (c < 0x10000) {
+                    string += String.fromCharCode(c);
+                } else/* if (c < 0x110000)*/ {
+                    // Unicode SMP (Supplementary Multilingual Plane)
+                    c -= 0x10000;
+                    string += String.fromCharCode((c >> 10) + 0xD800);    // hi
+                    string += String.fromCharCode((c & 0x03FF) + 0xDC00); // lo
+                }
             }
             return string;
         }
