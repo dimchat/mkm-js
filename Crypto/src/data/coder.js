@@ -288,23 +288,23 @@
     //
     //  Coder Lib
     //
-    var C = function (lib) {
-        this.coder = lib;
+    var Lib = function (coder) {
+        this.coder = coder;
     };
-    ns.Class(C, ns.type.Object, [coder]);
+    ns.Class(Lib, ns.type.Object, [coder]);
 
-    C.prototype.encode = function (data) {
+    Lib.prototype.encode = function (data) {
         return this.coder.encode(data);
     };
-    C.prototype.decode = function (string) {
+    Lib.prototype.decode = function (string) {
         return this.coder.decode(string);
     };
 
     //-------- namespace --------
     ns.format.BaseCoder = coder;
-    ns.format.Hex = new C(new hex());
-    ns.format.Base58 = new C(new base58());
-    ns.format.Base64 = new C(new base64());
+    ns.format.Hex = new Lib(new hex());
+    ns.format.Base58 = new Lib(new base58());
+    ns.format.Base64 = new Lib(new base64());
 
     ns.format.register('BaseCoder');
     ns.format.register('Hex');

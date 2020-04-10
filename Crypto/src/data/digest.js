@@ -87,20 +87,20 @@
     //
     //  Hash Lib
     //
-    var H = function (lib) {
-        this.hash = lib;
+    var Lib = function (hash) {
+        this.hash = hash;
     };
-    ns.Class(H, ns.type.Object, [hash]);
+    ns.Class(Lib, ns.type.Object, [hash]);
 
-    H.prototype.digest = function (data) {
+    Lib.prototype.digest = function (data) {
         return this.hash.digest(data);
     };
 
     //-------- namespace --------
     ns.digest.Hash = hash;
-    ns.digest.MD5 = new H(new md5());
-    ns.digest.SHA256 = new H(new sha256());
-    ns.digest.RIPEMD160 = new H(new ripemd160());
+    ns.digest.MD5 = new Lib(new md5());
+    ns.digest.SHA256 = new Lib(new sha256());
+    ns.digest.RIPEMD160 = new Lib(new ripemd160());
 
     ns.digest.register('Hash');
     ns.digest.register('MD5');

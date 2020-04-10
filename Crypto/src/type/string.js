@@ -31,102 +31,6 @@
 !function (ns) {
     'use strict';
 
-    var Data = ns.type.Data;
-
-    //
-    //  UTF-8
-    //
-    var UTF8 = {
-        /**
-         *  Encode string to UTF8 data array
-         *
-         * @param {String} string
-         * @returns {Uint8Array}
-         */
-        encode: function (string) {
-            var len = string.length;
-            var array = new Data(len);
-            var c, l;
-            for (var i = 0; i < len; ++i) {
-                c = string.charCodeAt(i);
-                if (0xD800 <= c && c <= 0xDBFF) {
-                    // Unicode SMP (Supplementary Multilingual Plane)
-                    l = string.charCodeAt(++i);
-                    c = ((c - 0xD800) << 10) + 0x10000 + l - 0xDC00;
-                }
-                if (c <= 0) {
-                    // end
-                    break;
-                } else if (c < 0x0080) {
-                    // 0xxx xxxx
-                    array.push(c);
-                } else if (c < 0x0800) {
-                    // 110x xxxx, 10xx xxxx
-                    array.push(0xC0 | ((c >>  6) & 0x1F));
-                    array.push(0x80 | ((c >>  0) & 0x3F));
-                } else if (c < 0x10000) {
-                    // 1110 xxxx, 10xx xxxx, 10xx xxxx
-                    array.push(0xE0 | ((c >> 12) & 0x0F));
-                    array.push(0x80 | ((c >>  6) & 0x3F));
-                    array.push(0x80 | ((c >>  0) & 0x3F));
-                } else {
-                    // 1111 0xxx, 10xx xxxx, 10xx xxxx, 10xx xxxx
-                    array.push(0xF0 | ((c >> 18) & 0x07));
-                    array.push(0x80 | ((c >> 12) & 0x3F));
-                    array.push(0x80 | ((c >>  6) & 0x3F));
-                    array.push(0x80 | ((c >>  0) & 0x3F));
-                }
-            }
-            return array.getBytes(false);
-        },
-        /**
-         *  Decode UTF8 data array to string
-         *
-         * @param {Uint8Array} array
-         * @returns {String}
-         */
-        decode: function (array) {
-            var string = '';
-            var len = array.length;
-            var c, c2, c3, c4;
-            for (var i = 0; i < len; ++i) {
-                c = array[i];
-                switch (c >> 4) {
-                    // case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
-                    //     // 0xxx xxxx
-                    //     break;
-                    case 12: case 13:
-                        // 110x xxxx, 10xx xxxx
-                        c2 = array[++i];
-                        c = ((c & 0x1F) << 6) | (c2 & 0x3F);
-                        break;
-                    case 14:
-                        // 1110 xxxx, 10xx xxxx, 10xx xxxx
-                        c2 = array[++i];
-                        c3 = array[++i];
-                        c = ((c & 0x0F) << 12) | ((c2 & 0x3F) << 6) | (c3 & 0x3F);
-                        break;
-                    case 15:
-                        c2 = array[++i];
-                        c3 = array[++i];
-                        c4 = array[++i];
-                        // 1111 0xxx, 10xx xxxx, 10xx xxxx, 10xx xxxx
-                        c = ((c & 0x07) << 18) | ((c2 & 0x3F) << 12) | ((c3 & 0x3F) << 6) | (c4 & 0x3F);
-                        break;
-                }
-                if (c < 0x10000) {
-                    string += String.fromCharCode(c);
-                } else/* if (c < 0x110000)*/ {
-                    // Unicode SMP (Supplementary Multilingual Plane)
-                    c -= 0x10000;
-                    string += String.fromCharCode((c >> 10) + 0xD800);    // hi
-                    string += String.fromCharCode((c & 0x03FF) + 0xDC00); // lo
-                }
-            }
-            return string;
-        }
-    };
-
     //
     //  String
     //
@@ -135,24 +39,21 @@
      *  Create String with data array or another string
      *
      * @param {Uint8Array|String|str} value
-     * @param {String} charset - 'UTF-8'
      */
-    var str = function (value, charset) {
+    var str = function (value) {
         if (!value) {
             value = '';
         } else if (value instanceof str) {
             value = value.valueOf();
-        } else if (typeof value !== 'string') {
-            // array?
-            if (!(value instanceof Uint8Array)) {
-                value = new Uint8Array(value);
-            }
+        } else if (value instanceof Uint8Array) {
             // decode data array
-            if (!charset || charset === 'UTF-8') {
-                value = UTF8.decode(value);
+            if (arguments.length === 1 || arguments[1] === 'UTF-8') {
+                value = ns.format.UTF8.decode(value);
             } else {
-                throw Error('only UTF-8 now');
+                throw Error('unknown charset: ' + arguments[1]);
             }
+        } else if (typeof value !== 'string') {
+            throw Error('string value error: ' + value);
         }
         ns.type.Object.call(this);
         this.string = value;
@@ -167,7 +68,7 @@
      */
     str.prototype.getBytes = function (charset) {
         if (!charset || charset === 'UTF-8') {
-            return UTF8.encode(this.string);
+            return ns.format.UTF8.encode(this.string);
         }
         throw Error('unknown charset: ' + charset);
     };
@@ -236,9 +137,14 @@
      */
     str.from = function (array) {
         if (array instanceof Array) {
+            // convert Array to Uint8Array
             array = new Uint8Array(array);
         }
-        return new str(array, null);
+        if (arguments.length === 1) {
+            return new str(array);
+        } else {
+            return new str(array, arguments[1]);
+        }
     };
 
     //-------- namespace --------

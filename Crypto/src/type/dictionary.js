@@ -40,7 +40,7 @@
     /**
      *  Create dictionary with values or JSON string
      *
-     * @param {{}|map|String} entries
+     * @param {{}|map|String|} entries
      */
     var map = function (entries) {
         if (!entries) {

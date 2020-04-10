@@ -31,12 +31,13 @@
 !function (ns) {
     'use strict';
 
+    var UTF8 = ns.format.UTF8;
+
     var CryptographyKey = ns.crypto.CryptographyKey;
     var EncryptKey = ns.crypto.EncryptKey;
     var DecryptKey = ns.crypto.DecryptKey;
 
-    var promise = 'Moky loves May Lee forever!';
-    promise = ns.type.String.from(promise).getBytes(null);
+    var promise = UTF8.encode('Moky loves May Lee forever!');;
 
     //
     //  Symmetric Cryptography Key

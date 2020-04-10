@@ -2,7 +2,7 @@
  * MingKeMing - User Module (v0.1.0)
  *
  * @author    moKy <albert.moky at gmail.com>
- * @date      Mar. 10, 2020
+ * @date      Apr. 10, 2020
  * @copyright (c) 2020 Albert Moky
  * @license   {@link https://mit-license.org | MIT License}
  */
@@ -250,6 +250,7 @@ if (typeof MingKeMing !== "object") {
     var Dictionary = ns.type.Dictionary;
     var PublicKey = ns.crypto.PublicKey;
     var Base64 = ns.format.Base64;
+    var UTF8 = ns.format.UTF8;
     var MetaType = ns.protocol.MetaType;
     var NetworkType = ns.protocol.NetworkType;
     var Address = ns.Address;
@@ -296,7 +297,7 @@ if (typeof MingKeMing !== "object") {
                     if (!this.seed || !this.fingerprint) {
                         this.status = -1
                     } else {
-                        var data = ns.type.String.from(this.seed).getBytes();
+                        var data = UTF8.encode(this.seed);
                         var signature = this.fingerprint;
                         if (this.key.verify(data, signature)) {
                             this.status = 1
@@ -316,7 +317,7 @@ if (typeof MingKeMing !== "object") {
             return true
         }
         if (this.hasSeed()) {
-            var data = ns.type.String.from(this.seed).getBytes();
+            var data = UTF8.encode(this.seed);
             var signature = this.fingerprint;
             return publicKey.verify(data, signature)
         } else {
@@ -368,7 +369,7 @@ if (typeof MingKeMing !== "object") {
             "key": privateKey.getPublicKey()
         };
         if (MetaType.hasSeed(version)) {
-            var data = ns.type.String.from(seed).getBytes();
+            var data = UTF8.encode(seed);
             var fingerprint = privateKey.sign(data);
             meta["seed"] = seed;
             meta["fingerprint"] = Base64.encode(fingerprint)
@@ -446,6 +447,7 @@ if (typeof MingKeMing !== "object") {
     var Dictionary = ns.type.Dictionary;
     var Base64 = ns.format.Base64;
     var JSON = ns.format.JSON;
+    var UTF8 = ns.format.UTF8;
     var PublicKey = ns.crypto.PublicKey;
     var ID = ns.ID;
     var Profile = function(info) {
@@ -476,7 +478,7 @@ if (typeof MingKeMing !== "object") {
         if (!this.data) {
             var string = this.getValue("data");
             if (string) {
-                this.data = ns.type.String.from(string).getBytes()
+                this.data = UTF8.encode(string)
             }
         }
         return this.data
@@ -555,10 +557,9 @@ if (typeof MingKeMing !== "object") {
             return this.signature
         }
         this.status = 1;
-        var string = JSON.encode(this.getProperties());
-        this.data = ns.type.String.from(string).getBytes();
+        this.data = JSON.encode(this.getProperties());
         this.signature = privateKey.sign(this.data);
-        this.setValue("data", string);
+        this.setValue("data", UTF8.decode(this.data));
         this.setValue("signature", Base64.encode(this.signature));
         return this.signature
     };

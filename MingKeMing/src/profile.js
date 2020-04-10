@@ -151,6 +151,7 @@
     var Dictionary = ns.type.Dictionary;
     var Base64 = ns.format.Base64;
     var JSON = ns.format.JSON;
+    var UTF8 = ns.format.UTF8;
 
     var PublicKey = ns.crypto.PublicKey;
     var ID = ns.ID;
@@ -204,7 +205,7 @@
         if (!this.data) {
             var string = this.getValue('data');
             if (string) {
-                this.data = ns.type.String.from(string).getBytes();
+                this.data = UTF8.encode(string);
             }
         }
         return this.data;
@@ -320,10 +321,9 @@
             return this.signature;
         }
         this.status = 1;
-        var string = JSON.encode(this.getProperties());
-        this.data = ns.type.String.from(string).getBytes();
+        this.data = JSON.encode(this.getProperties());
         this.signature = privateKey.sign(this.data);
-        this.setValue('data', string);
+        this.setValue('data', UTF8.decode(this.data));
         this.setValue('signature', Base64.encode(this.signature));
         return this.signature;
     };

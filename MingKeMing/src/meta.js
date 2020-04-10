@@ -41,6 +41,7 @@
 
     var PublicKey = ns.crypto.PublicKey;
     var Base64 = ns.format.Base64;
+    var UTF8 = ns.format.UTF8;
 
     var MetaType = ns.protocol.MetaType;
     var NetworkType = ns.protocol.NetworkType;
@@ -141,7 +142,7 @@
                     // seed and fingerprint should not be empty
                     this.status = -1;
                 } else {
-                    var data = ns.type.String.from(this.seed).getBytes();
+                    var data = UTF8.encode(this.seed);
                     var signature = this.fingerprint;
                     if (this.key.verify(data, signature)) {
                         // fingerprint matched
@@ -166,7 +167,7 @@
         // check with seed & fingerprint
         if (this.hasSeed()) {
             // check whether keys equal by verifying signature
-            var data = ns.type.String.from(this.seed).getBytes();
+            var data = UTF8.encode(this.seed);
             var signature = this.fingerprint;
             return publicKey.verify(data, signature);
         } else {
@@ -252,7 +253,7 @@
         };
         if (MetaType.hasSeed(version)) {
             // generate fingerprint with private key
-            var data = ns.type.String.from(seed).getBytes();
+            var data = UTF8.encode(seed);
             var fingerprint = privateKey.sign(data);
             meta['seed'] = seed;
             meta['fingerprint'] = Base64.encode(fingerprint);

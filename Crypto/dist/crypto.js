@@ -2,7 +2,7 @@
  * Cryptography JavaScript Library (v0.1.0)
  *
  * @author    moKy <albert.moky at gmail.com>
- * @date      Apr. 4, 2020
+ * @date      Apr. 10, 2020
  * @copyright (c) 2020 Albert Moky
  * @license   {@link https://mit-license.org | MIT License}
  */
@@ -599,94 +599,22 @@ if (typeof DIMP !== "object") {
     ns.type.register("Data")
 }(DIMP);
 ! function(ns) {
-    var Data = ns.type.Data;
-    var UTF8 = {
-        encode: function(string) {
-            var len = string.length;
-            var array = new Data(len);
-            var c, l;
-            for (var i = 0; i < len; ++i) {
-                c = string.charCodeAt(i);
-                if (55296 <= c && c <= 56319) {
-                    l = string.charCodeAt(++i);
-                    c = ((c - 55296) << 10) + 65536 + l - 56320
-                }
-                if (c <= 0) {
-                    break
-                } else {
-                    if (c < 128) {
-                        array.push(c)
-                    } else {
-                        if (c < 2048) {
-                            array.push(192 | ((c >> 6) & 31));
-                            array.push(128 | ((c >> 0) & 63))
-                        } else {
-                            if (c < 65536) {
-                                array.push(224 | ((c >> 12) & 15));
-                                array.push(128 | ((c >> 6) & 63));
-                                array.push(128 | ((c >> 0) & 63))
-                            } else {
-                                array.push(240 | ((c >> 18) & 7));
-                                array.push(128 | ((c >> 12) & 63));
-                                array.push(128 | ((c >> 6) & 63));
-                                array.push(128 | ((c >> 0) & 63))
-                            }
-                        }
-                    }
-                }
-            }
-            return array.getBytes(false)
-        },
-        decode: function(array) {
-            var string = "";
-            var len = array.length;
-            var c, c2, c3, c4;
-            for (var i = 0; i < len; ++i) {
-                c = array[i];
-                switch (c >> 4) {
-                    case 12:
-                    case 13:
-                        c2 = array[++i];
-                        c = ((c & 31) << 6) | (c2 & 63);
-                        break;
-                    case 14:
-                        c2 = array[++i];
-                        c3 = array[++i];
-                        c = ((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63);
-                        break;
-                    case 15:
-                        c2 = array[++i];
-                        c3 = array[++i];
-                        c4 = array[++i];
-                        c = ((c & 7) << 18) | ((c2 & 63) << 12) | ((c3 & 63) << 6) | (c4 & 63);
-                        break
-                }
-                if (c < 65536) {
-                    string += String.fromCharCode(c)
-                } else {
-                    c -= 65536;
-                    string += String.fromCharCode((c >> 10) + 55296);
-                    string += String.fromCharCode((c & 1023) + 56320)
-                }
-            }
-            return string
-        }
-    };
-    var str = function(value, charset) {
+    var str = function(value) {
         if (!value) {
             value = ""
         } else {
             if (value instanceof str) {
                 value = value.valueOf()
             } else {
-                if (typeof value !== "string") {
-                    if (!(value instanceof Uint8Array)) {
-                        value = new Uint8Array(value)
-                    }
-                    if (!charset || charset === "UTF-8") {
-                        value = UTF8.decode(value)
+                if (value instanceof Uint8Array) {
+                    if (arguments.length === 1 || arguments[1] === "UTF-8") {
+                        value = ns.format.UTF8.decode(value)
                     } else {
-                        throw Error("only UTF-8 now")
+                        throw Error("unknown charset: " + arguments[1])
+                    }
+                } else {
+                    if (typeof value !== "string") {
+                        throw Error("string value error: " + value)
                     }
                 }
             }
@@ -697,7 +625,7 @@ if (typeof DIMP !== "object") {
     ns.Class(str, ns.type.Object, null);
     str.prototype.getBytes = function(charset) {
         if (!charset || charset === "UTF-8") {
-            return UTF8.encode(this.string)
+            return ns.format.UTF8.encode(this.string)
         }
         throw Error("unknown charset: " + charset)
     };
@@ -750,7 +678,11 @@ if (typeof DIMP !== "object") {
         if (array instanceof Array) {
             array = new Uint8Array(array)
         }
-        return new str(array, null)
+        if (arguments.length === 1) {
+            return new str(array)
+        } else {
+            return new str(array, arguments[1])
+        }
     };
     ns.type.String = str;
     ns.type.register("String")
@@ -982,116 +914,147 @@ if (typeof DIMP !== "object") {
         console.assert(false, "Base58 decode not implemented");
         return null
     };
-    var C = function(lib) {
-        this.coder = lib
+    var Lib = function(coder) {
+        this.coder = coder
     };
-    ns.Class(C, ns.type.Object, [coder]);
-    C.prototype.encode = function(data) {
+    ns.Class(Lib, ns.type.Object, [coder]);
+    Lib.prototype.encode = function(data) {
         return this.coder.encode(data)
     };
-    C.prototype.decode = function(string) {
+    Lib.prototype.decode = function(string) {
         return this.coder.decode(string)
     };
     ns.format.BaseCoder = coder;
-    ns.format.Hex = new C(new hex());
-    ns.format.Base58 = new C(new base58());
-    ns.format.Base64 = new C(new base64());
+    ns.format.Hex = new Lib(new hex());
+    ns.format.Base58 = new Lib(new base58());
+    ns.format.Base64 = new Lib(new base64());
     ns.format.register("BaseCoder");
     ns.format.register("Hex");
     ns.format.register("Base58");
     ns.format.register("Base64")
 }(DIMP);
 ! function(ns) {
+    var utf8_encode = function(string) {
+        var len = string.length;
+        var array = new ns.type.Data(len);
+        var c, l;
+        for (var i = 0; i < len; ++i) {
+            c = string.charCodeAt(i);
+            if (55296 <= c && c <= 56319) {
+                l = string.charCodeAt(++i);
+                c = ((c - 55296) << 10) + 65536 + l - 56320
+            }
+            if (c <= 0) {
+                break
+            } else {
+                if (c < 128) {
+                    array.push(c)
+                } else {
+                    if (c < 2048) {
+                        array.push(192 | ((c >> 6) & 31));
+                        array.push(128 | ((c >> 0) & 63))
+                    } else {
+                        if (c < 65536) {
+                            array.push(224 | ((c >> 12) & 15));
+                            array.push(128 | ((c >> 6) & 63));
+                            array.push(128 | ((c >> 0) & 63))
+                        } else {
+                            array.push(240 | ((c >> 18) & 7));
+                            array.push(128 | ((c >> 12) & 63));
+                            array.push(128 | ((c >> 6) & 63));
+                            array.push(128 | ((c >> 0) & 63))
+                        }
+                    }
+                }
+            }
+        }
+        return array.getBytes(false)
+    };
+    var utf8_decode = function(array) {
+        var string = "";
+        var len = array.length;
+        var c, c2, c3, c4;
+        for (var i = 0; i < len; ++i) {
+            c = array[i];
+            switch (c >> 4) {
+                case 12:
+                case 13:
+                    c2 = array[++i];
+                    c = ((c & 31) << 6) | (c2 & 63);
+                    break;
+                case 14:
+                    c2 = array[++i];
+                    c3 = array[++i];
+                    c = ((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63);
+                    break;
+                case 15:
+                    c2 = array[++i];
+                    c3 = array[++i];
+                    c4 = array[++i];
+                    c = ((c & 7) << 18) | ((c2 & 63) << 12) | ((c3 & 63) << 6) | (c4 & 63);
+                    break
+            }
+            if (c < 65536) {
+                string += String.fromCharCode(c)
+            } else {
+                c -= 65536;
+                string += String.fromCharCode((c >> 10) + 55296);
+                string += String.fromCharCode((c & 1023) + 56320)
+            }
+        }
+        return string
+    };
     var parser = function() {};
     ns.Interface(parser, null);
-    parser.prototype.encode = function(container) {
+    parser.prototype.encode = function(object) {
         console.assert(false, "implement me!");
         return null
     };
-    parser.prototype.decode = function(string) {
+    parser.prototype.decode = function(data) {
         console.assert(false, "implement me!");
         return null
     };
     var json = function() {};
     ns.Class(json, ns.type.Object, [parser]);
     json.prototype.encode = function(container) {
-        return JSON.stringify(container)
+        var string = JSON.stringify(container);
+        if (!string) {
+            throw TypeError("failed to encode JSON object: " + container)
+        }
+        return ns.format.UTF8.encode(string)
     };
-    json.prototype.decode = function(string) {
+    json.prototype.decode = function(json) {
+        var string;
+        if (typeof json === "string") {
+            string = json
+        } else {
+            string = ns.format.UTF8.decode(json)
+        }
+        if (!string) {
+            throw TypeError("failed to decode JSON data: " + json)
+        }
         return JSON.parse(string)
     };
-    var P = function(lib) {
-        this.parser = lib
+    var utf8 = function() {};
+    ns.Class(utf8, ns.type.Object, [parser]);
+    utf8.prototype.encode = utf8_encode;
+    utf8.prototype.decode = utf8_decode;
+    var Lib = function(parser) {
+        this.parser = parser
     };
-    ns.Class(P, ns.type.Object, [parser]);
-    P.prototype.encode = function(container) {
-        return this.parser.encode(container)
+    ns.Class(Lib, ns.type.Object, [parser]);
+    Lib.prototype.encode = function(object) {
+        return this.parser.encode(object)
     };
-    P.prototype.decode = function(string) {
-        return this.parser.decode(string)
+    Lib.prototype.decode = function(data) {
+        return this.parser.decode(data)
     };
     ns.format.DataParser = parser;
-    ns.format.JSON = new P(new json());
+    ns.format.JSON = new Lib(new json());
+    ns.format.UTF8 = new Lib(new utf8());
     ns.format.register("DataParser");
-    ns.format.register("JSON")
-}(DIMP);
-! function(ns) {
-    var parser = function() {};
-    ns.Interface(parser, null);
-    parser.prototype.encodePublicKey = function(key) {
-        console.assert(false, "implement me!");
-        return null
-    };
-    parser.prototype.encodePrivateKey = function(key) {
-        console.assert(false, "implement me!");
-        return null
-    };
-    parser.prototype.decodePublicKey = function(pem) {
-        console.assert(false, "implement me!");
-        return null
-    };
-    parser.prototype.decodePrivateKey = function(pem) {
-        console.assert(false, "implement me!");
-        return null
-    };
-    var pem = function() {};
-    ns.Class(pem, ns.type.Object, [parser]);
-    pem.prototype.encodePublicKey = function(key) {
-        console.assert(false, "PEM parser not implemented");
-        return null
-    };
-    pem.prototype.encodePrivateKey = function(key) {
-        console.assert(false, "PEM parser not implemented");
-        return null
-    };
-    pem.prototype.decodePublicKey = function(pem) {
-        console.assert(false, "PEM parser not implemented");
-        return null
-    };
-    pem.prototype.decodePrivateKey = function(pem) {
-        console.assert(false, "PEM parser not implemented");
-        return null
-    };
-    var P = function(lib) {
-        this.parser = lib
-    };
-    ns.Class(P, ns.type.Object, [parser]);
-    P.prototype.encodePublicKey = function(key) {
-        return this.parser.encodePublicKey(key)
-    };
-    P.prototype.encodePrivateKey = function(key) {
-        return this.parser.encodePrivateKey(key)
-    };
-    P.prototype.decodePublicKey = function(pem) {
-        return this.parser.decodePublicKey(pem)
-    };
-    P.prototype.decodePrivateKey = function(pem) {
-        return this.parser.decodePrivateKey(pem)
-    };
-    ns.format.KeyParser = parser;
-    ns.format.PEM = new P(new pem());
-    ns.format.register("KeyParser");
-    ns.format.register("PEM")
+    ns.format.register("JSON");
+    ns.format.register("UTF8")
 }(DIMP);
 ! function(ns) {
     var hash = function() {};
@@ -1118,17 +1081,17 @@ if (typeof DIMP !== "object") {
         console.assert(false, "RIPEMD160 not implemented");
         return null
     };
-    var H = function(lib) {
-        this.hash = lib
+    var Lib = function(hash) {
+        this.hash = hash
     };
-    ns.Class(H, ns.type.Object, [hash]);
-    H.prototype.digest = function(data) {
+    ns.Class(Lib, ns.type.Object, [hash]);
+    Lib.prototype.digest = function(data) {
         return this.hash.digest(data)
     };
     ns.digest.Hash = hash;
-    ns.digest.MD5 = new H(new md5());
-    ns.digest.SHA256 = new H(new sha256());
-    ns.digest.RIPEMD160 = new H(new ripemd160());
+    ns.digest.MD5 = new Lib(new md5());
+    ns.digest.SHA256 = new Lib(new sha256());
+    ns.digest.RIPEMD160 = new Lib(new ripemd160());
     ns.digest.register("Hash");
     ns.digest.register("MD5");
     ns.digest.register("SHA256");
@@ -1192,11 +1155,11 @@ if (typeof DIMP !== "object") {
     ns.crypto.register("VerifyKey")
 }(DIMP);
 ! function(ns) {
+    var UTF8 = ns.format.UTF8;
     var CryptographyKey = ns.crypto.CryptographyKey;
     var EncryptKey = ns.crypto.EncryptKey;
     var DecryptKey = ns.crypto.DecryptKey;
-    var promise = "Moky loves May Lee forever!";
-    promise = ns.type.String.from(promise).getBytes(null);
+    var promise = UTF8.encode("Moky loves May Lee forever!");
     var SymmetricKey = function(key) {
         CryptographyKey.call(this, key)
     };
@@ -1247,11 +1210,11 @@ if (typeof DIMP !== "object") {
     ns.crypto.register("AsymmetricKey")
 }(DIMP);
 ! function(ns) {
+    var UTF8 = ns.format.UTF8;
     var CryptographyKey = ns.crypto.CryptographyKey;
     var AsymmetricKey = ns.crypto.AsymmetricKey;
     var VerifyKey = ns.crypto.VerifyKey;
-    var promise = "Moky loves May Lee forever!";
-    promise = ns.type.String.from(promise).getBytes(null);
+    var promise = UTF8.encode("Moky loves May Lee forever!");
     var PublicKey = function(key) {
         AsymmetricKey.call(this, key)
     };
