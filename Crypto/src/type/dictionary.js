@@ -25,13 +25,12 @@
 // =============================================================================
 //
 
-//! require 'class.js'
-//! require 'parser.js'
+//! require 'object.js'
 
 !function (ns) {
     'use strict';
 
-    var Arrays = ns.type.Arrays;
+    const Arrays = ns.type.Arrays;
 
     //
     //  Dictionary
@@ -42,7 +41,7 @@
      *
      * @param {{}|map|String|} entries
      */
-    var map = function (entries) {
+    const map = function (entries) {
         if (!entries) {
             entries = {};
         } else if (entries instanceof map) {
@@ -83,14 +82,6 @@
         return this.dictionary.toString();
     };
 
-    map.prototype.toLocaleString = function () {
-        return this.dictionary.toLocaleString();
-    };
-
-    map.prototype.toJSON = function () {
-        return this.dictionary;
-    };
-
     /**
      *  Get inner dictionary
      *
@@ -99,7 +90,7 @@
      */
     map.prototype.getMap = function (copy) {
         if (copy) {
-            var json = ns.format.JSON.encode(this.dictionary);
+            const json = ns.format.JSON.encode(this.dictionary);
             return ns.format.JSON.decode(json);
         } else {
             return this.dictionary;

@@ -37,16 +37,16 @@
      * @param {Class} protocol - interface
      * @returns {boolean}
      */
-    var conforms = function (object, protocol) {
+    const conforms = function (object, protocol) {
         if (!object) {
             return false;
         }
         if (object instanceof protocol) {
             return true;
         }
-        var child = Object.getPrototypeOf(object);
-        var names = Object.getOwnPropertyNames(protocol.prototype);
-        for (var i = 0; i < names.length; ++i) {
+        const child = Object.getPrototypeOf(object);
+        const names = Object.getOwnPropertyNames(protocol.prototype);
+        for (let i = 0; i < names.length; ++i) {
             if (!child.hasOwnProperty(names[i])) {
                 // TODO: check properties in ancestors' prototype?
                 return false;
@@ -62,15 +62,15 @@
      * @param {Class} protocol - class or interface
      * @returns {Class}
      */
-    var inherit = function (clazz, protocol) {
-        var prototype = protocol.prototype;
-        var names = Object.getOwnPropertyNames(prototype);
-        for (var i = 0; i < names.length; ++i) {
-            var key = names[i];
+    const inherit = function (clazz, protocol) {
+        const prototype = protocol.prototype;
+        const names = Object.getOwnPropertyNames(prototype);
+        for (let i = 0; i < names.length; ++i) {
+            let key = names[i];
             if (clazz.prototype.hasOwnProperty(key)) {
                 continue;
             }
-            var fn = prototype[key];
+            let fn = prototype[key];
             if (typeof fn !== 'function') {
                 continue;
             }
@@ -86,8 +86,8 @@
      * @param {Class[]} interfaces
      * @returns {Class}
      */
-    var inherits = function (clazz, interfaces) {
-        for (var i = 0; i < interfaces.length; ++i) {
+    const inherits = function (clazz, interfaces) {
+        for (let i = 0; i < interfaces.length; ++i) {
             clazz = inherit(clazz, interfaces[i]);
         }
         return clazz;
@@ -99,18 +99,18 @@
      * @param {Class} child - sub interface
      * @param {Class|Array} parent - parent interfaces
      */
-    var interfacefy = function (child, parent) {
+    const interfacefy = function (child, parent) {
         if (!child) {
             child = function () {
             };
         }
         if (parent) {
-            var ancestors;
+            let ancestors;
             if (parent instanceof Array) {
                 ancestors = parent;
             } else {
                 ancestors = [];
-                for (var i = 1; i < arguments.length; ++i) {
+                for (let i = 1; i < arguments.length; ++i) {
                     ancestors.push(arguments[i]);
                 }
             }
@@ -130,7 +130,7 @@
      * @returns {Class}
      * @constructor
      */
-    var classify = function (child, parent, interfaces) {
+    const classify = function (child, parent, interfaces) {
         if (!child) {
             child = function () {
             };
@@ -143,12 +143,12 @@
         inherit(child, parent);
         // implements Interface(s)
         if (interfaces) {
-            var ancestors;
+            let ancestors;
             if (interfaces instanceof Array) {
                 ancestors = interfaces;
             } else {
                 ancestors = [];
-                for (var i = 2; i < arguments.length; ++i) {
+                for (let i = 2; i < arguments.length; ++i) {
                     ancestors.push(arguments[i]);
                 }
             }

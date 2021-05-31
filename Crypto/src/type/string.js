@@ -25,8 +25,7 @@
 // =============================================================================
 //
 
-//! require 'class.js'
-//! require 'data.js'
+//! require 'object.js'
 
 !function (ns) {
     'use strict';
@@ -36,42 +35,20 @@
     //
 
     /**
-     *  Create String with data array or another string
+     *  Create String
      *
-     * @param {Uint8Array|String|str} value
+     * @param {String|str} value
      */
-    var str = function (value) {
+    const str = function (value) {
         if (!value) {
             value = '';
         } else if (value instanceof str) {
             value = value.valueOf();
-        } else if (value instanceof Uint8Array) {
-            // decode data array
-            if (arguments.length === 1 || arguments[1] === 'UTF-8') {
-                value = ns.format.UTF8.decode(value);
-            } else {
-                throw Error('unknown charset: ' + arguments[1]);
-            }
-        } else if (typeof value !== 'string') {
-            throw Error('string value error: ' + value);
         }
         ns.type.Object.call(this);
         this.string = value;
     };
     ns.Class(str, ns.type.Object, null);
-
-    /**
-     *  Encode str to UTF8 data array
-     *
-     * @param {String} charset - 'UTF-8'
-     * @returns {Uint8Array}
-     */
-    str.prototype.getBytes = function (charset) {
-        if (!charset || charset === 'UTF-8') {
-            return ns.format.UTF8.encode(this.string);
-        }
-        throw Error('unknown charset: ' + charset);
-    };
 
     /**
      *  Check whether strings equal
@@ -90,12 +67,12 @@
         }
     };
 
-    var equalsIgnoreCase = function (str1, str2) {
+    const equalsIgnoreCase = function (str1, str2) {
         if (str1.length !== str2.length) {
             return false;
         }
-        var low1 = str1.toLowerCase();
-        var low2 = str2.toLowerCase();
+        const low1 = str1.toLowerCase();
+        const low2 = str2.toLowerCase();
         return low1 === low2;
     };
     str.prototype.equalsIgnoreCase = function (other) {
@@ -117,34 +94,8 @@
         return this.string;
     };
 
-    str.prototype.toLocaleString = function () {
-        return this.string.toLocaleString();
-    };
-
-    str.prototype.toJSON = function () {
-        return this.string;
-    };
-
     str.prototype.getLength = function() {
         return this.string.length;
-    };
-
-    /**
-     *  Create str from Array
-     *
-     * @param {Uint8Array|uint[]|str|String} array
-     * @returns {str}
-     */
-    str.from = function (array) {
-        if (array instanceof Array) {
-            // convert Array to Uint8Array
-            array = new Uint8Array(array);
-        }
-        if (arguments.length === 1) {
-            return new str(array);
-        } else {
-            return new str(array, arguments[1]);
-        }
     };
 
     //-------- namespace --------

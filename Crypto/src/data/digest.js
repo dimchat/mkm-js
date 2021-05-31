@@ -33,7 +33,7 @@
     //
     //  Hash interface
     //
-    var hash = function () {
+    const hash = function () {
     };
     ns.Interface(hash, null);
     // noinspection JSUnusedLocalSymbols
@@ -51,7 +51,7 @@
     //
     //  MD5
     //
-    var md5 = function () {
+    const md5 = function () {
     };
     ns.Class(md5, ns.type.Object, [hash]);
     // noinspection JSUnusedLocalSymbols
@@ -63,7 +63,7 @@
     //
     //  SHA256
     //
-    var sha256 = function () {
+    const sha256 = function () {
     };
     ns.Class(sha256, ns.type.Object, [hash]);
     // noinspection JSUnusedLocalSymbols
@@ -75,7 +75,7 @@
     //
     //  RIPEMD160
     //
-    var ripemd160 = function () {
+    const ripemd160 = function () {
     };
     ns.Class(ripemd160, ns.type.Object, [hash]);
     // noinspection JSUnusedLocalSymbols
@@ -87,7 +87,7 @@
     //
     //  Hash Lib
     //
-    var Lib = function (hash) {
+    const Lib = function (hash) {
         this.hash = hash;
     };
     ns.Class(Lib, ns.type.Object, [hash]);

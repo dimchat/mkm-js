@@ -25,19 +25,18 @@
 // =============================================================================
 //
 
-//! require 'class.js'
 //! require 'data.js'
 
 !function (ns) {
     'use strict';
 
-    var Data = ns.type.Data;
+    const Data = ns.type.Data;
 
     //-------- HEX algorithm begin --------
-    var hex_chars = '0123456789abcdef';
-    var hex_values = new Int8Array(128);
+    const hex_chars = '0123456789abcdef';
+    const hex_values = new Int8Array(128);
     !function (chars, values) {
-        for (var i = 0; i < chars.length; ++i) {
+        for (let i = 0; i < chars.length; ++i) {
             values[chars.charCodeAt(i)] = i;
         }
         values['A'.charCodeAt(0)] = 0x0A;
@@ -54,11 +53,11 @@
      * @param {Uint8Array} data
      * @returns {String}
      */
-    var hex_encode = function (data) {
-        var len = data.length;
-        var str = '';
-        var byt;
-        for (var i = 0; i < len; ++i) {
+    const hex_encode = function (data) {
+        const len = data.length;
+        let str = '';
+        let byt;
+        for (let i = 0; i < len; ++i) {
             byt = data[i];
             str += hex_chars[byt >> 4];   // hi
             str += hex_chars[byt & 0x0F]; // lo
@@ -72,9 +71,9 @@
      * @param {String} string
      * @returns {Uint8Array}
      */
-    var hex_decode = function (string) {
-        var i = 0;
-        var len = string.length;
+    const hex_decode = function (string) {
+        let i = 0;
+        let len = string.length;
         if (len > 2) {
             // skip '0x'
             if (string[0] === '0') {
@@ -83,24 +82,24 @@
                 }
             }
         }
-        var size = Math.floor(len / 2);
-        var data = new Data(size);
+        const size = Math.floor(len / 2);
+        const data = new Data(size);
         --len; // for condition: i < (len - 1)
-        var hi, lo;
+        let hi, lo;
         for (; i < len; i+=2) {
             hi = hex_values[string.charCodeAt(i)];
             lo = hex_values[string.charCodeAt(i+1)];
             data.push((hi << 4) | lo);
         }
-        return data.getBytes(false);
+        return data.getBytes();
     };
     //-------- HEX algorithm end --------
 
     //-------- Base64 algorithm begin --------
-    var base64_chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-    var base64_values = new Int8Array(128);
+    const base64_chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+    const base64_values = new Int8Array(128);
     !function (chars, values) {
-        for (var i = 0; i < chars.length; ++i) {
+        for (let i = 0; i < chars.length; ++i) {
             values[chars.charCodeAt(i)] = i;
         }
     }(base64_chars, base64_values);
@@ -127,11 +126,11 @@
      * @param {Uint8Array} data
      * @returns {String}
      */
-    var base64_encode = function (data) {
-        var base64 = '';
-        var length = data.length;
-        var tail = '';
-        var remainder = length % 3;
+    const base64_encode = function (data) {
+        let base64 = '';
+        let length = data.length;
+        let tail = '';
+        const remainder = length % 3;
         if (remainder === 1) {
             length -= 1;
             tail = '==';
@@ -139,8 +138,8 @@
             length -= 2;
             tail = '=';
         }
-        var x1, x2, x3;
-        var i;
+        let x1, x2, x3;
+        let i;
         for (i = 0; i < length; i += 3) {
             x1 = data[i];
             x2 = data[i+1];
@@ -180,17 +179,17 @@
      * @param {String} string
      * @returns {Uint8Array}
      */
-    var base64_decode = function (string) {
+    const base64_decode = function (string) {
         // preprocess
-        var str = string.replace(/[^A-Za-z0-9+\/=]/g, '');
-        var length = str.length;
+        const str = string.replace(/[^A-Za-z0-9+\/=]/g, '');
+        const length = str.length;
         if ((length % 4) !== 0 || !/^[A-Za-z0-9+\/]+={0,2}$/.test(str)) {
             throw Error('base64 string error: ' + string)
         }
-        var array = new Data(length * 3 / 4);
+        const array = new Data(length * 3 / 4);
         // parse each 4 chars to 3 bytes
-        var ch1, ch2, ch3, ch4;
-        var i;
+        let ch1, ch2, ch3, ch4;
+        let i;
         for (i = 0; i < length; i+=4) {
             ch1 = base64_values[str.charCodeAt(i)];
             ch2 = base64_values[str.charCodeAt(i+1)];
@@ -207,14 +206,14 @@
         while (str[--i] === '=') {
             array.pop();
         }
-        return array.getBytes(false);
+        return array.getBytes();
     };
     //-------- Base64 algorithm end --------
 
     //
     //  BaseCoder interface
     //
-    var coder = function () {
+    const coder = function () {
     };
     ns.Interface(coder, null);
     // noinspection JSUnusedLocalSymbols
@@ -243,7 +242,7 @@
     //
     //  Hex
     //
-    var hex = function () {
+    const hex = function () {
     };
     ns.Class(hex, ns.type.Object, [coder]);
 
@@ -257,7 +256,7 @@
     //
     //  Base64
     //
-    var base64 = function () {
+    const base64 = function () {
     };
     ns.Class(base64, ns.type.Object, [coder]);
 
@@ -271,7 +270,7 @@
     //
     //  Base58
     //
-    var base58 = function () {
+    const base58 = function () {
     };
     ns.Class(base58, ns.type.Object, [coder]);
     // noinspection JSUnusedLocalSymbols
@@ -288,7 +287,7 @@
     //
     //  Coder Lib
     //
-    var Lib = function (coder) {
+    const Lib = function (coder) {
         this.coder = coder;
     };
     ns.Class(Lib, ns.type.Object, [coder]);

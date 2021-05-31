@@ -25,8 +25,8 @@
 // =============================================================================
 //
 
-//! require 'class.js'
 //! require 'json2.js' (https://github.com/douglascrockford/JSON-js)
+//! require 'data.js'
 
 !function (ns) {
     'use strict';
@@ -37,11 +37,11 @@
      * @param {String} string
      * @returns {Uint8Array}
      */
-    var utf8_encode = function (string) {
-        var len = string.length;
-        var array = new ns.type.Data(len);
-        var c, l;
-        for (var i = 0; i < len; ++i) {
+    const utf8_encode = function (string) {
+        const len = string.length;
+        const array = new ns.type.Data(len);
+        let c, l;
+        for (let i = 0; i < len; ++i) {
             c = string.charCodeAt(i);
             if (0xD800 <= c && c <= 0xDBFF) {
                 // Unicode SMP (Supplementary Multilingual Plane)
@@ -71,7 +71,7 @@
                 array.push(0x80 | ((c >>  0) & 0x3F));
             }
         }
-        return array.getBytes(false);
+        return array.getBytes();
     };
 
     /**
@@ -80,11 +80,11 @@
      * @param {Uint8Array} array
      * @returns {String}
      */
-    var utf8_decode = function (array) {
-        var string = '';
-        var len = array.length;
-        var c, c2, c3, c4;
-        for (var i = 0; i < len; ++i) {
+    const utf8_decode = function (array) {
+        let string = '';
+        const len = array.length;
+        let c, c2, c3, c4;
+        for (let i = 0; i < len; ++i) {
             c = array[i];
             switch (c >> 4) {
                 // case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
@@ -124,7 +124,7 @@
     //
     //  DataParser interface
     //
-    var parser = function () {
+    const parser = function () {
     };
     ns.Interface(parser, null);
     // noinspection JSUnusedLocalSymbols
@@ -153,19 +153,19 @@
     //
     //  JSON
     //
-    var json = function () {
+    const json = function () {
     };
     ns.Class(json, ns.type.Object, [parser]);
 
     json.prototype.encode = function (container) {
-        var string = JSON.stringify(container);
+        const string = JSON.stringify(container);
         if (!string) {
             throw TypeError('failed to encode JSON object: ' + container);
         }
         return ns.format.UTF8.encode(string);
     };
     json.prototype.decode = function (json) {
-        var string;
+        let string;
         if (typeof json === 'string') {
             string = json;
         } else {
@@ -181,7 +181,7 @@
     //
     //  UTF-8
     //
-    var utf8 = function () {
+    const utf8 = function () {
     };
     ns.Class(utf8, ns.type.Object, [parser]);
 
@@ -191,7 +191,7 @@
     //
     //  Parser Lib
     //
-    var Lib = function (parser) {
+    const Lib = function (parser) {
         this.parser = parser;
     };
     ns.Class(Lib, ns.type.Object, [parser]);

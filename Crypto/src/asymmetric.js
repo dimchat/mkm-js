@@ -31,7 +31,7 @@
 !function (ns) {
     'use strict';
 
-    var CryptographyKey = ns.crypto.CryptographyKey;
+    const CryptographyKey = ns.crypto.CryptographyKey;
 
     //
     //  Asymmetric Cryptography Key
@@ -43,7 +43,7 @@
     //      ...
     //  }
     //
-    var AsymmetricKey = function (key) {
+    const AsymmetricKey = function (key) {
         CryptographyKey.call(this, key);
     };
     ns.Class(AsymmetricKey, CryptographyKey, null);
@@ -61,15 +61,15 @@
 !function (ns) {
     'use strict';
 
-    var UTF8 = ns.format.UTF8;
+    const UTF8 = ns.format.UTF8;
 
-    var CryptographyKey = ns.crypto.CryptographyKey;
-    var AsymmetricKey = ns.crypto.AsymmetricKey;
-    var VerifyKey = ns.crypto.VerifyKey;
+    const CryptographyKey = ns.crypto.CryptographyKey;
+    const AsymmetricKey = ns.crypto.AsymmetricKey;
+    const VerifyKey = ns.crypto.VerifyKey;
 
-    var promise = UTF8.encode('Moky loves May Lee forever!');
+    const promise = UTF8.encode('Moky loves May Lee forever!');
 
-    var PublicKey = function (key) {
+    const PublicKey = function (key) {
         AsymmetricKey.call(this, key);
     };
     ns.Class(PublicKey, AsymmetricKey, [VerifyKey]);
@@ -85,17 +85,17 @@
             return false;
         }
         // 1. if the SK has the same public key, return true
-        var publicKey = privateKey.getPublicKey();
+        const publicKey = privateKey.getPublicKey();
         if (this.equals(publicKey)) {
             return true;
         }
         // 2. try to verify the SK's signature
-        var signature = privateKey.sign(promise);
+        const signature = privateKey.sign(promise);
         return this.verify(promise, signature);
     };
 
     //-------- runtime --------
-    var public_key_classes = {};
+    const public_key_classes = {};
 
     /**
      *  Register symmetric key class with algorithm
@@ -119,8 +119,8 @@
         } else if (key instanceof PublicKey) {
             return key;
         }
-        var algorithm = key['algorithm'];
-        var clazz = public_key_classes[algorithm];
+        const algorithm = key['algorithm'];
+        const clazz = public_key_classes[algorithm];
         if (typeof clazz === 'function') {
             // noinspection JSValidateTypes
             return CryptographyKey.createInstance(clazz, key);
@@ -138,11 +138,11 @@
 !function (ns) {
     'use strict';
 
-    var CryptographyKey = ns.crypto.CryptographyKey;
-    var AsymmetricKey = ns.crypto.AsymmetricKey;
-    var SignKey = ns.crypto.SignKey;
+    const CryptographyKey = ns.crypto.CryptographyKey;
+    const AsymmetricKey = ns.crypto.AsymmetricKey;
+    const SignKey = ns.crypto.SignKey;
 
-    var PrivateKey = function (key) {
+    const PrivateKey = function (key) {
         AsymmetricKey.call(this, key);
     };
     ns.Class(PrivateKey, AsymmetricKey, [SignKey]);
@@ -154,7 +154,7 @@
      * @returns {boolean}
      */
     PrivateKey.prototype.equals = function (other) {
-        var publicKey = this.getPublicKey();
+        const publicKey = this.getPublicKey();
         if (!publicKey) {
             return false;
         }
@@ -182,7 +182,7 @@
     };
 
     //-------- runtime --------
-    var private_key_classes = {};
+    const private_key_classes = {};
 
     /**
      *  Register symmetric key class with algorithm
@@ -206,8 +206,8 @@
         } else if (key instanceof PrivateKey) {
             return key;
         }
-        var algorithm = key['algorithm'];
-        var clazz = private_key_classes[algorithm];
+        const algorithm = key['algorithm'];
+        const clazz = private_key_classes[algorithm];
         if (typeof clazz === 'function') {
             // noinspection JSValidateTypes
             return CryptographyKey.createInstance(clazz, key);

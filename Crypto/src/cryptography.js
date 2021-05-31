@@ -31,7 +31,7 @@
 !function (ns) {
     'use strict';
 
-    var Dictionary = ns.type.Dictionary;
+    const Dictionary = ns.type.Dictionary;
 
     //
     //  Cryptography Key
@@ -43,7 +43,7 @@
     //      ...
     //  }
     //
-    var CryptographyKey = function (key) {
+    const CryptographyKey = function (key) {
         Dictionary.call(this, key);
     };
     ns.Class(CryptographyKey, Dictionary, null);
@@ -92,7 +92,7 @@
 !function (ns) {
     'use strict';
 
-    var EncryptKey = function () {
+    const EncryptKey = function () {
     };
     ns.Interface(EncryptKey, null);
     // noinspection JSUnusedLocalSymbols
@@ -108,7 +108,7 @@
         return null;
     };
 
-    var DecryptKey = function () {
+    const DecryptKey = function () {
     };
     ns.Interface(DecryptKey, null);
     // noinspection JSUnusedLocalSymbols
@@ -124,7 +124,7 @@
         return null;
     };
 
-    var SignKey = function () {
+    const SignKey = function () {
     };
     ns.Interface(SignKey, null);
     // noinspection JSUnusedLocalSymbols
@@ -139,7 +139,7 @@
         return null;
     };
 
-    var VerifyKey = function () {
+    const VerifyKey = function () {
     };
     ns.Interface(VerifyKey, null);
     // noinspection JSUnusedLocalSymbols

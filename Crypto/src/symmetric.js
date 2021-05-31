@@ -31,13 +31,13 @@
 !function (ns) {
     'use strict';
 
-    var UTF8 = ns.format.UTF8;
+    const UTF8 = ns.format.UTF8;
 
-    var CryptographyKey = ns.crypto.CryptographyKey;
-    var EncryptKey = ns.crypto.EncryptKey;
-    var DecryptKey = ns.crypto.DecryptKey;
+    const CryptographyKey = ns.crypto.CryptographyKey;
+    const EncryptKey = ns.crypto.EncryptKey;
+    const DecryptKey = ns.crypto.DecryptKey;
 
-    var promise = UTF8.encode('Moky loves May Lee forever!');;
+    const promise = UTF8.encode('Moky loves May Lee forever!');
 
     //
     //  Symmetric Cryptography Key
@@ -49,15 +49,15 @@
     //      ...
     //  }
     //
-    var SymmetricKey = function (key) {
+    const SymmetricKey = function (key) {
         CryptographyKey.call(this, key);
     };
     ns.Class(SymmetricKey, CryptographyKey, [EncryptKey, DecryptKey]);
 
     SymmetricKey.prototype.equals = function (other) {
         // check by encryption
-        var ciphertext = other.encrypt(promise);
-        var plaintext = this.decrypt(ciphertext);
+        const ciphertext = other.encrypt(promise);
+        const plaintext = this.decrypt(ciphertext);
         return ns.type.Arrays.equals(promise, plaintext);
     };
 
@@ -72,7 +72,7 @@
     };
 
     //-------- runtime --------
-    var key_classes = {};
+    const key_classes = {};
 
     /**
      *  Register symmetric key class with algorithm
@@ -96,8 +96,8 @@
         } else if (key instanceof SymmetricKey) {
             return key;
         }
-        var algorithm = key['algorithm'];
-        var clazz = key_classes[algorithm];
+        const algorithm = key['algorithm'];
+        const clazz = key_classes[algorithm];
         if (typeof clazz === 'function') {
             return CryptographyKey.createInstance(clazz, key);
         }

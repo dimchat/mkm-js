@@ -25,7 +25,7 @@
 // =============================================================================
 //
 
-//! require 'namespace.js'
+//! require 'class.js'
 
 !function (ns) {
     'use strict';
@@ -33,7 +33,7 @@
     //
     //  Object
     //
-    var obj = function () {
+    const obj = function () {
     };
     ns.Class(obj, Object, null);
 
@@ -51,7 +51,7 @@
 !function (ns) {
     'use strict';
 
-    var is_array = function (obj) {
+    const is_array = function (obj) {
         if (obj instanceof Array) {
             return true;
         } else if (obj instanceof Uint8Array) {
@@ -76,35 +76,33 @@
         return false;
     };
 
-    var is_arrays_equal = function (array1, array2) {
+    const arrays_equal = function (array1, array2) {
         if (array1.length !== array2.length) {
             return false;
         }
-        for (var i = 0; i < array1.length; ++i) {
-            if (!is_objects_equal(array1[i], array2[i])) {
+        for (let i = 0; i < array1.length; ++i) {
+            if (!objects_equal(array1[i], array2[i])) {
                 return false;
             }
         }
         return true;
     };
 
-    var is_dictionary_equal = function (dict1, dict2) {
-        var keys1 = Object.keys(dict1);
-        var keys2 = Object.keys(dict2);
+    const maps_equal = function (dict1, dict2) {
+        const keys1 = Object.keys(dict1);
+        const keys2 = Object.keys(dict2);
         if (keys1.length !== keys2.length) {
             return false;
         }
-        var k;
-        for (var i = 0; i < keys1.length; ++i) {
-            k = keys1[i];
-            if (!is_objects_equal(dict1[k], dict2[k])) {
+        for (let k in keys1) {
+            if (!objects_equal(dict1[k], dict2[k])) {
                 return false;
             }
         }
         return true;
     };
 
-    var is_objects_equal = function (obj1, obj2) {
+    const objects_equal = function (obj1, obj2) {
         // compare directly
         if (obj1 === obj2) {
             return true; // same objects
@@ -123,7 +121,7 @@
         if (is_array(obj1)) {
             if (is_array(obj2)) {
                 // compare as array
-                return is_arrays_equal(obj1, obj2);
+                return arrays_equal(obj1, obj2);
             } else {
                 return false;
             }
@@ -131,102 +129,111 @@
             return false;
         }
         // compare as dictionary
-        return is_dictionary_equal(obj1, obj2);
+        return maps_equal(obj1, obj2);
     };
 
-    //
-    //  Array
-    //
-    var arrays = {
-        /**
-         *  Remove the item from array
-         *
-         * @param {[]} array
-         * @param {*} item
-         * @returns {boolean}
-         */
-        remove: function (array, item) {
-            var index = array.indexOf(item);
-            if (index < 0/* || index >= array.length*/) {
+    /**
+     *  Copy array
+     *
+     * @param {Uint8Array} src
+     * @param {int}        srcPos
+     * @param {Uint8Array} dest
+     * @param {int}        destPos
+     * @param {int}        length
+     */
+    const copy_items = function (src, srcPos, dest, destPos, length) {
+        if (srcPos !== 0 || length !== src.length) {
+            src = src.subarray(srcPos, srcPos + length);
+        }
+        dest.set(src, destPos);
+    }
+
+    /**
+     *  Insert the item in the position of array,
+     *  all items after this position (includes) will be moved
+     *
+     * @param {[]} array
+     * @param {Number} index
+     * @param {*} item
+     * @returns {boolean}
+     */
+    const insert_item = function (array, index, item) {
+        if (index < 0) {
+            // for update the same position after inserted,
+            // here should add 1 because array.length increased
+            index += array.length + 1;
+            if (index < 0) {
                 return false;
-            } else if (index === 0) {
-                // remove head
-                array.shift();
-            } else if ((index+1) === array.length) {
-                // remove tail
-                array.pop();
-            } else {
-                array.splice(index, 1);
             }
-            return true;
-        },
-
-        /**
-         *  Update the position of array with item
-         *
-         * @param {[]} array
-         * @param {Number} index
-         * @param {*} item
-         * @returns {boolean}
-         */
-        update: function (array, index, item) {
-            if (index < 0) {
-                index += array.length;
-                if (index < 0) {
-                    return false;
-                }
-            }
-            // skip empty spaces
+        }
+        if (index === 0) {
+            // insert to head
+            array.unshift(item);
+        } else if (index === array.length) {
+            // push to tail
+            array.push(item);
+        } else if (index > array.length) {
+            // NOTICE: this function will skip empty spaces
             array[index] = item;
-            return true;
-        },
+        } else {
+            // NOTICE: this will push the item to tail if index > array.length
+            array.splice(index, 0, item);
+        }
+        return true;
+    };
 
-        /**
-         *  Insert the item in the position of array,
-         *  all items after this position (includes) will be moved
-         *
-         * @param {[]} array
-         * @param {Number} index
-         * @param {*} item
-         * @returns {boolean}
-         */
-        insert: function (array, index, item) {
+    /**
+     *  Update the position of array with item
+     *
+     * @param {[]} array
+     * @param {Number} index
+     * @param {*} item
+     * @returns {boolean}
+     */
+    const update_item = function (array, index, item) {
+        if (index < 0) {
+            index += array.length;
             if (index < 0) {
-                // for update the same position after inserted,
-                // here should add 1 because array.length increased
-                index += array.length + 1;
-                if (index < 0) {
-                    return false;
-                }
+                return false;
             }
-            if (index === 0) {
-                // insert to head
-                array.unshift(item);
-            } else if (index === array.length) {
-                // push to tail
-                array.push(item);
-            } else if (index > array.length) {
-                // NOTICE: this function will skip empty spaces
-                array[index] = item;
-            } else {
-                // NOTICE: this will push the item to tail if index > array.length
-                array.splice(index, 0, item);
-            }
-            return true;
-        },
+        }
+        // skip empty spaces
+        array[index] = item;
+        return true;
+    };
 
-        /**
-         *  Check whether the two arrays are equal
-         *
-         * @param {Uint8Array|[]|{}} array1
-         * @param {Uint8Array|[]|{}} array2
-         * @returns {boolean}
-         */
-        equals: is_objects_equal
+    /**
+     *  Remove the item from array
+     *
+     * @param {[]} array
+     * @param {*} item
+     * @returns {boolean}
+     */
+    const remove_item = function (array, item) {
+        const index = array.indexOf(item);
+        if (index < 0/* || index >= array.length*/) {
+            return false;
+        } else if (index === 0) {
+            // remove head
+            array.shift();
+        } else if ((index+1) === array.length) {
+            // remove tail
+            array.pop();
+        } else {
+            array.splice(index, 1);
+        }
+        return true;
     };
 
     //-------- namespace --------
-    ns.type.Arrays = arrays;
+    ns.type.Arrays = {
+        insert: insert_item,
+        update: update_item,
+        remove: remove_item,
+        equals: objects_equal,
+        isArray: is_array,
+        copy: copy_items,
+    };
 
     ns.type.register('Arrays');
 

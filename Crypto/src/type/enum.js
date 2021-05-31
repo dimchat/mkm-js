@@ -25,7 +25,7 @@
 // =============================================================================
 //
 
-//! require 'class.js'
+//! require 'object.js'
 
 !function (ns) {
     'use strict';
@@ -34,11 +34,11 @@
     //  Enumeration
     //
 
-    var get_alias = function (value) {
+    const get_alias = function (value) {
         // searching exists elements for alias
-        var enumeration = this.constructor;
-        var e;
-        for (var k in enumeration) {
+        const enumeration = this.constructor;
+        let e;
+        for (let k in enumeration) {
             if (!enumeration.hasOwnProperty(k)) {
                 continue;
             }
@@ -58,7 +58,7 @@
      * @param {Number|base_enum} value
      * @param {String} alias
      */
-    var base_enum = function (value, alias) {
+    const base_enum = function (value, alias) {
         ns.type.Object.call(this);
         if (!alias) {
             if (value instanceof base_enum) {
@@ -102,15 +102,6 @@
             + ': ' + this.value.toString() + '>';
     };
 
-    base_enum.prototype.toLocaleString = function () {
-        return '<' + this.alias.toLocaleString()
-            + ': ' + this.value.toLocaleString() + '>';
-    };
-
-    base_enum.prototype.toJSON = function () {
-        return this.value;
-    };
-
     /**
      *  Define Enum with elements names & values
      *
@@ -118,15 +109,15 @@
      * @param {{}} elements
      * @returns {Class}
      */
-    var enumify = function(enumeration, elements) {
+    const enumify = function(enumeration, elements) {
         if (!enumeration) {
             enumeration = function (value, alias) {
                 base_enum.call(this, value, alias);
             }
         }
         ns.Class(enumeration, base_enum, null);
-        var e, v;
-        for (var name in elements) {
+        let e, v;
+        for (let name in elements) {
             if (!elements.hasOwnProperty(name)) {
                 continue;
             }
