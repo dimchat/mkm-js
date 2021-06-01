@@ -38,7 +38,7 @@
 !function (ns) {
     'use strict';
 
-    var ID = ns.ID;
+    var ID = ns.protocol.ID;
 
     /**
      *  Entity (User/Group)

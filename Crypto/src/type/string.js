@@ -43,7 +43,7 @@
         if (!value) {
             value = '';
         } else if (value instanceof str) {
-            value = value.valueOf();
+            value = value.toString();
         }
         ns.type.Object.call(this);
         this.string = value;

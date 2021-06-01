@@ -65,8 +65,6 @@
     map.prototype.equals = function (other) {
         if (!other) {
             return !this.dictionary;
-        // } else if (ns.type.Object.prototype.equals.call(this, other)) {
-        //     return true;
         } else if (other instanceof map) {
             return Arrays.equals(this.dictionary, other.getMap());
         } else {

@@ -30,25 +30,60 @@
 // =============================================================================
 //
 
-//! require <crypto.js>
+//! require 'string.js'
+//! require 'protocol/types.js'
+//! require 'protocol/address.js'
 
-if (typeof MingKeMing !== 'object') {
-    MingKeMing = {};
-}
-
-(function (ns, base) {
+(function (ns) {
     'use strict';
 
-    // exports namespace from Crypto
-    base.exports(ns);
+    var str = ns.type.String;
+    var NetworkType = ns.protocol.NetworkType;
+    var Address = ns.protocol.Address;
+
+    //
+    //  Address for broadcast
+    //
+    var BroadcastAddress = function (string, network) {
+        str.call(this, string);
+        if (network instanceof NetworkType) {
+            network = network.valueOf();
+        }
+        this.network = network;
+    };
+    ns.Class(BroadcastAddress, str, [Address]);
+
+    BroadcastAddress.prototype.getNetwork = function () {
+        return this.network;
+    };
+
+    /**
+     *  Address for broadcast
+     */
+    Address.ANYWHERE = new BroadcastAddress('anywhere', NetworkType.MAIN);
+    Address.EVERYWHERE = new BroadcastAddress('everywhere', NetworkType.GROUP);
 
     //-------- namespace --------
-    if (typeof ns.protocol !== 'object') {
-        ns.protocol = {};
-    }
+    ns.BroadcastAddress = BroadcastAddress;
 
-    base.Namespace(ns.protocol);
+    ns.register('BroadcastAddress')
 
-    ns.register('protocol');
+})(MingKeMing);
 
-})(MingKeMing, DIMP);
+(function (ns) {
+    'use strict';
+
+    var ID = ns.protocol.ID;
+    var Address = ns.protocol.Address;
+    var IDFactory = ns.IDFactory;
+
+    var factory = new IDFactory();
+    ID.setFactory(factory);
+
+    /**
+     *  ID for broadcast
+     */
+    ID.ANYONE = factory.createID('anyone', Address.ANYWHERE, null);
+    ID.EVERYONE = factory.createID('everyone', Address.EVERYWHERE, null);
+
+})(MingKeMing);

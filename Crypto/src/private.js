@@ -31,8 +31,6 @@
 (function (ns) {
     'use strict';
 
-    var obj = ns.type.Object;
-    var Dictionary = ns.type.Dictionary;
     var CryptographyKey = ns.crypto.CryptographyKey;
     var SignKey = ns.crypto.SignKey;
 
@@ -58,7 +56,7 @@
      */
     PrivateKey.generate = function (algorithm) {
         var factory = PrivateKey.getFactory(algorithm);
-        if (obj.isNull(factory)) {
+        if (!factory) {
             throw ReferenceError('key algorithm not support: ' + algorithm);
         }
         return factory.generatePrivateKey();
@@ -71,16 +69,14 @@
      * @return {PrivateKey}
      */
     PrivateKey.parse = function (key) {
-        if (obj.isNull(key)) {
+        if (!key) {
             return null;
         } else if (key instanceof PrivateKey) {
             return key;
-        } else if (key instanceof Dictionary) {
-            key = key.getMap();
         }
         var algorithm = CryptographyKey.getAlgorithm(key);
         var factory = PrivateKey.getFactory(algorithm);
-        if (obj.isNull(factory)) {
+        if (!factory) {
             factory = PrivateKey.getFactory('*');  // unknown
         }
         return factory.parsePublicKey(key);

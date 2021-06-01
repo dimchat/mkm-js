@@ -154,7 +154,7 @@
     var UTF8 = ns.format.UTF8;
 
     var PublicKey = ns.crypto.PublicKey;
-    var ID = ns.ID;
+    var ID = ns.protocol.ID;
 
 //    var TAI = ns.TAI;
 
@@ -353,7 +353,7 @@
         if (!this.key) {
             var key = this.getProperty('key');
             if (key) {
-                this.key = PublicKey.getInstance(key);
+                this.key = PublicKey.parse(key);
             }
         }
         return this.key;

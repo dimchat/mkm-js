@@ -32,7 +32,7 @@
 
 //! require 'namespace.js'
 
-!function (ns) {
+(function (ns) {
     'use strict';
 
     /**
@@ -79,7 +79,7 @@
      *      0000 0001 - this entity's branch is independent (clear division).
      *      0000 0010 - this entity can contains other group (big organization).
      *      0000 0100 - this entity is top organization.
-     *      0000 1000 - (Main) this entity acts like a human.
+     *      0000 1000 - (MAIN) this entity acts like a human.
      *
      *      0001 0000 - this entity contains members (Group)
      *      0010 0000 - this entity needs other administrators (big organization)
@@ -90,45 +90,45 @@
      */
     var NetworkType = ns.type.Enum(null, {
 
-        BTCMain:        (0x00), // 0000 0000
-        //BTCTest:      (0x6F), // 0110 1111
+        BTC_MAIN:        (0x00), // 0000 0000
+        //BTC_TEST:      (0x6F), // 0110 1111
 
         /*
          *  Person Account
          */
-        Main:           (0x08), // 0000 1000 (Person)
+        MAIN:            (0x08), // 0000 1000 (Person)
 
         /*
          *  Virtual Groups
          */
-        Group:          (0x10), // 0001 0000 (Multi-Persons)
+        GROUP:           (0x10), // 0001 0000 (Multi-Persons)
 
-        //Moments:      (0x18), // 0001 1000 (Twitter)
-        Polylogue:      (0x10), // 0001 0000 (Multi-Persons Chat, N < 100)
-        Chatroom:       (0x30), // 0011 0000 (Multi-Persons Chat, N >= 100)
+        //MOMENTS:       (0x18), // 0001 1000 (Twitter)
+        POLYLOGUE:       (0x10), // 0001 0000 (Multi-Persons Chat, N < 100)
+        CHATROOM:        (0x30), // 0011 0000 (Multi-Persons Chat, N >= 100)
 
         /*
          *  Social Entities in Reality
          */
-        //SocialEntity: (0x50), // 0101 0000
+        //SOCIAL_ENTITY: (0x50), // 0101 0000
 
-        //Organization: (0x74), // 0111 0100
-        //Company:      (0x76), // 0111 0110
-        //School:       (0x77), // 0111 0111
-        //Government:   (0x73), // 0111 0011
-        //Department:   (0x52), // 0101 0010
+        //ORGANIZATION:  (0x74), // 0111 0100
+        //COMPANY:       (0x76), // 0111 0110
+        //SCHOOL:        (0x77), // 0111 0111
+        //GOVERNMENT:    (0x73), // 0111 0011
+        //DEPARTMENT:    (0x52), // 0101 0010
 
         /*
          *  Network
          */
-        Provider:       (0x76), // 0111 0110 (Service Provider)
-        Station:        (0x88), // 1000 1000 (Server Node)
+        PROVIDER:        (0x76), // 0111 0110 (Service Provider)
+        STATION:         (0x88), // 1000 1000 (Server Node)
 
         /*
          *  Internet of Things
          */
-        Thing:          (0x80), // 1000 0000 (IoT)
-        Robot:          (0xC8)  // 1100 1000
+        THING:           (0x80), // 1000 0000 (IoT)
+        ROBOT:           (0xC8)  // 1100 1000
     });
 
     // NetworkType.prototype.toByte = function () {
@@ -142,8 +142,8 @@
      * @returns {boolean}
      */
     NetworkType.isUser = function (network) {
-        var main = NetworkType.Main.valueOf();
-        var btcMain = NetworkType.BTCMain.valueOf();
+        var main = NetworkType.MAIN.valueOf();
+        var btcMain = NetworkType.BTC_MAIN.valueOf();
         return ((network & main) === main) || (network === btcMain);
     };
 
@@ -154,7 +154,7 @@
      * @returns {boolean}
      */
     NetworkType.isGroup = function (network) {
-        var group = NetworkType.Group.valueOf();
+        var group = NetworkType.GROUP.valueOf();
         return (network & group) === group;
     };
 
@@ -163,9 +163,9 @@
 
     ns.protocol.register('NetworkType');
 
-}(MingKeMing);
+})(MingKeMing);
 
-!function (ns) {
+(function (ns) {
     'use strict';
 
     /**
@@ -194,7 +194,7 @@
      */
     var MetaType = ns.type.Enum(null, {
 
-        Default: (0x01),
+        DEFAULT: (0x01),
         MKM:     (0x01),  // 0000 0001
 
         BTC:     (0x02),  // 0000 0010
@@ -219,4 +219,4 @@
 
     ns.protocol.register('MetaType');
 
-}(MingKeMing);
+})(MingKeMing);

@@ -31,12 +31,10 @@
 (function (ns) {
     'use strict';
 
-    var obj = ns.type.Object;
-    var Dictionary = ns.type.Dictionary;
     var CryptographyKey = ns.crypto.CryptographyKey;
     var VerifyKey = ns.crypto.VerifyKey;
 
-    var PublicKey = function (key) {
+    var PublicKey = function () {
     };
     ns.Interface(PublicKey, [VerifyKey]);
 
@@ -47,16 +45,14 @@
      * @return {PublicKey}
      */
     PublicKey.parse = function (key) {
-        if (obj.isNull(key)) {
+        if (!key) {
             return null;
         } else if (key instanceof PublicKey) {
             return key;
-        } else if (key instanceof Dictionary) {
-            key = key.getMap();
         }
         var algorithm = CryptographyKey.getAlgorithm(key);
         var factory = PublicKey.getFactory(algorithm);
-        if (obj.isNull(factory)) {
+        if (!factory) {
             factory = PublicKey.getFactory('*');  // unknown
         }
         return factory.parsePublicKey(key);

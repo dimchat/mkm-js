@@ -966,7 +966,7 @@ if (typeof DIMP !== "object") {
             value = ""
         } else {
             if (value instanceof str) {
-                value = value.valueOf()
+                value = value.toString()
             }
         }
         ns.type.Object.call(this);
@@ -1095,7 +1095,7 @@ if (typeof DIMP !== "object") {
         var name;
         for (var k in keys) {
             if (k instanceof str) {
-                name = k.valueOf()
+                name = k.toString()
             } else {
                 name = k
             }
@@ -1119,7 +1119,7 @@ if (typeof DIMP !== "object") {
             }
         }
         if (object instanceof str) {
-            return object.valueOf()
+            return object.toString()
         }
         if (object instanceof Enum) {
             return object.valueOf()
@@ -1604,8 +1604,6 @@ if (typeof DIMP !== "object") {
     ns.crypto.register("DecryptKey")
 })(DIMP);
 (function(ns) {
-    var obj = ns.type.Object;
-    var Dictionary = ns.type.Dictionary;
     var CryptographyKey = ns.crypto.CryptographyKey;
     var EncryptKey = ns.crypto.EncryptKey;
     var DecryptKey = ns.crypto.DecryptKey;
@@ -1615,26 +1613,22 @@ if (typeof DIMP !== "object") {
     SymmetricKey.DES = "DES";
     SymmetricKey.generate = function(algorithm) {
         var factory = SymmetricKey.getFactory(algorithm);
-        if (obj.isNull(factory)) {
+        if (!factory) {
             throw ReferenceError("key algorithm not support: " + algorithm)
         }
         return factory.generateSymmetricKey()
     };
     SymmetricKey.parse = function(key) {
-        if (obj.isNull(key)) {
+        if (!key) {
             return null
         } else {
             if (key instanceof SymmetricKey) {
                 return key
-            } else {
-                if (key instanceof Dictionary) {
-                    key = key.getMap()
-                }
             }
         }
         var algorithm = CryptographyKey.getAlgorithm(key);
         var factory = SymmetricKey.getFactory(algorithm);
-        if (obj.isNull(factory)) {
+        if (!factory) {
             factory = SymmetricKey.getFactory("*")
         }
         return factory.parseSymmetricKey(key)
@@ -1692,27 +1686,21 @@ if (typeof DIMP !== "object") {
     ns.crypto.register("VerifyKey")
 })(DIMP);
 (function(ns) {
-    var obj = ns.type.Object;
-    var Dictionary = ns.type.Dictionary;
     var CryptographyKey = ns.crypto.CryptographyKey;
     var VerifyKey = ns.crypto.VerifyKey;
     var PublicKey = function(key) {};
     ns.Interface(PublicKey, [VerifyKey]);
     PublicKey.parse = function(key) {
-        if (obj.isNull(key)) {
+        if (!key) {
             return null
         } else {
             if (key instanceof PublicKey) {
                 return key
-            } else {
-                if (key instanceof Dictionary) {
-                    key = key.getMap()
-                }
             }
         }
         var algorithm = CryptographyKey.getAlgorithm(key);
         var factory = PublicKey.getFactory(algorithm);
-        if (obj.isNull(factory)) {
+        if (!factory) {
             factory = PublicKey.getFactory("*")
         }
         return factory.parsePublicKey(key)
@@ -1736,8 +1724,6 @@ if (typeof DIMP !== "object") {
     ns.crypto.register("PublicKeyFactory")
 })(DIMP);
 (function(ns) {
-    var obj = ns.type.Object;
-    var Dictionary = ns.type.Dictionary;
     var CryptographyKey = ns.crypto.CryptographyKey;
     var SignKey = ns.crypto.SignKey;
     var PrivateKey = function() {};
@@ -1748,26 +1734,22 @@ if (typeof DIMP !== "object") {
     };
     PrivateKey.generate = function(algorithm) {
         var factory = PrivateKey.getFactory(algorithm);
-        if (obj.isNull(factory)) {
+        if (!factory) {
             throw ReferenceError("key algorithm not support: " + algorithm)
         }
         return factory.generatePrivateKey()
     };
     PrivateKey.parse = function(key) {
-        if (obj.isNull(key)) {
+        if (!key) {
             return null
         } else {
             if (key instanceof PrivateKey) {
                 return key
-            } else {
-                if (key instanceof Dictionary) {
-                    key = key.getMap()
-                }
             }
         }
         var algorithm = CryptographyKey.getAlgorithm(key);
         var factory = PrivateKey.getFactory(algorithm);
-        if (obj.isNull(factory)) {
+        if (!factory) {
             factory = PrivateKey.getFactory("*")
         }
         return factory.parsePublicKey(key)

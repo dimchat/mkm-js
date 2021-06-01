@@ -53,7 +53,7 @@
         var name;
         for (var k in keys) {
             if (k instanceof str) {
-                name = k.valueOf();
+                name = k.toString();
             } else {
                 name = k;
             }
@@ -91,7 +91,7 @@
         }
         // check for string
         if (object instanceof str) {
-            return object.valueOf();
+            return object.toString();
         }
         // check for enum
         if (object instanceof Enum) {

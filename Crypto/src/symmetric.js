@@ -77,9 +77,6 @@
 (function (ns) {
     'use strict';
 
-    var obj = ns.type.Object;
-    var Dictionary = ns.type.Dictionary;
-
     var CryptographyKey = ns.crypto.CryptographyKey;
     var EncryptKey = ns.crypto.EncryptKey;
     var DecryptKey = ns.crypto.DecryptKey;
@@ -109,7 +106,7 @@
      */
     SymmetricKey.generate = function (algorithm) {
         var factory = SymmetricKey.getFactory(algorithm);
-        if (obj.isNull(factory)) {
+        if (!factory) {
             throw ReferenceError('key algorithm not support: ' + algorithm);
         }
         return factory.generateSymmetricKey();
@@ -122,16 +119,14 @@
      * @return {SymmetricKey}
      */
     SymmetricKey.parse = function (key) {
-        if (obj.isNull(key)) {
+        if (!key) {
             return null;
         } else if (key instanceof SymmetricKey) {
             return key;
-        } else if (key instanceof Dictionary) {
-            key = key.getMap();
         }
         var algorithm = CryptographyKey.getAlgorithm(key);
         var factory = SymmetricKey.getFactory(algorithm);
-        if (obj.isNull(factory)) {
+        if (!factory) {
             factory = SymmetricKey.getFactory('*');  // unknown
         }
         return factory.parseSymmetricKey(key);
