@@ -27,7 +27,7 @@
 
 //! require 'data.js'
 
-!function (ns) {
+(function (ns) {
     'use strict';
 
     const Data = ns.type.Data;
@@ -35,7 +35,7 @@
     //-------- HEX algorithm begin --------
     const hex_chars = '0123456789abcdef';
     const hex_values = new Int8Array(128);
-    !function (chars, values) {
+    (function (chars, values) {
         for (let i = 0; i < chars.length; ++i) {
             values[chars.charCodeAt(i)] = i;
         }
@@ -45,7 +45,7 @@
         values['D'.charCodeAt(0)] = 0x0D;
         values['E'.charCodeAt(0)] = 0x0E;
         values['F'.charCodeAt(0)] = 0x0F;
-    }(hex_chars, hex_values);
+    })(hex_chars, hex_values);
 
     /**
      *  Encode data array to HEX string
@@ -98,11 +98,11 @@
     //-------- Base64 algorithm begin --------
     const base64_chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
     const base64_values = new Int8Array(128);
-    !function (chars, values) {
+    (function (chars, values) {
         for (let i = 0; i < chars.length; ++i) {
             values[chars.charCodeAt(i)] = i;
         }
-    }(base64_chars, base64_values);
+    })(base64_chars, base64_values);
 
     //
     //  (Int8Array)
@@ -310,4 +310,4 @@
     ns.format.register('Base58');
     ns.format.register('Base64');
 
-}(DIMP);
+})(DIMP);

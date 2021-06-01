@@ -26,11 +26,15 @@
 //
 
 //! require 'string.js'
+//! require 'enum.js'
+//! require 'data.js'
+//! require 'arrays.js'
 //! require 'dictionary.js'
 
-!function (ns) {
+(function (ns) {
     'use strict';
 
+    const obj = ns.type.Object;
     const str = ns.type.String;
     const Enum = ns.type.Enum;
     const Data = ns.type.Data;
@@ -56,7 +60,7 @@
             result[name] = unwrap(dict[k], true);
         }
         return result;
-    }
+    };
 
     /**
      *  Unwrap items circularly
@@ -70,7 +74,7 @@
             result.push(unwrap(item, true));
         }
         return result;
-    }
+    };
 
     /**
      *  Remove Wrapper if exists
@@ -80,50 +84,47 @@
      * @returns {*}
      */
     const unwrap = function (object, circularly) {
-        if (!object) {
+        if (obj.isNull(object)) {
+            return null;
+        } else if (obj.isBaseType(object)) {
             return object;
         }
         // check for string
         if (object instanceof str) {
             return object.valueOf();
-        } else if (object instanceof String) {
-            return object;
         }
-        // check for enum/Number
+        // check for enum
         if (object instanceof Enum) {
             return object.valueOf();
-        } else if (object instanceof Number) {
-            return object;
         }
-        // check for Data/Array
+        // check for Data
         if (object instanceof Data) {
             return object.getBytes();
-        } else if (Arrays.isArray(object)) {
-            return object;
         }
-        // remove top wrapper
-        if (!circularly) {
-            if (object instanceof Dictionary) {
-                return object.getMap(false);
+        // unwrap container
+        if (circularly) {
+            if (Arrays.isArray(object)) {
+                if (object instanceof Array) {
+                    return list_unwrap(object);
+                }
+            } else {
+                if (object instanceof Dictionary) {
+                    object = object.getMap(false);
+                }
+                return map_unwrap(object);
             }
-            return object;
+        } else if (object instanceof Dictionary) {
+            return object.getMap(false);
         }
-        // remove wrapper circularly
-        if (object instanceof Array) {
-            return list_unwrap(object);
-        }
-        if (object instanceof Dictionary) {
-            object = object.getMap(false);
-        }
-        return map_unwrap(object);
-    }
+        return object;
+    };
 
     //
     //  Wrapper
     //
     const wrapper = function () {
     };
-    ns.Class(wrapper, Object, null);
+    ns.Interface(wrapper, null);
 
     wrapper.unwrap = unwrap;
 
@@ -132,4 +133,4 @@
 
     ns.type.register('Wrapper');
 
-}(DIMP);
+})(DIMP);

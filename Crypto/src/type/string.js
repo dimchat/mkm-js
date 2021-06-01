@@ -27,7 +27,7 @@
 
 //! require 'object.js'
 
-!function (ns) {
+(function (ns) {
     'use strict';
 
     //
@@ -103,4 +103,4 @@
 
     ns.type.register('String');
 
-}(DIMP);
+})(DIMP);

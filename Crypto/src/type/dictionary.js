@@ -27,7 +27,7 @@
 
 //! require 'object.js'
 
-!function (ns) {
+(function (ns) {
     'use strict';
 
     const Arrays = ns.type.Arrays;
@@ -145,4 +145,4 @@
 
     ns.type.register('Dictionary');
 
-}(DIMP);
+})(DIMP);

@@ -1,10 +1,9 @@
 ;
-
-!function (ns) {
+(function (ns) {
     'use strict';
 
     function loadJS(src) {
-        var script = document.createElement("script");
+        const script = document.createElement("script");
         script.type = "text/javascript";
         script.src = src;
         script.async = false;
@@ -20,12 +19,12 @@
             }
         };
 
-        var heads = document.getElementsByTagName("head");
-        var head = (heads && heads.length > 0) ? heads[0] : document.documentElement;
+        const heads = document.getElementsByTagName("head");
+        const head = (heads && heads.length > 0) ? heads[0] : document.documentElement;
         head.appendChild(script);
     }
 
-    var Loader = function (base) {
+    const Loader = function (base) {
         this.base = base;
     };
 
@@ -33,13 +32,13 @@
         if (!src) {
             return;
         }
-        var url;
+        let url;
         if (src.indexOf('://') > 0) {
             // absolute URL
             url = src;
         } else if (src[0] === '/') {
             // absolute path
-            var pos = this.base.indexOf('://');
+            let pos = this.base.indexOf('://');
             pos = this.base.indexOf('/', pos + 3);
             url = this.base.substring(0, pos) + src;
         } else {
@@ -56,7 +55,7 @@
     //
     if (typeof ns.$ !== 'function') {
         ns.$ = function (fn) {
-            var onload = window.onload;
+            const onload = window.onload;
             window.onload = function (ev) {
                 if (typeof onload === 'function') {
                     onload(ev);
@@ -66,4 +65,4 @@
         }
     }
 
-}(window);
+})(window);

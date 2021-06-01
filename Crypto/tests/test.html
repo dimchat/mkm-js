@@ -11,15 +11,18 @@
     <script src="../libs/utils.js"></script>
     <script>
         !function (ns) {
-            var sources = [
+            const sources = [
                 'src/base/namespace.js',
                 'src/base/class.js',
 
                 'src/type/object.js',
+                'src/type/arrays.js',
                 'src/type/enum.js',
                 'src/type/data.js',
+                'src/type/data_m.js',
                 'src/type/string.js',
                 'src/type/dictionary.js',
+                'src/type/wrapper.js',
 
                 'src/data/coder.js',
                 'src/data/parser.js',
@@ -30,21 +33,21 @@
                 'src/asymmetric.js',
                 null
             ];
-            var dist = 'dist/crypto.js';
+            const dist = 'dist/crypto.js';
 
-            var tests = [
+            const tests = [
                 'tests/crypto_tests.js',
                 null
             ];
 
-            var base = window.location.href;
+            let base = window.location.href;
             base = base.substring(0, base.indexOf('tests/test.html'));
-            var loader = new Loader(base);
+            const loader = new Loader(base);
 
-            for (var i = 0; i < sources.length; ++i) {
+            for (let i = 0; i < sources.length; ++i) {
                 loader.importJS(sources[i]);
             }
-            for (var j = 0; j < tests.length; ++j) {
+            for (let j = 0; j < tests.length; ++j) {
                 loader.importJS(tests[j]);
             }
 
@@ -53,7 +56,7 @@
         }(window);
 
         $(function () {
-            var runner = new Runner('crypto_tests');
+            const runner = new Runner('crypto_tests');
             runner.run(crypto_tests);
         });
     </script>
@@ -68,9 +71,9 @@
     <p class="console">
         <script>
             !(function () {
-                var text = 'cat';
-                var file;
-                for (var i = 0; i < sources.length; ++i) {
+                let text = 'cat';
+                let file;
+                for (let i = 0; i < sources.length; ++i) {
                     file = sources[i];
                     if (!file) {
                         continue;

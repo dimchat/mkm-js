@@ -28,7 +28,7 @@
 //! require 'class.js'
 //! require 'cryptography.js'
 
-!function (ns) {
+(function (ns) {
     'use strict';
 
     const UTF8 = ns.format.UTF8;
@@ -112,4 +112,4 @@
 
     ns.crypto.register('SymmetricKey');
 
-}(DIMP);
+})(DIMP);

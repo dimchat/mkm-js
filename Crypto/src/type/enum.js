@@ -27,7 +27,7 @@
 
 //! require 'object.js'
 
-!function (ns) {
+(function (ns) {
     'use strict';
 
     //
@@ -140,4 +140,4 @@
     ns.type.register('BaseEnum');
     ns.type.register('Enum');
 
-}(DIMP);
+})(DIMP);

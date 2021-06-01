@@ -28,7 +28,7 @@
 //! require 'json2.js' (https://github.com/douglascrockford/JSON-js)
 //! require 'data.js'
 
-!function (ns) {
+(function (ns) {
     'use strict';
 
     /**
@@ -212,4 +212,4 @@
     ns.format.register('JSON');
     ns.format.register('UTF8');
 
-}(DIMP);
+})(DIMP);

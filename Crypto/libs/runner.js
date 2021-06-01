@@ -1,15 +1,14 @@
 ;
-
-!function (ns) {
+(function (ns) {
     'use strict';
 
-    var run = function (fn, name) {
-        var dl = document.createElement('dl');
-        var dt = document.createElement('dt');
-        var dd = document.createElement('dd');
+    const run = function (fn, name) {
+        const dl = document.createElement('dl');
+        const dt = document.createElement('dt');
+        const dd = document.createElement('dd');
         dt.innerText = name;
         try {
-            var res = fn();
+            let res = fn();
             if (!res) {
                 res = 'OK';
             }
@@ -26,8 +25,8 @@
         return dl;
     };
 
-    var Runner = function (output) {
-        var tray = output;
+    const Runner = function (output) {
+        let tray = output;
         if (typeof output === 'string') {
             tray = document.getElementById(output);
         }
@@ -36,8 +35,8 @@
     };
 
     Runner.prototype.run = function (cases) {
-        var fn, res;
-        for (var i = 0; i < cases.length; ++i) {
+        let fn, res;
+        for (let i = 0; i < cases.length; ++i) {
             fn = cases[i];
             res = run(fn, fn.name);
             this.tray.appendChild(res);
@@ -46,4 +45,4 @@
 
     ns.Runner = Runner;
 
-}(window);
+})(window);

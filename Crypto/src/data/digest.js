@@ -27,7 +27,7 @@
 
 //! require 'class.js'
 
-!function (ns) {
+(function (ns) {
     'use strict';
 
     //
@@ -107,4 +107,4 @@
     ns.digest.register('SHA256');
     ns.digest.register('RIPEMD160');
 
-}(DIMP);
+})(DIMP);

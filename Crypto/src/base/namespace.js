@@ -29,7 +29,7 @@ if (typeof DIMP !== 'object') {
     DIMP = {};
 }
 
-!function (ns) {
+(function (ns) {
     "use strict";
 
     /**
@@ -126,9 +126,9 @@ if (typeof DIMP !== 'object') {
 
     ns.register('Namespace');
 
-}(DIMP);
+})(DIMP);
 
-!function (ns) {
+(function (ns) {
     "use strict";
 
     //-------- namespace --------
@@ -155,4 +155,4 @@ if (typeof DIMP !== 'object') {
     ns.register('digest');
     ns.register('crypto');
 
-}(DIMP);
+})(DIMP);

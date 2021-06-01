@@ -28,7 +28,7 @@
 //! require 'class.js'
 //! require 'dictionary.js'
 
-!function (ns) {
+(function (ns) {
     'use strict';
 
     const Dictionary = ns.type.Dictionary;
@@ -87,9 +87,9 @@
 
     // ns.crypto.register('CryptographyKey');
 
-}(DIMP);
+})(DIMP);
 
-!function (ns) {
+(function (ns) {
     'use strict';
 
     const EncryptKey = function () {
@@ -166,4 +166,4 @@
     ns.crypto.register('SignKey');
     ns.crypto.register('VerifyKey');
 
-}(DIMP);
+})(DIMP);

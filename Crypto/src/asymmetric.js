@@ -28,7 +28,7 @@
 //! require 'class.js'
 //! require 'cryptography.js'
 
-!function (ns) {
+(function (ns) {
     'use strict';
 
     const CryptographyKey = ns.crypto.CryptographyKey;
@@ -56,9 +56,9 @@
 
     ns.crypto.register('AsymmetricKey');
 
-}(DIMP);
+})(DIMP);
 
-!function (ns) {
+(function (ns) {
     'use strict';
 
     const UTF8 = ns.format.UTF8;
@@ -133,9 +133,9 @@
 
     ns.crypto.register('PublicKey');
 
-}(DIMP);
+})(DIMP);
 
-!function (ns) {
+(function (ns) {
     'use strict';
 
     const CryptographyKey = ns.crypto.CryptographyKey;
@@ -220,4 +220,4 @@
 
     ns.crypto.register('PrivateKey');
 
-}(DIMP);
+})(DIMP);

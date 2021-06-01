@@ -27,7 +27,7 @@
 
 //! require 'namespace.js'
 
-!function (ns) {
+(function (ns) {
     'use strict';
 
     /**
@@ -166,4 +166,4 @@
     ns.register('Interface');
     ns.register('Class');
 
-}(DIMP);
+})(DIMP);
