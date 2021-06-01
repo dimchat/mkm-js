@@ -25,59 +25,29 @@
 // =============================================================================
 //
 
-//! require 'class.js'
+//! require 'hash.js'
 
 (function (ns) {
     'use strict';
 
-    var is_null = function (object) {
-        if (typeof object === 'undefined') {
-            return true;
-        } else {
-            return object === null;
-        }
-    };
-
-    var is_base_type = function (object) {
-        var t = typeof object;
-        if (t === 'string' || t === 'number' || t === 'boolean' || t === 'function') {
-            return true;
-        }
-        if (object instanceof String) {
-            return true;
-        }
-        if (object instanceof Number) {
-            return true;
-        }
-        if (object instanceof Boolean) {
-            return true;
-        }
-        if (object instanceof Date) {
-            return true;
-        }
-        if (object instanceof RegExp) {
-            return true;
-        }
-        return object instanceof Error;
-    };
+    var Hash = ns.digest.Hash;
+    var Lib = ns.digest.HashLib;
 
     //
-    //  Object
+    //  SHA1
     //
-    var obj = function () {
+    var sha1 = function () {
     };
-    ns.Class(obj, Object, null);
-
-    obj.isNull = is_null;
-    obj.isBaseType = is_base_type;
-
-    obj.prototype.equals = function (other) {
-        return this === other;
+    ns.Class(sha1, ns.type.Object, [Hash]);
+    // noinspection JSUnusedLocalSymbols
+    sha1.prototype.digest = function (data) {
+        console.assert(false, 'SHA1 not implemented');
+        return null;
     };
 
     //-------- namespace --------
-    ns.type.Object = obj;
+    ns.digest.SHA1 = new Lib(new sha1());
 
-    ns.type.register('Object');
+    ns.digest.register('SHA1');
 
 })(DIMP);

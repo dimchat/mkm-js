@@ -25,59 +25,34 @@
 // =============================================================================
 //
 
-//! require 'class.js'
+//! require 'coder.js'
 
 (function (ns) {
     'use strict';
 
-    var is_null = function (object) {
-        if (typeof object === 'undefined') {
-            return true;
-        } else {
-            return object === null;
-        }
-    };
-
-    var is_base_type = function (object) {
-        var t = typeof object;
-        if (t === 'string' || t === 'number' || t === 'boolean' || t === 'function') {
-            return true;
-        }
-        if (object instanceof String) {
-            return true;
-        }
-        if (object instanceof Number) {
-            return true;
-        }
-        if (object instanceof Boolean) {
-            return true;
-        }
-        if (object instanceof Date) {
-            return true;
-        }
-        if (object instanceof RegExp) {
-            return true;
-        }
-        return object instanceof Error;
-    };
+    var Coder = ns.format.BaseCoder;
+    var Lib = ns.format.CoderLib;
 
     //
-    //  Object
+    //  Base58
     //
-    var obj = function () {
+    var base58 = function () {
     };
-    ns.Class(obj, Object, null);
-
-    obj.isNull = is_null;
-    obj.isBaseType = is_base_type;
-
-    obj.prototype.equals = function (other) {
-        return this === other;
+    ns.Class(base58, ns.type.Object, [Coder]);
+    // noinspection JSUnusedLocalSymbols
+    base58.prototype.encode = function (data) {
+        console.assert(false, 'Base58 encode not implemented');
+        return null;
+    };
+    // noinspection JSUnusedLocalSymbols
+    base58.prototype.decode = function (string) {
+        console.assert(false, 'Base58 decode not implemented');
+        return null;
     };
 
     //-------- namespace --------
-    ns.type.Object = obj;
+    ns.format.Base58 = new Lib(new base58());
 
-    ns.type.register('Object');
+    ns.format.register('Base58');
 
 })(DIMP);

@@ -25,12 +25,12 @@
 // =============================================================================
 //
 
-//! require 'object.js'
+//! require 'arrays.js'
 
 (function (ns) {
     'use strict';
 
-    const Arrays = ns.type.Arrays;
+    var Arrays = ns.type.Arrays;
 
     //
     //  Dictionary
@@ -41,11 +41,11 @@
      *
      * @param {{}|map|String|} entries
      */
-    const map = function (entries) {
+    var map = function (entries) {
         if (!entries) {
             entries = {};
         } else if (entries instanceof map) {
-            entries = entries.getMap(false);
+            entries = entries.getMap();
         } else if (entries instanceof ns.type.String) {
             entries = ns.format.JSON.decode(entries.toString());
         } else if (typeof entries === 'string') {
@@ -60,7 +60,7 @@
      *  Check whether all entities equal
      *
      * @param {map|{}} other - another map
-     * @returns {boolean}
+     * @return {boolean}
      */
     map.prototype.equals = function (other) {
         if (!other) {
@@ -68,7 +68,7 @@
         // } else if (ns.type.Object.prototype.equals.call(this, other)) {
         //     return true;
         } else if (other instanceof map) {
-            return Arrays.equals(this.dictionary, other.getMap(false));
+            return Arrays.equals(this.dictionary, other.getMap());
         } else {
             return Arrays.equals(this.dictionary, other);
         }
@@ -84,23 +84,19 @@
 
     /**
      *  Get inner dictionary
-     *
-     * @param {boolean} copy - clone when true
-     * @returns {{}}
      */
-    map.prototype.getMap = function (copy) {
-        if (copy) {
-            const json = ns.format.JSON.encode(this.dictionary);
-            return ns.format.JSON.decode(json);
-        } else {
-            return this.dictionary;
-        }
+    map.prototype.getMap = function () {
+        return this.dictionary;
+    };
+    map.prototype.copyMap = function () {
+        var json = ns.format.JSON.encode(this.dictionary);
+        return ns.format.JSON.decode(json);
     };
 
     /**
      *  Get all keys in dictionary
      *
-     * @returns {String[]}
+     * @return {String[]}
      */
     map.prototype.allKeys = function() {
         return Object.keys(this.dictionary);
@@ -110,7 +106,7 @@
      *  Get value for key
      *
      * @param {String} key
-     * @returns {*}
+     * @return {*}
      */
     map.prototype.getValue = function (key) {
         return this.dictionary[key];
@@ -134,7 +130,7 @@
      *  Create a map with entities from another object or JSON string
      *
      * @param {{}|map|String} dict
-     * @returns {map}
+     * @return {map}
      */
     map.from = function (dict) {
         return new map(dict);

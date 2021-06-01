@@ -25,59 +25,60 @@
 // =============================================================================
 //
 
-//! require 'class.js'
+//! require 'object.js'
 
 (function (ns) {
     'use strict';
 
-    var is_null = function (object) {
-        if (typeof object === 'undefined') {
-            return true;
-        } else {
-            return object === null;
-        }
+    //
+    //  DataParser interface
+    //
+    var parser = function () {
+    };
+    ns.Interface(parser, null);
+
+    /**
+     *  Encode container/string object to bytes
+     *
+     * @param {{}|[]|String} object - Map, List, or String
+     * @return {Uint8Array} JsON or UTF-8 string bytes
+     */
+    parser.prototype.encode = function (object) {
+        console.assert(false, 'implement me!');
+        return null;
     };
 
-    var is_base_type = function (object) {
-        var t = typeof object;
-        if (t === 'string' || t === 'number' || t === 'boolean' || t === 'function') {
-            return true;
-        }
-        if (object instanceof String) {
-            return true;
-        }
-        if (object instanceof Number) {
-            return true;
-        }
-        if (object instanceof Boolean) {
-            return true;
-        }
-        if (object instanceof Date) {
-            return true;
-        }
-        if (object instanceof RegExp) {
-            return true;
-        }
-        return object instanceof Error;
+    /**
+     *  Decode bytes to container/string object
+     *
+     * @param {Uint8Array} data - JsON or UTF-8 string bytes
+     * @return {{}|[]|String} Map, List, or String
+     */
+    parser.prototype.decode = function (data) {
+        console.assert(false, 'implement me!');
+        return null;
     };
 
     //
-    //  Object
+    //  Parser Lib
     //
-    var obj = function () {
+    var lib = function (parser) {
+        this.parser = parser;
     };
-    ns.Class(obj, Object, null);
+    ns.Class(lib, ns.type.Object, [parser]);
 
-    obj.isNull = is_null;
-    obj.isBaseType = is_base_type;
-
-    obj.prototype.equals = function (other) {
-        return this === other;
+    lib.prototype.encode = function (object) {
+        return this.parser.encode(object);
+    };
+    lib.prototype.decode = function (data) {
+        return this.parser.decode(data);
     };
 
-    //-------- namespace --------
-    ns.type.Object = obj;
+    //-------- namespace --------//
+    ns.format.DataParser = parser;
+    ns.format.ParserLib = lib;
 
-    ns.type.register('Object');
+    ns.format.register('DataParser');
+    ns.format.register('ParserLib');
 
 })(DIMP);

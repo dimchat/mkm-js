@@ -2,13 +2,13 @@
 (function (ns) {
     'use strict';
 
-    const run = function (fn, name) {
-        const dl = document.createElement('dl');
-        const dt = document.createElement('dt');
-        const dd = document.createElement('dd');
+    var run = function (fn, name) {
+        var dl = document.createElement('dl');
+        var dt = document.createElement('dt');
+        var dd = document.createElement('dd');
         dt.innerText = name;
         try {
-            let res = fn();
+            var res = fn();
             if (!res) {
                 res = 'OK';
             }
@@ -25,8 +25,8 @@
         return dl;
     };
 
-    const Runner = function (output) {
-        let tray = output;
+    var Runner = function (output) {
+        var tray = output;
         if (typeof output === 'string') {
             tray = document.getElementById(output);
         }
@@ -35,8 +35,8 @@
     };
 
     Runner.prototype.run = function (cases) {
-        let fn, res;
-        for (let i = 0; i < cases.length; ++i) {
+        var fn, res;
+        for (var i = 0; i < cases.length; ++i) {
             fn = cases[i];
             res = run(fn, fn.name);
             this.tray.appendChild(res);

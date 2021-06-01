@@ -30,7 +30,7 @@
 (function (ns) {
     'use strict';
 
-    const Arrays = ns.type.Arrays;
+    var Arrays = ns.type.Arrays;
 
     /**
      *  Create data bytes with capacity, or another data bytes
@@ -42,7 +42,7 @@
      *      4. new Data(buffer);
      *      5. new Data(buffer, offset, length);
      */
-    const bytes = function () {
+    var bytes = function () {
         ns.type.Object.call(this);
         this.buffer = null;
         this.offset = 0;
@@ -51,7 +51,7 @@
             // 1. default capacity
             this.buffer = new Uint8Array(4);
         } else if (arguments.length === 1) {
-            const arg = arguments[0];
+            var arg = arguments[0];
             if (typeof arg === 'number') {
                 // 2. create empty buffer with capacity
                 this.buffer = new Uint8Array(arg);
@@ -83,24 +83,11 @@
 
     bytes.ZERO = new bytes(new Uint8Array(0), 0, 0);
 
-    // bytes.prototype.getBuffer = function () {
-    //     return this.buffer;
-    // };
-    // bytes.prototype.getBufferLength = function () {
-    //     return this.buffer.length;
-    // };
-    // bytes.prototype.getOffset = function () {
-    //     return this.offset;
-    // };
-    // bytes.prototype.getLength = function () {
-    //     return this.length;
-    // };
-
     /**
      *  Check whether bytes equal
      *
-     * @param {bytes|Uint8Array|Array} other - another array
-     * @returns {boolean}
+     * @param {bytes|Uint8Array|uint[]} other - another array
+     * @return {boolean}
      */
     bytes.prototype.equals = function (other) {
         if (!other || other.length === 0) {
@@ -110,7 +97,7 @@
             // same object
             return true;
         }
-        let otherBuffer, otherOffset, otherLength;
+        var otherBuffer, otherOffset, otherLength;
         if (other instanceof bytes) {
             otherBuffer = other.buffer;
             otherOffset = other.offset;
@@ -127,9 +114,9 @@
             return true;
         }
         // check items one by one
-        const buffer = this.buffer;
-        let pos1 = this.offset + this.length - 1;
-        let pos2 = otherOffset + otherLength - 1;
+        var buffer = this.buffer;
+        var pos1 = this.offset + this.length - 1;
+        var pos2 = otherOffset + otherLength - 1;
         for (; pos2 >= otherOffset; --pos1, --pos2) {
             if (buffer[pos1] !== otherBuffer[pos2]) {
                 return false;
@@ -139,7 +126,7 @@
     };
 
     // adjust the position within range [0, len)
-    const adjust = function (pos, len) {
+    var adjust = function (pos, len) {
         if (pos < 0) {
             pos += len;    // count from right hand
             if (pos < 0) {
@@ -159,12 +146,12 @@
     /**
      *  Search value in range [start, end)
      *
-     * @param {int} value - element value
+     * @param {uint} value - element value
      * @param {int} start - start position (include)
      * @param {int} end   - end position (exclude)
-     * @returns -1 on not found
+     * @return -1 on not found
      */
-    const find_value = function (value, start, end) {
+    var find_value = function (value, start, end) {
         // adjust position
         start += this.offset;
         end += this.offset;
@@ -183,9 +170,9 @@
      * @param {bytes} sub - sub data
      * @param {int} start - start position (include)
      * @param {int} end   - end position (exclude)
-     * @returns -1 on not found
+     * @return -1 on not found
      */
-    const find_sub = function (sub, start, end) {
+    var find_sub = function (sub, start, end) {
         if ((end - start) < sub.length) {
             return -1;
         }
@@ -200,7 +187,7 @@
             //         but we cannot confirm this is the first position it appeared,
             //         so we still need to do searching.
         }
-        let index;
+        var index;
         for (; start < end; ++start) {
             for (index = 0; index < sub.length; ++index) {
                 if (this.buffer[start + index] !== sub.buffer[sub.offset + index]) {
@@ -227,10 +214,10 @@
      *      5. find(sub, start);
      *      6. find(sub, start, end);
      *
-     * @returns -1 on not found
+     * @return -1 on not found
      */
     bytes.prototype.find = function () {
-        let sub, start, end;
+        var sub, start, end;
         if (arguments.length === 1) {
             sub = arguments[0];
             start = 0;
@@ -262,7 +249,7 @@
      *  Get value with index
      *
      * @param {Number} index
-     * @returns {int}
+     * @return {uint}
      */
     bytes.prototype.getByte = function (index) {
         // check position
@@ -282,9 +269,9 @@
      *
      * @param {int} start - start position (include)
      * @param {int} end   - end position (exclude)
-     * @returns {Uint8Array} sub bytes
+     * @return {Uint8Array} sub bytes
      */
-    const get_bytes = function (start, end) {
+    var get_bytes = function (start, end) {
         start += this.offset;
         end += this.offset;
         // check range
@@ -308,10 +295,10 @@
      *      2. getBytes(start);
      *      3. getBytes(start, end);
      *
-     * @returns {Uint8Array}
+     * @return {Uint8Array}
      */
     bytes.prototype.getBytes = function () {
-        let start, end;
+        var start, end;
         if (arguments.length === 0) {
             start = 0;
             end = this.length;
@@ -337,10 +324,10 @@
      *      1. slice(start);
      *      2. slice(start, end);
      *
-     * @returns {bytes}
+     * @return {bytes}
      */
     bytes.prototype.slice = function (start) {
-        let end;
+        var end;
         if (arguments.length === 2) {
             end = arguments[1];
             end = adjust(end, this.length);
@@ -351,7 +338,7 @@
         return slice(this, start, end);
     };
 
-    const slice = function (data, start, end) {
+    var slice = function (data, start, end) {
         if (start === 0 && end === data.length) {
             // whole data
             return data;
@@ -371,12 +358,12 @@
      *      1. concat(other);
      *      2. concat(other1, other2, ...);
      *
-     * @returns {bytes}
+     * @return {bytes}
      */
     bytes.prototype.concat = function () {
-        let result = this;
-        let arg, other;
-        for (let i = 0; i < arguments.length; ++i) {
+        var result = this;
+        var arg, other;
+        for (var i = 0; i < arguments.length; ++i) {
             arg = arguments[i];
             if (arg instanceof bytes) {
                 other = arg;
@@ -388,7 +375,7 @@
         return result;
     };
 
-    const concat = function (left, right) {
+    var concat = function (left, right) {
         if (left.length === 0) {
             return right;
         } else if (right.length === 0) {
@@ -397,7 +384,7 @@
             // sticky data
             return new bytes(left.buffer, left.offset, left.length + right.length);
         } else {
-            const joined = new Uint8Array(left.length + right.length);
+            var joined = new Uint8Array(left.length + right.length);
             Arrays.copy(left.buffer, left.offset, joined, 0, left.length);
             Arrays.copy(right.buffer, right.offset, joined, left.length, right.length);
             return new bytes(joined, 0, joined.length);
@@ -407,14 +394,14 @@
     /**
      *  Clone data
      *
-     * @returns {bytes}
+     * @return {bytes}
      */
     bytes.prototype.copy = function () {
         return new bytes(this.buffer, this.offset, this.length);
     };
 
     bytes.prototype.mutableCopy = function () {
-        let buffer = this.getBytes();
+        var buffer = this.getBytes();
         buffer = new Uint8Array(buffer);
         return new bytes(buffer, 0, buffer.length);
     };
@@ -422,10 +409,10 @@
     /**
      *  Convert Uint8Array to Array
      *
-     * @returns {Number[]}
+     * @return {uint[]}
      */
     bytes.prototype.toArray = function () {
-        const array = this.getBytes();
+        var array = this.getBytes();
         if (typeof Array.from === 'function') {
             return Array.from(array);
         } else {

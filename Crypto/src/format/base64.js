@@ -26,80 +26,20 @@
 //
 
 //! require 'data.js'
+//! require 'coder.js'
 
 (function (ns) {
     'use strict';
 
-    const Data = ns.type.Data;
-
-    //-------- HEX algorithm begin --------
-    const hex_chars = '0123456789abcdef';
-    const hex_values = new Int8Array(128);
-    (function (chars, values) {
-        for (let i = 0; i < chars.length; ++i) {
-            values[chars.charCodeAt(i)] = i;
-        }
-        values['A'.charCodeAt(0)] = 0x0A;
-        values['B'.charCodeAt(0)] = 0x0B;
-        values['C'.charCodeAt(0)] = 0x0C;
-        values['D'.charCodeAt(0)] = 0x0D;
-        values['E'.charCodeAt(0)] = 0x0E;
-        values['F'.charCodeAt(0)] = 0x0F;
-    })(hex_chars, hex_values);
-
-    /**
-     *  Encode data array to HEX string
-     *
-     * @param {Uint8Array} data
-     * @returns {String}
-     */
-    const hex_encode = function (data) {
-        const len = data.length;
-        let str = '';
-        let byt;
-        for (let i = 0; i < len; ++i) {
-            byt = data[i];
-            str += hex_chars[byt >> 4];   // hi
-            str += hex_chars[byt & 0x0F]; // lo
-        }
-        return str;
-    };
-
-    /**
-     *  Decode HEX string to data array
-     *
-     * @param {String} string
-     * @returns {Uint8Array}
-     */
-    const hex_decode = function (string) {
-        let i = 0;
-        let len = string.length;
-        if (len > 2) {
-            // skip '0x'
-            if (string[0] === '0') {
-                if (string[1] === 'x' || string[1] === 'X') {
-                    i += 2;
-                }
-            }
-        }
-        const size = Math.floor(len / 2);
-        const data = new Data(size);
-        --len; // for condition: i < (len - 1)
-        let hi, lo;
-        for (; i < len; i+=2) {
-            hi = hex_values[string.charCodeAt(i)];
-            lo = hex_values[string.charCodeAt(i+1)];
-            data.push((hi << 4) | lo);
-        }
-        return data.getBytes();
-    };
-    //-------- HEX algorithm end --------
+    var Data = ns.type.Data;
+    var Coder = ns.format.BaseCoder;
+    var Lib = ns.format.CoderLib;
 
     //-------- Base64 algorithm begin --------
-    const base64_chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-    const base64_values = new Int8Array(128);
+    var base64_chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+    var base64_values = new Int8Array(128);
     (function (chars, values) {
-        for (let i = 0; i < chars.length; ++i) {
+        for (var i = 0; i < chars.length; ++i) {
             values[chars.charCodeAt(i)] = i;
         }
     })(base64_chars, base64_values);
@@ -124,13 +64,13 @@
      *  Encode data array to Base64 string
      *
      * @param {Uint8Array} data
-     * @returns {String}
+     * @return {String}
      */
-    const base64_encode = function (data) {
-        let base64 = '';
-        let length = data.length;
-        let tail = '';
-        const remainder = length % 3;
+    var base64_encode = function (data) {
+        var base64 = '';
+        var length = data.length;
+        var tail = '';
+        var remainder = length % 3;
         if (remainder === 1) {
             length -= 1;
             tail = '==';
@@ -138,8 +78,8 @@
             length -= 2;
             tail = '=';
         }
-        let x1, x2, x3;
-        let i;
+        var x1, x2, x3;
+        var i;
         for (i = 0; i < length; i += 3) {
             x1 = data[i];
             x2 = data[i+1];
@@ -177,19 +117,19 @@
      *  Decode Base64 string to data array
      *
      * @param {String} string
-     * @returns {Uint8Array}
+     * @return {Uint8Array}
      */
-    const base64_decode = function (string) {
+    var base64_decode = function (string) {
         // preprocess
-        const str = string.replace(/[^A-Za-z0-9+\/=]/g, '');
-        const length = str.length;
+        var str = string.replace(/[^A-Za-z0-9+\/=]/g, '');
+        var length = str.length;
         if ((length % 4) !== 0 || !/^[A-Za-z0-9+\/]+={0,2}$/.test(str)) {
             throw Error('base64 string error: ' + string)
         }
-        const array = new Data(length * 3 / 4);
+        var array = new Data(length * 3 / 4);
         // parse each 4 chars to 3 bytes
-        let ch1, ch2, ch3, ch4;
-        let i;
+        var ch1, ch2, ch3, ch4;
+        var i;
         for (i = 0; i < length; i+=4) {
             ch1 = base64_values[str.charCodeAt(i)];
             ch2 = base64_values[str.charCodeAt(i+1)];
@@ -211,54 +151,11 @@
     //-------- Base64 algorithm end --------
 
     //
-    //  BaseCoder interface
-    //
-    const coder = function () {
-    };
-    ns.Interface(coder, null);
-    // noinspection JSUnusedLocalSymbols
-    /**
-     *  Encode binary data to text string
-     *
-     * @param {Uint8Array} data
-     * @returns {String}
-     */
-    coder.prototype.encode = function (data) {
-        console.assert(false, 'implement me!');
-        return null;
-    };
-    // noinspection JSUnusedLocalSymbols
-    /**
-     *  Decode text string to binary data
-     *
-     * @param {String} string
-     * @returns {Uint8Array}
-     */
-    coder.prototype.decode = function (string) {
-        console.assert(false, 'implement me!');
-        return null;
-    };
-
-    //
-    //  Hex
-    //
-    const hex = function () {
-    };
-    ns.Class(hex, ns.type.Object, [coder]);
-
-    hex.prototype.encode = function (data) {
-        return hex_encode(data);
-    };
-    hex.prototype.decode = function (str) {
-        return hex_decode(str);
-    };
-
-    //
     //  Base64
     //
-    const base64 = function () {
+    var base64 = function () {
     };
-    ns.Class(base64, ns.type.Object, [coder]);
+    ns.Class(base64, ns.type.Object, [Coder]);
 
     base64.prototype.encode = function (data) {
         return base64_encode(data);
@@ -267,47 +164,9 @@
         return base64_decode(string);
     };
 
-    //
-    //  Base58
-    //
-    const base58 = function () {
-    };
-    ns.Class(base58, ns.type.Object, [coder]);
-    // noinspection JSUnusedLocalSymbols
-    base58.prototype.encode = function (data) {
-        console.assert(false, 'Base58 encode not implemented');
-        return null;
-    };
-    // noinspection JSUnusedLocalSymbols
-    base58.prototype.decode = function (string) {
-        console.assert(false, 'Base58 decode not implemented');
-        return null;
-    };
-
-    //
-    //  Coder Lib
-    //
-    const Lib = function (coder) {
-        this.coder = coder;
-    };
-    ns.Class(Lib, ns.type.Object, [coder]);
-
-    Lib.prototype.encode = function (data) {
-        return this.coder.encode(data);
-    };
-    Lib.prototype.decode = function (string) {
-        return this.coder.decode(string);
-    };
-
     //-------- namespace --------
-    ns.format.BaseCoder = coder;
-    ns.format.Hex = new Lib(new hex());
-    ns.format.Base58 = new Lib(new base58());
     ns.format.Base64 = new Lib(new base64());
 
-    ns.format.register('BaseCoder');
-    ns.format.register('Hex');
-    ns.format.register('Base58');
     ns.format.register('Base64');
 
 })(DIMP);

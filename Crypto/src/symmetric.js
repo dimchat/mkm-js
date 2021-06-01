@@ -25,19 +25,64 @@
 // =============================================================================
 //
 
-//! require 'class.js'
+//! require 'dictionary.js'
 //! require 'cryptography.js'
 
 (function (ns) {
     'use strict';
 
-    const UTF8 = ns.format.UTF8;
+    var CryptographyKey = ns.crypto.CryptographyKey;
 
-    const CryptographyKey = ns.crypto.CryptographyKey;
-    const EncryptKey = ns.crypto.EncryptKey;
-    const DecryptKey = ns.crypto.DecryptKey;
+    var EncryptKey = function () {
+    };
+    ns.Interface(EncryptKey, [CryptographyKey]);
+    // noinspection JSUnusedLocalSymbols
+    /**
+     *  ciphertext = encrypt(plaintext, PW)
+     *  ciphertext = encrypt(plaintext, PK)
+     *
+     * @param {Uint8Array} plaintext
+     * @return {Uint8Array}
+     */
+    EncryptKey.prototype.encrypt = function (plaintext) {
+        console.assert(false, 'implement me!');
+        return null;
+    };
 
-    const promise = UTF8.encode('Moky loves May Lee forever!');
+    var DecryptKey = function () {
+    };
+    ns.Interface(DecryptKey, [CryptographyKey]);
+    // noinspection JSUnusedLocalSymbols
+    /**
+     *  plaintext = decrypt(ciphertext, PW);
+     *  plaintext = decrypt(ciphertext, SK);
+     *
+     * @param {Uint8Array} ciphertext
+     * @return {Uint8Array}
+     */
+    DecryptKey.prototype.decrypt = function (ciphertext) {
+        console.assert(false, 'implement me!');
+        return null;
+    };
+
+    //-------- namespace --------
+    ns.crypto.EncryptKey = EncryptKey;
+    ns.crypto.DecryptKey = DecryptKey;
+
+    ns.crypto.register('EncryptKey');
+    ns.crypto.register('DecryptKey');
+
+})(DIMP);
+
+(function (ns) {
+    'use strict';
+
+    var obj = ns.type.Object;
+    var Dictionary = ns.type.Dictionary;
+
+    var CryptographyKey = ns.crypto.CryptographyKey;
+    var EncryptKey = ns.crypto.EncryptKey;
+    var DecryptKey = ns.crypto.DecryptKey;
 
     //
     //  Symmetric Cryptography Key
@@ -49,67 +94,97 @@
     //      ...
     //  }
     //
-    const SymmetricKey = function (key) {
-        CryptographyKey.call(this, key);
+    var SymmetricKey = function () {
     };
-    ns.Class(SymmetricKey, CryptographyKey, [EncryptKey, DecryptKey]);
+    ns.Interface(SymmetricKey, [EncryptKey, DecryptKey]);
 
-    SymmetricKey.prototype.equals = function (other) {
-        // check by encryption
-        const ciphertext = other.encrypt(promise);
-        const plaintext = this.decrypt(ciphertext);
-        return ns.type.Arrays.equals(promise, plaintext);
-    };
+    SymmetricKey.AES = 'AES'; //-- "AES/CBC/PKCS7Padding"
+    SymmetricKey.DES = 'DES';
 
     /**
      *  Generate key with algorithm name
      *
      * @param {String} algorithm - algorithm name ('AES')
-     * @returns {SymmetricKey}
+     * @return {SymmetricKey}
      */
     SymmetricKey.generate = function (algorithm) {
-        return this.getInstance({algorithm: algorithm});
+        var factory = SymmetricKey.getFactory(algorithm);
+        if (obj.isNull(factory)) {
+            throw ReferenceError('key algorithm not support: ' + algorithm);
+        }
+        return factory.generateSymmetricKey();
     };
 
-    //-------- runtime --------
-    const key_classes = {};
+    /**
+     *  Parse map object to key
+     *
+     * @param {{String:Object}} key - key info
+     * @return {SymmetricKey}
+     */
+    SymmetricKey.parse = function (key) {
+        if (obj.isNull(key)) {
+            return null;
+        } else if (key instanceof SymmetricKey) {
+            return key;
+        } else if (key instanceof Dictionary) {
+            key = key.getMap();
+        }
+        var algorithm = CryptographyKey.getAlgorithm(key);
+        var factory = SymmetricKey.getFactory(algorithm);
+        if (obj.isNull(factory)) {
+            factory = SymmetricKey.getFactory('*');  // unknown
+        }
+        return factory.parseSymmetricKey(key);
+    }
 
     /**
      *  Register symmetric key class with algorithm
      *
-     * @param {String} algorithm - key algorithm
-     * @param {Class} clazz - if key class is None, then remove with algorithm
+     * @param {String} algorithm
+     * @param {SymmetricKeyFactory} factory
      */
-    SymmetricKey.register = function (algorithm, clazz) {
-        key_classes[algorithm] = clazz;
+    SymmetricKey.register = function (algorithm, factory) {
+        s_factories[algorithm] = factory;
     };
+    SymmetricKey.getFactory = function (algorithm) {
+        return s_factories[algorithm];
+    }
+
+    var s_factories = {};
 
     /**
-     *  Create symmetric key
-     *
-     * @param {{}|SymmetricKey} key - key info (with algorithm='AES')
-     * @returns {SymmetricKey}
+     *  Key Factory
+     *  ~~~~~~~~~~~
      */
-    SymmetricKey.getInstance = function (key) {
-        if (!key) {
-            return null;
-        } else if (key instanceof SymmetricKey) {
-            return key;
-        }
-        const algorithm = key['algorithm'];
-        const clazz = key_classes[algorithm];
-        if (typeof clazz === 'function') {
-            return CryptographyKey.createInstance(clazz, key);
-        }
-        throw TypeError('key algorithm error: ' + algorithm);
+    var SymmetricKeyFactory = function () {
     };
-
-    SymmetricKey.AES = 'AES'; //-- "AES/CBC/PKCS7Padding"
-    SymmetricKey.DES = 'DES';
+    ns.Interface(SymmetricKeyFactory, null);
+    /**
+     *  Generate key
+     *
+     * @return {SymmetricKey}
+     */
+    SymmetricKeyFactory.prototype.generateSymmetricKey = function () {
+        console.assert(false, 'implement me!');
+        return null;
+    };
+    // noinspection JSUnusedLocalSymbols
+    /**
+     *  Parse map object to key
+     *
+     * @param {{String:Object}} key - key info
+     * @return {SymmetricKey}
+     */
+    SymmetricKeyFactory.prototype.parseSymmetricKey = function (key) {
+        console.assert(false, 'implement me!');
+        return null;
+    };
 
     //-------- namespace --------
     ns.crypto.SymmetricKey = SymmetricKey;
+    ns.crypto.SymmetricKeyFactory = SymmetricKeyFactory;
 
     ns.crypto.register('SymmetricKey');
+    ns.crypto.register('SymmetricKeyFactory');
 
 })(DIMP);

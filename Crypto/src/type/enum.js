@@ -34,11 +34,11 @@
     //  Enumeration
     //
 
-    const get_alias = function (value) {
+    var get_alias = function (value) {
         // searching exists elements for alias
-        const enumeration = this.constructor;
-        let e;
-        for (let k in enumeration) {
+        var enumeration = this.constructor;
+        var e;
+        for (var k in enumeration) {
             if (!enumeration.hasOwnProperty(k)) {
                 continue;
             }
@@ -58,7 +58,7 @@
      * @param {Number|base_enum} value
      * @param {String} alias
      */
-    const base_enum = function (value, alias) {
+    var base_enum = function (value, alias) {
         ns.type.Object.call(this);
         if (!alias) {
             if (value instanceof base_enum) {
@@ -79,7 +79,7 @@
      *  Check whether values equal
      *
      * @param {base_enum|Number} other
-     * @returns {boolean}
+     * @return {boolean}
      */
     base_enum.prototype.equals = function (other) {
         if (!other) {
@@ -107,17 +107,17 @@
      *
      * @param {*} enumeration - enum constructor
      * @param {{}} elements
-     * @returns {Class}
+     * @return {Class}
      */
-    const enumify = function(enumeration, elements) {
+    var enumify = function(enumeration, elements) {
         if (!enumeration) {
             enumeration = function (value, alias) {
                 base_enum.call(this, value, alias);
             }
         }
         ns.Class(enumeration, base_enum, null);
-        let e, v;
-        for (let name in elements) {
+        var e, v;
+        for (var name in elements) {
             if (!elements.hasOwnProperty(name)) {
                 continue;
             }

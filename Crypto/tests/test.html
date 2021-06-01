@@ -11,7 +11,7 @@
     <script src="../libs/utils.js"></script>
     <script>
         !function (ns) {
-            const sources = [
+            var sources = [
                 'src/base/namespace.js',
                 'src/base/class.js',
 
@@ -24,30 +24,44 @@
                 'src/type/dictionary.js',
                 'src/type/wrapper.js',
 
-                'src/data/coder.js',
-                'src/data/parser.js',
-                'src/data/digest.js',
+                'src/digest/hash.js',
+                'src/digest/md5.js',
+                'src/digest/sha1.js',
+                'src/digest/sha256.js',
+                'src/digest/ripemd160.js',
+                'src/digest/keccak256.js',
+
+                'src/format/coder.js',
+                'src/format/hex.js',
+                'src/format/base58.js',
+                'src/format/base64.js',
+
+                'src/format/parser.js',
+                'src/format/utf8.js',
+                'src/format/json.js',
 
                 'src/cryptography.js',
                 'src/symmetric.js',
                 'src/asymmetric.js',
+                'src/public.js',
+                'src/private.js',
                 null
             ];
-            const dist = 'dist/crypto.js';
+            var dist = 'dist/crypto.js';
 
-            const tests = [
+            var tests = [
                 'tests/crypto_tests.js',
                 null
             ];
 
-            let base = window.location.href;
+            var base = window.location.href;
             base = base.substring(0, base.indexOf('tests/test.html'));
-            const loader = new Loader(base);
+            var loader = new Loader(base);
 
-            for (let i = 0; i < sources.length; ++i) {
+            for (var i = 0; i < sources.length; ++i) {
                 loader.importJS(sources[i]);
             }
-            for (let j = 0; j < tests.length; ++j) {
+            for (var j = 0; j < tests.length; ++j) {
                 loader.importJS(tests[j]);
             }
 
@@ -56,7 +70,7 @@
         }(window);
 
         $(function () {
-            const runner = new Runner('crypto_tests');
+            var runner = new Runner('crypto_tests');
             runner.run(crypto_tests);
         });
     </script>
@@ -71,9 +85,9 @@
     <p class="console">
         <script>
             !(function () {
-                let text = 'cat';
-                let file;
-                for (let i = 0; i < sources.length; ++i) {
+                var text = 'cat';
+                var file;
+                for (var i = 0; i < sources.length; ++i) {
                     file = sources[i];
                     if (!file) {
                         continue;

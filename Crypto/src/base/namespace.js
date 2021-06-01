@@ -36,9 +36,9 @@ if (typeof DIMP !== 'object') {
      *  Make an object to be a namespace
      *
      * @param {namespace} space
-     * @returns {namespace}
+     * @return {namespace}
      */
-    const namespacefy = function (space) {
+    var namespacefy = function (space) {
         if (!space) {
             space = new namespace();
         } else if (!is_space(space)) {
@@ -49,7 +49,7 @@ if (typeof DIMP !== 'object') {
         return space;
     };
 
-    const is_space = function (space) {
+    var is_space = function (space) {
         if (space instanceof namespace) {
             return true;
         }
@@ -65,7 +65,7 @@ if (typeof DIMP !== 'object') {
     //
     //  Namespace
     //
-    const namespace = function () {
+    var namespace = function () {
         // all registered names
         this.__all__ = [];  // Array<String>
     };
@@ -95,9 +95,9 @@ if (typeof DIMP !== 'object') {
         // make sure the outer is a namespace
         namespacefy(outerSpace);
         // copy all registered objects from inner space to outer space
-        const all = this.__all__;
-        let name, inner;
-        for (let i = 0; i < all.length; ++i) {
+        var all = this.__all__;
+        var name, inner;
+        for (var i = 0; i < all.length; ++i) {
             name = all[i];
             inner = this[name];
             if (!inner) {

@@ -30,7 +30,7 @@
 (function (ns) {
     'use strict';
 
-    const is_array = function (obj) {
+    var is_array = function (obj) {
         if (obj instanceof Array) {
             return true;
         } else if (obj instanceof Uint8Array) {
@@ -55,11 +55,11 @@
         return false;
     };
 
-    const arrays_equal = function (array1, array2) {
+    var arrays_equal = function (array1, array2) {
         if (array1.length !== array2.length) {
             return false;
         }
-        for (let i = 0; i < array1.length; ++i) {
+        for (var i = 0; i < array1.length; ++i) {
             if (!objects_equal(array1[i], array2[i])) {
                 return false;
             }
@@ -67,13 +67,13 @@
         return true;
     };
 
-    const maps_equal = function (dict1, dict2) {
-        const keys1 = Object.keys(dict1);
-        const keys2 = Object.keys(dict2);
+    var maps_equal = function (dict1, dict2) {
+        var keys1 = Object.keys(dict1);
+        var keys2 = Object.keys(dict2);
         if (keys1.length !== keys2.length) {
             return false;
         }
-        for (let k in keys1) {
+        for (var k in keys1) {
             if (!objects_equal(dict1[k], dict2[k])) {
                 return false;
             }
@@ -81,7 +81,7 @@
         return true;
     };
 
-    const objects_equal = function (obj1, obj2) {
+    var objects_equal = function (obj1, obj2) {
         // compare directly
         if (obj1 === obj2) {
             return true; // same objects
@@ -120,7 +120,7 @@
      * @param {int}        destPos
      * @param {int}        length
      */
-    const copy_items = function (src, srcPos, dest, destPos, length) {
+    var copy_items = function (src, srcPos, dest, destPos, length) {
         if (srcPos !== 0 || length !== src.length) {
             src = src.subarray(srcPos, srcPos + length);
         }
@@ -134,9 +134,9 @@
      * @param {[]} array
      * @param {Number} index
      * @param {*} item
-     * @returns {boolean}
+     * @return {boolean}
      */
-    const insert_item = function (array, index, item) {
+    var insert_item = function (array, index, item) {
         if (index < 0) {
             // for update the same position after inserted,
             // here should add 1 because array.length increased
@@ -167,9 +167,9 @@
      * @param {[]} array
      * @param {Number} index
      * @param {*} item
-     * @returns {boolean}
+     * @return {boolean}
      */
-    const update_item = function (array, index, item) {
+    var update_item = function (array, index, item) {
         if (index < 0) {
             index += array.length;
             if (index < 0) {
@@ -186,10 +186,10 @@
      *
      * @param {[]} array
      * @param {*} item
-     * @returns {boolean}
+     * @return {boolean}
      */
-    const remove_item = function (array, item) {
-        const index = array.indexOf(item);
+    var remove_item = function (array, item) {
+        var index = array.indexOf(item);
         if (index < 0/* || index >= array.length*/) {
             return false;
         } else if (index === 0) {

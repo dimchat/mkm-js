@@ -25,23 +25,27 @@
 // =============================================================================
 //
 
-//! require 'json2.js' (https://github.com/douglascrockford/JSON-js)
 //! require 'data.js'
+//! require 'parser.js'
 
 (function (ns) {
     'use strict';
+
+    var Data = ns.type.Data;
+    var Parser = ns.format.DataParser;
+    var Lib = ns.format.ParserLib;
 
     /**
      *  Encode string to UTF8 data array
      *
      * @param {String} string
-     * @returns {Uint8Array}
+     * @return {Uint8Array}
      */
-    const utf8_encode = function (string) {
-        const len = string.length;
-        const array = new ns.type.Data(len);
-        let c, l;
-        for (let i = 0; i < len; ++i) {
+    var utf8_encode = function (string) {
+        var len = string.length;
+        var array = new Data(len);
+        var c, l;
+        for (var i = 0; i < len; ++i) {
             c = string.charCodeAt(i);
             if (0xD800 <= c && c <= 0xDBFF) {
                 // Unicode SMP (Supplementary Multilingual Plane)
@@ -78,13 +82,13 @@
      *  Decode UTF8 data array to string
      *
      * @param {Uint8Array} array
-     * @returns {String}
+     * @return {String}
      */
-    const utf8_decode = function (array) {
-        let string = '';
-        const len = array.length;
-        let c, c2, c3, c4;
-        for (let i = 0; i < len; ++i) {
+    var utf8_decode = function (array) {
+        var string = '';
+        var len = array.length;
+        var c, c2, c3, c4;
+        for (var i = 0; i < len; ++i) {
             c = array[i];
             switch (c >> 4) {
                 // case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
@@ -122,94 +126,18 @@
     };
 
     //
-    //  DataParser interface
-    //
-    const parser = function () {
-    };
-    ns.Interface(parser, null);
-    // noinspection JSUnusedLocalSymbols
-    /**
-     *  Encode container/string object to bytes
-     *
-     * @param {{}|[]|String} object - Map, List, or String
-     * @returns {Uint8Array} JsON or UTF-8 string bytes
-     */
-    parser.prototype.encode = function (object) {
-        console.assert(false, 'implement me!');
-        return null;
-    };
-    // noinspection JSUnusedLocalSymbols
-    /**
-     *  Decode bytes to container/string object
-     *
-     * @param {Uint8Array} data - JsON or UTF-8 string bytes
-     * @returns {{}|[]|String} Map, List, or String
-     */
-    parser.prototype.decode = function (data) {
-        console.assert(false, 'implement me!');
-        return null;
-    };
-
-    //
-    //  JSON
-    //
-    const json = function () {
-    };
-    ns.Class(json, ns.type.Object, [parser]);
-
-    json.prototype.encode = function (container) {
-        const string = JSON.stringify(container);
-        if (!string) {
-            throw TypeError('failed to encode JSON object: ' + container);
-        }
-        return ns.format.UTF8.encode(string);
-    };
-    json.prototype.decode = function (json) {
-        let string;
-        if (typeof json === 'string') {
-            string = json;
-        } else {
-            // convert UTF-8 data bytes to String
-            string = ns.format.UTF8.decode(json);
-        }
-        if (!string) {
-            throw TypeError('failed to decode JSON data: ' + json);
-        }
-        return JSON.parse(string);
-    };
-
-    //
     //  UTF-8
     //
-    const utf8 = function () {
+    var utf8 = function () {
     };
-    ns.Class(utf8, ns.type.Object, [parser]);
+    ns.Class(utf8, ns.type.Object, [Parser]);
 
     utf8.prototype.encode = utf8_encode;
     utf8.prototype.decode = utf8_decode;
 
-    //
-    //  Parser Lib
-    //
-    const Lib = function (parser) {
-        this.parser = parser;
-    };
-    ns.Class(Lib, ns.type.Object, [parser]);
-
-    Lib.prototype.encode = function (object) {
-        return this.parser.encode(object);
-    };
-    Lib.prototype.decode = function (data) {
-        return this.parser.decode(data);
-    };
-
     //-------- namespace --------//
-    ns.format.DataParser = parser;
-    ns.format.JSON = new Lib(new json());
     ns.format.UTF8 = new Lib(new utf8());
 
-    ns.format.register('DataParser');
-    ns.format.register('JSON');
     ns.format.register('UTF8');
 
 })(DIMP);

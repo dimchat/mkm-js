@@ -25,59 +25,46 @@
 // =============================================================================
 //
 
-//! require 'class.js'
+//! require 'json2.js' (https://github.com/douglascrockford/JSON-js)
+//! require 'parser.js'
 
 (function (ns) {
     'use strict';
 
-    var is_null = function (object) {
-        if (typeof object === 'undefined') {
-            return true;
+    var Parser = ns.format.DataParser;
+    var Lib = ns.format.ParserLib;
+
+    //
+    //  JSON
+    //
+    var json = function () {
+    };
+    ns.Class(json, ns.type.Object, [Parser]);
+
+    json.prototype.encode = function (container) {
+        var string = JSON.stringify(container);
+        if (!string) {
+            throw TypeError('failed to encode JSON object: ' + container);
+        }
+        return ns.format.UTF8.encode(string);
+    };
+    json.prototype.decode = function (json) {
+        var string;
+        if (typeof json === 'string') {
+            string = json;
         } else {
-            return object === null;
+            // convert UTF-8 data bytes to String
+            string = ns.format.UTF8.decode(json);
         }
+        if (!string) {
+            throw TypeError('failed to decode JSON data: ' + json);
+        }
+        return JSON.parse(string);
     };
 
-    var is_base_type = function (object) {
-        var t = typeof object;
-        if (t === 'string' || t === 'number' || t === 'boolean' || t === 'function') {
-            return true;
-        }
-        if (object instanceof String) {
-            return true;
-        }
-        if (object instanceof Number) {
-            return true;
-        }
-        if (object instanceof Boolean) {
-            return true;
-        }
-        if (object instanceof Date) {
-            return true;
-        }
-        if (object instanceof RegExp) {
-            return true;
-        }
-        return object instanceof Error;
-    };
+    //-------- namespace --------//
+    ns.format.JSON = new Lib(new json());
 
-    //
-    //  Object
-    //
-    var obj = function () {
-    };
-    ns.Class(obj, Object, null);
-
-    obj.isNull = is_null;
-    obj.isBaseType = is_base_type;
-
-    obj.prototype.equals = function (other) {
-        return this === other;
-    };
-
-    //-------- namespace --------
-    ns.type.Object = obj;
-
-    ns.type.register('Object');
+    ns.format.register('JSON');
 
 })(DIMP);

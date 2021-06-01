@@ -25,59 +25,60 @@
 // =============================================================================
 //
 
-//! require 'class.js'
+//! require 'object.js'
 
 (function (ns) {
     'use strict';
 
-    var is_null = function (object) {
-        if (typeof object === 'undefined') {
-            return true;
-        } else {
-            return object === null;
-        }
+    //
+    //  BaseCoder interface
+    //
+    var coder = function () {
+    };
+    ns.Interface(coder, null);
+
+    /**
+     *  Encode binary data to text string
+     *
+     * @param {Uint8Array} data
+     * @return {String}
+     */
+    coder.prototype.encode = function (data) {
+        console.assert(false, 'implement me!');
+        return null;
     };
 
-    var is_base_type = function (object) {
-        var t = typeof object;
-        if (t === 'string' || t === 'number' || t === 'boolean' || t === 'function') {
-            return true;
-        }
-        if (object instanceof String) {
-            return true;
-        }
-        if (object instanceof Number) {
-            return true;
-        }
-        if (object instanceof Boolean) {
-            return true;
-        }
-        if (object instanceof Date) {
-            return true;
-        }
-        if (object instanceof RegExp) {
-            return true;
-        }
-        return object instanceof Error;
+    /**
+     *  Decode text string to binary data
+     *
+     * @param {String} string
+     * @return {Uint8Array}
+     */
+    coder.prototype.decode = function (string) {
+        console.assert(false, 'implement me!');
+        return null;
     };
 
     //
-    //  Object
+    //  Coder Lib
     //
-    var obj = function () {
+    var lib = function (coder) {
+        this.coder = coder;
     };
-    ns.Class(obj, Object, null);
+    ns.Class(lib, ns.type.Object, [coder]);
 
-    obj.isNull = is_null;
-    obj.isBaseType = is_base_type;
-
-    obj.prototype.equals = function (other) {
-        return this === other;
+    lib.prototype.encode = function (data) {
+        return this.coder.encode(data);
+    };
+    lib.prototype.decode = function (string) {
+        return this.coder.decode(string);
     };
 
     //-------- namespace --------
-    ns.type.Object = obj;
+    ns.format.BaseCoder = coder;
+    ns.format.CoderLib = lib;
 
-    ns.type.register('Object');
+    ns.format.register('BaseCoder');
+    ns.format.register('CoderLib');
 
 })(DIMP);

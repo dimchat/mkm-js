@@ -25,13 +25,13 @@
 // =============================================================================
 //
 
-//! require 'class.js'
-//! require 'dictionary.js'
+//! require 'arrays.js'
+//! require 'utf8.js'
 
 (function (ns) {
     'use strict';
 
-    const Dictionary = ns.type.Dictionary;
+    var UTF8 = ns.format.UTF8;
 
     //
     //  Cryptography Key
@@ -43,127 +43,62 @@
     //      ...
     //  }
     //
-    const CryptographyKey = function (key) {
-        Dictionary.call(this, key);
+    var CryptographyKey = function () {
     };
-    ns.Class(CryptographyKey, Dictionary, null);
+    ns.Interface(CryptographyKey, null);
+
+    /**
+     *  Get key algorithm name
+     *
+     * @return {String} algorithm name
+     */
+    CryptographyKey.prototype.getAlgorithm = function () {
+        console.assert(false, 'implement me!');
+        return null;
+    };
+    CryptographyKey.getAlgorithm = function (key) {
+        return key['algorithm'];
+    };
 
     /**
      *  Get key data
      *
-     * @returns {Uint8Array}
+     * @return {Uint8Array}
      */
     CryptographyKey.prototype.getData = function () {
         console.assert(false, 'implement me!');
         return null;
     };
-    /**
-     *  Get key size
-     *
-     * @returns {Number}
-     */
-    CryptographyKey.prototype.getSize = function () {
-        console.assert(false, 'implement me!');
-        return 0;
-    };
+
+    // sample data for checking keys
+    CryptographyKey.promise = UTF8.encode('Moky loves May Lee forever!');
 
     /**
-     *  Create key with info
+     *  Check key pair by encryption
      *
-     * @param clazz - key class
-     * @param {{}} map - key info
-     * @returns {*} CryptographyKey
+     * @param {EncryptKey} pKey
+     * @param {DecryptKey} sKey
      */
-    CryptographyKey.createInstance = function (clazz, map) {
-        if (typeof clazz.getInstance === 'function') {
-            return clazz.getInstance(map);
-        } else {
-            return new clazz(map);
+    CryptographyKey.matches = function (pKey, sKey) {
+        // check by encryption
+        var promise = CryptographyKey.promise;
+        var ciphertext = pKey.encrypt(promise);
+        var plaintext = sKey.decrypt(ciphertext);
+        // check equals
+        if (!plaintext || plaintext.length !== promise.length) {
+            return false;
         }
+        for (var index = 0; index < promise.length; ++index) {
+            if (plaintext[index] !== promise[index]) {
+                return false;
+            }
+        }
+        return true;
     };
 
     //-------- namespace --------
     ns.crypto.CryptographyKey = CryptographyKey;
 
-    // ns.crypto.register('CryptographyKey');
-
-})(DIMP);
-
-(function (ns) {
-    'use strict';
-
-    const EncryptKey = function () {
-    };
-    ns.Interface(EncryptKey, null);
-    // noinspection JSUnusedLocalSymbols
-    /**
-     *  ciphertext = encrypt(plaintext, PW)
-     *  ciphertext = encrypt(plaintext, PK)
-     *
-     * @param {Uint8Array} plaintext
-     * @returns {Uint8Array}
-     */
-    EncryptKey.prototype.encrypt = function (plaintext) {
-        console.assert(false, 'implement me!');
-        return null;
-    };
-
-    const DecryptKey = function () {
-    };
-    ns.Interface(DecryptKey, null);
-    // noinspection JSUnusedLocalSymbols
-    /**
-     *  plaintext = decrypt(ciphertext, PW);
-     *  plaintext = decrypt(ciphertext, SK);
-     *
-     * @param {Uint8Array} ciphertext
-     * @returns {Uint8Array}
-     */
-    DecryptKey.prototype.decrypt = function (ciphertext) {
-        console.assert(false, 'implement me!');
-        return null;
-    };
-
-    const SignKey = function () {
-    };
-    ns.Interface(SignKey, null);
-    // noinspection JSUnusedLocalSymbols
-    /**
-     *  signature = sign(data, SK);
-     *
-     * @param {Uint8Array} data
-     * @returns {Uint8Array}
-     */
-    SignKey.prototype.sign = function (data) {
-        console.assert(false, 'implement me!');
-        return null;
-    };
-
-    const VerifyKey = function () {
-    };
-    ns.Interface(VerifyKey, null);
-    // noinspection JSUnusedLocalSymbols
-    /**
-     *  OK = verify(data, signature, PK)
-     *
-     * @param {Uint8Array} data
-     * @param {Uint8Array} signature
-     * @returns {boolean}
-     */
-    VerifyKey.prototype.verify = function (data, signature) {
-        console.assert(false, 'implement me!');
-        return false;
-    };
-
-    //-------- namespace --------
-    ns.crypto.EncryptKey = EncryptKey;
-    ns.crypto.DecryptKey = DecryptKey;
-    ns.crypto.SignKey = SignKey;
-    ns.crypto.VerifyKey = VerifyKey;
-
-    ns.crypto.register('EncryptKey');
-    ns.crypto.register('DecryptKey');
-    ns.crypto.register('SignKey');
-    ns.crypto.register('VerifyKey');
+    ns.crypto.register('CryptographyKey');
 
 })(DIMP);

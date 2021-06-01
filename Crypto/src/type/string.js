@@ -39,7 +39,7 @@
      *
      * @param {String|str} value
      */
-    const str = function (value) {
+    var str = function (value) {
         if (!value) {
             value = '';
         } else if (value instanceof str) {
@@ -54,7 +54,7 @@
      *  Check whether strings equal
      *
      * @param {str|String} other - another string
-     * @returns {boolean}
+     * @return {boolean}
      */
     str.prototype.equals = function (other) {
         if (!other) {
@@ -67,12 +67,12 @@
         }
     };
 
-    const equalsIgnoreCase = function (str1, str2) {
+    var equalsIgnoreCase = function (str1, str2) {
         if (str1.length !== str2.length) {
             return false;
         }
-        const low1 = str1.toLowerCase();
-        const low2 = str2.toLowerCase();
+        var low1 = str1.toLowerCase();
+        var low2 = str2.toLowerCase();
         return low1 === low2;
     };
     str.prototype.equalsIgnoreCase = function (other) {

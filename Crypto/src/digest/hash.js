@@ -25,59 +25,46 @@
 // =============================================================================
 //
 
-//! require 'class.js'
+//! require 'object.js'
 
 (function (ns) {
     'use strict';
 
-    var is_null = function (object) {
-        if (typeof object === 'undefined') {
-            return true;
-        } else {
-            return object === null;
-        }
+    //
+    //  Hash interface
+    //
+    var hash = function () {
     };
+    ns.Interface(hash, null);
 
-    var is_base_type = function (object) {
-        var t = typeof object;
-        if (t === 'string' || t === 'number' || t === 'boolean' || t === 'function') {
-            return true;
-        }
-        if (object instanceof String) {
-            return true;
-        }
-        if (object instanceof Number) {
-            return true;
-        }
-        if (object instanceof Boolean) {
-            return true;
-        }
-        if (object instanceof Date) {
-            return true;
-        }
-        if (object instanceof RegExp) {
-            return true;
-        }
-        return object instanceof Error;
+    /**
+     *  Get digest of data
+     *
+     * @param {Uint8Array} data
+     * @return {Uint8Array}
+     */
+    hash.prototype.digest = function (data) {
+        console.assert(false, 'implement me!');
+        return null;
     };
 
     //
-    //  Object
+    //  Hash Lib
     //
-    var obj = function () {
+    var lib = function (hash) {
+        this.hash = hash;
     };
-    ns.Class(obj, Object, null);
+    ns.Class(lib, ns.type.Object, [hash]);
 
-    obj.isNull = is_null;
-    obj.isBaseType = is_base_type;
-
-    obj.prototype.equals = function (other) {
-        return this === other;
+    lib.prototype.digest = function (data) {
+        return this.hash.digest(data);
     };
 
     //-------- namespace --------
-    ns.type.Object = obj;
+    ns.digest.Hash = hash;
+    ns.digest.HashLib = lib;
 
-    ns.type.register('Object');
+    ns.digest.register('Hash');
+    ns.digest.register('HashLib');
 
 })(DIMP);

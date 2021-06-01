@@ -30,27 +30,23 @@
 (function (ns) {
     'use strict';
 
-    const Arrays = ns.type.Arrays;
+    var Arrays = ns.type.Arrays;
 
     /**
      *  Mutable Data View
      */
-    const bytes = ns.type.Data;
-    const adjust = bytes.adjust;
+    var bytes = ns.type.Data;
+    var adjust = bytes.adjust;
 
-    bytes.prototype.getCapacity = function () {
-        return this.buffer.length - this.offset;
-    };
-
-    const resize = function (size) {
-        const bigger = new Uint8Array(size);
+    var resize = function (size) {
+        var bigger = new Uint8Array(size);
         Arrays.copy(this.buffer, this.offset, bigger, 0, this.length);
         this.buffer = bigger;
         this.offset = 0;
     };
 
-    const expand = function () {
-        const capacity = this.getCapacity();
+    var expand = function () {
+        var capacity = this.buffer.length - this.offset;
         if (capacity > 4) {
             resize.call(this, capacity << 1);
         } else {
@@ -61,8 +57,8 @@
     /**
      *  Set value with index
      *
-     * @param {Number} index
-     * @param {int}    value
+     * @param {int}  index
+     * @param {uint} value
      */
     bytes.prototype.setByte = function (index, value) {
         // adjust position
@@ -99,63 +95,72 @@
     /**
      *  Copy values from source buffer with range [start, end)
      *
+     * @param {bytes} data        - self
      * @param {int} pos           - copy to self buffer from this position
      * @param {Uint8Array} source - source buffer
      * @param {int} start         - source start position (include)
      * @param {int} end           - source end position (exclude)
      */
-    const copy_buffer = function (pos, source, start, end) {
-        // adjust position
+    var copy_buffer = function (data, pos, source, start, end) {
+        var copyLen = end - start;
+        if (copyLen > 0) {
+            var copyEnd = pos + copyLen;  // relative to offset
+            if (source !== data.buffer || (data.offset + pos) !== start) {
+                // not sticky data
+                if (data.offset + copyEnd > data.buffer.length) {
+                    // expend the buffer to this size
+                    resize.call(data, copyEnd);
+                }
+                // copy buffer
+                Arrays.copy(source, start, data.buffer, data.offset + pos, copyLen);
+            }
+            // reset view length
+            if (copyEnd > data.length) {
+                data.length = copyEnd;
+            }
+        }
+    };
+
+    /**
+     *  Copy data from source to position
+     *
+     *  Usages:
+     *      1. fill(pos, bytes);
+     *      2. fill(pos, bytes, start);
+     *      3. fill(pos, bytes, start, end);
+     *
+     * @param pos    - self position to copy data
+     * @param source - data source
+     */
+    bytes.prototype.fill = function (pos, source) {
         if (pos < 0) {
             pos += this.length;  // count from right hand
             if (pos < 0) {
                 throw RangeError('error position: ' + (pos - this.length) + ', length: ' + this.length);
             }
         }
-        const copyLen = end - start;
-        if (copyLen > 0) {
-            const destPos = this.offset + pos;
-            const copyEnd = pos + copyLen;  // relative to offset
-            if (source !== this.buffer || destPos !== start) {
-                // not sticky data
-                if (this.getCapacity() < copyEnd) {
-                    // expend the buffer to this size
-                    resize.call(this, copyEnd);
-                }
-                // copy buffer
-                Arrays.copy(source, start, this.buffer, 0, copyLen);
-            }
-            // reset view length
-            if (copyEnd > this.length) {
-                this.length = copyEnd;
-            }
-        }
-    };
-
-    bytes.prototype.fill = function (pos, source) {
-        let data, start, end;
-        if (source instanceof bytes) {
-            data = source;
-        } else {
-            data = new bytes(source);
-        }
+        var start, end;
         if (arguments.length === 4) {
             // fill(pos, source, start, end);
             start = arguments[2];
             end = arguments[3];
-            start = adjust(start, data.length);
-            end = adjust(end, data.length);
+            start = adjust(start, source.length);
+            end = adjust(end, source.length);
         } else if (arguments.length === 3) {
             // fill(pos, source, start);
             start = arguments[2];
-            end = data.length;
-            start = adjust(start, data.length);
+            end = source.length;
+            start = adjust(start, source.length);
         } else {
             // fill(pos, source);
             start = 0;
-            end = data.length;
+            end = source.length;
         }
-        copy_buffer.call(this, pos, data, start, end);
+        if (source instanceof bytes) {
+            copy_buffer(this, pos, source.buffer, source.offset + start, source.offset + end);
+        } else {
+            copy_buffer(this, pos, source, start, end);
+        }
     };
 
     //
@@ -163,10 +168,53 @@
     //
 
     /**
+     *  Append data from source
+     *
+     *  Usages:
+     *      1. append(bytes);
+     *      2. append(bytes, start);
+     *      3. append(bytes, start, end);
+     *      4. append(bytes1, bytes2, ...);
+     *
+     * @param source - data source
+     */
+    bytes.prototype.append = function (source) {
+        if (arguments.length > 1 && typeof arguments[1] !== 'number') {
+            // append(bytes1, bytes2, ...);
+            for (var i = 0; i < arguments.length; ++i) {
+                this.append(arguments[i]);
+            }
+            return
+        }
+        var start, end;
+        if (arguments.length === 3) {
+            // append(bytes, start, end);
+            start = arguments[1];
+            end = arguments[2];
+            start = adjust(start, source.length);
+            end = adjust(end, source.length);
+        } else if (arguments.length === 2) {
+            // append(bytes, start);
+            start = arguments[1];
+            end = source.length;
+            start = adjust(start, source.length);
+        } else {
+            // append(bytes);
+            start = 0;
+            end = source.length;
+        }
+        if (source instanceof bytes) {
+            copy_buffer(this, this.length, source.buffer, source.offset + start, source.offset + end);
+        } else {
+            copy_buffer(this, this.length, source, start, end);
+        }
+    };
+
+    /**
      *  Insert the value to this position
      *
      * @param {int}  index - position
-     * @param {char} value - value
+     * @param {uint} value - value
      * @return false for ArrayIndexOutOfBoundsException
      */
     bytes.prototype.insert = function (index, value) {
@@ -235,71 +283,84 @@
         return true;
     };
 
-    const add_item = function (value) {
-        const pos = this.offset + this.length;
-        if (pos >= this.buffer.length) {
-            // expand the inner array
-            expand.call(this, this.length << 1);
-        }
-        this.buffer[this.offset + this.length] = value;
-        ++this.length;
-    };
-    const add_array = function (array) {
-        if (!array) {
-            return;
-        }
-        let size = array.length;
-        if (size < 1) {
-            return;
-        }
-        size += this.length;
-        let capacity = this.buffer.length - this.offset;
-        if (size > capacity) {
-            // expand the inner array
-            while (capacity < size) {
-                capacity = capacity << 1;
-            }
-            expand.call(this, capacity);
-        }
-        Arrays.copy(array, 0, this.buffer, this.offset + this.length, array.length);
-        this.length = size;
-    };
+    //
+    //  Erasing
+    //
 
     /**
-     *  Appends new elements to an array, and returns the new length of the array.
+     *  Remove element at this position and return its value
      *
-     * @param {Number|bytes|Uint8Array|Number[]} items - New elements of the Array.
-     * @returns {number}
+     * @param {int} index - position
+     * @return {uint} value removed
+     * @throws RangeError on error
      */
-    bytes.prototype.push = function (items) {
-        if (typeof items === 'number') {
-            add_item.call(this, items);
-        } else {
-            let array;
-            if (items instanceof Uint8Array) {
-                array = items;
-            } else if (items instanceof bytes) {
-                array = items.getBytes();
-            } else {
-                // try to convert array
-                array = new Uint8Array(items);
+    bytes.prototype.remove = function (index) {
+        // adjust position
+        if (index < 0) {
+            index += this.length;  // count from right hand
+            if (index < 0) {       // too small
+                throw RangeError('error index: ' + (index - this.length) + ', length: ' + this.length);
             }
-            add_array.call(this, array);
+        } else if (index >= this.length) {  // too big
+            throw RangeError('index error: ' + index + ', length: ' + this.length);
         }
-        return this.length;
+        if (index === 0) {
+            // remove the first element
+            return this.shift();
+        } else if (index === (this.length - 1)) {
+            // remove the last element
+            return this.pop();
+        }
+        // remove inside element
+        var erased = this.buffer[this.offset + index];
+        if (index < (this.length >> 1)) {
+            // target position is near the head, move the left part
+            Arrays.copy(this.buffer, this.offset, this.buffer, this.offset + 1, index);
+        } else {
+            // target position is near the tail, move the right part
+            Arrays.copy(this.buffer, this.offset + index + 1,
+                this.buffer, this.offset + index, this.length - index - 1);
+        }
+        return erased;
     };
 
     /**
-     *  Removes the last element from an array and returns it.
+     *  Remove element from the head position and return its value
      *
-     * @returns {char}
+     * @return {uint} value (removed) at the first place
+     * @throws RangeError on data empty
+     */
+    bytes.prototype.shift = function () {
+        if (this.length < 1) {
+            throw RangeError('data empty!');
+        }
+        var erased = this.buffer[this.offset];
+        this.offset += 1;
+        this.length -= 1;
+        return erased;
+    };
+
+    /**
+     *  Remove element from the tail position and return its value
+     *
+     * @return {uint} value (removed) at the last place
+     * @throws RangeError on data empty
      */
     bytes.prototype.pop = function () {
         if (this.length < 1) {
-            throw RangeError('bytes empty');
+            throw RangeError('data empty!');
         }
         this.length -= 1;
         return this.buffer[this.offset + this.length];
+    };
+
+    /**
+     *  Append the element to the tail
+     *
+     * @param {uint} element - new item value
+     */
+    bytes.prototype.push = function (element) {
+        this.setByte(this.length, element);
     };
 
     //-------- namespace --------

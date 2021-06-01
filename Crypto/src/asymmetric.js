@@ -25,13 +25,12 @@
 // =============================================================================
 //
 
-//! require 'class.js'
 //! require 'cryptography.js'
 
 (function (ns) {
     'use strict';
 
-    const CryptographyKey = ns.crypto.CryptographyKey;
+    var CryptographyKey = ns.crypto.CryptographyKey;
 
     //
     //  Asymmetric Cryptography Key
@@ -43,181 +42,64 @@
     //      ...
     //  }
     //
-    const AsymmetricKey = function (key) {
-        CryptographyKey.call(this, key);
+    var AsymmetricKey = function (key) {
     };
-    ns.Class(AsymmetricKey, CryptographyKey, null);
+    ns.Interface(AsymmetricKey, [CryptographyKey]);
 
     AsymmetricKey.RSA = 'RSA'; //-- "RSA/ECB/PKCS1Padding", "SHA256withRSA"
     AsymmetricKey.ECC = 'ECC';
 
-    //-------- namespace --------
-    ns.crypto.AsymmetricKey = AsymmetricKey;
-
-    ns.crypto.register('AsymmetricKey');
-
-})(DIMP);
-
-(function (ns) {
-    'use strict';
-
-    const UTF8 = ns.format.UTF8;
-
-    const CryptographyKey = ns.crypto.CryptographyKey;
-    const AsymmetricKey = ns.crypto.AsymmetricKey;
-    const VerifyKey = ns.crypto.VerifyKey;
-
-    const promise = UTF8.encode('Moky loves May Lee forever!');
-
-    const PublicKey = function (key) {
-        AsymmetricKey.call(this, key);
-    };
-    ns.Class(PublicKey, AsymmetricKey, [VerifyKey]);
-
     /**
-     *  Check if this pubic key paired with the private key
+     *  Check key pair by encryption
      *
-     * @param privateKey
-     * @returns {boolean}
+     * @param {SignKey}   sKey
+     * @param {VerifyKey} pKey
      */
-    PublicKey.prototype.matches = function (privateKey) {
-        if (!privateKey) {
-            return false;
-        }
-        // 1. if the SK has the same public key, return true
-        const publicKey = privateKey.getPublicKey();
-        if (this.equals(publicKey)) {
-            return true;
-        }
-        // 2. try to verify the SK's signature
-        const signature = privateKey.sign(promise);
-        return this.verify(promise, signature);
+    AsymmetricKey.matches = function (sKey, pKey) {
+        // check by encryption
+        var promise = CryptographyKey.promise;
+        var signature = sKey.sign(promise);
+        return pKey.verify(promise, signature);
     };
 
-    //-------- runtime --------
-    const public_key_classes = {};
-
+    var SignKey = function () {
+    };
+    ns.Interface(SignKey, [AsymmetricKey]);
+    // noinspection JSUnusedLocalSymbols
     /**
-     *  Register symmetric key class with algorithm
+     *  signature = sign(data, SK);
      *
-     * @param {String} algorithm - key algorithm
-     * @param {Class} clazz - if key class is None, then remove with algorithm
+     * @param {Uint8Array} data
+     * @return {Uint8Array}
      */
-    PublicKey.register = function (algorithm, clazz) {
-        public_key_classes[algorithm] = clazz;
-    };
-
-    /**
-     *  Create symmetric key
-     *
-     * @param {{}|PublicKey} key - key info (with algorithm='AES')
-     * @returns {PublicKey}
-     */
-    PublicKey.getInstance = function (key) {
-        if (!key) {
-            return null;
-        } else if (key instanceof PublicKey) {
-            return key;
-        }
-        const algorithm = key['algorithm'];
-        const clazz = public_key_classes[algorithm];
-        if (typeof clazz === 'function') {
-            // noinspection JSValidateTypes
-            return CryptographyKey.createInstance(clazz, key);
-        }
-        throw TypeError('key algorithm error: ' + algorithm);
-    };
-
-    //-------- namespace --------
-    ns.crypto.PublicKey = PublicKey;
-
-    ns.crypto.register('PublicKey');
-
-})(DIMP);
-
-(function (ns) {
-    'use strict';
-
-    const CryptographyKey = ns.crypto.CryptographyKey;
-    const AsymmetricKey = ns.crypto.AsymmetricKey;
-    const SignKey = ns.crypto.SignKey;
-
-    const PrivateKey = function (key) {
-        AsymmetricKey.call(this, key);
-    };
-    ns.Class(PrivateKey, AsymmetricKey, [SignKey]);
-
-    /**
-     *  Check whether keys equal
-     *
-     * @param {PrivateKey} other - another private key
-     * @returns {boolean}
-     */
-    PrivateKey.prototype.equals = function (other) {
-        const publicKey = this.getPublicKey();
-        if (!publicKey) {
-            return false;
-        }
-        return publicKey.matches(other);
-    };
-
-    /**
-     *  Create public key from this private key
-     *
-     * @returns {PublicKey}
-     */
-    PrivateKey.prototype.getPublicKey = function () {
+    SignKey.prototype.sign = function (data) {
         console.assert(false, 'implement me!');
         return null;
     };
 
-    /**
-     *  Generate key with algorithm name
-     *
-     * @param {String} algorithm - algorithm name ('RSA')
-     * @returns {PrivateKey}
-     */
-    PrivateKey.generate = function (algorithm) {
-        return this.getInstance({algorithm: algorithm});
+    var VerifyKey = function () {
     };
-
-    //-------- runtime --------
-    const private_key_classes = {};
-
+    ns.Interface(VerifyKey, [AsymmetricKey]);
+    // noinspection JSUnusedLocalSymbols
     /**
-     *  Register symmetric key class with algorithm
+     *  OK = verify(data, signature, PK)
      *
-     * @param {String} algorithm - key algorithm
-     * @param {Class} clazz - if key class is None, then remove with algorithm
+     * @param {Uint8Array} data
+     * @param {Uint8Array} signature
+     * @return {boolean}
      */
-    PrivateKey.register = function (algorithm, clazz) {
-        private_key_classes[algorithm] = clazz;
-    };
-
-    /**
-     *  Create symmetric key
-     *
-     * @param {{}|PrivateKey} key - key info (with algorithm='AES')
-     * @returns {PrivateKey}
-     */
-    PrivateKey.getInstance = function (key) {
-        if (!key) {
-            return null;
-        } else if (key instanceof PrivateKey) {
-            return key;
-        }
-        const algorithm = key['algorithm'];
-        const clazz = private_key_classes[algorithm];
-        if (typeof clazz === 'function') {
-            // noinspection JSValidateTypes
-            return CryptographyKey.createInstance(clazz, key);
-        }
-        throw TypeError('key algorithm error: ' + algorithm);
+    VerifyKey.prototype.verify = function (data, signature) {
+        console.assert(false, 'implement me!');
+        return false;
     };
 
     //-------- namespace --------
-    ns.crypto.PrivateKey = PrivateKey;
+    ns.crypto.AsymmetricKey = AsymmetricKey;
+    ns.crypto.SignKey = SignKey;
+    ns.crypto.VerifyKey = VerifyKey;
 
-    ns.crypto.register('PrivateKey');
+    ns.crypto.register('AsymmetricKey');
+    ns.crypto.register('SignKey');
+    ns.crypto.register('VerifyKey');
 
 })(DIMP);

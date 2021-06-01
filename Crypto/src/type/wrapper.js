@@ -34,24 +34,24 @@
 (function (ns) {
     'use strict';
 
-    const obj = ns.type.Object;
-    const str = ns.type.String;
-    const Enum = ns.type.Enum;
-    const Data = ns.type.Data;
-    const Arrays = ns.type.Arrays;
-    const Dictionary = ns.type.Dictionary;
+    var obj = ns.type.Object;
+    var str = ns.type.String;
+    var Enum = ns.type.Enum;
+    var Data = ns.type.Data;
+    var Arrays = ns.type.Arrays;
+    var Dictionary = ns.type.Dictionary;
 
     /**
      *  Unwrap keys, values circularly
      *
      * @param {{}} dict
-     * @returns {{}}
+     * @return {{}}
      */
-    const map_unwrap = function (dict) {
-        const result = {};
-        const keys = Object.keys(dict);
-        let name;
-        for (let k in keys) {
+    var map_unwrap = function (dict) {
+        var result = {};
+        var keys = Object.keys(dict);
+        var name;
+        for (var k in keys) {
             if (k instanceof str) {
                 name = k.valueOf();
             } else {
@@ -66,11 +66,11 @@
      *  Unwrap items circularly
      *
      * @param {[]} array
-     * @returns {[]}
+     * @return {[]}
      */
-    const list_unwrap = function (array) {
-        const result = [];
-        for (let item in array) {
+    var list_unwrap = function (array) {
+        var result = [];
+        for (var item in array) {
             result.push(unwrap(item, true));
         }
         return result;
@@ -81,9 +81,9 @@
      *
      * @param {*} object
      * @param {boolean} circularly
-     * @returns {*}
+     * @return {*}
      */
-    const unwrap = function (object, circularly) {
+    var unwrap = function (object, circularly) {
         if (obj.isNull(object)) {
             return null;
         } else if (obj.isBaseType(object)) {
@@ -109,12 +109,12 @@
                 }
             } else {
                 if (object instanceof Dictionary) {
-                    object = object.getMap(false);
+                    object = object.getMap();
                 }
                 return map_unwrap(object);
             }
         } else if (object instanceof Dictionary) {
-            return object.getMap(false);
+            return object.getMap();
         }
         return object;
     };
@@ -122,7 +122,7 @@
     //
     //  Wrapper
     //
-    const wrapper = function () {
+    var wrapper = function () {
     };
     ns.Interface(wrapper, null);
 
