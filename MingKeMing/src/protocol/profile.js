@@ -30,100 +30,101 @@
 // =============================================================================
 //
 
-//! require 'types.js'
+//! require 'tai.js'
 
 (function (ns) {
     'use strict';
 
+    var Document = ns.protocol.Document;
+
     /**
-     *  Address for MKM ID
-     *  ~~~~~~~~~~~~~~~~~~
-     *  This class is used to build address for ID
+     *  User Document
+     *  ~~~~~~~~~~~~~
+     *  This interface is defined for authorizing other apps to login,
+     *  which can generate a temporary asymmetric key pair for messaging.
+     */
+    var Visa = function () {
+    };
+    ns.Interface(Visa, [Document]);
+
+    /**
+     *  Get public key to encrypt message for user
      *
-     *      properties:
-     *          network - address type
-     *          number  - search number
+     * @returns {EncryptKey} public key as visa.key
      */
-    var Address = function () {
-    };
-    ns.Interface(Address, null);
-
-    /**
-     *  get address type
-     *
-     * @returns {int} 0 ~ 255
-     */
-    Address.prototype.getNetwork = function () {
-        console.assert(false, 'implement me!');
-        return 0;
-    };
-
-    Address.prototype.isBroadcast = function () {
-        console.assert(false, 'implement me!');
-        return false;
-    };
-    Address.prototype.isUser = function () {
-        console.assert(false, 'implement me!');
-        return false;
-    };
-    Address.prototype.isGroup = function () {
-        console.assert(false, 'implement me!');
-        return false;
-    };
-
-    /**
-     *  Address for broadcast
-     */
-    Address.ANYWHERE = null;    // 'anywhere'
-    Address.EVERYWHERE = null;  // 'everywhere'
-
-    //
-    //  Factory method
-    //
-    Address.parse = function (address) {
-        if (!address) {
-            return null;
-        } else if (address instanceof Address) {
-            return address;
-        } else if (address instanceof ns.type.String) {
-            address = address.toString();
-        }
-        return Address.getFactory().parseAddress(address);
-    };
-
-    Address.getFactory = function () {
-        return s_factory;
-    };
-    Address.setFactory = function (factory) {
-        s_factory = factory;
-    };
-
-    var s_factory = null;
-
-    /**
-     *  Address Factory
-     *  ~~~~~~~~~~~~~~~
-     */
-    var AddressFactory = function () {
-    };
-    ns.Interface(AddressFactory, null);
-    // noinspection JSUnusedLocalSymbols
-    /**
-     *  Parse string object to address
-     *
-     * @param {String} address - address string
-     * @return {Address}
-     */
-    AddressFactory.prototype.parseAddress = function (address) {
+    Visa.prototype.getKey = function () {
         console.assert(false, 'implement me!');
         return null;
     };
+    // noinspection JSUnusedLocalSymbols
+    /**
+     *  Set public key for other user to encrypt message
+     *
+     * @param {EncryptKey} publicKey - public key as visa.key
+     */
+    Visa.prototype.setKey = function (publicKey) {
+        console.assert(false, 'implement me!');
+    };
+
+    /**
+     *  Get avatar URL
+     *
+     * @returns {String} URL string
+     */
+    Visa.prototype.getAvatar = function () {
+        console.assert(false, 'implement me!');
+        return null;
+    };
+    /**
+     *  Set avatar URL
+     *
+     * @param {String} url - URL string
+     */
+    Visa.prototype.setAvatar = function (url) {
+        console.assert(false, 'implement me!');
+    };
 
     //-------- namespace --------
-    ns.protocol.Address = Address;
-    ns.protocol.AddressFactory = AddressFactory;
+    ns.protocol.Visa = Visa;
 
-    ns.protocol.register('Address');
-    ns.protocol.register('AddressFactory');
+    ns.protocol.register('Visa');
+
+})(MingKeMing);
+
+(function (ns) {
+    'use strict';
+
+    var Document = ns.protocol.Document;
+
+    /**
+     *  Group Document
+     *  ~~~~~~~~~~~~~~
+     */
+    var Bulletin = function () {
+    };
+    ns.Interface(Bulletin, [Document]);
+
+    /**
+     *  Get group assistants
+     *
+     * @return {ID[]} bot ID list
+     */
+    Bulletin.prototype.getAssistants = function () {
+        console.assert(false, 'implement me!');
+        return null;
+    };
+    /**
+     *  Set group assistants
+     *
+     * @param {ID[]} assistants - bot ID list
+     */
+    Bulletin.prototype.setAssistants = function (assistants) {
+        console.assert(false, 'implement me!');
+    };
+
+    //-------- namespace --------
+    ns.protocol.Bulletin = Bulletin;
+
+    ns.protocol.register('Bulletin');
 
 })(MingKeMing);

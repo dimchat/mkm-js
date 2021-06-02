@@ -156,6 +156,8 @@
             return null;
         } else if (identifier instanceof ID) {
             return identifier;
+        } else if (identifier instanceof ns.type.String) {
+            identifier = identifier.toString();
         }
         return ID.getFactory().parseID(identifier);
     };

@@ -30,24 +30,22 @@
 // =============================================================================
 //
 
-//! require 'namespace.js'
-//! require 'address.js'
-//! require 'identifier.js'
+//! require 'crypto.js'
+//! require 'protocol/address.js'
+//! require 'protocol/identifier.js'
+//! require 'protocol/meta.js'
 
-!function (ns) {
+(function (ns) {
     'use strict';
 
     var Dictionary = ns.type.Dictionary;
-
     var PublicKey = ns.crypto.PublicKey;
-    var Base64 = ns.format.Base64;
-    var UTF8 = ns.format.UTF8;
 
     var MetaType = ns.protocol.MetaType;
     var NetworkType = ns.protocol.NetworkType;
+    var ID = ns.protocol.ID;
     var Meta = ns.protocol.Meta;
     var Address = ns.protocol.Address;
-    var ID = ns.protocol.ID;
 
     /**
      *  User/Group Meta data
@@ -102,7 +100,7 @@
                 'type': type,
                 'key': key.getMap(),
                 'seed': seed,
-                'fingerprint': Base64.encode(fingerprint)
+                'fingerprint': ns.format.Base64.encode(fingerprint)
             };
             status = 1;
         } else {
@@ -144,7 +142,7 @@
                 if (!this.seed || !this.fingerprint) {
                     // seed and fingerprint should not be empty
                     this.status = -1;
-                } else if (this.key.verify(UTF8.encode(this.seed), this.fingerprint)) {
+                } else if (this.key.verify(ns.format.UTF8.encode(this.seed), this.fingerprint)) {
                     // fingerprint matched
                     this.status = 1;
                 } else {
@@ -217,7 +215,7 @@
         // check with seed & fingerprint
         if (MetaType.hasSeed(this.type)) {
             // check whether keys equal by verifying signature
-            var data = UTF8.encode(this.seed);
+            var data = ns.format.UTF8.encode(this.seed);
             var signature = this.fingerprint;
             return publicKey.verify(data, signature);
         } else {
@@ -232,4 +230,4 @@
 
     ns.register('BaseMeta');
 
-}(MingKeMing);
+})(MingKeMing);

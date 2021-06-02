@@ -25,7 +25,6 @@
 // =============================================================================
 //
 
-//! require 'dictionary.js'
 //! require 'asymmetric.js'
 
 (function (ns) {
@@ -65,7 +64,7 @@
     /**
      *  Parse map object to key
      *
-     * @param {{String:Object}} key - key info
+     * @param {{String:Object}|Dictionary} key - key info
      * @return {PrivateKey}
      */
     PrivateKey.parse = function (key) {
@@ -73,13 +72,15 @@
             return null;
         } else if (key instanceof PrivateKey) {
             return key;
+        } else if (key instanceof ns.type.Dictionary) {
+            key = key.getMap();
         }
         var algorithm = CryptographyKey.getAlgorithm(key);
         var factory = PrivateKey.getFactory(algorithm);
         if (!factory) {
             factory = PrivateKey.getFactory('*');  // unknown
         }
-        return factory.parsePublicKey(key);
+        return factory.parsePrivateKey(key);
     }
 
     /**
@@ -95,7 +96,7 @@
         return s_factories[algorithm];
     }
 
-    var s_factories = {};
+    var s_factories = {};  // algorithm(String) -> PrivateKeyFactory
 
     /**
      *  Key Factory

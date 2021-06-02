@@ -30,14 +30,13 @@
 // =============================================================================
 //
 
-//! require 'namespace.js'
+//! require 'crypto.js'
 //! require 'address.js'
 //! require 'identifier.js'
 
 (function (ns) {
     'use strict';
 
-    var Base64 = ns.format.Base64;
     var PublicKey = ns.crypto.PublicKey;
     var ID = ns.protocol.ID;
 
@@ -127,7 +126,7 @@
         if (!base64) {
             return null;
         }
-        return Base64.decode(base64);
+        return ns.format.Base64.decode(base64);
     };
 
     /**
@@ -189,6 +188,8 @@
             return null;
         } else if (meta instanceof Meta) {
             return meta;
+        } else if (meta instanceof ns.type.Dictionary) {
+            meta = meta.getMap();
         }
         var version = Meta.getType(meta);
         var factory = Meta.getFactory(version);
@@ -211,7 +212,7 @@
         s_factories[type] = factory;
     };
 
-    var s_factories = {};
+    var s_factories = {};  // type(uint8|MetaType) -> MetaFactory
 
     /**
      *  Meta Factory

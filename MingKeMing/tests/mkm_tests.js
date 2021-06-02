@@ -10,8 +10,6 @@ mkm_tests = [];
 
     var NetworkType = ns.protocol.NetworkType;
     var ID = ns.protocol.ID;
-    var User = ns.User;
-    var Group = ns.Group;
 
     var test_broadcast_id = function () {
         var anyone = ID.ANYONE;
@@ -26,22 +24,6 @@ mkm_tests = [];
         assert(moky.isUser() === true, 'ID type error');
     };
     mkm_tests.push(test_id);
-
-    var test_user = function () {
-        var moky = ID.parse('moky@4DnqXWdTV8wuZgfqSCX9GjE2kNq7HJrUgQ');
-        var user = new User(moky);
-        log('moky', user);
-        assert(user.identifier.isUser() === true, 'user ID type error');
-    };
-    mkm_tests.push(test_user);
-
-    var test_group = function () {
-        var id = ID.parse('Group-Naruto@7ThVZeDuQAdG3eSDF6NeFjMDPjKN5SbrnM');
-        var group = new Group(id);
-        log('group', group);
-        assert(group.identifier.isGroup() === true, 'group ID type error');
-    };
-    mkm_tests.push(test_group);
 
 }(MingKeMing);
 
@@ -63,7 +45,7 @@ mkm_tests = [];
         log('generated meta: ', meta);
         assert(meta.isValid() === true, 'failed to generate meta');
 
-        var id = meta.generateIdentifier(NetworkType.MAIN);
+        var id = meta.generateID(NetworkType.MAIN);
         log('generated ID: ', id);
         assert(id.isValid() === true, 'failed to generate ID')
     };

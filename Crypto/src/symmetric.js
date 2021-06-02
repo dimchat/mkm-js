@@ -25,7 +25,6 @@
 // =============================================================================
 //
 
-//! require 'dictionary.js'
 //! require 'cryptography.js'
 
 (function (ns) {
@@ -115,7 +114,7 @@
     /**
      *  Parse map object to key
      *
-     * @param {{String:Object}} key - key info
+     * @param {{String:Object}|Dictionary} key - key info
      * @return {SymmetricKey}
      */
     SymmetricKey.parse = function (key) {
@@ -123,6 +122,8 @@
             return null;
         } else if (key instanceof SymmetricKey) {
             return key;
+        } else if (key instanceof ns.type.Dictionary) {
+            key = key.getMap();
         }
         var algorithm = CryptographyKey.getAlgorithm(key);
         var factory = SymmetricKey.getFactory(algorithm);
@@ -145,7 +146,7 @@
         return s_factories[algorithm];
     }
 
-    var s_factories = {};
+    var s_factories = {};  // algorithm(String) -> SymmetricKeyFactory
 
     /**
      *  Key Factory

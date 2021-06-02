@@ -57,6 +57,16 @@
         return this.network;
     };
 
+    BroadcastAddress.prototype.isBroadcast = function () {
+        return true;
+    };
+    BroadcastAddress.prototype.isUser = function () {
+        return NetworkType.isUser(this.network);
+    };
+    BroadcastAddress.prototype.isGroup = function () {
+        return NetworkType.isGroup(this.network);
+    };
+
     /**
      *  Address for broadcast
      */
@@ -67,6 +77,49 @@
     ns.BroadcastAddress = BroadcastAddress;
 
     ns.register('BroadcastAddress')
+
+})(MingKeMing);
+
+(function (ns) {
+    'use strict';
+
+    var Address = ns.protocol.Address;
+    var AddressFactory = ns.protocol.AddressFactory;
+
+    var BaseFactory = function () {
+        this.addresses = {};  // String -> Address
+        // cache broadcast addresses
+        this.addresses[Address.ANYWHERE.toString()] = Address.ANYWHERE;
+        this.addresses[Address.EVERYWHERE.toString()] = Address.EVERYWHERE;
+    };
+    ns.Interface(BaseFactory, [AddressFactory])
+
+    BaseFactory.prototype.parseAddress = function (string) {
+        var address = this.addresses[string];
+        if (!address) {
+            address = this.createAddress(string);
+            if (address) {
+                this.addresses[string] = address;
+            }
+        }
+        return address;
+    };
+    // noinspection JSUnusedLocalSymbols
+    /**
+     *  Create address from string
+     *
+     * @param {String} address - address string
+     * @return {Address}
+     */
+    BaseFactory.prototype.createAddress = function (address) {
+        console.assert(false, 'implement me!');
+        return null;
+    };
+
+    //-------- namespace --------
+    ns.AddressFactory = BaseFactory;
+
+    ns.register('AddressFactory');
 
 })(MingKeMing);
 

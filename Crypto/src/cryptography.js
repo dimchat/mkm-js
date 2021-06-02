@@ -31,8 +31,6 @@
 (function (ns) {
     'use strict';
 
-    var UTF8 = ns.format.UTF8;
-
     //
     //  Cryptography Key
     //  ~~~~~~~~~~~~~~~~
@@ -71,7 +69,7 @@
     };
 
     // sample data for checking keys
-    CryptographyKey.promise = UTF8.encode('Moky loves May Lee forever!');
+    CryptographyKey.promise = ns.format.UTF8.encode('Moky loves May Lee forever!');
 
     /**
      *  Check key pair by encryption

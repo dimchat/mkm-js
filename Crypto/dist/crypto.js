@@ -1,4 +1,3 @@
-;
 /**
  * Cryptography JavaScript Library (v0.1.0)
  *
@@ -6,7 +5,7 @@
  * @date      June. 1, 2021
  * @copyright (c) 2021 Albert Moky
  * @license   {@link https://mit-license.org | MIT License}
- */
+ */;
 if (typeof DIMP !== "object") {
     DIMP = {}
 }
@@ -1552,7 +1551,6 @@ if (typeof DIMP !== "object") {
     ns.format.register("JSON")
 })(DIMP);
 (function(ns) {
-    var UTF8 = ns.format.UTF8;
     var CryptographyKey = function() {};
     ns.Interface(CryptographyKey, null);
     CryptographyKey.prototype.getAlgorithm = function() {
@@ -1566,7 +1564,7 @@ if (typeof DIMP !== "object") {
         console.assert(false, "implement me!");
         return null
     };
-    CryptographyKey.promise = UTF8.encode("Moky loves May Lee forever!");
+    CryptographyKey.promise = ns.format.UTF8.encode("Moky loves May Lee forever!");
     CryptographyKey.matches = function(pKey, sKey) {
         var promise = CryptographyKey.promise;
         var ciphertext = pKey.encrypt(promise);
@@ -1624,6 +1622,10 @@ if (typeof DIMP !== "object") {
         } else {
             if (key instanceof SymmetricKey) {
                 return key
+            } else {
+                if (key instanceof ns.type.Dictionary) {
+                    key = key.getMap()
+                }
             }
         }
         var algorithm = CryptographyKey.getAlgorithm(key);
@@ -1688,7 +1690,7 @@ if (typeof DIMP !== "object") {
 (function(ns) {
     var CryptographyKey = ns.crypto.CryptographyKey;
     var VerifyKey = ns.crypto.VerifyKey;
-    var PublicKey = function(key) {};
+    var PublicKey = function() {};
     ns.Interface(PublicKey, [VerifyKey]);
     PublicKey.parse = function(key) {
         if (!key) {
@@ -1696,6 +1698,10 @@ if (typeof DIMP !== "object") {
         } else {
             if (key instanceof PublicKey) {
                 return key
+            } else {
+                if (key instanceof ns.type.Dictionary) {
+                    key = key.getMap()
+                }
             }
         }
         var algorithm = CryptographyKey.getAlgorithm(key);
@@ -1745,6 +1751,10 @@ if (typeof DIMP !== "object") {
         } else {
             if (key instanceof PrivateKey) {
                 return key
+            } else {
+                if (key instanceof ns.type.Dictionary) {
+                    key = key.getMap()
+                }
             }
         }
         var algorithm = CryptographyKey.getAlgorithm(key);
@@ -1752,7 +1762,7 @@ if (typeof DIMP !== "object") {
         if (!factory) {
             factory = PrivateKey.getFactory("*")
         }
-        return factory.parsePublicKey(key)
+        return factory.parsePrivateKey(key)
     };
     PrivateKey.register = function(algorithm, factory) {
         s_factories[algorithm] = factory
