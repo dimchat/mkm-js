@@ -30,7 +30,6 @@
 // =============================================================================
 //
 
-//! require 'string.js'
 //! require 'protocol/identifier.js'
 
 (function (ns) {

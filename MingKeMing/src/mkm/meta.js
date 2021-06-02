@@ -30,7 +30,6 @@
 // =============================================================================
 //
 
-//! require 'crypto.js'
 //! require 'protocol/address.js'
 //! require 'protocol/identifier.js'
 //! require 'protocol/meta.js'

@@ -30,7 +30,7 @@
 // =============================================================================
 //
 
-//! require 'namespace.js'
+//! require <crypto.js>
 
 (function (ns) {
     'use strict';

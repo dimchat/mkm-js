@@ -64,7 +64,7 @@
     /**
      *  Parse map object to key
      *
-     * @param {{String:Object}|Dictionary} key - key info
+     * @param {{String:Object}|Map} key - key info
      * @return {PrivateKey}
      */
     PrivateKey.parse = function (key) {
@@ -72,7 +72,7 @@
             return null;
         } else if (key instanceof PrivateKey) {
             return key;
-        } else if (key instanceof ns.type.Dictionary) {
+        } else if (key instanceof ns.type.Map) {
             key = key.getMap();
         }
         var algorithm = CryptographyKey.getAlgorithm(key);

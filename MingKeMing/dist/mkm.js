@@ -204,10 +204,11 @@ if (typeof MingKeMing !== "object") {
     ns.protocol.register("IDFactory")
 })(MingKeMing);
 (function(ns) {
+    var map = ns.type.Map;
     var PublicKey = ns.crypto.PublicKey;
     var ID = ns.protocol.ID;
     var Meta = function() {};
-    ns.Interface(Meta, null);
+    ns.Interface(Meta, [map]);
     Meta.prototype.getType = function() {
         console.assert(false, "implement me!");
         return 0
@@ -281,7 +282,7 @@ if (typeof MingKeMing !== "object") {
             if (meta instanceof Meta) {
                 return meta
             } else {
-                if (meta instanceof ns.type.Dictionary) {
+                if (meta instanceof map) {
                     meta = meta.getMap()
                 }
             }
@@ -355,10 +356,11 @@ if (typeof MingKeMing !== "object") {
     ns.protocol.register("TAI")
 })(MingKeMing);
 (function(ns) {
+    var map = ns.type.Map;
     var TAI = ns.protocol.TAI;
     var ID = ns.protocol.ID;
     var Document = function() {};
-    ns.Interface(Document, [TAI]);
+    ns.Interface(Document, [TAI, map]);
     Document.VISA = "visa";
     Document.PROFILE = "profile";
     Document.BULLETIN = "bulletin";
@@ -417,7 +419,7 @@ if (typeof MingKeMing !== "object") {
             if (doc instanceof Document) {
                 return doc
             } else {
-                if (doc instanceof ns.type.Dictionary) {
+                if (doc instanceof map) {
                     doc = doc.getMap()
                 }
             }

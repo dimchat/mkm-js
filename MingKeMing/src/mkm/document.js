@@ -30,7 +30,6 @@
 // =============================================================================
 //
 
-//! require 'dictionary.js'
 //! require 'protocol/tai.js'
 
 (function (ns) {

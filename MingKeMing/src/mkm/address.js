@@ -30,7 +30,6 @@
 // =============================================================================
 //
 
-//! require 'string.js'
 //! require 'protocol/types.js'
 //! require 'protocol/address.js'
 

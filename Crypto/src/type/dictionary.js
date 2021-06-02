@@ -30,31 +30,36 @@
 (function (ns) {
     'use strict';
 
-    var Arrays = ns.type.Arrays;
-
-    //
-    //  Dictionary
-    //
+    var map = function () {
+    };
+    ns.Interface(map, null);
 
     /**
-     *  Create dictionary with values or JSON string
+     *  Get inner map
      *
-     * @param {{}|map|String|} entries
+     * @return {Map} built-in map
      */
-    var map = function (entries) {
-        if (!entries) {
-            entries = {};
-        } else if (entries instanceof map) {
-            entries = entries.getMap();
-        } else if (entries instanceof ns.type.String) {
-            entries = ns.format.JSON.decode(entries.toString());
-        } else if (typeof entries === 'string') {
-            entries = ns.format.JSON.decode(entries);
-        }
-        ns.type.Object.call(this);
-        this.dictionary = entries;
+    map.prototype.getMap = function () {
+        console.assert(false, 'implement me!');
+        return null;
     };
-    ns.Class(map, ns.type.Object, null);
+
+    /**
+     *  Clone inner map
+     *
+     * @return {Map} copied built-in map
+     */
+    map.prototype.copyMap = function () {
+        console.assert(false, 'implement me!');
+        return null;
+    };
+    map.copyMap = function (dictionary) {
+        if (dictionary instanceof map) {
+            dictionary = dictionary.getMap();
+        }
+        var json = ns.format.JSON.encode(dictionary);
+        return ns.format.JSON.decode(json);
+    };
 
     /**
      *  Check whether all entities equal
@@ -63,32 +68,8 @@
      * @return {boolean}
      */
     map.prototype.equals = function (other) {
-        if (!other) {
-            return !this.dictionary;
-        } else if (other instanceof map) {
-            return Arrays.equals(this.dictionary, other.getMap());
-        } else {
-            return Arrays.equals(this.dictionary, other);
-        }
-    };
-
-    map.prototype.valueOf = function () {
-        return this.dictionary;
-    };
-
-    map.prototype.toString = function () {
-        return this.dictionary.toString();
-    };
-
-    /**
-     *  Get inner dictionary
-     */
-    map.prototype.getMap = function () {
-        return this.dictionary;
-    };
-    map.prototype.copyMap = function () {
-        var json = ns.format.JSON.encode(this.dictionary);
-        return ns.format.JSON.decode(json);
+        console.assert(false, 'implement me!');
+        return false;
     };
 
     /**
@@ -97,7 +78,8 @@
      * @return {String[]}
      */
     map.prototype.allKeys = function() {
-        return Object.keys(this.dictionary);
+        console.assert(false, 'implement me!');
+        return null;
     };
 
     /**
@@ -107,7 +89,8 @@
      * @return {*}
      */
     map.prototype.getValue = function (key) {
-        return this.dictionary[key];
+        console.assert(false, 'implement me!');
+        return null;
     };
 
     /**
@@ -117,6 +100,72 @@
      * @param {Object} value
      */
     map.prototype.setValue = function (key, value) {
+        console.assert(false, 'implement me!');
+    };
+
+    //-------- namespace --------
+    ns.type.Map = map;
+
+    ns.type.register('Map');
+
+})(DIMP);
+
+(function (ns) {
+    'use strict';
+
+    var Arrays = ns.type.Arrays;
+    var Map = ns.type.Map;
+
+    //
+    //  Dictionary
+    //
+
+    /**
+     *  Create dictionary with values or JSON string
+     *
+     * @param {{}|map} dictionary
+     */
+    var dict = function (dictionary) {
+        if (!dictionary) {
+            dictionary = {};
+        } else if (dictionary instanceof Map) {
+            dictionary = dictionary.getMap();
+        }
+        ns.type.Object.call(this);
+        this.dictionary = dictionary;
+    };
+    ns.Class(dict, ns.type.Object, [Map]);
+
+    dict.prototype.getMap = function () {
+        return this.dictionary;
+    };
+    dict.prototype.copyMap = function () {
+        return Map.copyMap(this.dictionary);
+    };
+
+    dict.prototype.valueOf = function () {
+        return this.dictionary;
+    };
+
+    dict.prototype.equals = function (other) {
+        if (!other) {
+            return !this.dictionary;
+        } else if (other instanceof Map) {
+            return Arrays.equals(this.dictionary, other.getMap());
+        } else {
+            return Arrays.equals(this.dictionary, other);
+        }
+    };
+
+    dict.prototype.allKeys = function() {
+        return Object.keys(this.dictionary);
+    };
+
+    dict.prototype.getValue = function (key) {
+        return this.dictionary[key];
+    };
+
+    dict.prototype.setValue = function (key, value) {
         if (value) {
             this.dictionary[key] = value;
         } else if (this.dictionary.hasOwnProperty(key)) {
@@ -124,18 +173,8 @@
         }
     };
 
-    /**
-     *  Create a map with entities from another object or JSON string
-     *
-     * @param {{}|map|String} dict
-     * @return {map}
-     */
-    map.from = function (dict) {
-        return new map(dict);
-    };
-
     //-------- namespace --------
-    ns.type.Dictionary = map;
+    ns.type.Dictionary = dict;
 
     ns.type.register('Dictionary');
 

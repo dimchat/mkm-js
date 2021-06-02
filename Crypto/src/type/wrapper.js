@@ -36,10 +36,10 @@
 
     var obj = ns.type.Object;
     var str = ns.type.String;
+    var map = ns.type.Map;
     var Enum = ns.type.Enum;
     var Data = ns.type.Data;
     var Arrays = ns.type.Arrays;
-    var Dictionary = ns.type.Dictionary;
 
     /**
      *  Unwrap keys, values circularly
@@ -108,13 +108,13 @@
                     return list_unwrap(object);
                 }
             } else {
-                if (object instanceof Dictionary) {
+                if (object instanceof map) {
                     object = object.getMap();
                 }
                 return map_unwrap(object);
             }
-        } else if (object instanceof Dictionary) {
-            return object.getMap();
+        } else if (object instanceof map) {
+            object = object.getMap();
         }
         return object;
     };

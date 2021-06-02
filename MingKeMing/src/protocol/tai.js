@@ -30,7 +30,7 @@
 // =============================================================================
 //
 
-//! require 'crypto.js'
+//! require <crypto.js>
 //! require 'identifier.js'
 
 (function (ns) {
@@ -128,6 +128,7 @@
 (function (ns) {
     'use strict';
 
+    var map = ns.type.Map;
     var TAI = ns.protocol.TAI;
     var ID = ns.protocol.ID;
 
@@ -144,7 +145,7 @@
      */
     var Document = function () {
     };
-    ns.Interface(Document, [TAI]);
+    ns.Interface(Document, [TAI, map]);
 
     //
     //  Document types
@@ -237,7 +238,7 @@
             return null;
         } else if (doc instanceof Document) {
             return doc;
-        } else if (doc instanceof ns.type.Dictionary) {
+        } else if (doc instanceof map) {
             doc = doc.getMap();
         }
         var type = Document.getType(doc);

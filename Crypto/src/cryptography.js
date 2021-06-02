@@ -31,6 +31,8 @@
 (function (ns) {
     'use strict';
 
+    var map = ns.type.Map;
+
     //
     //  Cryptography Key
     //  ~~~~~~~~~~~~~~~~
@@ -43,7 +45,7 @@
     //
     var CryptographyKey = function () {
     };
-    ns.Interface(CryptographyKey, null);
+    ns.Interface(CryptographyKey, [map]);
 
     /**
      *  Get key algorithm name

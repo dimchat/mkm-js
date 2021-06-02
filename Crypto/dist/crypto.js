@@ -387,7 +387,7 @@ if (typeof DIMP !== "object") {
         remove: remove_item,
         equals: objects_equal,
         isArray: is_array,
-        copy: copy_items,
+        copy: copy_items
     };
     ns.type.register("Arrays")
 })(DIMP);
@@ -1015,58 +1015,83 @@ if (typeof DIMP !== "object") {
     ns.type.register("String")
 })(DIMP);
 (function(ns) {
+    var map = function() {};
+    ns.Interface(map, null);
+    map.prototype.getMap = function() {
+        console.assert(false, "implement me!");
+        return null
+    };
+    map.prototype.copyMap = function() {
+        console.assert(false, "implement me!");
+        return null
+    };
+    map.copyMap = function(dictionary) {
+        if (dictionary instanceof map) {
+            dictionary = dictionary.getMap()
+        }
+        var json = ns.format.JSON.encode(dictionary);
+        return ns.format.JSON.decode(json)
+    };
+    map.prototype.equals = function(other) {
+        console.assert(false, "implement me!");
+        return false
+    };
+    map.prototype.allKeys = function() {
+        console.assert(false, "implement me!");
+        return null
+    };
+    map.prototype.getValue = function(key) {
+        console.assert(false, "implement me!");
+        return null
+    };
+    map.prototype.setValue = function(key, value) {
+        console.assert(false, "implement me!")
+    };
+    ns.type.Map = map;
+    ns.type.register("Map")
+})(DIMP);
+(function(ns) {
     var Arrays = ns.type.Arrays;
-    var map = function(entries) {
-        if (!entries) {
-            entries = {}
+    var Map = ns.type.Map;
+    var dict = function(dictionary) {
+        if (!dictionary) {
+            dictionary = {}
         } else {
-            if (entries instanceof map) {
-                entries = entries.getMap()
-            } else {
-                if (entries instanceof ns.type.String) {
-                    entries = ns.format.JSON.decode(entries.toString())
-                } else {
-                    if (typeof entries === "string") {
-                        entries = ns.format.JSON.decode(entries)
-                    }
-                }
+            if (dictionary instanceof Map) {
+                dictionary = dictionary.getMap()
             }
         }
         ns.type.Object.call(this);
-        this.dictionary = entries
+        this.dictionary = dictionary
     };
-    ns.Class(map, ns.type.Object, null);
-    map.prototype.equals = function(other) {
+    ns.Class(dict, ns.type.Object, [Map]);
+    dict.prototype.getMap = function() {
+        return this.dictionary
+    };
+    dict.prototype.copyMap = function() {
+        return Map.copyMap(this.dictionary)
+    };
+    dict.prototype.valueOf = function() {
+        return this.dictionary
+    };
+    dict.prototype.equals = function(other) {
         if (!other) {
             return !this.dictionary
         } else {
-            if (other instanceof map) {
+            if (other instanceof Map) {
                 return Arrays.equals(this.dictionary, other.getMap())
             } else {
                 return Arrays.equals(this.dictionary, other)
             }
         }
     };
-    map.prototype.valueOf = function() {
-        return this.dictionary
-    };
-    map.prototype.toString = function() {
-        return this.dictionary.toString()
-    };
-    map.prototype.getMap = function() {
-        return this.dictionary
-    };
-    map.prototype.copyMap = function() {
-        var json = ns.format.JSON.encode(this.dictionary);
-        return ns.format.JSON.decode(json)
-    };
-    map.prototype.allKeys = function() {
+    dict.prototype.allKeys = function() {
         return Object.keys(this.dictionary)
     };
-    map.prototype.getValue = function(key) {
+    dict.prototype.getValue = function(key) {
         return this.dictionary[key]
     };
-    map.prototype.setValue = function(key, value) {
+    dict.prototype.setValue = function(key, value) {
         if (value) {
             this.dictionary[key] = value
         } else {
@@ -1075,19 +1100,16 @@ if (typeof DIMP !== "object") {
             }
         }
     };
-    map.from = function(dict) {
-        return new map(dict)
-    };
-    ns.type.Dictionary = map;
+    ns.type.Dictionary = dict;
     ns.type.register("Dictionary")
 })(DIMP);
 (function(ns) {
     var obj = ns.type.Object;
     var str = ns.type.String;
+    var map = ns.type.Map;
     var Enum = ns.type.Enum;
     var Data = ns.type.Data;
     var Arrays = ns.type.Arrays;
-    var Dictionary = ns.type.Dictionary;
     var map_unwrap = function(dict) {
         var result = {};
         var keys = Object.keys(dict);
@@ -1132,14 +1154,14 @@ if (typeof DIMP !== "object") {
                     return list_unwrap(object)
                 }
             } else {
-                if (object instanceof Dictionary) {
+                if (object instanceof map) {
                     object = object.getMap()
                 }
                 return map_unwrap(object)
             }
         } else {
-            if (object instanceof Dictionary) {
-                return object.getMap()
+            if (object instanceof map) {
+                object = object.getMap()
             }
         }
         return object
@@ -1551,8 +1573,9 @@ if (typeof DIMP !== "object") {
     ns.format.register("JSON")
 })(DIMP);
 (function(ns) {
+    var map = ns.type.Map;
     var CryptographyKey = function() {};
-    ns.Interface(CryptographyKey, null);
+    ns.Interface(CryptographyKey, [map]);
     CryptographyKey.prototype.getAlgorithm = function() {
         console.assert(false, "implement me!");
         return null
@@ -1623,7 +1646,7 @@ if (typeof DIMP !== "object") {
             if (key instanceof SymmetricKey) {
                 return key
             } else {
-                if (key instanceof ns.type.Dictionary) {
+                if (key instanceof ns.type.Map) {
                     key = key.getMap()
                 }
             }
@@ -1699,7 +1722,7 @@ if (typeof DIMP !== "object") {
             if (key instanceof PublicKey) {
                 return key
             } else {
-                if (key instanceof ns.type.Dictionary) {
+                if (key instanceof ns.type.Map) {
                     key = key.getMap()
                 }
             }
@@ -1752,7 +1775,7 @@ if (typeof DIMP !== "object") {
             if (key instanceof PrivateKey) {
                 return key
             } else {
-                if (key instanceof ns.type.Dictionary) {
+                if (key instanceof ns.type.Map) {
                     key = key.getMap()
                 }
             }

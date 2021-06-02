@@ -211,7 +211,7 @@
         remove: remove_item,
         equals: objects_equal,
         isArray: is_array,
-        copy: copy_items,
+        copy: copy_items
     };
 
     ns.type.register('Arrays');

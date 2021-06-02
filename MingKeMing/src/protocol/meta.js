@@ -30,13 +30,14 @@
 // =============================================================================
 //
 
-//! require 'crypto.js'
+//! require <crypto.js>
 //! require 'address.js'
 //! require 'identifier.js'
 
 (function (ns) {
     'use strict';
 
+    var map = ns.type.Map;
     var PublicKey = ns.crypto.PublicKey;
     var ID = ns.protocol.ID;
 
@@ -57,7 +58,7 @@
      */
     var Meta = function () {
     };
-    ns.Interface(Meta, null);
+    ns.Interface(Meta, [map]);
 
     /**
      *  Meta algorithm version
@@ -188,7 +189,7 @@
             return null;
         } else if (meta instanceof Meta) {
             return meta;
-        } else if (meta instanceof ns.type.Dictionary) {
+        } else if (meta instanceof map) {
             meta = meta.getMap();
         }
         var version = Meta.getType(meta);
