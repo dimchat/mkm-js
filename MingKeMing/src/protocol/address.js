@@ -30,7 +30,7 @@
 // =============================================================================
 //
 
-//! require <crypto.js>
+//! require 'namespace.js'
 
 (function (ns) {
     'use strict';
@@ -77,9 +77,49 @@
     Address.ANYWHERE = null;    // 'anywhere'
     Address.EVERYWHERE = null;  // 'everywhere'
 
-    //
-    //  Factory method
-    //
+    //-------- namespace --------
+    ns.protocol.Address = Address;
+
+    ns.protocol.register('Address');
+
+})(MingKeMing);
+
+(function (ns) {
+    'use strict';
+
+    var Address = ns.protocol.Address;
+
+    /**
+     *  Address Factory
+     *  ~~~~~~~~~~~~~~~
+     */
+    var AddressFactory = function () {
+    };
+    ns.Interface(AddressFactory, null);
+
+    // noinspection JSUnusedLocalSymbols
+    AddressFactory.prototype.parseAddress = function (address) {
+        console.assert(false, 'implement me!');
+        return null;
+    };
+
+    Address.Factory = AddressFactory;
+
+    var s_factory = null;
+
+    Address.getFactory = function () {
+        return s_factory;
+    };
+    Address.setFactory = function (factory) {
+        s_factory = factory;
+    };
+
+    /**
+     *  Parse string object to address
+     *
+     * @param {String} address - address string
+     * @return {Address}
+     */
     Address.parse = function (address) {
         if (!address) {
             return null;
@@ -90,40 +130,5 @@
         }
         return Address.getFactory().parseAddress(address);
     };
-
-    Address.getFactory = function () {
-        return s_factory;
-    };
-    Address.setFactory = function (factory) {
-        s_factory = factory;
-    };
-
-    var s_factory = null;
-
-    /**
-     *  Address Factory
-     *  ~~~~~~~~~~~~~~~
-     */
-    var AddressFactory = function () {
-    };
-    ns.Interface(AddressFactory, null);
-    // noinspection JSUnusedLocalSymbols
-    /**
-     *  Parse string object to address
-     *
-     * @param {String} address - address string
-     * @return {Address}
-     */
-    AddressFactory.prototype.parseAddress = function (address) {
-        console.assert(false, 'implement me!');
-        return null;
-    };
-
-    //-------- namespace --------
-    ns.protocol.Address = Address;
-    ns.protocol.AddressFactory = AddressFactory;
-
-    ns.protocol.register('Address');
-    ns.protocol.register('AddressFactory');
 
 })(MingKeMing);

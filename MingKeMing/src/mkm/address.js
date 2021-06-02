@@ -83,17 +83,16 @@
     'use strict';
 
     var Address = ns.protocol.Address;
-    var AddressFactory = ns.protocol.AddressFactory;
 
-    var BaseFactory = function () {
+    var AddressFactory = function () {
         this.addresses = {};  // String -> Address
         // cache broadcast addresses
         this.addresses[Address.ANYWHERE.toString()] = Address.ANYWHERE;
         this.addresses[Address.EVERYWHERE.toString()] = Address.EVERYWHERE;
     };
-    ns.Interface(BaseFactory, [AddressFactory])
+    ns.Interface(AddressFactory, [Address.Factory])
 
-    BaseFactory.prototype.parseAddress = function (string) {
+    AddressFactory.prototype.parseAddress = function (string) {
         var address = this.addresses[string];
         if (!address) {
             address = this.createAddress(string);
@@ -110,13 +109,13 @@
      * @param {String} address - address string
      * @return {Address}
      */
-    BaseFactory.prototype.createAddress = function (address) {
+    AddressFactory.prototype.createAddress = function (address) {
         console.assert(false, 'implement me!');
         return null;
     };
 
     //-------- namespace --------
-    ns.AddressFactory = BaseFactory;
+    ns.AddressFactory = AddressFactory;
 
     ns.register('AddressFactory');
 

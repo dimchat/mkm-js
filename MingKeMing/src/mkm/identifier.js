@@ -91,7 +91,7 @@
     'use strict';
 
     var Address = ns.protocol.Address;
-    var IDFactory = ns.protocol.IDFactory;
+    var ID = ns.protocol.ID;
     var Identifier = ns.Identifier;
 
     /**
@@ -143,12 +143,12 @@
         return new Identifier(string, name, address, terminal);
     };
 
-    var GeneralFactory = function () {
+    var IDFactory = function () {
         this.identifiers = {};  // String -> ID
     };
-    ns.Class(GeneralFactory, null, [IDFactory])
+    ns.Class(IDFactory, null, [ID.Factory])
 
-    GeneralFactory.prototype.createID = function (name, address, terminal) {
+    IDFactory.prototype.createID = function (name, address, terminal) {
         var string = concat(name, address, terminal);
         var id = this.identifiers[string];
         if (!id) {
@@ -158,7 +158,7 @@
         return id;
     }
 
-    GeneralFactory.prototype.parseID = function (identifier) {
+    IDFactory.prototype.parseID = function (identifier) {
         var id = this.identifiers[identifier];
         if (!id) {
             id = parse(identifier);
@@ -170,7 +170,7 @@
     };
 
     //-------- namespace --------
-    ns.IDFactory = GeneralFactory;
+    ns.IDFactory = IDFactory;
 
     ns.register('IDFactory');
 

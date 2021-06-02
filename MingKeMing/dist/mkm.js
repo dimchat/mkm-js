@@ -78,6 +78,25 @@ if (typeof MingKeMing !== "object") {
     };
     Address.ANYWHERE = null;
     Address.EVERYWHERE = null;
+    ns.protocol.Address = Address;
+    ns.protocol.register("Address")
+})(MingKeMing);
+(function(ns) {
+    var Address = ns.protocol.Address;
+    var AddressFactory = function() {};
+    ns.Interface(AddressFactory, null);
+    AddressFactory.prototype.parseAddress = function(address) {
+        console.assert(false, "implement me!");
+        return null
+    };
+    Address.Factory = AddressFactory;
+    var s_factory = null;
+    Address.getFactory = function() {
+        return s_factory
+    };
+    Address.setFactory = function(factory) {
+        s_factory = factory
+    };
     Address.parse = function(address) {
         if (!address) {
             return null
@@ -91,24 +110,7 @@ if (typeof MingKeMing !== "object") {
             }
         }
         return Address.getFactory().parseAddress(address)
-    };
-    Address.getFactory = function() {
-        return s_factory
-    };
-    Address.setFactory = function(factory) {
-        s_factory = factory
-    };
-    var s_factory = null;
-    var AddressFactory = function() {};
-    ns.Interface(AddressFactory, null);
-    AddressFactory.prototype.parseAddress = function(address) {
-        console.assert(false, "implement me!");
-        return null
-    };
-    ns.protocol.Address = Address;
-    ns.protocol.AddressFactory = AddressFactory;
-    ns.protocol.register("Address");
-    ns.protocol.register("AddressFactory")
+    }
 })(MingKeMing);
 (function(ns) {
     var Address = ns.protocol.Address;
@@ -160,9 +162,36 @@ if (typeof MingKeMing !== "object") {
     ID.revert = function(members) {
         var array = [];
         for (var id in members) {
-            array.push(id.toString())
+            if (typeof id === "string") {
+                array.push(id)
+            } else {
+                array.push(id.toString())
+            }
         }
         return array
+    };
+    ns.protocol.ID = ID;
+    ns.protocol.register("ID")
+})(MingKeMing);
+(function(ns) {
+    var ID = ns.protocol.ID;
+    var IDFactory = function() {};
+    ns.Interface(IDFactory, null);
+    IDFactory.prototype.createID = function(name, address, terminal) {
+        console.assert(false, "implement me!");
+        return null
+    };
+    IDFactory.prototype.parseID = function(identifier) {
+        console.assert(false, "implement me!");
+        return null
+    };
+    ID.Factory = IDFactory;
+    var s_factory;
+    ID.getFactory = function() {
+        return s_factory
+    };
+    ID.setFactory = function(factory) {
+        s_factory = factory
     };
     ID.create = function(name, address, terminal) {
         return ID.getFactory().create(name, address, terminal)
@@ -180,28 +209,7 @@ if (typeof MingKeMing !== "object") {
             }
         }
         return ID.getFactory().parseID(identifier)
-    };
-    ID.getFactory = function() {
-        return s_factory
-    };
-    ID.setFactory = function(factory) {
-        s_factory = factory
-    };
-    var s_factory;
-    var IDFactory = function() {};
-    ns.Interface(IDFactory, null);
-    IDFactory.prototype.createID = function(name, address, terminal) {
-        console.assert(false, "implement me!");
-        return null
-    };
-    IDFactory.prototype.parseID = function(identifier) {
-        console.assert(false, "implement me!");
-        return null
-    };
-    ns.protocol.ID = ID;
-    ns.protocol.IDFactory = IDFactory;
-    ns.protocol.register("ID");
-    ns.protocol.register("IDFactory")
+    }
 })(MingKeMing);
 (function(ns) {
     var map = ns.type.Map;
@@ -261,6 +269,41 @@ if (typeof MingKeMing !== "object") {
         console.assert(false, "implement me!");
         return false
     };
+    ns.protocol.Meta = Meta;
+    ns.protocol.register("Meta")
+})(MingKeMing);
+(function(ns) {
+    var map = ns.type.Map;
+    var MetaType = ns.protocol.MetaType;
+    var Meta = ns.protocol.Meta;
+    var MetaFactory = function() {};
+    ns.Interface(MetaFactory, null);
+    MetaFactory.prototype.createMeta = function(key, seed, fingerprint) {
+        console.assert(false, "implement me!");
+        return null
+    };
+    MetaFactory.prototype.generateMeta = function(sKey, seed) {
+        console.assert(false, "implement me!");
+        return null
+    };
+    MetaFactory.prototype.parseMeta = function(meta) {
+        console.assert(false, "implement me!");
+        return null
+    };
+    Meta.Factory = MetaFactory;
+    var s_factories = {};
+    Meta.register = function(type, factory) {
+        if (type instanceof MetaType) {
+            type = type.valueOf()
+        }
+        s_factories[type] = factory
+    };
+    Meta.getFactory = function(type) {
+        if (type instanceof MetaType) {
+            type = type.valueOf()
+        }
+        return s_factories[type]
+    };
     Meta.create = function(type, key, seed, fingerprint) {
         var factory = Meta.getFactory(type);
         if (!factory) {
@@ -287,44 +330,13 @@ if (typeof MingKeMing !== "object") {
                 }
             }
         }
-        var version = Meta.getType(meta);
-        var factory = Meta.getFactory(version);
+        var type = Meta.getType(meta);
+        var factory = Meta.getFactory(type);
         if (!factory) {
             factory = Meta.getFactory(0)
         }
         return factory.parseMeta(meta)
-    };
-    Meta.getFactory = function(type) {
-        if (type instanceof MetaType) {
-            type = type.valueOf()
-        }
-        return s_factories[type]
-    };
-    Meta.register = function(type, factory) {
-        if (type instanceof MetaType) {
-            type = type.valueOf()
-        }
-        s_factories[type] = factory
-    };
-    var s_factories = {};
-    var MetaFactory = function() {};
-    ns.Interface(MetaFactory, null);
-    MetaFactory.prototype.createMeta = function(key, seed, fingerprint) {
-        console.assert(false, "implement me!");
-        return null
-    };
-    MetaFactory.prototype.generateMeta = function(sKey, seed) {
-        console.assert(false, "implement me!");
-        return null
-    };
-    MetaFactory.prototype.parseMeta = function(meta) {
-        console.assert(false, "implement me!");
-        return null
-    };
-    ns.protocol.Meta = Meta;
-    ns.protocol.MetaFactory = MetaFactory;
-    ns.protocol.register("Meta");
-    ns.protocol.register("MetaFactory")
+    }
 })(MingKeMing);
 (function(ns) {
     var TAI = function() {};
@@ -405,6 +417,30 @@ if (typeof MingKeMing !== "object") {
     Document.prototype.setName = function(name) {
         console.assert(false, "implement me!")
     };
+    ns.protocol.Document = Document;
+    ns.protocol.register("Document")
+})(MingKeMing);
+(function(ns) {
+    var map = ns.type.Map;
+    var Document = ns.protocol.Document;
+    var DocumentFactory = function() {};
+    ns.Interface(DocumentFactory, null);
+    DocumentFactory.prototype.createDocument = function(identifier, data, signature) {
+        console.assert(false, "implement me!");
+        return null
+    };
+    DocumentFactory.prototype.parseDocument = function(doc) {
+        console.assert(false, "implement me!");
+        return null
+    };
+    Document.Factory = DocumentFactory;
+    var s_factories = {};
+    Document.register = function(type, factory) {
+        s_factories[type] = factory
+    };
+    Document.getFactory = function(type) {
+        return s_factories[type]
+    };
     Document.create = function(type, identifier, data, signature) {
         var factory = Document.getFactory(type);
         if (!factory) {
@@ -430,28 +466,7 @@ if (typeof MingKeMing !== "object") {
             factory = Document.getFactory("*")
         }
         return factory.parseDocument(doc)
-    };
-    Document.register = function(type, factory) {
-        s_factories[type] = factory
-    };
-    Document.getFactory = function(type) {
-        return s_factories[type]
-    };
-    var s_factories = {};
-    var DocumentFactory = function() {};
-    ns.Interface(DocumentFactory, null);
-    DocumentFactory.prototype.createDocument = function(identifier, data, signature) {
-        console.assert(false, "implement me!");
-        return null
-    };
-    DocumentFactory.prototype.parseDocument = function(doc) {
-        console.assert(false, "implement me!");
-        return null
-    };
-    ns.protocol.Document = Document;
-    ns.protocol.DocumentFactory = DocumentFactory;
-    ns.protocol.register("Document");
-    ns.protocol.register("DocumentFactory")
+    }
 })(MingKeMing);
 (function(ns) {
     var Document = ns.protocol.Document;
@@ -524,7 +539,7 @@ if (typeof MingKeMing !== "object") {
 })(MingKeMing);
 (function(ns) {
     var Address = ns.protocol.Address;
-    var IDFactory = ns.protocol.IDFactory;
+    var ID = ns.protocol.ID;
     var Identifier = ns.Identifier;
     var concat = function(name, address, terminal) {
         var string = address.toString();
@@ -554,11 +569,11 @@ if (typeof MingKeMing !== "object") {
         }
         return new Identifier(string, name, address, terminal)
     };
-    var GeneralFactory = function() {
+    var IDFactory = function() {
         this.identifiers = {}
     };
-    ns.Class(GeneralFactory, null, [IDFactory]);
-    GeneralFactory.prototype.createID = function(name, address, terminal) {
+    ns.Class(IDFactory, null, [ID.Factory]);
+    IDFactory.prototype.createID = function(name, address, terminal) {
         var string = concat(name, address, terminal);
         var id = this.identifiers[string];
         if (!id) {
@@ -567,7 +582,7 @@ if (typeof MingKeMing !== "object") {
         }
         return id
     };
-    GeneralFactory.prototype.parseID = function(identifier) {
+    IDFactory.prototype.parseID = function(identifier) {
         var id = this.identifiers[identifier];
         if (!id) {
             id = parse(identifier);
@@ -577,7 +592,7 @@ if (typeof MingKeMing !== "object") {
         }
         return id
     };
-    ns.IDFactory = GeneralFactory;
+    ns.IDFactory = IDFactory;
     ns.register("IDFactory")
 })(MingKeMing);
 (function(ns) {
@@ -611,14 +626,13 @@ if (typeof MingKeMing !== "object") {
 })(MingKeMing);
 (function(ns) {
     var Address = ns.protocol.Address;
-    var AddressFactory = ns.protocol.AddressFactory;
-    var BaseFactory = function() {
+    var AddressFactory = function() {
         this.addresses = {};
         this.addresses[Address.ANYWHERE.toString()] = Address.ANYWHERE;
         this.addresses[Address.EVERYWHERE.toString()] = Address.EVERYWHERE
     };
-    ns.Interface(BaseFactory, [AddressFactory]);
-    BaseFactory.prototype.parseAddress = function(string) {
+    ns.Interface(AddressFactory, [Address.Factory]);
+    AddressFactory.prototype.parseAddress = function(string) {
         var address = this.addresses[string];
         if (!address) {
             address = this.createAddress(string);
@@ -628,11 +642,11 @@ if (typeof MingKeMing !== "object") {
         }
         return address
     };
-    BaseFactory.prototype.createAddress = function(address) {
+    AddressFactory.prototype.createAddress = function(address) {
         console.assert(false, "implement me!");
         return null
     };
-    ns.AddressFactory = BaseFactory;
+    ns.AddressFactory = AddressFactory;
     ns.register("AddressFactory")
 })(MingKeMing);
 (function(ns) {

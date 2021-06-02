@@ -115,8 +115,7 @@ if (typeof DIMP !== "object") {
     var inherit = function(clazz, protocol) {
         var prototype = protocol.prototype;
         var names = Object.getOwnPropertyNames(prototype);
-        for (var i = 0; i < names.length; ++i) {
-            var key = names[i];
+        for (var key in names) {
             if (clazz.prototype.hasOwnProperty(key)) {
                 continue
             }
@@ -1052,24 +1051,24 @@ if (typeof DIMP !== "object") {
 })(DIMP);
 (function(ns) {
     var Arrays = ns.type.Arrays;
-    var Map = ns.type.Map;
+    var map = ns.type.Map;
     var dict = function(dictionary) {
         if (!dictionary) {
             dictionary = {}
         } else {
-            if (dictionary instanceof Map) {
+            if (dictionary instanceof map) {
                 dictionary = dictionary.getMap()
             }
         }
         ns.type.Object.call(this);
         this.dictionary = dictionary
     };
-    ns.Class(dict, ns.type.Object, [Map]);
+    ns.Class(dict, ns.type.Object, [map]);
     dict.prototype.getMap = function() {
         return this.dictionary
     };
     dict.prototype.copyMap = function() {
-        return Map.copyMap(this.dictionary)
+        return map.copyMap(this.dictionary)
     };
     dict.prototype.valueOf = function() {
         return this.dictionary
@@ -1078,7 +1077,7 @@ if (typeof DIMP !== "object") {
         if (!other) {
             return !this.dictionary
         } else {
-            if (other instanceof Map) {
+            if (other instanceof map) {
                 return Arrays.equals(this.dictionary, other.getMap())
             } else {
                 return Arrays.equals(this.dictionary, other)
@@ -1625,13 +1624,37 @@ if (typeof DIMP !== "object") {
     ns.crypto.register("DecryptKey")
 })(DIMP);
 (function(ns) {
-    var CryptographyKey = ns.crypto.CryptographyKey;
     var EncryptKey = ns.crypto.EncryptKey;
     var DecryptKey = ns.crypto.DecryptKey;
     var SymmetricKey = function() {};
     ns.Interface(SymmetricKey, [EncryptKey, DecryptKey]);
     SymmetricKey.AES = "AES";
     SymmetricKey.DES = "DES";
+    ns.crypto.SymmetricKey = SymmetricKey;
+    ns.crypto.register("SymmetricKey")
+})(DIMP);
+(function(ns) {
+    var map = ns.type.Map;
+    var CryptographyKey = ns.crypto.CryptographyKey;
+    var SymmetricKey = ns.crypto.SymmetricKey;
+    var SymmetricKeyFactory = function() {};
+    ns.Interface(SymmetricKeyFactory, null);
+    SymmetricKeyFactory.prototype.generateSymmetricKey = function() {
+        console.assert(false, "implement me!");
+        return null
+    };
+    SymmetricKeyFactory.prototype.parseSymmetricKey = function(key) {
+        console.assert(false, "implement me!");
+        return null
+    };
+    SymmetricKey.Factory = SymmetricKeyFactory;
+    var s_factories = {};
+    SymmetricKey.register = function(algorithm, factory) {
+        s_factories[algorithm] = factory
+    };
+    SymmetricKey.getFactory = function(algorithm) {
+        return s_factories[algorithm]
+    };
     SymmetricKey.generate = function(algorithm) {
         var factory = SymmetricKey.getFactory(algorithm);
         if (!factory) {
@@ -1646,7 +1669,7 @@ if (typeof DIMP !== "object") {
             if (key instanceof SymmetricKey) {
                 return key
             } else {
-                if (key instanceof ns.type.Map) {
+                if (key instanceof map) {
                     key = key.getMap()
                 }
             }
@@ -1657,28 +1680,7 @@ if (typeof DIMP !== "object") {
             factory = SymmetricKey.getFactory("*")
         }
         return factory.parseSymmetricKey(key)
-    };
-    SymmetricKey.register = function(algorithm, factory) {
-        s_factories[algorithm] = factory
-    };
-    SymmetricKey.getFactory = function(algorithm) {
-        return s_factories[algorithm]
-    };
-    var s_factories = {};
-    var SymmetricKeyFactory = function() {};
-    ns.Interface(SymmetricKeyFactory, null);
-    SymmetricKeyFactory.prototype.generateSymmetricKey = function() {
-        console.assert(false, "implement me!");
-        return null
-    };
-    SymmetricKeyFactory.prototype.parseSymmetricKey = function(key) {
-        console.assert(false, "implement me!");
-        return null
-    };
-    ns.crypto.SymmetricKey = SymmetricKey;
-    ns.crypto.SymmetricKeyFactory = SymmetricKeyFactory;
-    ns.crypto.register("SymmetricKey");
-    ns.crypto.register("SymmetricKeyFactory")
+    }
 })(DIMP);
 (function(ns) {
     var CryptographyKey = ns.crypto.CryptographyKey;
@@ -1711,10 +1713,30 @@ if (typeof DIMP !== "object") {
     ns.crypto.register("VerifyKey")
 })(DIMP);
 (function(ns) {
-    var CryptographyKey = ns.crypto.CryptographyKey;
     var VerifyKey = ns.crypto.VerifyKey;
     var PublicKey = function() {};
     ns.Interface(PublicKey, [VerifyKey]);
+    ns.crypto.PublicKey = PublicKey;
+    ns.crypto.register("PublicKey")
+})(DIMP);
+(function(ns) {
+    var map = ns.type.Map;
+    var CryptographyKey = ns.crypto.CryptographyKey;
+    var PublicKey = ns.crypto.PublicKey;
+    var PublicKeyFactory = function() {};
+    ns.Interface(PublicKeyFactory, null);
+    PublicKeyFactory.prototype.parsePublicKey = function(key) {
+        console.assert(false, "implement me!");
+        return null
+    };
+    PublicKey.Factory = PublicKeyFactory;
+    var s_factories = {};
+    PublicKey.register = function(algorithm, factory) {
+        s_factories[algorithm] = factory
+    };
+    PublicKey.getFactory = function(algorithm) {
+        return s_factories[algorithm]
+    };
     PublicKey.parse = function(key) {
         if (!key) {
             return null
@@ -1722,7 +1744,7 @@ if (typeof DIMP !== "object") {
             if (key instanceof PublicKey) {
                 return key
             } else {
-                if (key instanceof ns.type.Map) {
+                if (key instanceof map) {
                     key = key.getMap()
                 }
             }
@@ -1733,33 +1755,40 @@ if (typeof DIMP !== "object") {
             factory = PublicKey.getFactory("*")
         }
         return factory.parsePublicKey(key)
-    };
-    PublicKey.register = function(algorithm, factory) {
-        s_factories[algorithm] = factory
-    };
-    PublicKey.getFactory = function(algorithm) {
-        return s_factories[algorithm]
-    };
-    var s_factories = {};
-    var PublicKeyFactory = function() {};
-    ns.Interface(PublicKeyFactory, null);
-    PublicKeyFactory.prototype.parsePublicKey = function(key) {
-        console.assert(false, "implement me!");
-        return null
-    };
-    ns.crypto.PublicKey = PublicKey;
-    ns.crypto.PublicKeyFactory = PublicKeyFactory;
-    ns.crypto.register("PublicKey");
-    ns.crypto.register("PublicKeyFactory")
+    }
 })(DIMP);
 (function(ns) {
-    var CryptographyKey = ns.crypto.CryptographyKey;
     var SignKey = ns.crypto.SignKey;
     var PrivateKey = function() {};
     ns.Interface(PrivateKey, [SignKey]);
     PrivateKey.prototype.getPublicKey = function() {
         console.assert(false, "implement me!");
         return null
+    };
+    ns.crypto.PrivateKey = PrivateKey;
+    ns.crypto.register("PrivateKey")
+})(DIMP);
+(function(ns) {
+    var map = ns.type.Map;
+    var CryptographyKey = ns.crypto.CryptographyKey;
+    var PrivateKey = ns.crypto.PrivateKey;
+    var PrivateKeyFactory = function() {};
+    ns.Interface(PrivateKeyFactory, null);
+    PrivateKeyFactory.prototype.generatePrivateKey = function() {
+        console.assert(false, "implement me!");
+        return null
+    };
+    PrivateKeyFactory.prototype.parsePrivateKey = function(key) {
+        console.assert(false, "implement me!");
+        return null
+    };
+    PrivateKey.Factory = PrivateKeyFactory;
+    var s_factories = {};
+    PrivateKey.register = function(algorithm, factory) {
+        s_factories[algorithm] = factory
+    };
+    PrivateKey.getFactory = function(algorithm) {
+        return s_factories[algorithm]
     };
     PrivateKey.generate = function(algorithm) {
         var factory = PrivateKey.getFactory(algorithm);
@@ -1775,7 +1804,7 @@ if (typeof DIMP !== "object") {
             if (key instanceof PrivateKey) {
                 return key
             } else {
-                if (key instanceof ns.type.Map) {
+                if (key instanceof map) {
                     key = key.getMap()
                 }
             }
@@ -1786,26 +1815,5 @@ if (typeof DIMP !== "object") {
             factory = PrivateKey.getFactory("*")
         }
         return factory.parsePrivateKey(key)
-    };
-    PrivateKey.register = function(algorithm, factory) {
-        s_factories[algorithm] = factory
-    };
-    PrivateKey.getFactory = function(algorithm) {
-        return s_factories[algorithm]
-    };
-    var s_factories = {};
-    var PrivateKeyFactory = function() {};
-    ns.Interface(PrivateKeyFactory, null);
-    PrivateKeyFactory.prototype.generatePrivateKey = function() {
-        console.assert(false, "implement me!");
-        return null
-    };
-    PrivateKeyFactory.prototype.parsePrivateKey = function(key) {
-        console.assert(false, "implement me!");
-        return null
-    };
-    ns.crypto.PrivateKey = PrivateKey;
-    ns.crypto.PrivateKeyFactory = PrivateKeyFactory;
-    ns.crypto.register("PrivateKey");
-    ns.crypto.register("PrivateKeyFactory")
+    }
 })(DIMP);

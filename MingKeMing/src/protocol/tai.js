@@ -30,7 +30,7 @@
 // =============================================================================
 //
 
-//! require <crypto.js>
+//! require 'namespace.js'
 //! require 'identifier.js'
 
 (function (ns) {
@@ -222,9 +222,67 @@
         console.assert(false, 'implement me!');
     };
 
-    //
-    //  Factory methods
-    //
+    //-------- namespace --------
+    ns.protocol.Document = Document;
+
+    ns.protocol.register('Document');
+
+})(MingKeMing);
+
+(function (ns) {
+    'use strict';
+
+    var map = ns.type.Map;
+    var Document = ns.protocol.Document;
+
+    /**
+     *  Document Factory
+     *  ~~~~~~~~~~~~~~~~
+     */
+    var DocumentFactory = function () {
+    };
+    ns.Interface(DocumentFactory, null);
+
+    // noinspection JSUnusedLocalSymbols
+    DocumentFactory.prototype.createDocument = function (identifier, data, signature) {
+        console.assert(false, 'implement me!');
+        return null;
+    };
+
+    // noinspection JSUnusedLocalSymbols
+    DocumentFactory.prototype.parseDocument = function (doc) {
+        console.assert(false, 'implement me!');
+        return null;
+    };
+
+    Document.Factory = DocumentFactory;
+
+    var s_factories = {};  // type(String) -> DocumentFactory
+
+    /**
+     *  Register document factory with type
+     *
+     * @param {String} type
+     * @param {DocumentFactory} factory
+     */
+    Document.register = function (type, factory) {
+        s_factories[type] = factory;
+    };
+    Document.getFactory = function (type) {
+        return s_factories[type];
+    };
+
+    /**
+     *  Create document
+     *      1. Create a new empty document with entity ID
+     *      2. Create document with data & signature loaded from local storage
+     *
+     * @param {String} type                 - document type
+     * @param {ID} identifier               - entity ID
+     * @param {Uint8Array|String} data      - document data
+     * @param {Uint8Array|String} signature - document signature
+     * @return {Document}
+     */
     Document.create = function (type, identifier, data, signature) {
         var factory = Document.getFactory(type);
         if (!factory) {
@@ -233,6 +291,12 @@
         return factory.createDocument(identifier, data, signature);
     };
 
+    /**
+     *  Parse map object to entity document
+     *
+     * @param {{String:Object}} doc - document info
+     * @return {Document}
+     */
     Document.parse = function (doc) {
         if (!doc) {
             return null;
@@ -248,55 +312,5 @@
         }
         return factory.parseDocument(doc);
     };
-
-    Document.register = function (type, factory) {
-        s_factories[type] = factory;
-    };
-    Document.getFactory = function (type) {
-        return s_factories[type];
-    };
-
-    var s_factories = {};  // type(String) -> DocumentFactory
-
-    /**
-     *  Document Factory
-     *  ~~~~~~~~~~~~~~~~
-     */
-    var DocumentFactory = function () {
-    };
-    ns.Interface(DocumentFactory, null);
-    // noinspection JSUnusedLocalSymbols
-    /**
-     *  Create document
-     *      1. Create a new empty document with entity ID
-     *      2. Create document with data & signature loaded from local storage
-     *
-     * @param {ID} identifier               - entity ID
-     * @param {Uint8Array|String} data      - document data
-     * @param {Uint8Array|String} signature - document signature
-     * @return {Document}
-     */
-    DocumentFactory.prototype.createDocument = function (identifier, data, signature) {
-        console.assert(false, 'implement me!');
-        return null;
-    };
-    // noinspection JSUnusedLocalSymbols
-    /**
-     *  Parse map object to entity document
-     *
-     * @param {{String:Object}} doc - document info
-     * @return {Document}
-     */
-    DocumentFactory.prototype.parseDocument = function (doc) {
-        console.assert(false, 'implement me!');
-        return null;
-    };
-
-    //-------- namespace --------
-    ns.protocol.Document = Document;
-    ns.protocol.DocumentFactory = DocumentFactory;
-
-    ns.protocol.register('Document');
-    ns.protocol.register('DocumentFactory');
 
 })(MingKeMing);

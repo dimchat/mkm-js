@@ -76,7 +76,6 @@
 (function (ns) {
     'use strict';
 
-    var CryptographyKey = ns.crypto.CryptographyKey;
     var EncryptKey = ns.crypto.EncryptKey;
     var DecryptKey = ns.crypto.DecryptKey;
 
@@ -97,6 +96,56 @@
     SymmetricKey.AES = 'AES'; //-- "AES/CBC/PKCS7Padding"
     SymmetricKey.DES = 'DES';
 
+    //-------- namespace --------
+    ns.crypto.SymmetricKey = SymmetricKey;
+
+    ns.crypto.register('SymmetricKey');
+
+})(DIMP);
+
+(function (ns) {
+    'use strict';
+
+    var map = ns.type.Map;
+    var CryptographyKey = ns.crypto.CryptographyKey;
+    var SymmetricKey = ns.crypto.SymmetricKey;
+
+    /**
+     *  Key Factory
+     *  ~~~~~~~~~~~
+     */
+    var SymmetricKeyFactory = function () {
+    };
+    ns.Interface(SymmetricKeyFactory, null);
+
+    SymmetricKeyFactory.prototype.generateSymmetricKey = function () {
+        console.assert(false, 'implement me!');
+        return null;
+    };
+
+    // noinspection JSUnusedLocalSymbols
+    SymmetricKeyFactory.prototype.parseSymmetricKey = function (key) {
+        console.assert(false, 'implement me!');
+        return null;
+    };
+
+    SymmetricKey.Factory = SymmetricKeyFactory;
+
+    var s_factories = {};  // algorithm(String) -> SymmetricKeyFactory
+
+    /**
+     *  Register symmetric key factory with algorithm
+     *
+     * @param {String} algorithm
+     * @param {SymmetricKeyFactory} factory
+     */
+    SymmetricKey.register = function (algorithm, factory) {
+        s_factories[algorithm] = factory;
+    };
+    SymmetricKey.getFactory = function (algorithm) {
+        return s_factories[algorithm];
+    }
+
     /**
      *  Generate key with algorithm name
      *
@@ -114,7 +163,7 @@
     /**
      *  Parse map object to key
      *
-     * @param {{String:Object}|Map} key - key info
+     * @param {{String:Object}} key - key info
      * @return {SymmetricKey}
      */
     SymmetricKey.parse = function (key) {
@@ -122,7 +171,7 @@
             return null;
         } else if (key instanceof SymmetricKey) {
             return key;
-        } else if (key instanceof ns.type.Map) {
+        } else if (key instanceof map) {
             key = key.getMap();
         }
         var algorithm = CryptographyKey.getAlgorithm(key);
@@ -132,55 +181,5 @@
         }
         return factory.parseSymmetricKey(key);
     }
-
-    /**
-     *  Register symmetric key class with algorithm
-     *
-     * @param {String} algorithm
-     * @param {SymmetricKeyFactory} factory
-     */
-    SymmetricKey.register = function (algorithm, factory) {
-        s_factories[algorithm] = factory;
-    };
-    SymmetricKey.getFactory = function (algorithm) {
-        return s_factories[algorithm];
-    }
-
-    var s_factories = {};  // algorithm(String) -> SymmetricKeyFactory
-
-    /**
-     *  Key Factory
-     *  ~~~~~~~~~~~
-     */
-    var SymmetricKeyFactory = function () {
-    };
-    ns.Interface(SymmetricKeyFactory, null);
-    /**
-     *  Generate key
-     *
-     * @return {SymmetricKey}
-     */
-    SymmetricKeyFactory.prototype.generateSymmetricKey = function () {
-        console.assert(false, 'implement me!');
-        return null;
-    };
-    // noinspection JSUnusedLocalSymbols
-    /**
-     *  Parse map object to key
-     *
-     * @param {{String:Object}} key - key info
-     * @return {SymmetricKey}
-     */
-    SymmetricKeyFactory.prototype.parseSymmetricKey = function (key) {
-        console.assert(false, 'implement me!');
-        return null;
-    };
-
-    //-------- namespace --------
-    ns.crypto.SymmetricKey = SymmetricKey;
-    ns.crypto.SymmetricKeyFactory = SymmetricKeyFactory;
-
-    ns.crypto.register('SymmetricKey');
-    ns.crypto.register('SymmetricKeyFactory');
 
 })(DIMP);

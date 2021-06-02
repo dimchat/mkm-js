@@ -30,7 +30,6 @@
 (function (ns) {
     'use strict';
 
-    var CryptographyKey = ns.crypto.CryptographyKey;
     var SignKey = ns.crypto.SignKey;
 
     var PrivateKey = function () {
@@ -46,6 +45,56 @@
         console.assert(false, 'implement me!');
         return null;
     };
+
+    //-------- namespace --------
+    ns.crypto.PrivateKey = PrivateKey;
+
+    ns.crypto.register('PrivateKey');
+
+})(DIMP);
+
+(function (ns) {
+    'use strict';
+
+    var map = ns.type.Map;
+    var CryptographyKey = ns.crypto.CryptographyKey;
+    var PrivateKey = ns.crypto.PrivateKey;
+
+    /**
+     *  Key Factory
+     *  ~~~~~~~~~~~
+     */
+    var PrivateKeyFactory = function () {
+    };
+    ns.Interface(PrivateKeyFactory, null);
+
+    PrivateKeyFactory.prototype.generatePrivateKey = function () {
+        console.assert(false, 'implement me!');
+        return null;
+    };
+
+    // noinspection JSUnusedLocalSymbols
+    PrivateKeyFactory.prototype.parsePrivateKey = function (key) {
+        console.assert(false, 'implement me!');
+        return null;
+    };
+
+    PrivateKey.Factory = PrivateKeyFactory;
+
+    var s_factories = {};  // algorithm(String) -> PrivateKeyFactory
+
+    /**
+     *  Register private key factory with algorithm
+     *
+     * @param {String} algorithm
+     * @param {PrivateKeyFactory} factory
+     */
+    PrivateKey.register = function (algorithm, factory) {
+        s_factories[algorithm] = factory;
+    };
+    PrivateKey.getFactory = function (algorithm) {
+        return s_factories[algorithm];
+    }
 
     /**
      *  Generate key with algorithm name
@@ -64,7 +113,7 @@
     /**
      *  Parse map object to key
      *
-     * @param {{String:Object}|Map} key - key info
+     * @param {{String:Object}} key - key info
      * @return {PrivateKey}
      */
     PrivateKey.parse = function (key) {
@@ -72,7 +121,7 @@
             return null;
         } else if (key instanceof PrivateKey) {
             return key;
-        } else if (key instanceof ns.type.Map) {
+        } else if (key instanceof map) {
             key = key.getMap();
         }
         var algorithm = CryptographyKey.getAlgorithm(key);
@@ -82,55 +131,5 @@
         }
         return factory.parsePrivateKey(key);
     }
-
-    /**
-     *  Register private key factory with algorithm
-     *
-     * @param {String} algorithm
-     * @param {PrivateKeyFactory} factory
-     */
-    PrivateKey.register = function (algorithm, factory) {
-        s_factories[algorithm] = factory;
-    };
-    PrivateKey.getFactory = function (algorithm) {
-        return s_factories[algorithm];
-    }
-
-    var s_factories = {};  // algorithm(String) -> PrivateKeyFactory
-
-    /**
-     *  Key Factory
-     *  ~~~~~~~~~~~
-     */
-    var PrivateKeyFactory = function () {
-    };
-    ns.Interface(PrivateKeyFactory, null);
-    /**
-     *  Generate key
-     *
-     * @return {PrivateKey}
-     */
-    PrivateKeyFactory.prototype.generatePrivateKey = function () {
-        console.assert(false, 'implement me!');
-        return null;
-    };
-    // noinspection JSUnusedLocalSymbols
-    /**
-     *  Parse map object to key
-     *
-     * @param {{String:Object}} key - key info
-     * @return {PrivateKey}
-     */
-    PrivateKeyFactory.prototype.parsePrivateKey = function (key) {
-        console.assert(false, 'implement me!');
-        return null;
-    };
-
-    //-------- namespace --------
-    ns.crypto.PrivateKey = PrivateKey;
-    ns.crypto.PrivateKeyFactory = PrivateKeyFactory;
-
-    ns.crypto.register('PrivateKey');
-    ns.crypto.register('PrivateKeyFactory');
 
 })(DIMP);

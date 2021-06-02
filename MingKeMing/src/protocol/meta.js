@@ -30,7 +30,7 @@
 // =============================================================================
 //
 
-//! require <crypto.js>
+//! require 'types.js'
 //! require 'address.js'
 //! require 'identifier.js'
 
@@ -165,55 +165,19 @@
         return false;
     };
 
-    //
-    //  Factory methods
-    //
-    Meta.create = function (type, key, seed, fingerprint) {
-        var factory = Meta.getFactory(type);
-        if (!factory) {
-            throw ReferenceError('meta type not support: ' + type);
-        }
-        return factory.createMeta(key, seed, fingerprint);
-    };
+    //-------- namespace --------
+    ns.protocol.Meta = Meta;
 
-    Meta.generate = function (type, sKey, seed) {
-        var factory = Meta.getFactory(type);
-        if (!factory) {
-            throw ReferenceError('meta type not support: ' + type);
-        }
-        return factory.generateMeta(sKey, seed);
-    };
+    ns.protocol.register('Meta');
 
-    Meta.parse = function (meta) {
-        if (!meta) {
-            return null;
-        } else if (meta instanceof Meta) {
-            return meta;
-        } else if (meta instanceof map) {
-            meta = meta.getMap();
-        }
-        var version = Meta.getType(meta);
-        var factory = Meta.getFactory(version);
-        if (!factory) {
-            factory = Meta.getFactory(0);
-        }
-        return factory.parseMeta(meta);
-    };
+})(MingKeMing);
 
-    Meta.getFactory = function (type) {
-        if (type instanceof MetaType) {
-            type = type.valueOf();
-        }
-        return s_factories[type];
-    };
-    Meta.register = function (type, factory) {
-        if (type instanceof MetaType) {
-            type = type.valueOf();
-        }
-        s_factories[type] = factory;
-    };
+(function (ns) {
+    'use strict';
 
-    var s_factories = {};  // type(uint8|MetaType) -> MetaFactory
+    var map = ns.type.Map;
+    var MetaType = ns.protocol.MetaType;
+    var Meta = ns.protocol.Meta;
 
     /**
      *  Meta Factory
@@ -222,48 +186,101 @@
     var MetaFactory = function () {
     };
     ns.Interface(MetaFactory, null);
+
     // noinspection JSUnusedLocalSymbols
+    MetaFactory.prototype.createMeta = function (key, seed, fingerprint) {
+        console.assert(false, 'implement me!');
+        return null;
+    };
+
+    // noinspection JSUnusedLocalSymbols
+    MetaFactory.prototype.generateMeta = function (sKey, seed) {
+        console.assert(false, 'implement me!');
+        return null;
+    };
+
+    // noinspection JSUnusedLocalSymbols
+    MetaFactory.prototype.parseMeta = function (meta) {
+        console.assert(false, 'implement me!');
+        return null;
+    };
+
+    Meta.Factory = MetaFactory;
+
+    var s_factories = {};  // type(uint8|MetaType) -> MetaFactory
+
+    /**
+     *  Register meta factory with type
+     *
+     * @param {MetaType|uint} type
+     * @param {MetaFactory} factory
+     */
+    Meta.register = function (type, factory) {
+        if (type instanceof MetaType) {
+            type = type.valueOf();
+        }
+        s_factories[type] = factory;
+    };
+    Meta.getFactory = function (type) {
+        if (type instanceof MetaType) {
+            type = type.valueOf();
+        }
+        return s_factories[type];
+    };
+
     /**
      *  Create meta
      *
+     * @param {MetaType|uint} type     - meta type
      * @param {PublicKey} key          - public key
      * @param {String} seed            - ID.name
      * @param {Uint8Array} fingerprint - sKey.sign(seed)
      * @return {Meta}
      */
-    MetaFactory.prototype.createMeta = function (key, seed, fingerprint) {
-        console.assert(false, 'implement me!');
-        return null;
+    Meta.create = function (type, key, seed, fingerprint) {
+        var factory = Meta.getFactory(type);
+        if (!factory) {
+            throw ReferenceError('meta type not support: ' + type);
+        }
+        return factory.createMeta(key, seed, fingerprint);
     };
-    // noinspection JSUnusedLocalSymbols
+
     /**
      *  Generate meta
      *
+     * @param {MetaType|uint} type     - meta type
      * @param {PrivateKey} sKey        - private key
      * @param {String} seed            - ID.name
      * @return {Meta}
      */
-    MetaFactory.prototype.generateMeta = function (sKey, seed) {
-        console.assert(false, 'implement me!');
-        return null;
+    Meta.generate = function (type, sKey, seed) {
+        var factory = Meta.getFactory(type);
+        if (!factory) {
+            throw ReferenceError('meta type not support: ' + type);
+        }
+        return factory.generateMeta(sKey, seed);
     };
-    // noinspection JSUnusedLocalSymbols
+
     /**
      *  Parse map object to meta
      *
      * @param {{String:Object}} meta - meta info
      * @return {Meta}
      */
-    MetaFactory.prototype.parseMeta = function (meta) {
-        console.assert(false, 'implement me!');
-        return null;
+    Meta.parse = function (meta) {
+        if (!meta) {
+            return null;
+        } else if (meta instanceof Meta) {
+            return meta;
+        } else if (meta instanceof map) {
+            meta = meta.getMap();
+        }
+        var type = Meta.getType(meta);
+        var factory = Meta.getFactory(type);
+        if (!factory) {
+            factory = Meta.getFactory(0);
+        }
+        return factory.parseMeta(meta);
     };
-
-    //-------- namespace --------
-    ns.protocol.Meta = Meta;
-    ns.protocol.MetaFactory = MetaFactory;
-
-    ns.protocol.register('Meta');
-    ns.protocol.register('MetaFactory');
 
 })(MingKeMing);

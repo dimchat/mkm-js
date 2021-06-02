@@ -140,17 +140,76 @@
     ID.revert = function (members) {
         var array = [];
         for (var id in members) {
-            array.push(id.toString());
+            if (typeof id === 'string') {
+                array.push(id);
+            } else {
+                array.push(id.toString());
+            }
         }
         return array;
     };
 
-    //
-    //  Factory methods
-    //
+    //-------- namespace --------
+    ns.protocol.ID = ID;
+
+    ns.protocol.register('ID');
+
+})(MingKeMing);
+
+(function (ns) {
+    'use strict';
+
+    var ID = ns.protocol.ID;
+
+    /**
+     *  ID Factory
+     *  ~~~~~~~~~~
+     */
+    var IDFactory = function () {
+    };
+    ns.Interface(IDFactory, null);
+
+    // noinspection JSUnusedLocalSymbols
+    IDFactory.prototype.createID = function (name, address, terminal) {
+        console.assert(false, 'implement me!');
+        return null;
+    };
+
+    // noinspection JSUnusedLocalSymbols
+    IDFactory.prototype.parseID = function (identifier) {
+        console.assert(false, 'implement me!');
+        return null;
+    };
+
+    ID.Factory = IDFactory;
+
+    var s_factory;
+
+    ID.getFactory = function () {
+        return s_factory;
+    };
+    ID.setFactory = function (factory) {
+        s_factory = factory;
+    };
+
+    /**
+     *  Create ID
+     *
+     * @param {String} name     - ID.name
+     * @param {Address} address - ID.address
+     * @param {String} terminal - ID.terminal
+     * @return {ID}
+     */
     ID.create = function (name, address, terminal) {
         return ID.getFactory().create(name, address, terminal);
     };
+
+    /**
+     *  Parse string object to ID
+     *
+     * @param {String} identifier - ID string
+     * @return {ID}
+     */
     ID.parse = function (identifier) {
         if (!identifier) {
             return null;
@@ -161,53 +220,5 @@
         }
         return ID.getFactory().parseID(identifier);
     };
-
-    ID.getFactory = function () {
-        return s_factory;
-    };
-    ID.setFactory = function (factory) {
-        s_factory = factory;
-    };
-
-    var s_factory;
-
-    /**
-     *  ID Factory
-     *  ~~~~~~~~~~
-     */
-    var IDFactory = function () {
-    };
-    ns.Interface(IDFactory, null);
-    // noinspection JSUnusedLocalSymbols
-    /**
-     *  Create ID
-     *
-     * @param {String} name     - ID.name
-     * @param {Address} address - ID.address
-     * @param {String} terminal - ID.terminal
-     * @return {ID}
-     */
-    IDFactory.prototype.createID = function (name, address, terminal) {
-        console.assert(false, 'implement me!');
-        return null;
-    };
-    // noinspection JSUnusedLocalSymbols
-    /**
-     *  Parse string object to ID
-     *
-     * @param {String} identifier - ID string
-     * @return {ID}
-     */
-    IDFactory.prototype.parseID = function (identifier) {
-        console.assert(false, 'implement me!');
-        return null;
-    };
-
-    //-------- namespace --------
-    ns.protocol.ID = ID;
-    ns.protocol.IDFactory = IDFactory;
-
-    ns.protocol.register('ID');
-    ns.protocol.register('IDFactory');
 
 })(MingKeMing);

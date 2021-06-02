@@ -30,34 +30,43 @@
 (function (ns) {
     'use strict';
 
-    var CryptographyKey = ns.crypto.CryptographyKey;
     var VerifyKey = ns.crypto.VerifyKey;
 
     var PublicKey = function () {
     };
     ns.Interface(PublicKey, [VerifyKey]);
 
+    //-------- namespace --------
+    ns.crypto.PublicKey = PublicKey;
+
+    ns.crypto.register('PublicKey');
+
+})(DIMP);
+
+(function (ns) {
+    'use strict';
+
+    var map = ns.type.Map;
+    var CryptographyKey = ns.crypto.CryptographyKey;
+    var PublicKey = ns.crypto.PublicKey;
+
     /**
-     *  Parse map object to key
-     *
-     * @param {{String:Object}|Map} key - key info
-     * @return {PublicKey}
+     *  Key Factory
+     *  ~~~~~~~~~~~
      */
-    PublicKey.parse = function (key) {
-        if (!key) {
-            return null;
-        } else if (key instanceof PublicKey) {
-            return key;
-        } else if (key instanceof ns.type.Map) {
-            key = key.getMap();
-        }
-        var algorithm = CryptographyKey.getAlgorithm(key);
-        var factory = PublicKey.getFactory(algorithm);
-        if (!factory) {
-            factory = PublicKey.getFactory('*');  // unknown
-        }
-        return factory.parsePublicKey(key);
-    }
+    var PublicKeyFactory = function () {
+    };
+    ns.Interface(PublicKeyFactory, null);
+
+    // noinspection JSUnusedLocalSymbols
+    PublicKeyFactory.prototype.parsePublicKey = function (key) {
+        console.assert(false, 'implement me!');
+        return null;
+    };
+
+    PublicKey.Factory = PublicKeyFactory;
+
+    var s_factories = {};  // algorithm(String) -> PublicKeyFactory
 
     /**
      *  Register public key factory with algorithm
@@ -72,32 +81,26 @@
         return s_factories[algorithm];
     }
 
-    var s_factories = {};  // algorithm(String) -> PublicKeyFactory
-
-    /**
-     *  Key Factory
-     *  ~~~~~~~~~~~
-     */
-    var PublicKeyFactory = function () {
-    };
-    ns.Interface(PublicKeyFactory, null);
-    // noinspection JSUnusedLocalSymbols
     /**
      *  Parse map object to key
      *
      * @param {{String:Object}} key - key info
      * @return {PublicKey}
      */
-    PublicKeyFactory.prototype.parsePublicKey = function (key) {
-        console.assert(false, 'implement me!');
-        return null;
-    };
-
-    //-------- namespace --------
-    ns.crypto.PublicKey = PublicKey;
-    ns.crypto.PublicKeyFactory = PublicKeyFactory;
-
-    ns.crypto.register('PublicKey');
-    ns.crypto.register('PublicKeyFactory');
+    PublicKey.parse = function (key) {
+        if (!key) {
+            return null;
+        } else if (key instanceof PublicKey) {
+            return key;
+        } else if (key instanceof map) {
+            key = key.getMap();
+        }
+        var algorithm = CryptographyKey.getAlgorithm(key);
+        var factory = PublicKey.getFactory(algorithm);
+        if (!factory) {
+            factory = PublicKey.getFactory('*');  // unknown
+        }
+        return factory.parsePublicKey(key);
+    }
 
 })(DIMP);

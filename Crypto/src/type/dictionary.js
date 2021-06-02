@@ -114,7 +114,7 @@
     'use strict';
 
     var Arrays = ns.type.Arrays;
-    var Map = ns.type.Map;
+    var map = ns.type.Map;
 
     //
     //  Dictionary
@@ -128,19 +128,19 @@
     var dict = function (dictionary) {
         if (!dictionary) {
             dictionary = {};
-        } else if (dictionary instanceof Map) {
+        } else if (dictionary instanceof map) {
             dictionary = dictionary.getMap();
         }
         ns.type.Object.call(this);
         this.dictionary = dictionary;
     };
-    ns.Class(dict, ns.type.Object, [Map]);
+    ns.Class(dict, ns.type.Object, [map]);
 
     dict.prototype.getMap = function () {
         return this.dictionary;
     };
     dict.prototype.copyMap = function () {
-        return Map.copyMap(this.dictionary);
+        return map.copyMap(this.dictionary);
     };
 
     dict.prototype.valueOf = function () {
@@ -150,7 +150,7 @@
     dict.prototype.equals = function (other) {
         if (!other) {
             return !this.dictionary;
-        } else if (other instanceof Map) {
+        } else if (other instanceof map) {
             return Arrays.equals(this.dictionary, other.getMap());
         } else {
             return Arrays.equals(this.dictionary, other);
