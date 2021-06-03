@@ -70,10 +70,14 @@
     var maps_equal = function (dict1, dict2) {
         var keys1 = Object.keys(dict1);
         var keys2 = Object.keys(dict2);
-        if (keys1.length !== keys2.length) {
+        var len1 = keys1.length;
+        var len2 = keys2.length;
+        if (len1 !== len2) {
             return false;
         }
-        for (var k in keys1) {
+        var k;
+        for (var i = 0; i < len1; ++i) {
+            k = keys1[i];
             if (!objects_equal(dict1[k], dict2[k])) {
                 return false;
             }

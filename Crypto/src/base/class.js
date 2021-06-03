@@ -65,7 +65,9 @@
     var inherit = function (clazz, protocol) {
         var prototype = protocol.prototype;
         var names = Object.getOwnPropertyNames(prototype);
-        for (var key in names) {
+        var key;
+        for (var i = 0; i < names.length; ++i) {
+            key = names[i];
             if (clazz.prototype.hasOwnProperty(key)) {
                 continue;
             }

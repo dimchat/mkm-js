@@ -150,18 +150,19 @@ if (typeof MingKeMing !== "object") {
     ID.convert = function(members) {
         var array = [];
         var id;
-        for (var item in members) {
-            id = ID.parse(item);
-            if (!id) {
-                continue
+        for (var i = 0; i < members.length; ++i) {
+            id = ID.parse(members[i]);
+            if (id) {
+                array.push(id)
             }
-            array.push(id)
         }
         return array
     };
     ID.revert = function(members) {
         var array = [];
-        for (var id in members) {
+        var id;
+        for (var i = 0; i < members.length; ++i) {
+            id = members[i];
             if (typeof id === "string") {
                 array.push(id)
             } else {
@@ -656,7 +657,8 @@ if (typeof MingKeMing !== "object") {
     var factory = new IDFactory();
     ID.setFactory(factory);
     ID.ANYONE = factory.createID("anyone", Address.ANYWHERE, null);
-    ID.EVERYONE = factory.createID("everyone", Address.EVERYWHERE, null)
+    ID.EVERYONE = factory.createID("everyone", Address.EVERYWHERE, null);
+    ID.FOUNDER = factory.createID("moky", Address.ANYWHERE, null)
 })(MingKeMing);
 (function(ns) {
     var Dictionary = ns.type.Dictionary;

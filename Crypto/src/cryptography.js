@@ -88,8 +88,8 @@
         if (!plaintext || plaintext.length !== promise.length) {
             return false;
         }
-        for (var index = 0; index < promise.length; ++index) {
-            if (plaintext[index] !== promise[index]) {
+        for (var i = 0; i < promise.length; ++i) {
+            if (plaintext[i] !== promise[i]) {
                 return false;
             }
         }

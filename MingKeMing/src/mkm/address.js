@@ -136,5 +136,9 @@
      */
     ID.ANYONE = factory.createID('anyone', Address.ANYWHERE, null);
     ID.EVERYONE = factory.createID('everyone', Address.EVERYWHERE, null);
+    /**
+     *  DIM Founder
+     */
+    ID.FOUNDER = factory.createID('moky', Address.ANYWHERE, null);
 
 })(MingKeMing);

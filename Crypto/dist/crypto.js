@@ -115,7 +115,9 @@ if (typeof DIMP !== "object") {
     var inherit = function(clazz, protocol) {
         var prototype = protocol.prototype;
         var names = Object.getOwnPropertyNames(prototype);
-        for (var key in names) {
+        var key;
+        for (var i = 0; i < names.length; ++i) {
+            key = names[i];
             if (clazz.prototype.hasOwnProperty(key)) {
                 continue
             }
@@ -278,10 +280,14 @@ if (typeof DIMP !== "object") {
     var maps_equal = function(dict1, dict2) {
         var keys1 = Object.keys(dict1);
         var keys2 = Object.keys(dict2);
-        if (keys1.length !== keys2.length) {
+        var len1 = keys1.length;
+        var len2 = keys2.length;
+        if (len1 !== len2) {
             return false
         }
-        for (var k in keys1) {
+        var k;
+        for (var i = 0; i < len1; ++i) {
+            k = keys1[i];
             if (!objects_equal(dict1[k], dict2[k])) {
                 return false
             }
@@ -1112,21 +1118,27 @@ if (typeof DIMP !== "object") {
     var map_unwrap = function(dict) {
         var result = {};
         var keys = Object.keys(dict);
-        var name;
-        for (var k in keys) {
-            if (k instanceof str) {
-                name = k.toString()
-            } else {
-                name = k
+        var key;
+        for (var i = 0; i < keys.length; ++i) {
+            key = keys[i];
+            if (key instanceof str) {
+                key = key.toString()
             }
-            result[name] = unwrap(dict[k], true)
+            result[key] = unwrap(dict[key], true)
         }
         return result
     };
     var list_unwrap = function(array) {
         var result = [];
-        for (var item in array) {
-            result.push(unwrap(item, true))
+        var item;
+        for (var i = 0; i < array.length; ++i) {
+            item = array[i];
+            if (item) {
+                item = unwrap(item, true);
+                if (item) {
+                    result[i] = item
+                }
+            }
         }
         return result
     };
@@ -1594,8 +1606,8 @@ if (typeof DIMP !== "object") {
         if (!plaintext || plaintext.length !== promise.length) {
             return false
         }
-        for (var index = 0; index < promise.length; ++index) {
-            if (plaintext[index] !== promise[index]) {
+        for (var i = 0; i < promise.length; ++i) {
+            if (plaintext[i] !== promise[i]) {
                 return false
             }
         }
