@@ -1630,6 +1630,10 @@ if (typeof DIMP !== "object") {
         console.assert(false, "implement me!");
         return null
     };
+    DecryptKey.prototype.matches = function(pKey) {
+        console.assert(false, "implement me!");
+        return false
+    };
     ns.crypto.EncryptKey = EncryptKey;
     ns.crypto.DecryptKey = DecryptKey;
     ns.crypto.register("EncryptKey");
@@ -1714,6 +1718,10 @@ if (typeof DIMP !== "object") {
     var VerifyKey = function() {};
     ns.Interface(VerifyKey, [AsymmetricKey]);
     VerifyKey.prototype.verify = function(data, signature) {
+        console.assert(false, "implement me!");
+        return false
+    };
+    VerifyKey.prototype.matches = function(sKey) {
         console.assert(false, "implement me!");
         return false
     };

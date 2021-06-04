@@ -63,6 +63,16 @@
         console.assert(false, 'implement me!');
         return null;
     };
+    /**
+     *  OK = decrypt(encrypt(data, SK), PK) == data
+     *
+     * @param {EncryptKey} pKey - encrypt key
+     * @return {boolean} true on signature matched
+     */
+    DecryptKey.prototype.matches = function (pKey) {
+        console.assert(false, 'implement me!');
+        return false;
+    };
 
     //-------- namespace --------
     ns.crypto.EncryptKey = EncryptKey;

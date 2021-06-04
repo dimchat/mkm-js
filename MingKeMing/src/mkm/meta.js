@@ -30,6 +30,22 @@
 // =============================================================================
 //
 
+/**
+ *  User/Group Meta data
+ *  ~~~~~~~~~~~~~~~~~~~~
+ *  This class is used to generate entity ID
+ *
+ *      data format: {
+ *          version: 1,          // algorithm version
+ *          seed: "moKy",        // user/group name
+ *          key: "{public key}", // PK = secp256k1(SK);
+ *          fingerprint: "..."   // CT = sign(seed, SK);
+ *      }
+ *
+ *      algorithm:
+ *          fingerprint = sign(seed, SK);
+ */
+
 //! require 'protocol/address.js'
 //! require 'protocol/identifier.js'
 //! require 'protocol/meta.js'
@@ -41,25 +57,16 @@
     var PublicKey = ns.crypto.PublicKey;
 
     var MetaType = ns.protocol.MetaType;
-    var NetworkType = ns.protocol.NetworkType;
     var ID = ns.protocol.ID;
     var Meta = ns.protocol.Meta;
-    var Address = ns.protocol.Address;
 
     /**
-     *  User/Group Meta data
-     *  ~~~~~~~~~~~~~~~~~~~~
-     *  This class is used to generate entity ID
+     *  Create Meta
      *
-     *      data format: {
-     *          version: 1,          // algorithm version
-     *          seed: "moKy",        // user/group name
-     *          key: "{public key}", // PK = secp256k1(SK);
-     *          fingerprint: "..."   // CT = sign(seed, SK);
-     *      }
-     *
-     *      algorithm:
-     *          fingerprint = sign(seed, SK);
+     *  Usages:
+     *      1. new BaseMeta(map);
+     *      2. new BaseMeta(type, key);
+     *      3. new BaseMeta(type, key, seed, fingerprint);
      */
     var BaseMeta = function () {
         var type, key, seed, fingerprint;

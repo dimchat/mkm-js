@@ -47,7 +47,7 @@ mkm_tests = [];
 
         var id = meta.generateID(NetworkType.MAIN);
         log('generated ID: ', id);
-        assert(id.isValid() === true, 'failed to generate ID')
+        assert(id.getType() === 0x08, 'failed to generate ID')
     };
     mkm_tests.push(test_meta);
 

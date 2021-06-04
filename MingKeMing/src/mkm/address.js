@@ -90,7 +90,7 @@
         this.addresses[Address.ANYWHERE.toString()] = Address.ANYWHERE;
         this.addresses[Address.EVERYWHERE.toString()] = Address.EVERYWHERE;
     };
-    ns.Interface(AddressFactory, [Address.Factory])
+    ns.Class(AddressFactory, null, [Address.Factory])
 
     AddressFactory.prototype.parseAddress = function (string) {
         var address = this.addresses[string];

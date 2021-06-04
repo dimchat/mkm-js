@@ -43,6 +43,16 @@
     var Visa = ns.protocol.Visa;
     var BaseDocument = ns.BaseDocument;
 
+    /**
+     *  Create base visa document
+     *
+     *  1. Create visa with info
+     *      new BaseVisa(map);
+     *  2. Create a new empty visa with ID
+     *      new BaseVisa(identifier);
+     *  3. Create visa with data & signature loaded from local storage
+     *      new BaseVisa(identifier, data, signature);
+     */
     var BaseVisa = function () {
         if (arguments.length === 3) {
             // new BaseVisa(identifier, data, signature);
@@ -107,6 +117,16 @@
     var Bulletin = ns.protocol.Bulletin;
     var BaseDocument = ns.BaseDocument;
 
+    /**
+     *  Create base group profile
+     *
+     *  1. Create group profile with info
+     *      new BaseBulletin(map);
+     *  2. Create a new empty group profile with ID
+     *      new BaseBulletin(identifier);
+     *  3. Create group profile with data & signature loaded from local storage
+     *      new BaseBulletin(identifier, data, signature);
+     */
     var BaseBulletin = function () {
         if (arguments.length === 3) {
             // new BaseBulletin(identifier, data, signature);

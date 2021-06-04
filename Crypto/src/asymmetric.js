@@ -92,6 +92,17 @@
         console.assert(false, 'implement me!');
         return false;
     };
+    // noinspection JSUnusedLocalSymbols
+    /**
+     *  OK = verify(data, sign(data, SK), PK)
+     *
+     * @param {SignKey} sKey - private key
+     * @return {boolean} true on signature matched
+     */
+    VerifyKey.prototype.matches = function (sKey) {
+        console.assert(false, 'implement me!');
+        return false;
+    };
 
     //-------- namespace --------
     ns.crypto.AsymmetricKey = AsymmetricKey;

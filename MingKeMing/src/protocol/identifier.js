@@ -202,7 +202,7 @@
      * @return {ID}
      */
     ID.create = function (name, address, terminal) {
-        return ID.getFactory().create(name, address, terminal);
+        return ID.getFactory().createID(name, address, terminal);
     };
 
     /**

@@ -269,7 +269,7 @@ crypto_tests = [];
                 + "7ieJEzQAp++O+d3WUQIDAQAB\n"
                 + "-----END PUBLIC KEY-----"
         };
-        PK = PublicKey.getInstance(key);
+        PK = PublicKey.parse(key);
 
         key = {
             algorithm: AsymmetricKey.RSA,
@@ -289,7 +289,7 @@ crypto_tests = [];
                 + "7Fmn9KfbQrUHPwwdo5nuK+oVVYnFkyKGPSer7ras8ro=\n"
                 + "-----END RSA PRIVATE KEY-----"
         };
-        SK = PrivateKey.getInstance(key);
+        SK = PrivateKey.parse(key);
         log('PublicKey: ', PK);
         log('PrivateKey: ', SK);
 
@@ -355,7 +355,7 @@ crypto_tests = [];
             data: 'C2+xGizLL1G1+z9QLPYNdp/bPP/seDvNw45SXPAvQqk=',
             iv: 'SxPwi6u4+ZLXLdAFJezvSQ=='
         };
-        var pwd = new SymmetricKey.getInstance(key);
+        var pwd = new SymmetricKey.parse(key);
 
         var expect = '0xtbqZN6x2aWTZn0DpCoCA==';
 
