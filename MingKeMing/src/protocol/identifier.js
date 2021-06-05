@@ -160,6 +160,7 @@
 (function (ns) {
     'use strict';
 
+    var str = ns.type.String;
     var ID = ns.protocol.ID;
 
     /**
@@ -214,9 +215,9 @@
     ID.parse = function (identifier) {
         if (!identifier) {
             return null;
-        } else if (identifier instanceof ID) {
+        } else if (ns.Interface.conforms(identifier, ID)) {
             return identifier;
-        } else if (identifier instanceof ns.type.String) {
+        } else if (identifier instanceof str) {
             identifier = identifier.toString();
         }
         return ID.getFactory().parseID(identifier);

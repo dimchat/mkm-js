@@ -91,7 +91,7 @@
             // all documents must be verified before saving into local storage
             status = 1;
         } else {
-            throw SyntaxError('document arguments error: ' + arguments);
+            throw new SyntaxError('document arguments error: ' + arguments);
         }
         Dictionary.call(this, map);
         this.identifier = identifier;

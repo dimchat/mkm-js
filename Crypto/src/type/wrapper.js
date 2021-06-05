@@ -114,12 +114,12 @@
                     return list_unwrap(object);
                 }
             } else {
-                if (object instanceof map) {
+                if (ns.Interface.conforms(object, map)) {
                     object = object.getMap();
                 }
                 return map_unwrap(object);
             }
-        } else if (object instanceof map) {
+        } else if (ns.Interface.conforms(object, map)) {
             object = object.getMap();
         }
         return object;

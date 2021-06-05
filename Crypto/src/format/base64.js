@@ -124,7 +124,7 @@
         var str = string.replace(/[^A-Za-z0-9+\/=]/g, '');
         var length = str.length;
         if ((length % 4) !== 0 || !/^[A-Za-z0-9+\/]+={0,2}$/.test(str)) {
-            throw Error('base64 string error: ' + string)
+            throw new Error('base64 string error: ' + string)
         }
         var array = new Data(length * 3 / 4);
         // parse each 4 chars to 3 bytes

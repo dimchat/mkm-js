@@ -30,11 +30,15 @@
 (function (ns) {
     'use strict';
 
+    var AsymmetricKey = ns.crypto.AsymmetricKey;
     var SignKey = ns.crypto.SignKey;
 
     var PrivateKey = function () {
     };
     ns.Interface(PrivateKey, [SignKey]);
+
+    PrivateKey.RSA = AsymmetricKey.RSA;
+    PrivateKey.ECC = AsymmetricKey.ECC;
 
     /**
      *  Create public key from this private key
@@ -105,7 +109,7 @@
     PrivateKey.generate = function (algorithm) {
         var factory = PrivateKey.getFactory(algorithm);
         if (!factory) {
-            throw ReferenceError('key algorithm not support: ' + algorithm);
+            throw new ReferenceError('key algorithm not support: ' + algorithm);
         }
         return factory.generatePrivateKey();
     };
@@ -119,9 +123,9 @@
     PrivateKey.parse = function (key) {
         if (!key) {
             return null;
-        } else if (key instanceof PrivateKey) {
+        } else if (ns.Interface.conforms(key, PrivateKey)) {
             return key;
-        } else if (key instanceof map) {
+        } else if (ns.Interface.conforms(key, map)) {
             key = key.getMap();
         }
         var algorithm = CryptographyKey.getAlgorithm(key);

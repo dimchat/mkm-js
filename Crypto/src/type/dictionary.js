@@ -54,7 +54,7 @@
         return null;
     };
     map.copyMap = function (dictionary) {
-        if (dictionary instanceof map) {
+        if (ns.Interface.conforms(dictionary, map)) {
             dictionary = dictionary.getMap();
         }
         var json = ns.format.JSON.encode(dictionary);
@@ -128,7 +128,7 @@
     var dict = function (dictionary) {
         if (!dictionary) {
             dictionary = {};
-        } else if (dictionary instanceof map) {
+        } else if (ns.Interface.conforms(dictionary, map)) {
             dictionary = dictionary.getMap();
         }
         ns.type.Object.call(this);
@@ -150,7 +150,7 @@
     dict.prototype.equals = function (other) {
         if (!other) {
             return !this.dictionary;
-        } else if (other instanceof map) {
+        } else if (ns.Interface.conforms(other, map)) {
             return Arrays.equals(this.dictionary, other.getMap());
         } else {
             return Arrays.equals(this.dictionary, other);

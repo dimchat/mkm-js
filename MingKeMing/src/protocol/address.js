@@ -87,6 +87,7 @@
 (function (ns) {
     'use strict';
 
+    var str = ns.type.String;
     var Address = ns.protocol.Address;
 
     /**
@@ -123,9 +124,9 @@
     Address.parse = function (address) {
         if (!address) {
             return null;
-        } else if (address instanceof Address) {
+        } else if (ns.Interface.conforms(address, Address)) {
             return address;
-        } else if (address instanceof ns.type.String) {
+        } else if (address instanceof str) {
             address = address.toString();
         }
         return Address.getFactory().parseAddress(address);

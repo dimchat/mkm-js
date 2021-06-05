@@ -286,7 +286,7 @@
     Document.create = function (type, identifier, data, signature) {
         var factory = Document.getFactory(type);
         if (!factory) {
-            throw ReferenceError('document type not support: ' + type);
+            throw new ReferenceError('document type not support: ' + type);
         }
         return factory.createDocument(identifier, data, signature);
     };
@@ -300,9 +300,9 @@
     Document.parse = function (doc) {
         if (!doc) {
             return null;
-        } else if (doc instanceof Document) {
+        } else if (ns.Interface.conforms(doc, Document)) {
             return doc;
-        } else if (doc instanceof map) {
+        } else if (ns.Interface.conforms(doc, map)) {
             doc = doc.getMap();
         }
         var type = Document.getType(doc);

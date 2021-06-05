@@ -81,7 +81,7 @@ if (typeof DIMP !== 'object') {
             // space[name] = clazz;
             return true;
         } else {
-            // throw Error('conflict name: ' + name);
+            // throw new Error('conflict name: ' + name);
             return false;
         }
     };
@@ -101,7 +101,7 @@ if (typeof DIMP !== 'object') {
             name = all[i];
             inner = this[name];
             if (!inner) {
-                throw Error('empty object: ' + name);
+                throw new Error('empty object: ' + name);
             }
             if (is_space(inner)) {
                 // inner space
@@ -110,7 +110,7 @@ if (typeof DIMP !== 'object') {
                 }
                 inner.exports(outerSpace[name]);
             } else if (outerSpace.hasOwnProperty(name)) {
-                // throw Error('conflict name: ' + name);
+                // throw new Error('conflict name: ' + name);
             } else {
                 outerSpace[name] = inner;
             }

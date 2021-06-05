@@ -165,7 +165,7 @@
     SymmetricKey.generate = function (algorithm) {
         var factory = SymmetricKey.getFactory(algorithm);
         if (!factory) {
-            throw ReferenceError('key algorithm not support: ' + algorithm);
+            throw new ReferenceError('key algorithm not support: ' + algorithm);
         }
         return factory.generateSymmetricKey();
     };
@@ -179,9 +179,9 @@
     SymmetricKey.parse = function (key) {
         if (!key) {
             return null;
-        } else if (key instanceof SymmetricKey) {
+        } else if (ns.Interface.conforms(key, SymmetricKey)) {
             return key;
-        } else if (key instanceof map) {
+        } else if (ns.Interface.conforms(key, map)) {
             key = key.getMap();
         }
         var algorithm = CryptographyKey.getAlgorithm(key);

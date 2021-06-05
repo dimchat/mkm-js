@@ -53,7 +53,7 @@ if (typeof DIMP !== "object") {
             name = all[i];
             inner = this[name];
             if (!inner) {
-                throw Error("empty object: " + name)
+                throw new Error("empty object: " + name)
             }
             if (is_space(inner)) {
                 if (typeof outerSpace[name] !== "object") {
@@ -112,44 +112,44 @@ if (typeof DIMP !== "object") {
         }
         return true
     };
-    var inherit = function(clazz, protocol) {
-        var prototype = protocol.prototype;
+    var inherits = function(child, parent) {
+        var prototype = parent.prototype;
         var names = Object.getOwnPropertyNames(prototype);
         var key;
         for (var i = 0; i < names.length; ++i) {
             key = names[i];
-            if (clazz.prototype.hasOwnProperty(key)) {
+            if (child.prototype.hasOwnProperty(key)) {
                 continue
             }
             var fn = prototype[key];
             if (typeof fn !== "function") {
                 continue
             }
-            clazz.prototype[key] = fn
+            child.prototype[key] = fn
         }
-        return clazz
+        return child
     };
-    var inherits = function(clazz, interfaces) {
+    var inherits_interfaces = function(child, interfaces) {
         for (var i = 0; i < interfaces.length; ++i) {
-            clazz = inherit(clazz, interfaces[i])
+            child = inherits(child, interfaces[i])
         }
-        return clazz
+        return child
     };
-    var interfacefy = function(child, parent) {
+    var interfacefy = function(child, parents) {
         if (!child) {
             child = function() {}
         }
-        if (parent) {
+        if (parents) {
             var ancestors;
-            if (parent instanceof Array) {
-                ancestors = parent
+            if (parents instanceof Array) {
+                ancestors = parents
             } else {
                 ancestors = [];
                 for (var i = 1; i < arguments.length; ++i) {
                     ancestors.push(arguments[i])
                 }
             }
-            child = inherits(child, ancestors)
+            child = inherits_interfaces(child, ancestors)
         }
         return child
     };
@@ -162,7 +162,7 @@ if (typeof DIMP !== "object") {
             parent = Object
         }
         child.prototype = Object.create(parent.prototype);
-        inherit(child, parent);
+        inherits(child, parent);
         if (interfaces) {
             var ancestors;
             if (interfaces instanceof Array) {
@@ -173,7 +173,7 @@ if (typeof DIMP !== "object") {
                     ancestors.push(arguments[i])
                 }
             }
-            child = inherits(child, ancestors)
+            child = inherits_interfaces(child, ancestors)
         }
         child.prototype.constructor = child;
         return child
@@ -463,7 +463,7 @@ if (typeof DIMP !== "object") {
                 v = v.value
             } else {
                 if (typeof v !== "number") {
-                    throw TypeError("Enum value must be a number!")
+                    throw new TypeError("Enum value must be a number!")
                 }
             }
             e = new enumeration(v, name);
@@ -510,7 +510,7 @@ if (typeof DIMP !== "object") {
                     this.offset = arguments[1];
                     this.length = arguments[2]
                 } else {
-                    throw SyntaxError("arguments error: " + arguments)
+                    throw new SyntaxError("arguments error: " + arguments)
                 }
             }
         }
@@ -620,7 +620,7 @@ if (typeof DIMP !== "object") {
                     start = adjust(start, this.length);
                     end = adjust(end, this.length)
                 } else {
-                    throw SyntaxError("arguments error: " + arguments)
+                    throw new SyntaxError("arguments error: " + arguments)
                 }
             }
         }
@@ -638,11 +638,11 @@ if (typeof DIMP !== "object") {
         if (index < 0) {
             index += this.length;
             if (index < 0) {
-                throw RangeError("error index: " + (index - this.length) + ", length: " + this.length)
+                throw new RangeError("error index: " + (index - this.length) + ", length: " + this.length)
             }
         } else {
             if (index >= this.length) {
-                throw RangeError("error index: " + index + ", length: " + this.length)
+                throw new RangeError("error index: " + index + ", length: " + this.length)
             }
         }
         return this.buffer[this.offset + index]
@@ -677,7 +677,7 @@ if (typeof DIMP !== "object") {
                     start = adjust(start, this.length);
                     end = adjust(end, this.length)
                 } else {
-                    throw SyntaxError("arguments error: " + arguments)
+                    throw new SyntaxError("arguments error: " + arguments)
                 }
             }
         }
@@ -814,7 +814,7 @@ if (typeof DIMP !== "object") {
         if (pos < 0) {
             pos += this.length;
             if (pos < 0) {
-                throw RangeError("error position: " + (pos - this.length) + ", length: " + this.length)
+                throw new RangeError("error position: " + (pos - this.length) + ", length: " + this.length)
             }
         }
         var start, end;
@@ -920,11 +920,11 @@ if (typeof DIMP !== "object") {
         if (index < 0) {
             index += this.length;
             if (index < 0) {
-                throw RangeError("error index: " + (index - this.length) + ", length: " + this.length)
+                throw new RangeError("error index: " + (index - this.length) + ", length: " + this.length)
             }
         } else {
             if (index >= this.length) {
-                throw RangeError("index error: " + index + ", length: " + this.length)
+                throw new RangeError("index error: " + index + ", length: " + this.length)
             }
         }
         if (index === 0) {
@@ -944,7 +944,7 @@ if (typeof DIMP !== "object") {
     };
     bytes.prototype.shift = function() {
         if (this.length < 1) {
-            throw RangeError("data empty!")
+            throw new RangeError("data empty!")
         }
         var erased = this.buffer[this.offset];
         this.offset += 1;
@@ -953,7 +953,7 @@ if (typeof DIMP !== "object") {
     };
     bytes.prototype.pop = function() {
         if (this.length < 1) {
-            throw RangeError("data empty!")
+            throw new RangeError("data empty!")
         }
         this.length -= 1;
         return this.buffer[this.offset + this.length]
@@ -1031,7 +1031,7 @@ if (typeof DIMP !== "object") {
         return null
     };
     map.copyMap = function(dictionary) {
-        if (dictionary instanceof map) {
+        if (ns.Interface.conforms(dictionary, map)) {
             dictionary = dictionary.getMap()
         }
         var json = ns.format.JSON.encode(dictionary);
@@ -1062,7 +1062,7 @@ if (typeof DIMP !== "object") {
         if (!dictionary) {
             dictionary = {}
         } else {
-            if (dictionary instanceof map) {
+            if (ns.Interface.conforms(dictionary, map)) {
                 dictionary = dictionary.getMap()
             }
         }
@@ -1083,7 +1083,7 @@ if (typeof DIMP !== "object") {
         if (!other) {
             return !this.dictionary
         } else {
-            if (other instanceof map) {
+            if (ns.Interface.conforms(other, map)) {
                 return Arrays.equals(this.dictionary, other.getMap())
             } else {
                 return Arrays.equals(this.dictionary, other)
@@ -1165,13 +1165,13 @@ if (typeof DIMP !== "object") {
                     return list_unwrap(object)
                 }
             } else {
-                if (object instanceof map) {
+                if (ns.Interface.conforms(object, map)) {
                     object = object.getMap()
                 }
                 return map_unwrap(object)
             }
         } else {
-            if (object instanceof map) {
+            if (ns.Interface.conforms(object, map)) {
                 object = object.getMap()
             }
         }
@@ -1419,7 +1419,7 @@ if (typeof DIMP !== "object") {
         var str = string.replace(/[^A-Za-z0-9+\/=]/g, "");
         var length = str.length;
         if ((length % 4) !== 0 || !/^[A-Za-z0-9+\/]+={0,2}$/.test(str)) {
-            throw Error("base64 string error: " + string)
+            throw new Error("base64 string error: " + string)
         }
         var array = new Data(length * 3 / 4);
         var ch1, ch2, ch3, ch4;
@@ -1564,7 +1564,7 @@ if (typeof DIMP !== "object") {
     json.prototype.encode = function(container) {
         var string = JSON.stringify(container);
         if (!string) {
-            throw TypeError("failed to encode JSON object: " + container)
+            throw new TypeError("failed to encode JSON object: " + container)
         }
         return ns.format.UTF8.encode(string)
     };
@@ -1576,7 +1576,7 @@ if (typeof DIMP !== "object") {
             string = ns.format.UTF8.decode(json)
         }
         if (!string) {
-            throw TypeError("failed to decode JSON data: " + json)
+            throw new TypeError("failed to decode JSON data: " + json)
         }
         return JSON.parse(string)
     };
@@ -1674,7 +1674,7 @@ if (typeof DIMP !== "object") {
     SymmetricKey.generate = function(algorithm) {
         var factory = SymmetricKey.getFactory(algorithm);
         if (!factory) {
-            throw ReferenceError("key algorithm not support: " + algorithm)
+            throw new ReferenceError("key algorithm not support: " + algorithm)
         }
         return factory.generateSymmetricKey()
     };
@@ -1682,10 +1682,10 @@ if (typeof DIMP !== "object") {
         if (!key) {
             return null
         } else {
-            if (key instanceof SymmetricKey) {
+            if (ns.Interface.conforms(key, SymmetricKey)) {
                 return key
             } else {
-                if (key instanceof map) {
+                if (ns.Interface.conforms(key, map)) {
                     key = key.getMap()
                 }
             }
@@ -1733,9 +1733,12 @@ if (typeof DIMP !== "object") {
     ns.crypto.register("VerifyKey")
 })(DIMP);
 (function(ns) {
+    var AsymmetricKey = ns.crypto.AsymmetricKey;
     var VerifyKey = ns.crypto.VerifyKey;
     var PublicKey = function() {};
     ns.Interface(PublicKey, [VerifyKey]);
+    PublicKey.RSA = AsymmetricKey.RSA;
+    PublicKey.ECC = AsymmetricKey.ECC;
     ns.crypto.PublicKey = PublicKey;
     ns.crypto.register("PublicKey")
 })(DIMP);
@@ -1761,10 +1764,10 @@ if (typeof DIMP !== "object") {
         if (!key) {
             return null
         } else {
-            if (key instanceof PublicKey) {
+            if (ns.Interface.conforms(key, PublicKey)) {
                 return key
             } else {
-                if (key instanceof map) {
+                if (ns.Interface.conforms(key, map)) {
                     key = key.getMap()
                 }
             }
@@ -1778,9 +1781,12 @@ if (typeof DIMP !== "object") {
     }
 })(DIMP);
 (function(ns) {
+    var AsymmetricKey = ns.crypto.AsymmetricKey;
     var SignKey = ns.crypto.SignKey;
     var PrivateKey = function() {};
     ns.Interface(PrivateKey, [SignKey]);
+    PrivateKey.RSA = AsymmetricKey.RSA;
+    PrivateKey.ECC = AsymmetricKey.ECC;
     PrivateKey.prototype.getPublicKey = function() {
         console.assert(false, "implement me!");
         return null
@@ -1813,7 +1819,7 @@ if (typeof DIMP !== "object") {
     PrivateKey.generate = function(algorithm) {
         var factory = PrivateKey.getFactory(algorithm);
         if (!factory) {
-            throw ReferenceError("key algorithm not support: " + algorithm)
+            throw new ReferenceError("key algorithm not support: " + algorithm)
         }
         return factory.generatePrivateKey()
     };
@@ -1821,10 +1827,10 @@ if (typeof DIMP !== "object") {
         if (!key) {
             return null
         } else {
-            if (key instanceof PrivateKey) {
+            if (ns.Interface.conforms(key, PrivateKey)) {
                 return key
             } else {
-                if (key instanceof map) {
+                if (ns.Interface.conforms(key, map)) {
                     key = key.getMap()
                 }
             }

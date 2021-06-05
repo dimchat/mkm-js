@@ -125,7 +125,7 @@
             if (v instanceof base_enum) {
                 v = v.value;
             } else if (typeof v !== 'number') {
-                throw TypeError('Enum value must be a number!');
+                throw new TypeError('Enum value must be a number!');
             }
             e = new enumeration(v, name);
             enumeration[name] = e;

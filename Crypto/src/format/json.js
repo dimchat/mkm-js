@@ -44,7 +44,7 @@
     json.prototype.encode = function (container) {
         var string = JSON.stringify(container);
         if (!string) {
-            throw TypeError('failed to encode JSON object: ' + container);
+            throw new TypeError('failed to encode JSON object: ' + container);
         }
         return ns.format.UTF8.encode(string);
     };
@@ -57,7 +57,7 @@
             string = ns.format.UTF8.decode(json);
         }
         if (!string) {
-            throw TypeError('failed to decode JSON data: ' + json);
+            throw new TypeError('failed to decode JSON data: ' + json);
         }
         return JSON.parse(string);
     };

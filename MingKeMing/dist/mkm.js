@@ -82,6 +82,7 @@ if (typeof MingKeMing !== "object") {
     ns.protocol.register("Address")
 })(MingKeMing);
 (function(ns) {
+    var str = ns.type.String;
     var Address = ns.protocol.Address;
     var AddressFactory = function() {};
     ns.Interface(AddressFactory, null);
@@ -101,10 +102,10 @@ if (typeof MingKeMing !== "object") {
         if (!address) {
             return null
         } else {
-            if (address instanceof Address) {
+            if (ns.Interface.conforms(address, Address)) {
                 return address
             } else {
-                if (address instanceof ns.type.String) {
+                if (address instanceof str) {
                     address = address.toString()
                 }
             }
@@ -175,6 +176,7 @@ if (typeof MingKeMing !== "object") {
     ns.protocol.register("ID")
 })(MingKeMing);
 (function(ns) {
+    var str = ns.type.String;
     var ID = ns.protocol.ID;
     var IDFactory = function() {};
     ns.Interface(IDFactory, null);
@@ -201,10 +203,10 @@ if (typeof MingKeMing !== "object") {
         if (!identifier) {
             return null
         } else {
-            if (identifier instanceof ID) {
+            if (ns.Interface.conforms(identifier, ID)) {
                 return identifier
             } else {
-                if (identifier instanceof ns.type.String) {
+                if (identifier instanceof str) {
                     identifier = identifier.toString()
                 }
             }
@@ -236,7 +238,7 @@ if (typeof MingKeMing !== "object") {
     Meta.getKey = function(meta) {
         var key = meta["key"];
         if (!key) {
-            throw TypeError("meta key not found: " + meta)
+            throw new TypeError("meta key not found: " + meta)
         }
         return PublicKey.parse(key)
     };
@@ -308,14 +310,14 @@ if (typeof MingKeMing !== "object") {
     Meta.create = function(type, key, seed, fingerprint) {
         var factory = Meta.getFactory(type);
         if (!factory) {
-            throw ReferenceError("meta type not support: " + type)
+            throw new ReferenceError("meta type not support: " + type)
         }
         return factory.createMeta(key, seed, fingerprint)
     };
     Meta.generate = function(type, sKey, seed) {
         var factory = Meta.getFactory(type);
         if (!factory) {
-            throw ReferenceError("meta type not support: " + type)
+            throw new ReferenceError("meta type not support: " + type)
         }
         return factory.generateMeta(sKey, seed)
     };
@@ -323,10 +325,10 @@ if (typeof MingKeMing !== "object") {
         if (!meta) {
             return null
         } else {
-            if (meta instanceof Meta) {
+            if (ns.Interface.conforms(meta, Meta)) {
                 return meta
             } else {
-                if (meta instanceof map) {
+                if (ns.Interface.conforms(meta, map)) {
                     meta = meta.getMap()
                 }
             }
@@ -445,7 +447,7 @@ if (typeof MingKeMing !== "object") {
     Document.create = function(type, identifier, data, signature) {
         var factory = Document.getFactory(type);
         if (!factory) {
-            throw ReferenceError("document type not support: " + type)
+            throw new ReferenceError("document type not support: " + type)
         }
         return factory.createDocument(identifier, data, signature)
     };
@@ -453,10 +455,10 @@ if (typeof MingKeMing !== "object") {
         if (!doc) {
             return null
         } else {
-            if (doc instanceof Document) {
+            if (ns.Interface.conforms(doc, Document)) {
                 return doc
             } else {
-                if (doc instanceof map) {
+                if (ns.Interface.conforms(doc, map)) {
                     doc = doc.getMap()
                 }
             }
@@ -707,7 +709,7 @@ if (typeof MingKeMing !== "object") {
                     };
                     status = 1
                 } else {
-                    throw SyntaxError("meta arguments error: " + arguments)
+                    throw new SyntaxError("meta arguments error: " + arguments)
                 }
             }
         }
@@ -768,10 +770,10 @@ if (typeof MingKeMing !== "object") {
         if (!this.isValid()) {
             return false
         }
-        if (id_or_key instanceof ID) {
+        if (ns.Interface.conforms(id_or_key, ID)) {
             return match_identifier.call(this, id_or_key)
         } else {
-            if (id_or_key instanceof PublicKey) {
+            if (ns.Interface.conforms(id_or_key, PublicKey)) {
                 return match_public_key.call(this, id_or_key)
             }
         }
@@ -845,7 +847,7 @@ if (typeof MingKeMing !== "object") {
                     properties = null;
                     status = 1
                 } else {
-                    throw SyntaxError("document arguments error: " + arguments)
+                    throw new SyntaxError("document arguments error: " + arguments)
                 }
             }
         }
@@ -971,7 +973,7 @@ if (typeof MingKeMing !== "object") {
         if (arguments.length === 3) {
             BaseDocument.call(this, arguments[0], arguments[1], arguments[2])
         } else {
-            if (arguments[0] instanceof ID) {
+            if (ns.Interface.conforms(arguments[0], ID)) {
                 BaseDocument.call(this, arguments[0], Document.VISA)
             } else {
                 if (arguments.length === 1) {
@@ -987,7 +989,7 @@ if (typeof MingKeMing !== "object") {
             var key = this.getProperty("key");
             if (key) {
                 key = PublicKey.parse(key);
-                if (key instanceof EncryptKey) {
+                if (ns.Interface.conforms(key, EncryptKey)) {
                     this.key = key
                 }
             }
@@ -1016,7 +1018,7 @@ if (typeof MingKeMing !== "object") {
         if (arguments.length === 3) {
             BaseDocument.call(this, arguments[0], arguments[1], arguments[2])
         } else {
-            if (arguments[0] instanceof ID) {
+            if (ns.Interface.conforms(arguments[0], ID)) {
                 BaseDocument.call(this, arguments[0], Document.BULLETIN)
             } else {
                 if (arguments.length === 1) {

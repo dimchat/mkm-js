@@ -66,7 +66,7 @@
             index += this.length;  // count from right hand
             if (index < 0) {
                 return false;      // too small
-                //throw RangeError('error index: ' + (index - this.length) + ', length: ' + this.length);
+                //throw new RangeError('error index: ' + (index - this.length) + ', length: ' + this.length);
             }
         }
         // check position
@@ -136,7 +136,7 @@
         if (pos < 0) {
             pos += this.length;  // count from right hand
             if (pos < 0) {
-                throw RangeError('error position: ' + (pos - this.length) + ', length: ' + this.length);
+                throw new RangeError('error position: ' + (pos - this.length) + ', length: ' + this.length);
             }
         }
         var start, end;
@@ -223,7 +223,7 @@
             index += this.length;  // count from right hand
             if (index < 0) {
                 return false;      // too small
-                //throw RangeError('error index: ' + (index - this.length) + ', length: ' + this.length);
+                //throw new RangeError('error index: ' + (index - this.length) + ', length: ' + this.length);
             }
         }
         if (index >= this.length) {
@@ -299,10 +299,10 @@
         if (index < 0) {
             index += this.length;  // count from right hand
             if (index < 0) {       // too small
-                throw RangeError('error index: ' + (index - this.length) + ', length: ' + this.length);
+                throw new RangeError('error index: ' + (index - this.length) + ', length: ' + this.length);
             }
         } else if (index >= this.length) {  // too big
-            throw RangeError('index error: ' + index + ', length: ' + this.length);
+            throw new RangeError('index error: ' + index + ', length: ' + this.length);
         }
         if (index === 0) {
             // remove the first element
@@ -332,7 +332,7 @@
      */
     bytes.prototype.shift = function () {
         if (this.length < 1) {
-            throw RangeError('data empty!');
+            throw new RangeError('data empty!');
         }
         var erased = this.buffer[this.offset];
         this.offset += 1;
@@ -348,7 +348,7 @@
      */
     bytes.prototype.pop = function () {
         if (this.length < 1) {
-            throw RangeError('data empty!');
+            throw new RangeError('data empty!');
         }
         this.length -= 1;
         return this.buffer[this.offset + this.length];

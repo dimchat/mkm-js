@@ -30,11 +30,15 @@
 (function (ns) {
     'use strict';
 
+    var AsymmetricKey = ns.crypto.AsymmetricKey;
     var VerifyKey = ns.crypto.VerifyKey;
 
     var PublicKey = function () {
     };
     ns.Interface(PublicKey, [VerifyKey]);
+
+    PublicKey.RSA = AsymmetricKey.RSA;
+    PublicKey.ECC = AsymmetricKey.ECC;
 
     //-------- namespace --------
     ns.crypto.PublicKey = PublicKey;
@@ -90,9 +94,9 @@
     PublicKey.parse = function (key) {
         if (!key) {
             return null;
-        } else if (key instanceof PublicKey) {
+        } else if (ns.Interface.conforms(key, PublicKey)) {
             return key;
-        } else if (key instanceof map) {
+        } else if (ns.Interface.conforms(key, map)) {
             key = key.getMap();
         }
         var algorithm = CryptographyKey.getAlgorithm(key);

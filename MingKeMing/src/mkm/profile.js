@@ -57,7 +57,7 @@
         if (arguments.length === 3) {
             // new BaseVisa(identifier, data, signature);
             BaseDocument.call(this, arguments[0], arguments[1], arguments[2]);
-        } else if (arguments[0] instanceof ID) {
+        } else if (ns.Interface.conforms(arguments[0], ID)) {
             // new BaseVisa(identifier);
             BaseDocument.call(this, arguments[0], Document.VISA);
         } else if (arguments.length === 1) {
@@ -80,7 +80,7 @@
             var key = this.getProperty('key');
             if (key) {
                 key = PublicKey.parse(key);
-                if (key instanceof EncryptKey) {
+                if (ns.Interface.conforms(key, EncryptKey)) {
                     this.key = key;
                 }
             }
@@ -131,7 +131,7 @@
         if (arguments.length === 3) {
             // new BaseBulletin(identifier, data, signature);
             BaseDocument.call(this, arguments[0], arguments[1], arguments[2]);
-        } else if (arguments[0] instanceof ID) {
+        } else if (ns.Interface.conforms(arguments[0], ID)) {
             // new BaseBulletin(identifier);
             BaseDocument.call(this, arguments[0], Document.BULLETIN);
         } else if (arguments.length === 1) {

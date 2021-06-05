@@ -76,7 +76,7 @@
             this.offset = arguments[1];
             this.length = arguments[2];
         } else {
-            throw SyntaxError('arguments error: ' + arguments);
+            throw new SyntaxError('arguments error: ' + arguments);
         }
     };
     ns.Class(bytes, ns.type.Object, null);
@@ -234,7 +234,7 @@
             start = adjust(start, this.length);
             end = adjust(end, this.length);
         } else {
-            throw SyntaxError('arguments error: ' + arguments);
+            throw new SyntaxError('arguments error: ' + arguments);
         }
         if (typeof sub === 'number') {
             return find_value.call(this, sub & 0xFF, start, end);
@@ -256,10 +256,10 @@
         if (index < 0) {
             index += this.length;
             if (index < 0) {
-                throw RangeError('error index: ' + (index - this.length) + ', length: ' + this.length);
+                throw new RangeError('error index: ' + (index - this.length) + ', length: ' + this.length);
             }
         } else if (index >= this.length) {
-            throw RangeError('error index: ' + index + ', length: ' + this.length);
+            throw new RangeError('error index: ' + index + ', length: ' + this.length);
         }
         return this.buffer[this.offset + index];
     };
@@ -312,7 +312,7 @@
             start = adjust(start, this.length);
             end = adjust(end, this.length);
         } else {
-            throw SyntaxError('arguments error: ' + arguments);
+            throw new SyntaxError('arguments error: ' + arguments);
         }
         return get_bytes.call(this, start, end);
     };

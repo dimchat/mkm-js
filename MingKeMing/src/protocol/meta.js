@@ -94,7 +94,7 @@
     Meta.getKey = function (meta) {
         var key = meta['key'];
         if (!key) {
-            throw TypeError('meta key not found: ' + meta);
+            throw new TypeError('meta key not found: ' + meta);
         }
         return PublicKey.parse(key);
     };
@@ -240,7 +240,7 @@
     Meta.create = function (type, key, seed, fingerprint) {
         var factory = Meta.getFactory(type);
         if (!factory) {
-            throw ReferenceError('meta type not support: ' + type);
+            throw new ReferenceError('meta type not support: ' + type);
         }
         return factory.createMeta(key, seed, fingerprint);
     };
@@ -256,7 +256,7 @@
     Meta.generate = function (type, sKey, seed) {
         var factory = Meta.getFactory(type);
         if (!factory) {
-            throw ReferenceError('meta type not support: ' + type);
+            throw new ReferenceError('meta type not support: ' + type);
         }
         return factory.generateMeta(sKey, seed);
     };
@@ -270,9 +270,9 @@
     Meta.parse = function (meta) {
         if (!meta) {
             return null;
-        } else if (meta instanceof Meta) {
+        } else if (ns.Interface.conforms(meta, Meta)) {
             return meta;
-        } else if (meta instanceof map) {
+        } else if (ns.Interface.conforms(meta, map)) {
             meta = meta.getMap();
         }
         var type = Meta.getType(meta);

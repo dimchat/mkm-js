@@ -110,7 +110,7 @@
             };
             status = 1;
         } else {
-            throw SyntaxError('meta arguments error: ' + arguments);
+            throw new SyntaxError('meta arguments error: ' + arguments);
         }
         Dictionary.call(this, meta);
         this.type = type;
@@ -193,9 +193,9 @@
         if (!this.isValid()) {
             return false;
         }
-        if (id_or_key instanceof ID) {
+        if (ns.Interface.conforms(id_or_key, ID)) {
             return match_identifier.call(this, id_or_key);
-        } else if (id_or_key instanceof PublicKey) {
+        } else if (ns.Interface.conforms(id_or_key, PublicKey)) {
             return match_public_key.call(this, id_or_key);
         }
         // console.assert(false, 'error: ' + key_id_addr);
