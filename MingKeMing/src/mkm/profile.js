@@ -64,7 +64,7 @@
             // new BaseVisa(map);
             BaseDocument.call(this, arguments[0]);
         }
-        this.key = null;
+        this.__key = null;
     };
     ns.Class(BaseVisa, BaseDocument, [Visa]);
 
@@ -76,20 +76,20 @@
      * @returns {EncryptKey}
      */
     BaseVisa.prototype.getKey = function () {
-        if (!this.key) {
+        if (!this.__key) {
             var key = this.getProperty('key');
             if (key) {
                 key = PublicKey.parse(key);
                 if (ns.Interface.conforms(key, EncryptKey)) {
-                    this.key = key;
+                    this.__key = key;
                 }
             }
         }
-        return this.key;
+        return this.__key;
     };
     BaseVisa.prototype.setKey = function (publicKey) {
         this.setProperty('key', publicKey.getMap());
-        this.key = publicKey;
+        this.__key = publicKey;
     };
 
     //-------- extra info --------
@@ -138,7 +138,7 @@
             // new BaseBulletin(map);
             BaseDocument.call(this, arguments[0]);
         }
-        this.assistants = null;
+        this.__assistants = null;
     };
     ns.Class(BaseBulletin, BaseDocument, [Bulletin]);
 
@@ -150,13 +150,13 @@
      * @return {ID[]} bot ID list
      */
     BaseBulletin.prototype.getAssistants = function () {
-        if (!this.assistants) {
+        if (!this.__assistants) {
             var assistants = this.getProperty('assistants');
             if (assistants) {
-                this.assistants = ID.convert(assistants);
+                this.__assistants = ID.convert(assistants);
             }
         }
-        return this.assistants;
+        return this.__assistants;
     };
     /**
      *  Set group assistants

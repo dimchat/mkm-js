@@ -46,7 +46,7 @@
             value = value.toString();
         }
         ns.type.Object.call(this);
-        this.string = value;
+        this.__string = value;
     };
     ns.Class(str, ns.type.Object, null);
 
@@ -58,12 +58,12 @@
      */
     str.prototype.equals = function (other) {
         if (!other) {
-            return !this.string;
+            return !this.__string;
         } else if (other instanceof str) {
-            return this.string === other.string;
+            return this.__string === other.__string;
         } else {
             // console.assert(other instanceof String, 'other string error');
-            return this.string === other;
+            return this.__string === other;
         }
     };
 
@@ -77,25 +77,25 @@
     };
     str.prototype.equalsIgnoreCase = function (other) {
         if (!other) {
-            return !this.string;
+            return !this.__string;
         } else if (other instanceof str) {
-            return equalsIgnoreCase(this.string, other.string);
+            return equalsIgnoreCase(this.__string, other.__string);
         } else {
             // console.assert(other instanceof String, 'other string error');
-            return equalsIgnoreCase(this.string, other);
+            return equalsIgnoreCase(this.__string, other);
         }
     };
 
     str.prototype.valueOf = function () {
-        return this.string;
+        return this.__string;
     };
 
     str.prototype.toString = function () {
-        return this.string;
+        return this.__string;
     };
 
     str.prototype.getLength = function() {
-        return this.string.length;
+        return this.__string.length;
     };
 
     //-------- namespace --------

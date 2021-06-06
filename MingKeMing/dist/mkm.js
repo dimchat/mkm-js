@@ -511,19 +511,19 @@ if (typeof MingKeMing !== "object") {
     var ID = ns.protocol.ID;
     var Identifier = function(identifier, name, address, terminal) {
         str.call(this, identifier);
-        this.name = name;
-        this.address = address;
-        this.terminal = terminal
+        this.__name = name;
+        this.__address = address;
+        this.__terminal = terminal
     };
     ns.Class(Identifier, str, [ID]);
     Identifier.prototype.getName = function() {
-        return this.name
+        return this.__name
     };
     Identifier.prototype.getAddress = function() {
-        return this.address
+        return this.__address
     };
     Identifier.prototype.getTerminal = function() {
-        return this.terminal
+        return this.__terminal
     };
     Identifier.prototype.getType = function() {
         return this.getAddress().getNetwork()
@@ -573,24 +573,24 @@ if (typeof MingKeMing !== "object") {
         return new Identifier(string, name, address, terminal)
     };
     var IDFactory = function() {
-        this.identifiers = {}
+        this.__identifiers = {}
     };
     ns.Class(IDFactory, null, [ID.Factory]);
     IDFactory.prototype.createID = function(name, address, terminal) {
         var string = concat(name, address, terminal);
-        var id = this.identifiers[string];
+        var id = this.__identifiers[string];
         if (!id) {
             id = new Identifier(string, name, address, terminal);
-            this.identifiers[string] = id
+            this.__identifiers[string] = id
         }
         return id
     };
     IDFactory.prototype.parseID = function(identifier) {
-        var id = this.identifiers[identifier];
+        var id = this.__identifiers[identifier];
         if (!id) {
             id = parse(identifier);
             if (id) {
-                this.identifiers[identifier] = id
+                this.__identifiers[identifier] = id
             }
         }
         return id
@@ -607,20 +607,20 @@ if (typeof MingKeMing !== "object") {
         if (network instanceof NetworkType) {
             network = network.valueOf()
         }
-        this.network = network
+        this.__network = network
     };
     ns.Class(BroadcastAddress, str, [Address]);
     BroadcastAddress.prototype.getNetwork = function() {
-        return this.network
+        return this.__network
     };
     BroadcastAddress.prototype.isBroadcast = function() {
         return true
     };
     BroadcastAddress.prototype.isUser = function() {
-        return NetworkType.isUser(this.network)
+        return NetworkType.isUser(this.__network)
     };
     BroadcastAddress.prototype.isGroup = function() {
-        return NetworkType.isGroup(this.network)
+        return NetworkType.isGroup(this.__network)
     };
     Address.ANYWHERE = new BroadcastAddress("anywhere", NetworkType.MAIN);
     Address.EVERYWHERE = new BroadcastAddress("everywhere", NetworkType.GROUP);
@@ -630,17 +630,17 @@ if (typeof MingKeMing !== "object") {
 (function(ns) {
     var Address = ns.protocol.Address;
     var AddressFactory = function() {
-        this.addresses = {};
-        this.addresses[Address.ANYWHERE.toString()] = Address.ANYWHERE;
-        this.addresses[Address.EVERYWHERE.toString()] = Address.EVERYWHERE
+        this.__addresses = {};
+        this.__addresses[Address.ANYWHERE.toString()] = Address.ANYWHERE;
+        this.__addresses[Address.EVERYWHERE.toString()] = Address.EVERYWHERE
     };
     ns.Class(AddressFactory, null, [Address.Factory]);
     AddressFactory.prototype.parseAddress = function(string) {
-        var address = this.addresses[string];
+        var address = this.__addresses[string];
         if (!address) {
             address = this.createAddress(string);
             if (address) {
-                this.addresses[string] = address
+                this.__addresses[string] = address
             }
         }
         return address
@@ -714,46 +714,46 @@ if (typeof MingKeMing !== "object") {
             }
         }
         Dictionary.call(this, meta);
-        this.type = type;
-        this.key = key;
-        this.seed = seed;
-        this.fingerprint = fingerprint;
-        this.status = status
+        this.__type = type;
+        this.__key = key;
+        this.__seed = seed;
+        this.__fingerprint = fingerprint;
+        this.__status = status
     };
     ns.Class(BaseMeta, Dictionary, [Meta]);
     BaseMeta.prototype.getType = function() {
-        return this.type
+        return this.__type
     };
     BaseMeta.prototype.getKey = function() {
-        return this.key
+        return this.__key
     };
     BaseMeta.prototype.getSeed = function() {
-        return this.seed
+        return this.__seed
     };
     BaseMeta.prototype.getFingerprint = function() {
-        return this.fingerprint
+        return this.__fingerprint
     };
     BaseMeta.prototype.isValid = function() {
-        if (this.status === 0) {
-            if (!this.key) {
-                this.status = -1
+        if (this.__status === 0) {
+            if (!this.__key) {
+                this.__status = -1
             } else {
-                if (MetaType.hasSeed(this.type)) {
-                    if (!this.seed || !this.fingerprint) {
-                        this.status = -1
+                if (MetaType.hasSeed(this.__type)) {
+                    if (!this.__seed || !this.__fingerprint) {
+                        this.__status = -1
                     } else {
-                        if (this.key.verify(ns.format.UTF8.encode(this.seed), this.fingerprint)) {
-                            this.status = 1
+                        if (this.__key.verify(ns.format.UTF8.encode(this.__seed), this.__fingerprint)) {
+                            this.__status = 1
                         } else {
-                            this.status = -1
+                            this.__status = -1
                         }
                     }
                 } else {
-                    this.status = 1
+                    this.__status = 1
                 }
             }
         }
-        return this.status === 1
+        return this.__status === 1
     };
     BaseMeta.prototype.generateAddress = function(network) {
         console.assert(false, "implement me!");
@@ -780,8 +780,8 @@ if (typeof MingKeMing !== "object") {
         return false
     };
     var match_identifier = function(identifier) {
-        if (MetaType.hasSeed(this.type)) {
-            if (identifier.getName() !== this.seed) {
+        if (MetaType.hasSeed(this.__type)) {
+            if (identifier.getName() !== this.__seed) {
                 return false
             }
         }
@@ -789,12 +789,12 @@ if (typeof MingKeMing !== "object") {
         return identifier.getAddress().equals(address)
     };
     var match_public_key = function(publicKey) {
-        if (this.key.equals(publicKey)) {
+        if (this.__key.equals(publicKey)) {
             return true
         }
-        if (MetaType.hasSeed(this.type)) {
-            var data = ns.format.UTF8.encode(this.seed);
-            var signature = this.fingerprint;
+        if (MetaType.hasSeed(this.__type)) {
+            var data = ns.format.UTF8.encode(this.__seed);
+            var signature = this.__fingerprint;
             return publicKey.verify(data, signature)
         } else {
             return false
@@ -852,15 +852,15 @@ if (typeof MingKeMing !== "object") {
             }
         }
         Dictionary.call(this, map);
-        this.identifier = identifier;
-        this.data = data;
-        this.signature = signature;
-        this._properties = properties;
-        this.status = status
+        this.__identifier = identifier;
+        this.__data = data;
+        this.__signature = signature;
+        this.__properties = properties;
+        this.__status = status
     };
     ns.Class(BaseDocument, Dictionary, [Document]);
     BaseDocument.prototype.isValid = function() {
-        return this.status > 0
+        return this.__status > 0
     };
     BaseDocument.prototype.getType = function() {
         var type = this.getProperty("type");
@@ -870,7 +870,7 @@ if (typeof MingKeMing !== "object") {
         return type
     };
     BaseDocument.prototype.getIdentifier = function() {
-        return this.identifier
+        return this.__identifier
     };
     BaseDocument.prototype.allPropertyNames = function() {
         var dict = this.getProperties();
@@ -880,18 +880,18 @@ if (typeof MingKeMing !== "object") {
         return Object.keys(dict)
     };
     BaseDocument.prototype.getProperties = function() {
-        if (this.status < 0) {
+        if (this.__status < 0) {
             return null
         }
-        if (!this.properties) {
-            var data = this.data;
+        if (!this.__properties) {
+            var data = this.__data;
             if (data) {
-                this.properties = ns.format.JSON.decode(data)
+                this.__properties = ns.format.JSON.decode(data)
             } else {
-                this.properties = {}
+                this.__properties = {}
             }
         }
-        return this.properties
+        return this.__properties
     };
     BaseDocument.prototype.getProperty = function(name) {
         var dict = this.getProperties();
@@ -901,49 +901,49 @@ if (typeof MingKeMing !== "object") {
         return dict[name]
     };
     BaseDocument.prototype.setProperty = function(name, value) {
-        this.status = 0;
+        this.__status = 0;
         var dict = this.getProperties();
         dict[name] = value;
         this.setValue("data", null);
         this.setValue("signature", null);
-        this.data = null;
-        this.signature = null
+        this.__data = null;
+        this.__signature = null
     };
     BaseDocument.prototype.verify = function(publicKey) {
-        if (this.status > 0) {
+        if (this.__status > 0) {
             return true
         }
-        var data = this.data;
-        var signature = this.signature;
+        var data = this.__data;
+        var signature = this.__signature;
         if (!data) {
             if (!signature) {
-                this.status = 0
+                this.__status = 0
             } else {
-                this.status = -1
+                this.__status = -1
             }
         } else {
             if (!signature) {
-                this.status = -1
+                this.__status = -1
             } else {
                 if (publicKey.verify(data, signature)) {
-                    this.status = 1
+                    this.__status = 1
                 }
             }
         }
-        return this.status > 0
+        return this.__status > 0
     };
     BaseDocument.prototype.sign = function(privateKey) {
-        if (this.status > 0) {
-            return this.signature
+        if (this.__status > 0) {
+            return this.__signature
         }
         var now = new Date();
         this.setProperty("time", now.getTime() / 1000);
-        this.status = 1;
-        this.data = ns.format.JSON.encode(this.getProperties());
-        this.signature = privateKey.sign(this.data);
-        this.setValue("data", ns.format.UTF8.decode(this.data));
-        this.setValue("signature", ns.format.Base64.encode(this.signature));
-        return this.signature
+        this.__status = 1;
+        this.__data = ns.format.JSON.encode(this.getProperties());
+        this.__signature = privateKey.sign(this.__data);
+        this.setValue("data", ns.format.UTF8.decode(this.__data));
+        this.setValue("signature", ns.format.Base64.encode(this.__signature));
+        return this.__signature
     };
     BaseDocument.prototype.getTime = function() {
         var timestamp = this.getProperty("time");
@@ -981,24 +981,24 @@ if (typeof MingKeMing !== "object") {
                 }
             }
         }
-        this.key = null
+        this.__key = null
     };
     ns.Class(BaseVisa, BaseDocument, [Visa]);
     BaseVisa.prototype.getKey = function() {
-        if (!this.key) {
+        if (!this.__key) {
             var key = this.getProperty("key");
             if (key) {
                 key = PublicKey.parse(key);
                 if (ns.Interface.conforms(key, EncryptKey)) {
-                    this.key = key
+                    this.__key = key
                 }
             }
         }
-        return this.key
+        return this.__key
     };
     BaseVisa.prototype.setKey = function(publicKey) {
         this.setProperty("key", publicKey.getMap());
-        this.key = publicKey
+        this.__key = publicKey
     };
     BaseVisa.prototype.getAvatar = function() {
         return this.getProperty("avatar")
@@ -1026,17 +1026,17 @@ if (typeof MingKeMing !== "object") {
                 }
             }
         }
-        this.assistants = null
+        this.__assistants = null
     };
     ns.Class(BaseBulletin, BaseDocument, [Bulletin]);
     BaseBulletin.prototype.getAssistants = function() {
-        if (!this.assistants) {
+        if (!this.__assistants) {
             var assistants = this.getProperty("assistants");
             if (assistants) {
-                this.assistants = ID.convert(assistants)
+                this.__assistants = ID.convert(assistants)
             }
         }
-        return this.assistants
+        return this.__assistants
     };
     BaseBulletin.prototype.setAssistants = function(assistants) {
         if (assistants && assistants.length > 0) {

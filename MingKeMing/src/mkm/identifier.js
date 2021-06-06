@@ -50,20 +50,20 @@
      */
     var Identifier = function (identifier, name, address, terminal) {
         str.call(this, identifier);
-        this.name = name;
-        this.address = address;
-        this.terminal = terminal;
+        this.__name = name;
+        this.__address = address;
+        this.__terminal = terminal;
     };
     ns.Class(Identifier, str, [ID]);
 
     Identifier.prototype.getName = function () {
-        return this.name;
+        return this.__name;
     };
     Identifier.prototype.getAddress = function () {
-        return this.address;
+        return this.__address;
     };
     Identifier.prototype.getTerminal = function () {
-        return this.terminal;
+        return this.__terminal;
     };
 
     Identifier.prototype.getType = function () {
@@ -144,26 +144,26 @@
     };
 
     var IDFactory = function () {
-        this.identifiers = {};  // String -> ID
+        this.__identifiers = {};  // String -> ID
     };
     ns.Class(IDFactory, null, [ID.Factory])
 
     IDFactory.prototype.createID = function (name, address, terminal) {
         var string = concat(name, address, terminal);
-        var id = this.identifiers[string];
+        var id = this.__identifiers[string];
         if (!id) {
             id = new Identifier(string, name, address, terminal);
-            this.identifiers[string] = id;
+            this.__identifiers[string] = id;
         }
         return id;
     }
 
     IDFactory.prototype.parseID = function (identifier) {
-        var id = this.identifiers[identifier];
+        var id = this.__identifiers[identifier];
         if (!id) {
             id = parse(identifier);
             if (id) {
-                this.identifiers[identifier] = id;
+                this.__identifiers[identifier] = id;
             }
         }
         return id;

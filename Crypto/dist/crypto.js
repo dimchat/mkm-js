@@ -407,7 +407,7 @@ if (typeof DIMP !== "object") {
             e = enumeration[k];
             if (e instanceof enumeration) {
                 if (e.equals(value)) {
-                    return e.alias
+                    return e.__alias
                 }
             }
         }
@@ -417,34 +417,34 @@ if (typeof DIMP !== "object") {
         ns.type.Object.call(this);
         if (!alias) {
             if (value instanceof base_enum) {
-                alias = value.alias
+                alias = value.__alias
             } else {
                 alias = get_alias.call(this, value)
             }
         }
         if (value instanceof base_enum) {
-            value = value.value
+            value = value.__value
         }
-        this.value = value;
-        this.alias = alias
+        this.__value = value;
+        this.__alias = alias
     };
     ns.Class(base_enum, ns.type.Object, null);
     base_enum.prototype.equals = function(other) {
         if (!other) {
-            return !this.value
+            return !this.__value
         } else {
             if (other instanceof base_enum) {
-                return this.value === other.valueOf()
+                return this.__value === other.valueOf()
             } else {
-                return this.value === other
+                return this.__value === other
             }
         }
     };
     base_enum.prototype.valueOf = function() {
-        return this.value
+        return this.__value
     };
     base_enum.prototype.toString = function() {
-        return "<" + this.alias.toString() + ": " + this.value.toString() + ">"
+        return "<" + this.__alias.toString() + ": " + this.__value.toString() + ">"
     };
     var enumify = function(enumeration, elements) {
         if (!enumeration) {
@@ -460,7 +460,7 @@ if (typeof DIMP !== "object") {
             }
             v = elements[name];
             if (v instanceof base_enum) {
-                v = v.value
+                v = v.__value
             } else {
                 if (typeof v !== "number") {
                     throw new TypeError("Enum value must be a number!")
@@ -480,35 +480,35 @@ if (typeof DIMP !== "object") {
     var Arrays = ns.type.Arrays;
     var bytes = function() {
         ns.type.Object.call(this);
-        this.buffer = null;
-        this.offset = 0;
-        this.length = 0;
+        this._buffer = null;
+        this._offset = 0;
+        this._length = 0;
         if (arguments.length === 0) {
-            this.buffer = new Uint8Array(4)
+            this._buffer = new Uint8Array(4)
         } else {
             if (arguments.length === 1) {
                 var arg = arguments[0];
                 if (typeof arg === "number") {
-                    this.buffer = new Uint8Array(arg)
+                    this._buffer = new Uint8Array(arg)
                 } else {
                     if (arg instanceof bytes) {
-                        this.buffer = arg.buffer;
-                        this.offset = arg.buffer;
-                        this.length = arg.length
+                        this._buffer = arg._buffer;
+                        this._offset = arg._offset;
+                        this._length = arg._length
                     } else {
                         if (arg instanceof Uint8Array) {
-                            this.buffer = arg
+                            this._buffer = arg
                         } else {
-                            this.buffer = new Uint8Array(arg)
+                            this._buffer = new Uint8Array(arg)
                         }
-                        this.length = arg.length
+                        this._length = arg.length
                     }
                 }
             } else {
                 if (arguments.length === 3) {
-                    this.buffer = arguments[0];
-                    this.offset = arguments[1];
-                    this.length = arguments[2]
+                    this._buffer = arguments[0];
+                    this._offset = arguments[1];
+                    this._length = arguments[2]
                 } else {
                     throw new SyntaxError("arguments error: " + arguments)
                 }
@@ -517,9 +517,15 @@ if (typeof DIMP !== "object") {
     };
     ns.Class(bytes, ns.type.Object, null);
     bytes.ZERO = new bytes(new Uint8Array(0), 0, 0);
+    bytes.prototype.getBuffer = function() {
+        return this._buffer
+    };
+    bytes.prototype.getOffset = function() {
+        return this._offset
+    };
     bytes.prototype.equals = function(other) {
-        if (!other || other.length === 0) {
-            return this.length === 0
+        if (!other) {
+            return this._length === 0
         } else {
             if (this === other) {
                 return true
@@ -527,23 +533,23 @@ if (typeof DIMP !== "object") {
         }
         var otherBuffer, otherOffset, otherLength;
         if (other instanceof bytes) {
-            otherBuffer = other.buffer;
-            otherOffset = other.offset;
-            otherLength = other.length
+            otherBuffer = other._buffer;
+            otherOffset = other._offset;
+            otherLength = other._length
         } else {
             otherBuffer = other;
             otherOffset = 0;
             otherLength = other.length
         }
-        if (this.length !== otherLength) {
+        if (this._length !== otherLength) {
             return false
         } else {
-            if (this.buffer === otherBuffer && this.offset === otherOffset) {
+            if (this._buffer === otherBuffer && this._offset === otherOffset) {
                 return true
             }
         }
-        var buffer = this.buffer;
-        var pos1 = this.offset + this.length - 1;
+        var buffer = this._buffer;
+        var pos1 = this._offset + this._length - 1;
         var pos2 = otherOffset + otherLength - 1;
         for (; pos2 >= otherOffset; --pos1, --pos2) {
             if (buffer[pos1] !== otherBuffer[pos2]) {
@@ -567,35 +573,35 @@ if (typeof DIMP !== "object") {
     };
     bytes.adjust = adjust;
     var find_value = function(value, start, end) {
-        start += this.offset;
-        end += this.offset;
+        start += this._offset;
+        end += this._offset;
         for (; start < end; ++start) {
-            if (this.buffer[start] === value) {
-                return start - this.offset
+            if (this._buffer[start] === value) {
+                return start - this._offset
             }
         }
         return -1
     };
     var find_sub = function(sub, start, end) {
-        if ((end - start) < sub.length) {
+        if ((end - start) < sub._length) {
             return -1
         }
-        start += this.offset;
-        end += this.offset - sub.length + 1;
-        if (this.buffer === sub.buffer) {
-            if (start === sub.offset) {
-                return start - this.offset
+        start += this._offset;
+        end += this._offset - sub._length + 1;
+        if (this._buffer === sub._buffer) {
+            if (start === sub._offset) {
+                return start - this._offset
             }
         }
         var index;
         for (; start < end; ++start) {
-            for (index = 0; index < sub.length; ++index) {
-                if (this.buffer[start + index] !== sub.buffer[sub.offset + index]) {
+            for (index = 0; index < sub._length; ++index) {
+                if (this._buffer[start + index] !== sub._buffer[sub._offset + index]) {
                     break
                 }
             }
-            if (index === sub.length) {
-                return start - this.offset
+            if (index === sub._length) {
+                return start - this._offset
             }
         }
         return -1
@@ -605,20 +611,20 @@ if (typeof DIMP !== "object") {
         if (arguments.length === 1) {
             sub = arguments[0];
             start = 0;
-            end = this.length
+            end = this._length
         } else {
             if (arguments.length === 2) {
                 sub = arguments[0];
                 start = arguments[1];
-                end = this.length;
-                start = adjust(start, this.length)
+                end = this._length;
+                start = adjust(start, this._length)
             } else {
                 if (arguments.length === 3) {
                     sub = arguments[0];
                     start = arguments[1];
                     end = arguments[2];
-                    start = adjust(start, this.length);
-                    end = adjust(end, this.length)
+                    start = adjust(start, this._length);
+                    end = adjust(end, this._length)
                 } else {
                     throw new SyntaxError("arguments error: " + arguments)
                 }
@@ -636,25 +642,25 @@ if (typeof DIMP !== "object") {
     };
     bytes.prototype.getByte = function(index) {
         if (index < 0) {
-            index += this.length;
+            index += this._length;
             if (index < 0) {
-                throw new RangeError("error index: " + (index - this.length) + ", length: " + this.length)
+                throw new RangeError("error index: " + (index - this._length) + ", length: " + this._length)
             }
         } else {
-            if (index >= this.length) {
-                throw new RangeError("error index: " + index + ", length: " + this.length)
+            if (index >= this._length) {
+                throw new RangeError("error index: " + index + ", length: " + this._length)
             }
         }
-        return this.buffer[this.offset + index]
+        return this._buffer[this._offset + index]
     };
     var get_bytes = function(start, end) {
-        start += this.offset;
-        end += this.offset;
-        if (start === 0 && end === this.buffer.length) {
-            return this.buffer
+        start += this._offset;
+        end += this._offset;
+        if (start === 0 && end === this._buffer.length) {
+            return this._buffer
         } else {
             if (start < end) {
-                return this.buffer.subarray(start, end)
+                return this._buffer.subarray(start, end)
             } else {
                 return this.ZERO.getBytes()
             }
@@ -664,18 +670,18 @@ if (typeof DIMP !== "object") {
         var start, end;
         if (arguments.length === 0) {
             start = 0;
-            end = this.length
+            end = this._length
         } else {
             if (arguments.length === 1) {
                 start = arguments[0];
-                end = this.length;
-                start = adjust(start, this.length)
+                end = this._length;
+                start = adjust(start, this._length)
             } else {
                 if (arguments.length === 2) {
                     start = arguments[0];
                     end = arguments[1];
-                    start = adjust(start, this.length);
-                    end = adjust(end, this.length)
+                    start = adjust(start, this._length);
+                    end = adjust(end, this._length)
                 } else {
                     throw new SyntaxError("arguments error: " + arguments)
                 }
@@ -687,19 +693,19 @@ if (typeof DIMP !== "object") {
         var end;
         if (arguments.length === 2) {
             end = arguments[1];
-            end = adjust(end, this.length)
+            end = adjust(end, this._length)
         } else {
-            end = this.length
+            end = this._length
         }
-        start = adjust(start, this.length);
+        start = adjust(start, this._length);
         return slice(this, start, end)
     };
     var slice = function(data, start, end) {
-        if (start === 0 && end === data.length) {
+        if (start === 0 && end === data._length) {
             return data
         } else {
             if (start < end) {
-                return new bytes(data.buffer, data.offset + start, end - start)
+                return new bytes(data._buffer, data._offset + start, end - start)
             } else {
                 return bytes.ZERO
             }
@@ -720,25 +726,25 @@ if (typeof DIMP !== "object") {
         return result
     };
     var concat = function(left, right) {
-        if (left.length === 0) {
+        if (left._length === 0) {
             return right
         } else {
-            if (right.length === 0) {
+            if (right._length === 0) {
                 return left
             } else {
-                if (left.buffer === right.buffer && (left.offset + left.length) === right.offset) {
-                    return new bytes(left.buffer, left.offset, left.length + right.length)
+                if (left._buffer === right._buffer && (left._offset + left._length) === right._offset) {
+                    return new bytes(left._buffer, left._offset, left._length + right._length)
                 } else {
-                    var joined = new Uint8Array(left.length + right.length);
-                    Arrays.copy(left.buffer, left.offset, joined, 0, left.length);
-                    Arrays.copy(right.buffer, right.offset, joined, left.length, right.length);
+                    var joined = new Uint8Array(left._length + right._length);
+                    Arrays.copy(left._buffer, left._offset, joined, 0, left._length);
+                    Arrays.copy(right._buffer, right._offset, joined, left._length, right._length);
                     return new bytes(joined, 0, joined.length)
                 }
             }
         }
     };
     bytes.prototype.copy = function() {
-        return new bytes(this.buffer, this.offset, this.length)
+        return new bytes(this._buffer, this._offset, this._length)
     };
     bytes.prototype.mutableCopy = function() {
         var buffer = this.getBytes();
@@ -762,12 +768,12 @@ if (typeof DIMP !== "object") {
     var adjust = bytes.adjust;
     var resize = function(size) {
         var bigger = new Uint8Array(size);
-        Arrays.copy(this.buffer, this.offset, bigger, 0, this.length);
-        this.buffer = bigger;
-        this.offset = 0
+        Arrays.copy(this._buffer, this._offset, bigger, 0, this._length);
+        this._buffer = bigger;
+        this._offset = 0
     };
     var expand = function() {
-        var capacity = this.buffer.length - this.offset;
+        var capacity = this._buffer.length - this._offset;
         if (capacity > 4) {
             resize.call(this, capacity << 1)
         } else {
@@ -776,72 +782,80 @@ if (typeof DIMP !== "object") {
     };
     bytes.prototype.setByte = function(index, value) {
         if (index < 0) {
-            index += this.length;
+            index += this._length;
             if (index < 0) {
                 return false
             }
         }
-        if (index >= this.length) {
-            if (this.offset + index >= this.buffer.length) {
-                if (index < this.buffer.length) {
-                    Arrays.copy(this.buffer, this.offset, this.buffer, 0, this.length);
-                    this.offset = 0
+        if (index >= this._length) {
+            if (this._offset + index >= this._buffer.length) {
+                if (index < this._buffer.length) {
+                    Arrays.copy(this._buffer, this._offset, this._buffer, 0, this._length);
+                    this._offset = 0
                 } else {
                     resize.call(this, index + 1)
                 }
             }
-            this.length = index + 1
+            this._length = index + 1
         }
-        this.buffer[this.offset + index] = value & 255;
+        this._buffer[this._offset + index] = value & 255;
         return true
     };
     var copy_buffer = function(data, pos, source, start, end) {
         var copyLen = end - start;
         if (copyLen > 0) {
             var copyEnd = pos + copyLen;
-            if (source !== data.buffer || (data.offset + pos) !== start) {
-                if (data.offset + copyEnd > data.buffer.length) {
+            if (source !== data._buffer || (data._offset + pos) !== start) {
+                if (data._offset + copyEnd > data._buffer.length) {
                     resize.call(data, copyEnd)
                 }
-                Arrays.copy(source, start, data.buffer, data.offset + pos, copyLen)
+                Arrays.copy(source, start, data._buffer, data._offset + pos, copyLen)
             }
-            if (copyEnd > data.length) {
-                data.length = copyEnd
+            if (copyEnd > data._length) {
+                data._length = copyEnd
             }
         }
     };
     bytes.prototype.fill = function(pos, source) {
         if (pos < 0) {
-            pos += this.length;
+            pos += this._length;
             if (pos < 0) {
-                throw new RangeError("error position: " + (pos - this.length) + ", length: " + this.length)
+                throw new RangeError("error position: " + (pos - this._length) + ", length: " + this._length)
             }
         }
         var start, end;
         if (arguments.length === 4) {
             start = arguments[2];
             end = arguments[3];
-            start = adjust(start, source.length);
-            end = adjust(end, source.length)
+            start = adjust(start, get_length(source));
+            end = adjust(end, get_length(source))
         } else {
             if (arguments.length === 3) {
                 start = arguments[2];
-                end = source.length;
-                start = adjust(start, source.length)
+                end = get_length(source);
+                start = adjust(start, get_length(source))
             } else {
                 start = 0;
-                end = source.length
+                end = get_length(source)
             }
         }
         if (source instanceof bytes) {
-            copy_buffer(this, pos, source.buffer, source.offset + start, source.offset + end)
+            copy_buffer(this, pos, source._buffer, source._offset + start, source._offset + end)
         } else {
             copy_buffer(this, pos, source, start, end)
         }
     };
+    var get_length = function(source) {
+        if (source instanceof bytes) {
+            return source._length
+        } else {
+            return source.length
+        }
+    };
     bytes.prototype.append = function(source) {
         if (arguments.length > 1 && typeof arguments[1] !== "number") {
-            for (var i = 0; i < arguments.length; ++i) {
+            for (var i = 0;
+                 i < arguments.length; ++i) {
                 this.append(arguments[i])
             }
             return
@@ -850,116 +864,116 @@ if (typeof DIMP !== "object") {
         if (arguments.length === 3) {
             start = arguments[1];
             end = arguments[2];
-            start = adjust(start, source.length);
-            end = adjust(end, source.length)
+            start = adjust(start, get_length(source));
+            end = adjust(end, get_length(source))
         } else {
             if (arguments.length === 2) {
                 start = arguments[1];
-                end = source.length;
-                start = adjust(start, source.length)
+                end = get_length(source);
+                start = adjust(start, get_length(source))
             } else {
                 start = 0;
-                end = source.length
+                end = get_length(source)
             }
         }
         if (source instanceof bytes) {
-            copy_buffer(this, this.length, source.buffer, source.offset + start, source.offset + end)
+            copy_buffer(this, this._length, source._buffer, source._offset + start, source._offset + end)
         } else {
-            copy_buffer(this, this.length, source, start, end)
+            copy_buffer(this, this._length, source, start, end)
         }
     };
     bytes.prototype.insert = function(index, value) {
         if (index < 0) {
-            index += this.length;
+            index += this._length;
             if (index < 0) {
                 return false
             }
         }
-        if (index >= this.length) {
+        if (index >= this._length) {
             return this.setByte(index, value)
         }
         if (index === 0) {
-            if (this.offset > 0) {
-                this.offset -= 1
+            if (this._offset > 0) {
+                this._offset -= 1
             } else {
-                if (this.length === this.buffer.length) {
+                if (this._length === this._buffer.length) {
                     expand.call(this)
                 }
-                Arrays.copy(this.buffer, 0, this.buffer, 1, this.length)
+                Arrays.copy(this._buffer, 0, this._buffer, 1, this._length)
             }
         } else {
-            if (index < (this.length >> 1)) {
-                if (this.offset > 0) {
-                    Arrays.copy(this.buffer, this.offset, this.buffer, this.offset - 1, index);
-                    this.offset -= 1
+            if (index < (this._length >> 1)) {
+                if (this._offset > 0) {
+                    Arrays.copy(this._buffer, this._offset, this._buffer, this._offset - 1, index);
+                    this._offset -= 1
                 } else {
-                    if ((this.offset + this.length) === this.buffer.length) {
+                    if ((this._offset + this._length) === this._buffer.length) {
                         expand.call(this)
                     }
-                    Arrays.copy(this.buffer, this.offset + index, this.buffer, this.offset + index + 1, this.length - index)
+                    Arrays.copy(this._buffer, this._offset + index, this._buffer, this._offset + index + 1, this._length - index)
                 }
             } else {
-                if ((this.offset + this.length) < this.buffer.length) {
-                    Arrays.copy(this.buffer, this.offset + index, this.buffer, this.offset + index + 1, this.length - index)
+                if ((this._offset + this._length) < this._buffer.length) {
+                    Arrays.copy(this._buffer, this._offset + index, this._buffer, this._offset + index + 1, this._length - index)
                 } else {
-                    if (this.offset > 0) {
-                        Arrays.copy(this.buffer, this.offset, this.buffer, this.offset - 1, index);
-                        this.offset -= 1
+                    if (this._offset > 0) {
+                        Arrays.copy(this._buffer, this._offset, this._buffer, this._offset - 1, index);
+                        this._offset -= 1
                     } else {
                         expand.call(this);
-                        Arrays.copy(this.buffer, this.offset + index, this.buffer, this.offset + index + 1, this.length - index)
+                        Arrays.copy(this._buffer, this._offset + index, this._buffer, this._offset + index + 1, this._length - index)
                     }
                 }
             }
         }
-        this.buffer[this.offset + index] = value & 255;
-        this.length += 1;
+        this._buffer[this._offset + index] = value & 255;
+        this._length += 1;
         return true
     };
     bytes.prototype.remove = function(index) {
         if (index < 0) {
-            index += this.length;
+            index += this._length;
             if (index < 0) {
-                throw new RangeError("error index: " + (index - this.length) + ", length: " + this.length)
+                throw new RangeError("error index: " + (index - this._length) + ", length: " + this._length)
             }
         } else {
-            if (index >= this.length) {
-                throw new RangeError("index error: " + index + ", length: " + this.length)
+            if (index >= this._length) {
+                throw new RangeError("index error: " + index + ", length: " + this._length)
             }
         }
         if (index === 0) {
             return this.shift()
         } else {
-            if (index === (this.length - 1)) {
+            if (index === (this._length - 1)) {
                 return this.pop()
             }
         }
-        var erased = this.buffer[this.offset + index];
-        if (index < (this.length >> 1)) {
-            Arrays.copy(this.buffer, this.offset, this.buffer, this.offset + 1, index)
+        var erased = this._buffer[this._offset + index];
+        if (index < (this._length >> 1)) {
+            Arrays.copy(this._buffer, this._offset, this._buffer, this._offset + 1, index)
         } else {
-            Arrays.copy(this.buffer, this.offset + index + 1, this.buffer, this.offset + index, this.length - index - 1)
+            Arrays.copy(this._buffer, this._offset + index + 1, this._buffer, this._offset + index, this._length - index - 1)
         }
         return erased
     };
     bytes.prototype.shift = function() {
-        if (this.length < 1) {
+        if (this._length < 1) {
             throw new RangeError("data empty!")
         }
-        var erased = this.buffer[this.offset];
-        this.offset += 1;
-        this.length -= 1;
+        var erased = this._buffer[this._offset];
+        this._offset += 1;
+        this._length -= 1;
         return erased
     };
     bytes.prototype.pop = function() {
-        if (this.length < 1) {
+        if (this._length < 1) {
             throw new RangeError("data empty!")
         }
-        this.length -= 1;
-        return this.buffer[this.offset + this.length]
+        this._length -= 1;
+        return this._buffer[this._offset + this._length]
     };
     bytes.prototype.push = function(element) {
-        this.setByte(this.length, element)
+        this.setByte(this._length, element)
     };
     ns.type.MutableData = bytes;
     ns.type.register("MutableData")
@@ -974,17 +988,17 @@ if (typeof DIMP !== "object") {
             }
         }
         ns.type.Object.call(this);
-        this.string = value
+        this.__string = value
     };
     ns.Class(str, ns.type.Object, null);
     str.prototype.equals = function(other) {
         if (!other) {
-            return !this.string
+            return !this.__string
         } else {
             if (other instanceof str) {
-                return this.string === other.string
+                return this.__string === other.__string
             } else {
-                return this.string === other
+                return this.__string === other
             }
         }
     };
@@ -998,23 +1012,23 @@ if (typeof DIMP !== "object") {
     };
     str.prototype.equalsIgnoreCase = function(other) {
         if (!other) {
-            return !this.string
+            return !this.__string
         } else {
             if (other instanceof str) {
-                return equalsIgnoreCase(this.string, other.string)
+                return equalsIgnoreCase(this.__string, other.__string)
             } else {
-                return equalsIgnoreCase(this.string, other)
+                return equalsIgnoreCase(this.__string, other)
             }
         }
     };
     str.prototype.valueOf = function() {
-        return this.string
+        return this.__string
     };
     str.prototype.toString = function() {
-        return this.string
+        return this.__string
     };
     str.prototype.getLength = function() {
-        return this.string.length
+        return this.__string.length
     };
     ns.type.String = str;
     ns.type.register("String")
@@ -1067,41 +1081,41 @@ if (typeof DIMP !== "object") {
             }
         }
         ns.type.Object.call(this);
-        this.dictionary = dictionary
+        this.__dictionary = dictionary
     };
     ns.Class(dict, ns.type.Object, [map]);
     dict.prototype.getMap = function() {
-        return this.dictionary
+        return this.__dictionary
     };
     dict.prototype.copyMap = function() {
-        return map.copyMap(this.dictionary)
+        return map.copyMap(this.__dictionary)
     };
     dict.prototype.valueOf = function() {
-        return this.dictionary
+        return this.__dictionary
     };
     dict.prototype.equals = function(other) {
         if (!other) {
-            return !this.dictionary
+            return !this.__dictionary
         } else {
             if (ns.Interface.conforms(other, map)) {
-                return Arrays.equals(this.dictionary, other.getMap())
+                return Arrays.equals(this.__dictionary, other.getMap())
             } else {
-                return Arrays.equals(this.dictionary, other)
+                return Arrays.equals(this.__dictionary, other)
             }
         }
     };
     dict.prototype.allKeys = function() {
-        return Object.keys(this.dictionary)
+        return Object.keys(this.__dictionary)
     };
     dict.prototype.getValue = function(key) {
-        return this.dictionary[key]
+        return this.__dictionary[key]
     };
     dict.prototype.setValue = function(key, value) {
         if (value) {
-            this.dictionary[key] = value
+            this.__dictionary[key] = value
         } else {
-            if (this.dictionary.hasOwnProperty(key)) {
-                delete this.dictionary[key]
+            if (this.__dictionary.hasOwnProperty(key)) {
+                delete this.__dictionary[key]
             }
         }
     };

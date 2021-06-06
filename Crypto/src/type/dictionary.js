@@ -132,44 +132,44 @@
             dictionary = dictionary.getMap();
         }
         ns.type.Object.call(this);
-        this.dictionary = dictionary;
+        this.__dictionary = dictionary;
     };
     ns.Class(dict, ns.type.Object, [map]);
 
     dict.prototype.getMap = function () {
-        return this.dictionary;
+        return this.__dictionary;
     };
     dict.prototype.copyMap = function () {
-        return map.copyMap(this.dictionary);
+        return map.copyMap(this.__dictionary);
     };
 
     dict.prototype.valueOf = function () {
-        return this.dictionary;
+        return this.__dictionary;
     };
 
     dict.prototype.equals = function (other) {
         if (!other) {
-            return !this.dictionary;
+            return !this.__dictionary;
         } else if (ns.Interface.conforms(other, map)) {
-            return Arrays.equals(this.dictionary, other.getMap());
+            return Arrays.equals(this.__dictionary, other.getMap());
         } else {
-            return Arrays.equals(this.dictionary, other);
+            return Arrays.equals(this.__dictionary, other);
         }
     };
 
     dict.prototype.allKeys = function() {
-        return Object.keys(this.dictionary);
+        return Object.keys(this.__dictionary);
     };
 
     dict.prototype.getValue = function (key) {
-        return this.dictionary[key];
+        return this.__dictionary[key];
     };
 
     dict.prototype.setValue = function (key, value) {
         if (value) {
-            this.dictionary[key] = value;
-        } else if (this.dictionary.hasOwnProperty(key)) {
-            delete this.dictionary[key];
+            this.__dictionary[key] = value;
+        } else if (this.__dictionary.hasOwnProperty(key)) {
+            delete this.__dictionary[key];
         }
     };
 

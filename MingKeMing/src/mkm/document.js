@@ -94,16 +94,16 @@
             throw new SyntaxError('document arguments error: ' + arguments);
         }
         Dictionary.call(this, map);
-        this.identifier = identifier;
-        this.data = data;            // JsON.encode(properties)
-        this.signature = signature;  // LocalUser(identifier).sign(data)
-        this._properties = properties;
-        this.status = status;        // 1 for valid, -1 for invalid
+        this.__identifier = identifier;
+        this.__data = data;            // JsON.encode(properties)
+        this.__signature = signature;  // LocalUser(identifier).sign(data)
+        this.__properties = properties;
+        this.__status = status;        // 1 for valid, -1 for invalid
     };
     ns.Class(BaseDocument, Dictionary, [Document]);
 
     BaseDocument.prototype.isValid = function () {
-        return this.status > 0;
+        return this.__status > 0;
     };
 
     BaseDocument.prototype.getType = function () {
@@ -115,7 +115,7 @@
     };
 
     BaseDocument.prototype.getIdentifier = function () {
-        return this.identifier;
+        return this.__identifier;
     };
 
     //-------- properties --------
@@ -129,19 +129,19 @@
     };
 
     BaseDocument.prototype.getProperties = function () {
-        if (this.status < 0) {
+        if (this.__status < 0) {
             // invalid
             return null;
         }
-        if (!this.properties) {
-            var data = this.data;
+        if (!this.__properties) {
+            var data = this.__data;
             if (data) {
-                this.properties = ns.format.JSON.decode(data);
+                this.__properties = ns.format.JSON.decode(data);
             } else {
-                this.properties = {};
+                this.__properties = {};
             }
         }
-        return this.properties;
+        return this.__properties;
     };
 
     BaseDocument.prototype.getProperty = function (name) {
@@ -154,63 +154,63 @@
 
     BaseDocument.prototype.setProperty = function (name, value) {
         // 1. reset status
-        this.status = 0;
+        this.__status = 0;
         // 2. update property value with name
         var dict = this.getProperties();
         dict[name] = value;
         // 3. clear data signature after properties changed
         this.setValue('data', null);
         this.setValue('signature', null);
-        this.data = null;
-        this.signature = null;
+        this.__data = null;
+        this.__signature = null;
     };
 
     //-------- signature --------
 
     BaseDocument.prototype.verify = function (publicKey) {
-        if (this.status > 0) {
+        if (this.__status > 0) {
             // already verify OK
             return true;
         }
-        var data = this.data;
-        var signature = this.signature;
+        var data = this.__data;
+        var signature = this.__signature;
         if (!data) {
             // NOTICE: if data is empty, signature should be empty at the same time
             //         this happen while profile not found
             if (!signature) {
-                this.status = 0;
+                this.__status = 0;
             } else {
                 // data signature error
-                this.status = -1;
+                this.__status = -1;
             }
         } else if (!signature) {
             // signature error
-            this.status = -1;
+            this.__status = -1;
         } else if (publicKey.verify(data, signature)) {
             // signature matched
-            this.status = 1;
+            this.__status = 1;
         }
         // NOTICE: if status is 0, it doesn't mean the profile is invalid,
         //         try another key
-        return this.status > 0;
+        return this.__status > 0;
     };
 
     BaseDocument.prototype.sign = function (privateKey) {
-        if (this.status > 0) {
+        if (this.__status > 0) {
             // already signed/verified
-            return this.signature;
+            return this.__signature;
         }
         // update sign time
         var now = new Date();
         this.setProperty('time', now.getTime() / 1000);
         // update status
-        this.status = 1;
+        this.__status = 1;
         // sign
-        this.data = ns.format.JSON.encode(this.getProperties());
-        this.signature = privateKey.sign(this.data);
-        this.setValue('data', ns.format.UTF8.decode(this.data));
-        this.setValue('signature', ns.format.Base64.encode(this.signature));
-        return this.signature;
+        this.__data = ns.format.JSON.encode(this.getProperties());
+        this.__signature = privateKey.sign(this.__data);
+        this.setValue('data', ns.format.UTF8.decode(this.__data));
+        this.setValue('signature', ns.format.Base64.encode(this.__signature));
+        return this.__signature;
     };
 
     //-------- extra info --------

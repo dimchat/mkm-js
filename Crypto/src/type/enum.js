@@ -45,7 +45,7 @@
             e = enumeration[k];
             if (e instanceof enumeration) {
                 if (e.equals(value)) {
-                    return e.alias;
+                    return e.__alias;
                 }
             }
         }
@@ -62,16 +62,16 @@
         ns.type.Object.call(this);
         if (!alias) {
             if (value instanceof base_enum) {
-                alias = value.alias;
+                alias = value.__alias;
             } else {
                 alias = get_alias.call(this, value);
             }
         }
         if (value instanceof base_enum) {
-            value = value.value;
+            value = value.__value;
         }
-        this.value = value;
-        this.alias = alias;
+        this.__value = value;
+        this.__alias = alias;
     };
     ns.Class(base_enum, ns.type.Object, null);
 
@@ -83,23 +83,23 @@
      */
     base_enum.prototype.equals = function (other) {
         if (!other) {
-            return !this.value;
+            return !this.__value;
         // } else if (ns.type.Object.prototype.equals.call(this, other)) {
         //     return true;
         } else if (other instanceof base_enum) {
-            return this.value === other.valueOf();
+            return this.__value === other.valueOf();
         } else {
-            return this.value === other;
+            return this.__value === other;
         }
     };
 
     base_enum.prototype.valueOf = function () {
-        return this.value;
+        return this.__value;
     };
 
     base_enum.prototype.toString = function () {
-        return '<' + this.alias.toString()
-            + ': ' + this.value.toString() + '>';
+        return '<' + this.__alias.toString()
+            + ': ' + this.__value.toString() + '>';
     };
 
     /**
@@ -123,7 +123,7 @@
             }
             v = elements[name];
             if (v instanceof base_enum) {
-                v = v.value;
+                v = v.__value;
             } else if (typeof v !== 'number') {
                 throw new TypeError('Enum value must be a number!');
             }

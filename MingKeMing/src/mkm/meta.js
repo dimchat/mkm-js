@@ -113,25 +113,25 @@
             throw new SyntaxError('meta arguments error: ' + arguments);
         }
         Dictionary.call(this, meta);
-        this.type = type;
-        this.key = key;
-        this.seed = seed;
-        this.fingerprint = fingerprint;
-        this.status = status;  // 1 for valid, -1 for invalid
+        this.__type = type;
+        this.__key = key;
+        this.__seed = seed;
+        this.__fingerprint = fingerprint;
+        this.__status = status;  // 1 for valid, -1 for invalid
     };
     ns.Class(BaseMeta, Dictionary, [Meta]);
 
     BaseMeta.prototype.getType = function () {
-        return this.type;
+        return this.__type;
     };
     BaseMeta.prototype.getKey = function () {
-        return this.key;
+        return this.__key;
     };
     BaseMeta.prototype.getSeed = function () {
-        return this.seed;
+        return this.__seed;
     };
     BaseMeta.prototype.getFingerprint = function () {
-        return this.fingerprint;
+        return this.__fingerprint;
     };
 
     /**
@@ -140,26 +140,26 @@
      * @returns {boolean}
      */
     BaseMeta.prototype.isValid = function () {
-        if (this.status === 0) {
-            if (!this.key) {
+        if (this.__status === 0) {
+            if (!this.__key) {
                 // meta.key should not be empty
-                this.status = -1;
-            } else if (MetaType.hasSeed(this.type)) {
-                if (!this.seed || !this.fingerprint) {
+                this.__status = -1;
+            } else if (MetaType.hasSeed(this.__type)) {
+                if (!this.__seed || !this.__fingerprint) {
                     // seed and fingerprint should not be empty
-                    this.status = -1;
-                } else if (this.key.verify(ns.format.UTF8.encode(this.seed), this.fingerprint)) {
+                    this.__status = -1;
+                } else if (this.__key.verify(ns.format.UTF8.encode(this.__seed), this.__fingerprint)) {
                     // fingerprint matched
-                    this.status = 1;
+                    this.__status = 1;
                 } else {
                     // fingerprint not matched
-                    this.status = -1;
+                    this.__status = -1;
                 }
             } else {
-                this.status = 1;
+                this.__status = 1;
             }
         }
-        return this.status === 1;
+        return this.__status === 1;
     };
 
     // noinspection JSUnusedLocalSymbols
@@ -204,8 +204,8 @@
 
     var match_identifier = function (identifier) {
         // check with seed & address
-        if (MetaType.hasSeed(this.type)) {
-            if (identifier.getName() !== this.seed) {
+        if (MetaType.hasSeed(this.__type)) {
+            if (identifier.getName() !== this.__seed) {
                 return false;
             }
         }
@@ -215,14 +215,14 @@
 
     var match_public_key = function (publicKey) {
         // check whether the public key equals to meta.key
-        if (this.key.equals(publicKey)) {
+        if (this.__key.equals(publicKey)) {
             return true;
         }
         // check with seed & fingerprint
-        if (MetaType.hasSeed(this.type)) {
+        if (MetaType.hasSeed(this.__type)) {
             // check whether keys equal by verifying signature
-            var data = ns.format.UTF8.encode(this.seed);
-            var signature = this.fingerprint;
+            var data = ns.format.UTF8.encode(this.__seed);
+            var signature = this.__fingerprint;
             return publicKey.verify(data, signature);
         } else {
             // ID with BTC/ETH address has no username

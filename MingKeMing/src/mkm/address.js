@@ -48,22 +48,22 @@
         if (network instanceof NetworkType) {
             network = network.valueOf();
         }
-        this.network = network;
+        this.__network = network;
     };
     ns.Class(BroadcastAddress, str, [Address]);
 
     BroadcastAddress.prototype.getNetwork = function () {
-        return this.network;
+        return this.__network;
     };
 
     BroadcastAddress.prototype.isBroadcast = function () {
         return true;
     };
     BroadcastAddress.prototype.isUser = function () {
-        return NetworkType.isUser(this.network);
+        return NetworkType.isUser(this.__network);
     };
     BroadcastAddress.prototype.isGroup = function () {
-        return NetworkType.isGroup(this.network);
+        return NetworkType.isGroup(this.__network);
     };
 
     /**
@@ -85,19 +85,19 @@
     var Address = ns.protocol.Address;
 
     var AddressFactory = function () {
-        this.addresses = {};  // String -> Address
+        this.__addresses = {};  // String -> Address
         // cache broadcast addresses
-        this.addresses[Address.ANYWHERE.toString()] = Address.ANYWHERE;
-        this.addresses[Address.EVERYWHERE.toString()] = Address.EVERYWHERE;
+        this.__addresses[Address.ANYWHERE.toString()] = Address.ANYWHERE;
+        this.__addresses[Address.EVERYWHERE.toString()] = Address.EVERYWHERE;
     };
     ns.Class(AddressFactory, null, [Address.Factory])
 
     AddressFactory.prototype.parseAddress = function (string) {
-        var address = this.addresses[string];
+        var address = this.__addresses[string];
         if (!address) {
             address = this.createAddress(string);
             if (address) {
-                this.addresses[string] = address;
+                this.__addresses[string] = address;
             }
         }
         return address;

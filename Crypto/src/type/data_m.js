@@ -40,13 +40,13 @@
 
     var resize = function (size) {
         var bigger = new Uint8Array(size);
-        Arrays.copy(this.buffer, this.offset, bigger, 0, this.length);
-        this.buffer = bigger;
-        this.offset = 0;
+        Arrays.copy(this._buffer, this._offset, bigger, 0, this._length);
+        this._buffer = bigger;
+        this._offset = 0;
     };
 
     var expand = function () {
-        var capacity = this.buffer.length - this.offset;
+        var capacity = this._buffer.length - this._offset;
         if (capacity > 4) {
             resize.call(this, capacity << 1);
         } else {
@@ -63,32 +63,32 @@
     bytes.prototype.setByte = function (index, value) {
         // adjust position
         if (index < 0) {
-            index += this.length;  // count from right hand
+            index += this._length;  // count from right hand
             if (index < 0) {
                 return false;      // too small
-                //throw new RangeError('error index: ' + (index - this.length) + ', length: ' + this.length);
+                //throw new RangeError('error index: ' + (index - this._length) + ', length: ' + this._length);
             }
         }
         // check position
-        if (index >= this.length) {
+        if (index >= this._length) {
             // target position is out of range [offset, offset + length)
             // check empty spaces on the right
-            if (this.offset + index >= this.buffer.length) {
+            if (this._offset + index >= this._buffer.length) {
                 // empty spaces on the right not enough
                 // check empty spaces on the left
-                if (index < this.buffer.length) {
+                if (index < this._buffer.length) {
                     // move all data left
-                    Arrays.copy(this.buffer, this.offset, this.buffer, 0, this.length);
-                    this.offset = 0;
+                    Arrays.copy(this._buffer, this._offset, this._buffer, 0, this._length);
+                    this._offset = 0;
                 } else {
                     // current space not enough, expand it
                     resize.call(this, index + 1);
                 }
             }
             // TODO: fill range [offset + length, offset + index) with ZERO?
-            this.length = index + 1;
+            this._length = index + 1;
         }
-        this.buffer[this.offset + index] = value & 0xFF;
+        this._buffer[this._offset + index] = value & 0xFF;
         return true;
     };
 
@@ -105,18 +105,18 @@
         var copyLen = end - start;
         if (copyLen > 0) {
             var copyEnd = pos + copyLen;  // relative to offset
-            if (source !== data.buffer || (data.offset + pos) !== start) {
+            if (source !== data._buffer || (data._offset + pos) !== start) {
                 // not sticky data
-                if (data.offset + copyEnd > data.buffer.length) {
+                if (data._offset + copyEnd > data._buffer.length) {
                     // expend the buffer to this size
                     resize.call(data, copyEnd);
                 }
                 // copy buffer
-                Arrays.copy(source, start, data.buffer, data.offset + pos, copyLen);
+                Arrays.copy(source, start, data._buffer, data._offset + pos, copyLen);
             }
             // reset view length
-            if (copyEnd > data.length) {
-                data.length = copyEnd;
+            if (copyEnd > data._length) {
+                data._length = copyEnd;
             }
         }
     };
@@ -125,18 +125,18 @@
      *  Copy data from source to position
      *
      *  Usages:
-     *      1. fill(pos, bytes);
-     *      2. fill(pos, bytes, start);
-     *      3. fill(pos, bytes, start, end);
+     *      1. fill(pos, source);
+     *      2. fill(pos, source, start);
+     *      3. fill(pos, source, start, end);
      *
-     * @param pos    - self position to copy data
-     * @param source - data source
+     * @param {int} pos    - self position to copy data
+     * @param {bytes|Uint8Array} source - data source
      */
     bytes.prototype.fill = function (pos, source) {
         if (pos < 0) {
-            pos += this.length;  // count from right hand
+            pos += this._length;  // count from right hand
             if (pos < 0) {
-                throw new RangeError('error position: ' + (pos - this.length) + ', length: ' + this.length);
+                throw new RangeError('error position: ' + (pos - this._length) + ', length: ' + this._length);
             }
         }
         var start, end;
@@ -144,22 +144,30 @@
             // fill(pos, source, start, end);
             start = arguments[2];
             end = arguments[3];
-            start = adjust(start, source.length);
-            end = adjust(end, source.length);
+            start = adjust(start, get_length(source));
+            end = adjust(end, get_length(source));
         } else if (arguments.length === 3) {
             // fill(pos, source, start);
             start = arguments[2];
-            end = source.length;
-            start = adjust(start, source.length);
+            end = get_length(source);
+            start = adjust(start, get_length(source));
         } else {
             // fill(pos, source);
             start = 0;
-            end = source.length;
+            end = get_length(source);
         }
         if (source instanceof bytes) {
-            copy_buffer(this, pos, source.buffer, source.offset + start, source.offset + end);
+            copy_buffer(this, pos, source._buffer, source._offset + start, source._offset + end);
         } else {
             copy_buffer(this, pos, source, start, end);
+        }
+    };
+
+    var get_length = function (source) {
+        if (source instanceof bytes) {
+            return source._length;
+        } else {
+            return source.length;
         }
     };
 
@@ -171,12 +179,12 @@
      *  Append data from source
      *
      *  Usages:
-     *      1. append(bytes);
-     *      2. append(bytes, start);
-     *      3. append(bytes, start, end);
-     *      4. append(bytes1, bytes2, ...);
+     *      1. append(source);
+     *      2. append(source, start);
+     *      3. append(source, start, end);
+     *      4. append(source1, source2, ...);
      *
-     * @param source - data source
+     * @param {bytes|Uint8Array} source - data source
      */
     bytes.prototype.append = function (source) {
         if (arguments.length > 1 && typeof arguments[1] !== 'number') {
@@ -191,22 +199,22 @@
             // append(bytes, start, end);
             start = arguments[1];
             end = arguments[2];
-            start = adjust(start, source.length);
-            end = adjust(end, source.length);
+            start = adjust(start, get_length(source));
+            end = adjust(end, get_length(source));
         } else if (arguments.length === 2) {
             // append(bytes, start);
             start = arguments[1];
-            end = source.length;
-            start = adjust(start, source.length);
+            end = get_length(source);
+            start = adjust(start, get_length(source));
         } else {
             // append(bytes);
             start = 0;
-            end = source.length;
+            end = get_length(source);
         }
         if (source instanceof bytes) {
-            copy_buffer(this, this.length, source.buffer, source.offset + start, source.offset + end);
+            copy_buffer(this, this._length, source._buffer, source._offset + start, source._offset + end);
         } else {
-            copy_buffer(this, this.length, source, start, end);
+            copy_buffer(this, this._length, source, start, end);
         }
     };
 
@@ -220,66 +228,66 @@
     bytes.prototype.insert = function (index, value) {
         // check position
         if (index < 0) {
-            index += this.length;  // count from right hand
+            index += this._length;  // count from right hand
             if (index < 0) {
                 return false;      // too small
-                //throw new RangeError('error index: ' + (index - this.length) + ', length: ' + this.length);
+                //throw new RangeError('error index: ' + (index - this._length) + ', length: ' + this._length);
             }
         }
-        if (index >= this.length) {
+        if (index >= this._length) {
             // target position is out of range [offset, offset + length)
             // set it directly
             return this.setByte(index, value);
         }
         if (index === 0) {
             // insert to the head
-            if (this.offset > 0) {
+            if (this._offset > 0) {
                 // empty spaces exist before the queue, no need to move elements
-                this.offset -= 1;
+                this._offset -= 1;
             } else {
                 // no empty space before the queue
-                if (this.length === this.buffer.length) {
+                if (this._length === this._buffer.length) {
                     // the buffer is full, expand it
                     expand.call(this);
                 }
                 // move the queue to right
-                Arrays.copy(this.buffer, 0, this.buffer, 1, this.length);
+                Arrays.copy(this._buffer, 0, this._buffer, 1, this._length);
             }
-        } else if (index < (this.length >> 1)) {
+        } else if (index < (this._length >> 1)) {
             // target position is near the head
-            if (this.offset > 0) {
+            if (this._offset > 0) {
                 // empty spaces found before the queue, move left part
-                Arrays.copy(this.buffer, this.offset, this.buffer, this.offset - 1, index);
-                this.offset -= 1;
+                Arrays.copy(this._buffer, this._offset, this._buffer, this._offset - 1, index);
+                this._offset -= 1;
             } else {
-                if ((this.offset + this.length) === this.buffer.length) {
+                if ((this._offset + this._length) === this._buffer.length) {
                     // the space is full, expand it
                     expand.call(this);
                 }
                 // move right part
-                Arrays.copy(this.buffer, this.offset + index,
-                    this.buffer, this.offset + index + 1, this.length - index);
+                Arrays.copy(this._buffer, this._offset + index,
+                    this._buffer, this._offset + index + 1, this._length - index);
             }
         } else {
             // target position is near the tail
-            if ((this.offset + this.length) < this.buffer.length) {
+            if ((this._offset + this._length) < this._buffer.length) {
                 // empty spaces found after the queue, move right part
-                Arrays.copy(this.buffer, this.offset + index,
-                    this.buffer, this.offset + index + 1, this.length - index);
-            } else if (this.offset > 0) {
+                Arrays.copy(this._buffer, this._offset + index,
+                    this._buffer, this._offset + index + 1, this._length - index);
+            } else if (this._offset > 0) {
                 // empty spaces found before the queue, move left part
-                Arrays.copy(this.buffer, this.offset, this.buffer, this.offset - 1, index);
-                this.offset -= 1;
+                Arrays.copy(this._buffer, this._offset, this._buffer, this._offset - 1, index);
+                this._offset -= 1;
             } else {
                 // the space is full, expand it
                 expand.call(this);
                 // move right part
-                Arrays.copy(this.buffer, this.offset + index,
-                    this.buffer, this.offset + index + 1, this.length - index);
+                Arrays.copy(this._buffer, this._offset + index,
+                    this._buffer, this._offset + index + 1, this._length - index);
             }
         }
-        this.buffer[this.offset + index] = value & 0xFF;
-        this.length += 1;
+        this._buffer[this._offset + index] = value & 0xFF;
+        this._length += 1;
         return true;
     };
 
@@ -297,29 +305,29 @@
     bytes.prototype.remove = function (index) {
         // adjust position
         if (index < 0) {
-            index += this.length;  // count from right hand
+            index += this._length;  // count from right hand
             if (index < 0) {       // too small
-                throw new RangeError('error index: ' + (index - this.length) + ', length: ' + this.length);
+                throw new RangeError('error index: ' + (index - this._length) + ', length: ' + this._length);
             }
-        } else if (index >= this.length) {  // too big
-            throw new RangeError('index error: ' + index + ', length: ' + this.length);
+        } else if (index >= this._length) {  // too big
+            throw new RangeError('index error: ' + index + ', length: ' + this._length);
         }
         if (index === 0) {
             // remove the first element
             return this.shift();
-        } else if (index === (this.length - 1)) {
+        } else if (index === (this._length - 1)) {
             // remove the last element
             return this.pop();
         }
         // remove inside element
-        var erased = this.buffer[this.offset + index];
-        if (index < (this.length >> 1)) {
+        var erased = this._buffer[this._offset + index];
+        if (index < (this._length >> 1)) {
             // target position is near the head, move the left part
-            Arrays.copy(this.buffer, this.offset, this.buffer, this.offset + 1, index);
+            Arrays.copy(this._buffer, this._offset, this._buffer, this._offset + 1, index);
         } else {
             // target position is near the tail, move the right part
-            Arrays.copy(this.buffer, this.offset + index + 1,
-                this.buffer, this.offset + index, this.length - index - 1);
+            Arrays.copy(this._buffer, this._offset + index + 1,
+                this._buffer, this._offset + index, this._length - index - 1);
         }
         return erased;
     };
@@ -331,12 +339,12 @@
      * @throws RangeError on data empty
      */
     bytes.prototype.shift = function () {
-        if (this.length < 1) {
+        if (this._length < 1) {
             throw new RangeError('data empty!');
         }
-        var erased = this.buffer[this.offset];
-        this.offset += 1;
-        this.length -= 1;
+        var erased = this._buffer[this._offset];
+        this._offset += 1;
+        this._length -= 1;
         return erased;
     };
 
@@ -347,11 +355,11 @@
      * @throws RangeError on data empty
      */
     bytes.prototype.pop = function () {
-        if (this.length < 1) {
+        if (this._length < 1) {
             throw new RangeError('data empty!');
         }
-        this.length -= 1;
-        return this.buffer[this.offset + this.length];
+        this._length -= 1;
+        return this._buffer[this._offset + this._length];
     };
 
     /**
@@ -360,7 +368,7 @@
      * @param {uint} element - new item value
      */
     bytes.prototype.push = function (element) {
-        this.setByte(this.length, element);
+        this.setByte(this._length, element);
     };
 
     //-------- namespace --------
