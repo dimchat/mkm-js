@@ -5,7 +5,7 @@
 //
 crypto_tests = [];
 
-!function (ns) {
+(function (ns) {
     'use strict';
 
     var Data = ns.type.Data;
@@ -107,9 +107,9 @@ crypto_tests = [];
     };
     crypto_tests.push(test_utf8);
 
-}(DIMP);
+})(MONKEY);
 
-!function (ns) {
+(function (ns) {
     'use strict';
 
     var UTF8 = ns.format.UTF8;
@@ -161,9 +161,9 @@ crypto_tests = [];
     };
     crypto_tests.push(test_base58);
 
-}(DIMP);
+})(MONKEY);
 
-!function (ns) {
+(function (ns) {
     'use strict';
 
     var UTF8 = ns.format.UTF8;
@@ -212,9 +212,9 @@ crypto_tests = [];
     };
     crypto_tests.push(test_ripemd160);
 
-}(DIMP);
+})(MONKEY);
 
-!function (ns) {
+(function (ns) {
     'use strict';
 
     var Arrays = ns.type.Arrays;
@@ -230,9 +230,9 @@ crypto_tests = [];
     };
     crypto_tests.push(test_json);
 
-}(DIMP);
+})(MONKEY);
 
-!function (ns) {
+(function (ns) {
     'use strict';
 
     var UTF8 = ns.format.UTF8;
@@ -326,9 +326,9 @@ crypto_tests = [];
     };
     crypto_tests.push(test_rsa);
 
-}(DIMP);
+})(MONKEY);
 
-!function (ns) {
+(function (ns) {
     'use strict';
 
     var UTF8 = ns.format.UTF8;
@@ -371,4 +371,4 @@ crypto_tests = [];
     };
     crypto_tests.push(test_aes);
 
-}(DIMP);
+})(MONKEY);

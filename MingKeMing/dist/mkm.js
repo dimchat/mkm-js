@@ -16,7 +16,7 @@ if (typeof MingKeMing !== "object") {
     }
     base.Namespace(ns.protocol);
     ns.register("protocol")
-})(MingKeMing, DIMP);
+})(MingKeMing, MONKEY);
 (function(ns) {
     var NetworkType = ns.type.Enum(null, {
         BTC_MAIN: (0),

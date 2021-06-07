@@ -1,5 +1,10 @@
 ;
 // license: https://mit-license.org
+//
+//  MONKEY: Memory Object aNd KEYs
+//
+//                               Written in 2020 by Moky <albert.moky@gmail.com>
+//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -31,80 +36,109 @@
     'use strict';
 
     var AsymmetricKey = ns.crypto.AsymmetricKey;
-    var VerifyKey = ns.crypto.VerifyKey;
+    var SignKey = ns.crypto.SignKey;
 
-    var PublicKey = function () {
+    var PrivateKey = function () {
     };
-    ns.Interface(PublicKey, [VerifyKey]);
+    ns.Interface(PrivateKey, [SignKey]);
 
-    PublicKey.RSA = AsymmetricKey.RSA;
-    PublicKey.ECC = AsymmetricKey.ECC;
+    PrivateKey.RSA = AsymmetricKey.RSA;
+    PrivateKey.ECC = AsymmetricKey.ECC;
+
+    /**
+     *  Create public key from this private key
+     *
+     * @return {PublicKey}
+     */
+    PrivateKey.prototype.getPublicKey = function () {
+        console.assert(false, 'implement me!');
+        return null;
+    };
 
     //-------- namespace --------
-    ns.crypto.PublicKey = PublicKey;
+    ns.crypto.PrivateKey = PrivateKey;
 
-    ns.crypto.register('PublicKey');
+    ns.crypto.register('PrivateKey');
 
-})(DIMP);
+})(MONKEY);
 
 (function (ns) {
     'use strict';
 
     var map = ns.type.Map;
     var CryptographyKey = ns.crypto.CryptographyKey;
-    var PublicKey = ns.crypto.PublicKey;
+    var PrivateKey = ns.crypto.PrivateKey;
 
     /**
      *  Key Factory
      *  ~~~~~~~~~~~
      */
-    var PublicKeyFactory = function () {
+    var PrivateKeyFactory = function () {
     };
-    ns.Interface(PublicKeyFactory, null);
+    ns.Interface(PrivateKeyFactory, null);
 
-    // noinspection JSUnusedLocalSymbols
-    PublicKeyFactory.prototype.parsePublicKey = function (key) {
+    PrivateKeyFactory.prototype.generatePrivateKey = function () {
         console.assert(false, 'implement me!');
         return null;
     };
 
-    PublicKey.Factory = PublicKeyFactory;
+    // noinspection JSUnusedLocalSymbols
+    PrivateKeyFactory.prototype.parsePrivateKey = function (key) {
+        console.assert(false, 'implement me!');
+        return null;
+    };
 
-    var s_factories = {};  // algorithm(String) -> PublicKeyFactory
+    PrivateKey.Factory = PrivateKeyFactory;
+
+    var s_factories = {};  // algorithm(String) -> PrivateKeyFactory
 
     /**
-     *  Register public key factory with algorithm
+     *  Register private key factory with algorithm
      *
      * @param {String} algorithm
-     * @param {PublicKeyFactory} factory
+     * @param {PrivateKeyFactory} factory
      */
-    PublicKey.register = function (algorithm, factory) {
+    PrivateKey.register = function (algorithm, factory) {
         s_factories[algorithm] = factory;
     };
-    PublicKey.getFactory = function (algorithm) {
+    PrivateKey.getFactory = function (algorithm) {
         return s_factories[algorithm];
     }
+
+    /**
+     *  Generate key with algorithm name
+     *
+     * @param {String} algorithm - algorithm name ('AES')
+     * @return {PrivateKey}
+     */
+    PrivateKey.generate = function (algorithm) {
+        var factory = PrivateKey.getFactory(algorithm);
+        if (!factory) {
+            throw new ReferenceError('key algorithm not support: ' + algorithm);
+        }
+        return factory.generatePrivateKey();
+    };
 
     /**
      *  Parse map object to key
      *
      * @param {{String:Object}} key - key info
-     * @return {PublicKey}
+     * @return {PrivateKey}
      */
-    PublicKey.parse = function (key) {
+    PrivateKey.parse = function (key) {
         if (!key) {
             return null;
-        } else if (ns.Interface.conforms(key, PublicKey)) {
+        } else if (ns.Interface.conforms(key, PrivateKey)) {
             return key;
         } else if (ns.Interface.conforms(key, map)) {
             key = key.getMap();
         }
         var algorithm = CryptographyKey.getAlgorithm(key);
-        var factory = PublicKey.getFactory(algorithm);
+        var factory = PrivateKey.getFactory(algorithm);
         if (!factory) {
-            factory = PublicKey.getFactory('*');  // unknown
+            factory = PrivateKey.getFactory('*');  // unknown
         }
-        return factory.parsePublicKey(key);
+        return factory.parsePrivateKey(key);
     }
 
-})(DIMP);
+})(MONKEY);

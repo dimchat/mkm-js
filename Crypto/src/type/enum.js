@@ -1,5 +1,10 @@
 ;
 // license: https://mit-license.org
+//
+//  MONKEY: Memory Object aNd KEYs
+//
+//                               Written in 2020 by Moky <albert.moky@gmail.com>
+//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -140,4 +145,4 @@
     ns.type.register('BaseEnum');
     ns.type.register('Enum');
 
-})(DIMP);
+})(MONKEY);

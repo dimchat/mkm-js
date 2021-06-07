@@ -12,8 +12,8 @@
     <script>
         !function (ns) {
             var sources = [
-                'src/base/namespace.js',
-                'src/base/class.js',
+                'src/namespace.js',
+                'src/class.js',
 
                 'src/type/object.js',
                 'src/type/arrays.js',
@@ -23,6 +23,10 @@
                 'src/type/string.js',
                 'src/type/dictionary.js',
                 'src/type/wrapper.js',
+
+                'src/threading/thread.js',
+                'src/threading/handler.js',
+                'src/threading/runner.js',
 
                 'src/digest/hash.js',
                 'src/digest/md5.js',
@@ -40,11 +44,11 @@
                 'src/format/utf8.js',
                 'src/format/json.js',
 
-                'src/cryptography.js',
-                'src/symmetric.js',
-                'src/asymmetric.js',
-                'src/public.js',
-                'src/private.js',
+                'src/crypto/cryptography.js',
+                'src/crypto/symmetric.js',
+                'src/crypto/asymmetric.js',
+                'src/crypto/public.js',
+                'src/crypto/private.js',
                 null
             ];
             var dist = 'dist/crypto.js';

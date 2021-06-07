@@ -1,5 +1,10 @@
 ;
 // license: https://mit-license.org
+//
+//  MONKEY: Memory Object aNd KEYs
+//
+//                               Written in 2021 by Moky <albert.moky@gmail.com>
+//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -139,4 +144,4 @@
 
     ns.type.register('Wrapper');
 
-})(DIMP);
+})(MONKEY);

@@ -1,5 +1,10 @@
 ;
 // license: https://mit-license.org
+//
+//  MONKEY: Memory Object aNd KEYs
+//
+//                               Written in 2020 by Moky <albert.moky@gmail.com>
+//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -81,7 +86,7 @@
     ns.crypto.register('EncryptKey');
     ns.crypto.register('DecryptKey');
 
-})(DIMP);
+})(MONKEY);
 
 (function (ns) {
     'use strict';
@@ -111,7 +116,7 @@
 
     ns.crypto.register('SymmetricKey');
 
-})(DIMP);
+})(MONKEY);
 
 (function (ns) {
     'use strict';
@@ -192,4 +197,4 @@
         return factory.parseSymmetricKey(key);
     }
 
-})(DIMP);
+})(MONKEY);

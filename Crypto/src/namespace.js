@@ -1,5 +1,10 @@
 ;
 // license: https://mit-license.org
+//
+//  MONKEY: Memory Object aNd KEYs
+//
+//                               Written in 2020 by Moky <albert.moky@gmail.com>
+//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -25,8 +30,8 @@
 // =============================================================================
 //
 
-if (typeof DIMP !== 'object') {
-    DIMP = {};
+if (typeof MONKEY !== 'object') {
+    MONKEY = {};
 }
 
 (function (ns) {
@@ -126,7 +131,7 @@ if (typeof DIMP !== 'object') {
 
     ns.register('Namespace');
 
-})(DIMP);
+})(MONKEY);
 
 (function (ns) {
     "use strict";
@@ -134,6 +139,9 @@ if (typeof DIMP !== 'object') {
     //-------- namespace --------
     if (typeof ns.type !== 'object') {
         ns.type = {};
+    }
+    if (typeof ns.threading !== 'object') {
+        ns.threading = {};
     }
     if (typeof ns.format !== 'object') {
         ns.format = {};
@@ -146,13 +154,15 @@ if (typeof DIMP !== 'object') {
     }
 
     ns.Namespace(ns.type);
+    ns.Namespace(ns.threading);
     ns.Namespace(ns.format);
     ns.Namespace(ns.digest);
     ns.Namespace(ns.crypto);
 
     ns.register('type');
+    ns.register('threading');
     ns.register('format');
     ns.register('digest');
     ns.register('crypto');
 
-})(DIMP);
+})(MONKEY);

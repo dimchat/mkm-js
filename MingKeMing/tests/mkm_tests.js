@@ -5,7 +5,7 @@
 //
 mkm_tests = [];
 
-!function (ns) {
+(function (ns) {
     'use strict';
 
     var NetworkType = ns.protocol.NetworkType;
@@ -25,13 +25,13 @@ mkm_tests = [];
     };
     mkm_tests.push(test_id);
 
-}(MingKeMing);
+})(MingKeMing);
 
-!function (ns) {
+!(function (ns) {
     'use strict';
 
-    var AsymmetricKey = DIMP.crypto.AsymmetricKey;
-    var PrivateKey = DIMP.crypto.PrivateKey;
+    var AsymmetricKey = ns.crypto.AsymmetricKey;
+    var PrivateKey = ns.crypto.PrivateKey;
 
     var NetworkType = ns.protocol.NetworkType;
 
@@ -45,10 +45,10 @@ mkm_tests = [];
         log('generated meta: ', meta);
         assert(meta.isValid() === true, 'failed to generate meta');
 
-        var id = meta.generateID(NetworkType.MAIN);
+        var id = meta.generateID(NetworkType.MAIN, null);
         log('generated ID: ', id);
         assert(id.getType() === 0x08, 'failed to generate ID')
     };
     mkm_tests.push(test_meta);
 
-}(MingKeMing);
+})(MingKeMing);
