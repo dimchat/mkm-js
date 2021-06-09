@@ -142,6 +142,6 @@
     //-------- namespace --------
     ns.type.Wrapper = wrapper;
 
-    ns.type.register('Wrapper');
+    ns.type.registers('Wrapper');
 
 })(MONKEY);

@@ -379,6 +379,6 @@
     //-------- namespace --------
     ns.type.MutableData = bytes;
 
-    ns.type.register('MutableData');
+    ns.type.registers('MutableData');
 
 })(MONKEY);

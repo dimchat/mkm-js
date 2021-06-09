@@ -233,8 +233,8 @@
     };
 
     //-------- namespace --------
-    ns.BaseDocument = BaseDocument;
+    ns.mkm.BaseDocument = BaseDocument;
 
-    ns.register('BaseDocument');
+    ns.mkm.registers('BaseDocument');
 
 })(MingKeMing);

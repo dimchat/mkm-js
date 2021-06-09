@@ -58,7 +58,7 @@
     //-------- namespace --------
     ns.crypto.PrivateKey = PrivateKey;
 
-    ns.crypto.register('PrivateKey');
+    ns.crypto.registers('PrivateKey');
 
 })(MONKEY);
 

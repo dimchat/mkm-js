@@ -111,15 +111,16 @@
     //-------- namespace --------
     ns.type.Map = map;
 
-    ns.type.register('Map');
+    ns.type.registers('Map');
 
 })(MONKEY);
 
 (function (ns) {
     'use strict';
 
-    var Arrays = ns.type.Arrays;
+    var obj = ns.type.Object;
     var map = ns.type.Map;
+    var Arrays = ns.type.Arrays;
 
     //
     //  Dictionary
@@ -131,15 +132,15 @@
      * @param {{}|map} dictionary
      */
     var dict = function (dictionary) {
+        obj.call(this);
         if (!dictionary) {
             dictionary = {};
         } else if (ns.Interface.conforms(dictionary, map)) {
             dictionary = dictionary.getMap();
         }
-        ns.type.Object.call(this);
         this.__dictionary = dictionary;
     };
-    ns.Class(dict, ns.type.Object, [map]);
+    ns.Class(dict, obj, [map]);
 
     dict.prototype.getMap = function () {
         return this.__dictionary;
@@ -181,6 +182,6 @@
     //-------- namespace --------
     ns.type.Dictionary = dict;
 
-    ns.type.register('Dictionary');
+    ns.type.registers('Dictionary');
 
 })(MONKEY);

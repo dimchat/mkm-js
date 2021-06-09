@@ -161,7 +161,7 @@
     //-------- namespace --------
     ns.protocol.NetworkType = NetworkType;
 
-    ns.protocol.register('NetworkType');
+    ns.protocol.registers('NetworkType');
 
 })(MingKeMing);
 
@@ -217,6 +217,6 @@
     //-------- namespace --------
     ns.protocol.MetaType = MetaType;
 
-    ns.protocol.register('MetaType');
+    ns.protocol.registers('MetaType');
 
 })(MingKeMing);

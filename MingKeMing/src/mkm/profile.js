@@ -103,9 +103,9 @@
     };
 
     //-------- namespace --------
-    ns.BaseVisa = BaseVisa;
+    ns.mkm.BaseVisa = BaseVisa;
 
-    ns.register('BaseVisa');
+    ns.mkm.registers('BaseVisa');
 
 })(MingKeMing);
 
@@ -115,7 +115,7 @@
     var ID = ns.protocol.ID;
     var Document = ns.protocol.Document;
     var Bulletin = ns.protocol.Bulletin;
-    var BaseDocument = ns.BaseDocument;
+    var BaseDocument = ns.mkm.BaseDocument;
 
     /**
      *  Create base group profile
@@ -171,8 +171,8 @@
     };
 
     //-------- namespace --------
-    ns.BaseBulletin = BaseBulletin;
+    ns.mkm.BaseBulletin = BaseBulletin;
 
-    ns.register('BaseBulletin');
+    ns.mkm.registers('BaseBulletin');
 
 })(MingKeMing);

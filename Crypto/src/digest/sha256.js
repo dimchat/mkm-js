@@ -35,6 +35,7 @@
 (function (ns) {
     'use strict';
 
+    var obj = ns.type.Object;
     var Hash = ns.digest.Hash;
     var Lib = ns.digest.HashLib;
 
@@ -42,8 +43,9 @@
     //  SHA256
     //
     var sha256 = function () {
+        obj.call(this);
     };
-    ns.Class(sha256, ns.type.Object, [Hash]);
+    ns.Class(sha256, obj, [Hash]);
     // noinspection JSUnusedLocalSymbols
     sha256.prototype.digest = function (data) {
         console.assert(false, 'SHA256 not implemented');
@@ -53,6 +55,6 @@
     //-------- namespace --------
     ns.digest.SHA256 = new Lib(new sha256());
 
-    ns.digest.register('SHA256');
+    ns.digest.registers('SHA256');
 
 })(MONKEY);

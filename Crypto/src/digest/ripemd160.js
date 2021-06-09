@@ -35,6 +35,7 @@
 (function (ns) {
     'use strict';
 
+    var obj = ns.type.Object;
     var Hash = ns.digest.Hash;
     var Lib = ns.digest.HashLib;
 
@@ -42,8 +43,9 @@
     //  RIPEMD160
     //
     var ripemd160 = function () {
+        obj.call(this);
     };
-    ns.Class(ripemd160, ns.type.Object, [Hash]);
+    ns.Class(ripemd160, obj, [Hash]);
     // noinspection JSUnusedLocalSymbols
     ripemd160.prototype.digest = function (data) {
         console.assert(false, 'RIPEMD160 not implemented');
@@ -53,6 +55,6 @@
     //-------- namespace --------
     ns.digest.RIPEMD160 = new Lib(new ripemd160());
 
-    ns.digest.register('RIPEMD160');
+    ns.digest.registers('RIPEMD160');
 
 })(MONKEY);

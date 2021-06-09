@@ -73,24 +73,26 @@
     Address.EVERYWHERE = new BroadcastAddress('everywhere', NetworkType.GROUP);
 
     //-------- namespace --------
-    ns.BroadcastAddress = BroadcastAddress;
+    ns.mkm.BroadcastAddress = BroadcastAddress;
 
-    ns.register('BroadcastAddress')
+    ns.mkm.registers('BroadcastAddress')
 
 })(MingKeMing);
 
 (function (ns) {
     'use strict';
 
+    var obj = ns.type.Object;
     var Address = ns.protocol.Address;
 
     var AddressFactory = function () {
+        obj.call(this);
         this.__addresses = {};  // String -> Address
         // cache broadcast addresses
         this.__addresses[Address.ANYWHERE.toString()] = Address.ANYWHERE;
         this.__addresses[Address.EVERYWHERE.toString()] = Address.EVERYWHERE;
     };
-    ns.Class(AddressFactory, null, [Address.Factory])
+    ns.Class(AddressFactory, obj, [Address.Factory])
 
     AddressFactory.prototype.parseAddress = function (string) {
         var address = this.__addresses[string];
@@ -115,9 +117,9 @@
     };
 
     //-------- namespace --------
-    ns.AddressFactory = AddressFactory;
+    ns.mkm.AddressFactory = AddressFactory;
 
-    ns.register('AddressFactory');
+    ns.mkm.registers('AddressFactory');
 
 })(MingKeMing);
 
@@ -126,7 +128,7 @@
 
     var ID = ns.protocol.ID;
     var Address = ns.protocol.Address;
-    var IDFactory = ns.IDFactory;
+    var IDFactory = ns.mkm.IDFactory;
 
     var factory = new IDFactory();
     ID.setFactory(factory);

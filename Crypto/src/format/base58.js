@@ -35,6 +35,7 @@
 (function (ns) {
     'use strict';
 
+    var obj = ns.type.Object;
     var Coder = ns.format.BaseCoder;
     var Lib = ns.format.CoderLib;
 
@@ -42,8 +43,9 @@
     //  Base58
     //
     var base58 = function () {
+        obj.call(this);
     };
-    ns.Class(base58, ns.type.Object, [Coder]);
+    ns.Class(base58, obj, [Coder]);
     // noinspection JSUnusedLocalSymbols
     base58.prototype.encode = function (data) {
         console.assert(false, 'Base58 encode not implemented');
@@ -58,6 +60,6 @@
     //-------- namespace --------
     ns.format.Base58 = new Lib(new base58());
 
-    ns.format.register('Base58');
+    ns.format.registers('Base58');
 
 })(MONKEY);

@@ -153,7 +153,7 @@
     //-------- namespace --------
     ns.protocol.ID = ID;
 
-    ns.protocol.register('ID');
+    ns.protocol.registers('ID');
 
 })(MingKeMing);
 

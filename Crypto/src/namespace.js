@@ -44,16 +44,18 @@ if (typeof MONKEY !== 'object') {
      * @return {namespace}
      */
     var namespacefy = function (space) {
-        if (!space) {
-            space = new namespace();
-        } else if (!is_space(space)) {
-            space.__all__ = [];
-            space.register = namespace.prototype.register;
-            space.exports = namespace.prototype.exports;
-        }
+        space.__all__ = [];
+        space.registers = namespace.prototype.registers;
+        space.exports = namespace.prototype.exports;
         return space;
     };
 
+    /**
+     *  Check whether the space is a namespace
+     *
+     * @param {Object} space
+     * @return {boolean}
+     */
     var is_space = function (space) {
         if (space instanceof namespace) {
             return true;
@@ -61,75 +63,81 @@ if (typeof MONKEY !== 'object') {
         if (typeof space.exports !== 'function') {
             return false;
         }
-        if (typeof space.register !== 'function') {
+        if (typeof space.registers !== 'function') {
             return false;
         }
         return space.__all__ instanceof Array;
     };
 
-    //
-    //  Namespace
-    //
+    /**
+     *  Namespace
+     *  ~~~~~~~~~
+     */
     var namespace = function () {
         // all registered names
         this.__all__ = [];  // Array<String>
     };
 
     /**
-     *  Register a class into current namespace with name
+     *  Register a name in a namespace
      *
-     * @param {String} name to export from ths space
+     * @param {String} name - class name
+     * @throws {SyntaxError} on conflicted
      */
-    namespace.prototype.register = function (name/*, clazz*/) {
+    namespace.prototype.registers = function (name) {
         if (this.__all__.indexOf(name) < 0) {
             this.__all__.push(name);
-            // space[name] = clazz;
-            return true;
-        } else {
-            // throw new Error('conflict name: ' + name);
-            return false;
+        // } else {
+        //     throw new SyntaxError('conflict name: ' + name);
         }
     };
 
     /**
-     *  Export from classes in current namespace
+     *  Export this namespace to another namespace
      *
-     * @param {namespace} outerSpace - outer namespace
+     * @param {namespace} to - another namespace
+     * @return {namespace} outer namespace
      */
-    namespace.prototype.exports = function (outerSpace) {
-        // make sure the outer is a namespace
-        namespacefy(outerSpace);
-        // copy all registered objects from inner space to outer space
-        var all = this.__all__;
-        var name, inner;
-        for (var i = 0; i < all.length; ++i) {
-            name = all[i];
-            inner = this[name];
-            if (!inner) {
-                throw new Error('empty object: ' + name);
-            }
-            if (is_space(inner)) {
-                // inner space
-                if (typeof outerSpace[name] !== 'object') {
-                    outerSpace[name] = new namespace();
-                }
-                inner.exports(outerSpace[name]);
-            } else if (outerSpace.hasOwnProperty(name)) {
-                // throw new Error('conflict name: ' + name);
-            } else {
-                outerSpace[name] = inner;
-            }
-            outerSpace.register(name);
+    namespace.prototype.exports = function (to) {
+        var names = this.__all__;
+        var name;
+        for (var i = 0; i < names.length; ++i) {
+            name = names[i];
+            export_one(this, to, name);
+            to.registers(name);
         }
-        return outerSpace;
+        return to;
+    };
+    var export_one = function (from, to, name) {
+        var source = from[name];
+        var target = to[name];
+        if (typeof target === 'undefined') {
+            // target not exists, copy directly
+            to[name] = source;
+        } else if (is_space(source)) {
+            // copying namespace to target
+            if (!is_space(target)) {
+                namespacefy(target);
+            }
+            source.exports(target);
+        } else {
+            // copying properties to target
+            export_all(source, target);
+        }
+    };
+    var export_all = function (from, to) {
+        var names = Object.getOwnPropertyNames(from);
+        for (var i = 0; i < names.length; ++i) {
+            export_one(from, to, names[i]);
+        }
     };
 
     //-------- namespace --------
-    ns.Namespace = namespacefy;
+    ns.Namespace = namespace;
 
     namespacefy(ns);
 
-    ns.register('Namespace');
+    ns.registers('Namespace');
 
 })(MONKEY);
 
@@ -138,31 +146,25 @@ if (typeof MONKEY !== 'object') {
 
     //-------- namespace --------
     if (typeof ns.type !== 'object') {
-        ns.type = {};
+        ns.type = new ns.Namespace();
     }
     if (typeof ns.threading !== 'object') {
-        ns.threading = {};
+        ns.threading = new ns.Namespace();
     }
     if (typeof ns.format !== 'object') {
-        ns.format = {};
+        ns.format = new ns.Namespace();
     }
     if (typeof ns.digest !== 'object') {
-        ns.digest = {};
+        ns.digest = new ns.Namespace();
     }
     if (typeof ns.crypto !== 'object') {
-        ns.crypto = {};
+        ns.crypto = new ns.Namespace();
     }
 
-    ns.Namespace(ns.type);
-    ns.Namespace(ns.threading);
-    ns.Namespace(ns.format);
-    ns.Namespace(ns.digest);
-    ns.Namespace(ns.crypto);
-
-    ns.register('type');
-    ns.register('threading');
-    ns.register('format');
-    ns.register('digest');
-    ns.register('crypto');
+    ns.registers('type');
+    ns.registers('threading');
+    ns.registers('format');
+    ns.registers('digest');
+    ns.registers('crypto');
 
 })(MONKEY);

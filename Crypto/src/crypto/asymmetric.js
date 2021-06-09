@@ -114,8 +114,8 @@
     ns.crypto.SignKey = SignKey;
     ns.crypto.VerifyKey = VerifyKey;
 
-    ns.crypto.register('AsymmetricKey');
-    ns.crypto.register('SignKey');
-    ns.crypto.register('VerifyKey');
+    ns.crypto.registers('AsymmetricKey');
+    ns.crypto.registers('SignKey');
+    ns.crypto.registers('VerifyKey');
 
 })(MONKEY);

@@ -87,7 +87,7 @@
     //-------- namespace --------
     ns.protocol.Visa = Visa;
 
-    ns.protocol.register('Visa');
+    ns.protocol.registers('Visa');
 
 })(MingKeMing);
 
@@ -125,6 +125,6 @@
     //-------- namespace --------
     ns.protocol.Bulletin = Bulletin;
 
-    ns.protocol.register('Bulletin');
+    ns.protocol.registers('Bulletin');
 
 })(MingKeMing);

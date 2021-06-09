@@ -83,8 +83,8 @@
     ns.crypto.EncryptKey = EncryptKey;
     ns.crypto.DecryptKey = DecryptKey;
 
-    ns.crypto.register('EncryptKey');
-    ns.crypto.register('DecryptKey');
+    ns.crypto.registers('EncryptKey');
+    ns.crypto.registers('DecryptKey');
 
 })(MONKEY);
 
@@ -114,7 +114,7 @@
     //-------- namespace --------
     ns.crypto.SymmetricKey = SymmetricKey;
 
-    ns.crypto.register('SymmetricKey');
+    ns.crypto.registers('SymmetricKey');
 
 })(MONKEY);
 

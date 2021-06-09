@@ -121,7 +121,7 @@
     //-------- namespace --------
     ns.protocol.TAI = TAI;
 
-    ns.protocol.register('TAI');
+    ns.protocol.registers('TAI');
 
 })(MingKeMing);
 
@@ -225,7 +225,7 @@
     //-------- namespace --------
     ns.protocol.Document = Document;
 
-    ns.protocol.register('Document');
+    ns.protocol.registers('Document');
 
 })(MingKeMing);
 

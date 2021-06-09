@@ -36,6 +36,7 @@
 (function (ns) {
     'use strict';
 
+    var obj = ns.type.Object;
     var Data = ns.type.Data;
     var Coder = ns.format.BaseCoder;
     var Lib = ns.format.CoderLib;
@@ -107,8 +108,9 @@
     //  Hex
     //
     var hex = function () {
+        obj.call(this);
     };
-    ns.Class(hex, ns.type.Object, [Coder]);
+    ns.Class(hex, obj, [Coder]);
 
     hex.prototype.encode = function (data) {
         return hex_encode(data);
@@ -120,6 +122,6 @@
     //-------- namespace --------
     ns.format.Hex = new Lib(new hex());
 
-    ns.format.register('Hex');
+    ns.format.registers('Hex');
 
 })(MONKEY);

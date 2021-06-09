@@ -35,6 +35,8 @@
 (function (ns) {
     'use strict';
 
+    var obj = ns.type.Object;
+
     //
     //  Hash interface
     //
@@ -57,9 +59,10 @@
     //  Hash Lib
     //
     var lib = function (hash) {
+        obj.call(this);
         this.hash = hash;
     };
-    ns.Class(lib, ns.type.Object, [hash]);
+    ns.Class(lib, obj, [hash]);
 
     lib.prototype.digest = function (data) {
         return this.hash.digest(data);
@@ -69,7 +72,7 @@
     ns.digest.Hash = hash;
     ns.digest.HashLib = lib;
 
-    ns.digest.register('Hash');
-    ns.digest.register('HashLib');
+    ns.digest.registers('Hash');
+    ns.digest.registers('HashLib');
 
 })(MONKEY);

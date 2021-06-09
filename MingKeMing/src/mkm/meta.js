@@ -232,8 +232,8 @@
     };
 
     //-------- namespace --------
-    ns.BaseMeta = BaseMeta;
+    ns.mkm.BaseMeta = BaseMeta;
 
-    ns.register('BaseMeta');
+    ns.mkm.registers('BaseMeta');
 
 })(MingKeMing);

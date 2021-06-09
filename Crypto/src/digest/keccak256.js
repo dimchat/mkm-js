@@ -35,6 +35,8 @@
 (function (ns) {
     'use strict';
 
+    var obj = ns.type.Object;
+
     var Hash = ns.digest.Hash;
     var Lib = ns.digest.HashLib;
 
@@ -42,8 +44,9 @@
     //  KECCAK256
     //
     var keccak256 = function () {
+        obj.call(this);
     };
-    ns.Class(keccak256, ns.type.Object, [Hash]);
+    ns.Class(keccak256, obj, [Hash]);
     // noinspection JSUnusedLocalSymbols
     keccak256.prototype.digest = function (data) {
         console.assert(false, 'KECCAK256 not implemented');
@@ -53,6 +56,6 @@
     //-------- namespace --------
     ns.digest.KECCAK256 = new Lib(new keccak256());
 
-    ns.digest.register('KECCAK256');
+    ns.digest.registers('KECCAK256');
 
 })(MONKEY);

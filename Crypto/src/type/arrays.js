@@ -223,6 +223,6 @@
         copy: copy_items
     };
 
-    ns.type.register('Arrays');
+    ns.type.registers('Arrays');
 
 })(MONKEY);

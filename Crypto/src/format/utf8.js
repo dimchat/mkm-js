@@ -36,6 +36,7 @@
 (function (ns) {
     'use strict';
 
+    var obj = ns.type.Object;
     var Data = ns.type.Data;
     var Parser = ns.format.DataParser;
     var Lib = ns.format.ParserLib;
@@ -134,8 +135,9 @@
     //  UTF-8
     //
     var utf8 = function () {
+        obj.call(this);
     };
-    ns.Class(utf8, ns.type.Object, [Parser]);
+    ns.Class(utf8, obj, [Parser]);
 
     utf8.prototype.encode = utf8_encode;
     utf8.prototype.decode = utf8_decode;
@@ -143,6 +145,6 @@
     //-------- namespace --------//
     ns.format.UTF8 = new Lib(new utf8());
 
-    ns.format.register('UTF8');
+    ns.format.registers('UTF8');
 
 })(MONKEY);

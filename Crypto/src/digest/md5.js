@@ -35,6 +35,7 @@
 (function (ns) {
     'use strict';
 
+    var obj = ns.type.Object;
     var Hash = ns.digest.Hash;
     var Lib = ns.digest.HashLib;
 
@@ -42,8 +43,9 @@
     //  MD5
     //
     var md5 = function () {
+        obj.call(this);
     };
-    ns.Class(md5, ns.type.Object, [Hash]);
+    ns.Class(md5, obj, [Hash]);
     // noinspection JSUnusedLocalSymbols
     md5.prototype.digest = function (data) {
         console.assert(false, 'MD5 not implemented');
@@ -53,6 +55,6 @@
     //-------- namespace --------
     ns.digest.MD5 = new Lib(new md5());
 
-    ns.digest.register('MD5');
+    ns.digest.registers('MD5');
 
 })(MONKEY);

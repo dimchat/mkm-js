@@ -35,6 +35,8 @@
 (function (ns) {
     'use strict';
 
+    var obj = ns.type.Object;
+
     //
     //  Enumeration
     //
@@ -64,7 +66,7 @@
      * @param {String} alias
      */
     var base_enum = function (value, alias) {
-        ns.type.Object.call(this);
+        obj.call(this);
         if (!alias) {
             if (value instanceof base_enum) {
                 alias = value.__alias;
@@ -78,7 +80,7 @@
         this.__value = value;
         this.__alias = alias;
     };
-    ns.Class(base_enum, ns.type.Object, null);
+    ns.Class(base_enum, obj, null);
 
     /**
      *  Check whether values equal
@@ -89,7 +91,7 @@
     base_enum.prototype.equals = function (other) {
         if (!other) {
             return !this.__value;
-        // } else if (ns.type.Object.prototype.equals.call(this, other)) {
+        // } else if (obj.prototype.equals.call(this, other)) {
         //     return true;
         } else if (other instanceof base_enum) {
             return this.__value === other.valueOf();
@@ -139,10 +141,8 @@
     };
 
     //-------- namespace --------
-    ns.type.BaseEnum = base_enum;
     ns.type.Enum = enumify;
 
-    ns.type.register('BaseEnum');
-    ns.type.register('Enum');
+    ns.type.registers('Enum');
 
 })(MONKEY);

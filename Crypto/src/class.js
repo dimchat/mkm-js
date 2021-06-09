@@ -168,7 +168,7 @@
     ns.Interface = interfacefy;
     ns.Class = classify;
 
-    ns.register('Interface');
-    ns.register('Class');
+    ns.registers('Interface');
+    ns.registers('Class');
 
 })(MONKEY);

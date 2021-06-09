@@ -54,7 +54,7 @@
     //-------- namespace --------
     ns.threading.Processor = Processor;
 
-    ns.threading.register('Processor');
+    ns.threading.registers('Processor');
 
 })(MONKEY);
 
@@ -178,7 +178,7 @@
     Runner.prototype.process = function () {
         var processor = this.__processor;
         if (!processor || processor === this) {
-            throw SyntaxError('Runner::process() > override me!');
+            throw new SyntaxError('Runner::process() > override me!');
         } else {
             return processor.process();
         }
@@ -187,6 +187,6 @@
     //-------- namespace --------
     ns.threading.Runner = Runner;
 
-    ns.threading.register('Runner');
+    ns.threading.registers('Runner');
 
 })(MONKEY);

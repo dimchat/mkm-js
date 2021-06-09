@@ -35,6 +35,8 @@
 (function (ns) {
     'use strict';
 
+    var obj = ns.type.Object;
+
     //
     //  String
     //
@@ -45,15 +47,15 @@
      * @param {String|str} value
      */
     var str = function (value) {
+        obj.call(this);
         if (!value) {
             value = '';
         } else if (value instanceof str) {
             value = value.toString();
         }
-        ns.type.Object.call(this);
         this.__string = value;
     };
-    ns.Class(str, ns.type.Object, null);
+    ns.Class(str, obj, null);
 
     /**
      *  Check whether strings equal
@@ -106,6 +108,6 @@
     //-------- namespace --------
     ns.type.String = str;
 
-    ns.type.register('String');
+    ns.type.registers('String');
 
 })(MONKEY);

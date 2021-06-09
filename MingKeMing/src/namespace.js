@@ -33,7 +33,7 @@
 //! require <crypto.js>
 
 if (typeof MingKeMing !== 'object') {
-    MingKeMing = {};
+    MingKeMing = new MONKEY.Namespace();
 }
 
 (function (ns, base) {
@@ -44,11 +44,13 @@ if (typeof MingKeMing !== 'object') {
 
     //-------- namespace --------
     if (typeof ns.protocol !== 'object') {
-        ns.protocol = {};
+        ns.protocol = new ns.Namespace();
+    }
+    if (typeof ns.mkm !== 'object') {
+        ns.mkm = new ns.Namespace();
     }
 
-    base.Namespace(ns.protocol);
-
-    ns.register('protocol');
+    ns.registers('protocol');
+    ns.registers('mkm');
 
 })(MingKeMing, MONKEY);

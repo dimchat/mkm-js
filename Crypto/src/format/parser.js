@@ -35,6 +35,8 @@
 (function (ns) {
     'use strict';
 
+    var obj = ns.type.Object;
+
     //
     //  DataParser interface
     //
@@ -68,9 +70,10 @@
     //  Parser Lib
     //
     var lib = function (parser) {
+        obj.call(this);
         this.parser = parser;
     };
-    ns.Class(lib, ns.type.Object, [parser]);
+    ns.Class(lib, obj, [parser]);
 
     lib.prototype.encode = function (object) {
         return this.parser.encode(object);
@@ -83,7 +86,7 @@
     ns.format.DataParser = parser;
     ns.format.ParserLib = lib;
 
-    ns.format.register('DataParser');
-    ns.format.register('ParserLib');
+    ns.format.registers('DataParser');
+    ns.format.registers('ParserLib');
 
 })(MONKEY);

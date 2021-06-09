@@ -35,6 +35,7 @@
 (function (ns) {
     'use strict';
 
+    var obj = ns.type.Object;
     var Arrays = ns.type.Arrays;
 
     /**
@@ -48,7 +49,7 @@
      *      5. new Data(buffer, offset, length);
      */
     var bytes = function () {
-        ns.type.Object.call(this);
+        obj.call(this);
         this._buffer = null;
         this._offset = 0;
         this._length = 0;
@@ -84,7 +85,7 @@
             throw new SyntaxError('arguments error: ' + arguments);
         }
     };
-    ns.Class(bytes, ns.type.Object, null);
+    ns.Class(bytes, obj, null);
 
     bytes.ZERO = new bytes(new Uint8Array(0), 0, 0);
 
@@ -435,6 +436,6 @@
     //-------- namespace --------
     ns.type.Data = bytes;
 
-    ns.type.register('Data');
+    ns.type.registers('Data');
 
 })(MONKEY);

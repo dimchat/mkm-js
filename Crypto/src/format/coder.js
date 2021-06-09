@@ -35,6 +35,8 @@
 (function (ns) {
     'use strict';
 
+    var obj = ns.type.Object;
+
     //
     //  BaseCoder interface
     //
@@ -68,9 +70,10 @@
     //  Coder Lib
     //
     var lib = function (coder) {
+        obj.call(this);
         this.coder = coder;
     };
-    ns.Class(lib, ns.type.Object, [coder]);
+    ns.Class(lib, obj, [coder]);
 
     lib.prototype.encode = function (data) {
         return this.coder.encode(data);
@@ -83,7 +86,7 @@
     ns.format.BaseCoder = coder;
     ns.format.CoderLib = lib;
 
-    ns.format.register('BaseCoder');
-    ns.format.register('CoderLib');
+    ns.format.registers('BaseCoder');
+    ns.format.registers('CoderLib');
 
 })(MONKEY);

@@ -80,7 +80,7 @@
     //-------- namespace --------
     ns.protocol.Address = Address;
 
-    ns.protocol.register('Address');
+    ns.protocol.registers('Address');
 
 })(MingKeMing);
 

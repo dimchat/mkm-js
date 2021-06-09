@@ -75,6 +75,6 @@
     //-------- namespace --------
     ns.threading.Handler = Handler;
 
-    ns.threading.register('Handler');
+    ns.threading.registers('Handler');
 
 })(MONKEY);

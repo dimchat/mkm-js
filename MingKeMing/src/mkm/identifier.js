@@ -81,18 +81,19 @@
     };
 
     //-------- namespace --------
-    ns.Identifier = Identifier;
+    ns.mkm.Identifier = Identifier;
 
-    ns.register('Identifier');
+    ns.mkm.registers('Identifier');
 
 })(MingKeMing);
 
 (function (ns) {
     'use strict';
 
+    var obj = ns.type.Object;
     var Address = ns.protocol.Address;
     var ID = ns.protocol.ID;
-    var Identifier = ns.Identifier;
+    var Identifier = ns.mkm.Identifier;
 
     /**
      *  Concat ID with components
@@ -144,9 +145,10 @@
     };
 
     var IDFactory = function () {
+        obj.call(this);
         this.__identifiers = {};  // String -> ID
     };
-    ns.Class(IDFactory, null, [ID.Factory])
+    ns.Class(IDFactory, obj, [ID.Factory])
 
     IDFactory.prototype.createID = function (name, address, terminal) {
         var string = concat(name, address, terminal);
@@ -170,8 +172,8 @@
     };
 
     //-------- namespace --------
-    ns.IDFactory = IDFactory;
+    ns.mkm.IDFactory = IDFactory;
 
-    ns.register('IDFactory');
+    ns.mkm.registers('IDFactory');
 
 })(MingKeMing);

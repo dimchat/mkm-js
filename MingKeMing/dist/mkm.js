@@ -7,15 +7,18 @@
  * @license   {@link https://mit-license.org | MIT License}
  */;
 if (typeof MingKeMing !== "object") {
-    MingKeMing = {}
+    MingKeMing = new MONKEY.Namespace()
 }
 (function(ns, base) {
     base.exports(ns);
     if (typeof ns.protocol !== "object") {
-        ns.protocol = {}
+        ns.protocol = new ns.Namespace()
     }
-    base.Namespace(ns.protocol);
-    ns.register("protocol")
+    if (typeof ns.mkm !== "object") {
+        ns.mkm = new ns.Namespace()
+    }
+    ns.registers("protocol");
+    ns.registers("mkm")
 })(MingKeMing, MONKEY);
 (function(ns) {
     var NetworkType = ns.type.Enum(null, {
@@ -39,7 +42,7 @@ if (typeof MingKeMing !== "object") {
         return (network & group) === group
     };
     ns.protocol.NetworkType = NetworkType;
-    ns.protocol.register("NetworkType")
+    ns.protocol.registers("NetworkType")
 })(MingKeMing);
 (function(ns) {
     var MetaType = ns.type.Enum(null, {
@@ -55,7 +58,7 @@ if (typeof MingKeMing !== "object") {
         return (version & mkm) === mkm
     };
     ns.protocol.MetaType = MetaType;
-    ns.protocol.register("MetaType")
+    ns.protocol.registers("MetaType")
 })(MingKeMing);
 (function(ns) {
     var Address = function() {};
@@ -79,7 +82,7 @@ if (typeof MingKeMing !== "object") {
     Address.ANYWHERE = null;
     Address.EVERYWHERE = null;
     ns.protocol.Address = Address;
-    ns.protocol.register("Address")
+    ns.protocol.registers("Address")
 })(MingKeMing);
 (function(ns) {
     var str = ns.type.String;
@@ -173,7 +176,7 @@ if (typeof MingKeMing !== "object") {
         return array
     };
     ns.protocol.ID = ID;
-    ns.protocol.register("ID")
+    ns.protocol.registers("ID")
 })(MingKeMing);
 (function(ns) {
     var str = ns.type.String;
@@ -273,7 +276,7 @@ if (typeof MingKeMing !== "object") {
         return false
     };
     ns.protocol.Meta = Meta;
-    ns.protocol.register("Meta")
+    ns.protocol.registers("Meta")
 })(MingKeMing);
 (function(ns) {
     var map = ns.type.Map;
@@ -368,7 +371,7 @@ if (typeof MingKeMing !== "object") {
         console.assert(false, "implement me!")
     };
     ns.protocol.TAI = TAI;
-    ns.protocol.register("TAI")
+    ns.protocol.registers("TAI")
 })(MingKeMing);
 (function(ns) {
     var map = ns.type.Map;
@@ -421,7 +424,7 @@ if (typeof MingKeMing !== "object") {
         console.assert(false, "implement me!")
     };
     ns.protocol.Document = Document;
-    ns.protocol.register("Document")
+    ns.protocol.registers("Document")
 })(MingKeMing);
 (function(ns) {
     var map = ns.type.Map;
@@ -490,7 +493,7 @@ if (typeof MingKeMing !== "object") {
         console.assert(false, "implement me!")
     };
     ns.protocol.Visa = Visa;
-    ns.protocol.register("Visa")
+    ns.protocol.registers("Visa")
 })(MingKeMing);
 (function(ns) {
     var Document = ns.protocol.Document;
@@ -504,7 +507,7 @@ if (typeof MingKeMing !== "object") {
         console.assert(false, "implement me!")
     };
     ns.protocol.Bulletin = Bulletin;
-    ns.protocol.register("Bulletin")
+    ns.protocol.registers("Bulletin")
 })(MingKeMing);
 (function(ns) {
     var str = ns.type.String;
@@ -537,13 +540,14 @@ if (typeof MingKeMing !== "object") {
     Identifier.prototype.isGroup = function() {
         return this.getAddress().isGroup()
     };
-    ns.Identifier = Identifier;
-    ns.register("Identifier")
+    ns.mkm.Identifier = Identifier;
+    ns.mkm.registers("Identifier")
 })(MingKeMing);
 (function(ns) {
+    var obj = ns.type.Object;
     var Address = ns.protocol.Address;
     var ID = ns.protocol.ID;
-    var Identifier = ns.Identifier;
+    var Identifier = ns.mkm.Identifier;
     var concat = function(name, address, terminal) {
         var string = address.toString();
         if (name && name.length > 0) {
@@ -573,9 +577,10 @@ if (typeof MingKeMing !== "object") {
         return new Identifier(string, name, address, terminal)
     };
     var IDFactory = function() {
+        obj.call(this);
         this.__identifiers = {}
     };
-    ns.Class(IDFactory, null, [ID.Factory]);
+    ns.Class(IDFactory, obj, [ID.Factory]);
     IDFactory.prototype.createID = function(name, address, terminal) {
         var string = concat(name, address, terminal);
         var id = this.__identifiers[string];
@@ -595,8 +600,8 @@ if (typeof MingKeMing !== "object") {
         }
         return id
     };
-    ns.IDFactory = IDFactory;
-    ns.register("IDFactory")
+    ns.mkm.IDFactory = IDFactory;
+    ns.mkm.registers("IDFactory")
 })(MingKeMing);
 (function(ns) {
     var str = ns.type.String;
@@ -624,17 +629,19 @@ if (typeof MingKeMing !== "object") {
     };
     Address.ANYWHERE = new BroadcastAddress("anywhere", NetworkType.MAIN);
     Address.EVERYWHERE = new BroadcastAddress("everywhere", NetworkType.GROUP);
-    ns.BroadcastAddress = BroadcastAddress;
-    ns.register("BroadcastAddress")
+    ns.mkm.BroadcastAddress = BroadcastAddress;
+    ns.mkm.registers("BroadcastAddress")
 })(MingKeMing);
 (function(ns) {
+    var obj = ns.type.Object;
     var Address = ns.protocol.Address;
     var AddressFactory = function() {
+        obj.call(this);
         this.__addresses = {};
         this.__addresses[Address.ANYWHERE.toString()] = Address.ANYWHERE;
         this.__addresses[Address.EVERYWHERE.toString()] = Address.EVERYWHERE
     };
-    ns.Class(AddressFactory, null, [Address.Factory]);
+    ns.Class(AddressFactory, obj, [Address.Factory]);
     AddressFactory.prototype.parseAddress = function(string) {
         var address = this.__addresses[string];
         if (!address) {
@@ -649,13 +656,13 @@ if (typeof MingKeMing !== "object") {
         console.assert(false, "implement me!");
         return null
     };
-    ns.AddressFactory = AddressFactory;
-    ns.register("AddressFactory")
+    ns.mkm.AddressFactory = AddressFactory;
+    ns.mkm.registers("AddressFactory")
 })(MingKeMing);
 (function(ns) {
     var ID = ns.protocol.ID;
     var Address = ns.protocol.Address;
-    var IDFactory = ns.IDFactory;
+    var IDFactory = ns.mkm.IDFactory;
     var factory = new IDFactory();
     ID.setFactory(factory);
     ID.ANYONE = factory.createID("anyone", Address.ANYWHERE, null);
@@ -800,8 +807,8 @@ if (typeof MingKeMing !== "object") {
             return false
         }
     };
-    ns.BaseMeta = BaseMeta;
-    ns.register("BaseMeta")
+    ns.mkm.BaseMeta = BaseMeta;
+    ns.mkm.registers("BaseMeta")
 })(MingKeMing);
 (function(ns) {
     var Dictionary = ns.type.Dictionary;
@@ -959,8 +966,8 @@ if (typeof MingKeMing !== "object") {
     BaseDocument.prototype.setName = function(name) {
         this.setProperty("name", name)
     };
-    ns.BaseDocument = BaseDocument;
-    ns.register("BaseDocument")
+    ns.mkm.BaseDocument = BaseDocument;
+    ns.mkm.registers("BaseDocument")
 })(MingKeMing);
 (function(ns) {
     var EncryptKey = ns.crypto.EncryptKey;
@@ -1006,14 +1013,14 @@ if (typeof MingKeMing !== "object") {
     BaseVisa.prototype.setAvatar = function(url) {
         this.setProperty("avatar", url)
     };
-    ns.BaseVisa = BaseVisa;
-    ns.register("BaseVisa")
+    ns.mkm.BaseVisa = BaseVisa;
+    ns.mkm.registers("BaseVisa")
 })(MingKeMing);
 (function(ns) {
     var ID = ns.protocol.ID;
     var Document = ns.protocol.Document;
     var Bulletin = ns.protocol.Bulletin;
-    var BaseDocument = ns.BaseDocument;
+    var BaseDocument = ns.mkm.BaseDocument;
     var BaseBulletin = function() {
         if (arguments.length === 3) {
             BaseDocument.call(this, arguments[0], arguments[1], arguments[2])
@@ -1045,6 +1052,6 @@ if (typeof MingKeMing !== "object") {
             this.setProperty("assistants", null)
         }
     };
-    ns.BaseBulletin = BaseBulletin;
-    ns.register("BaseBulletin")
+    ns.mkm.BaseBulletin = BaseBulletin;
+    ns.mkm.registers("BaseBulletin")
 })(MingKeMing);

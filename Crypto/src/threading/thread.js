@@ -51,7 +51,7 @@
     //-------- namespace --------
     ns.threading.Runnable = Runnable;
 
-    ns.threading.register('Runnable');
+    ns.threading.registers('Runnable');
 
 })(MONKEY);
 
@@ -146,7 +146,7 @@
     Thread.prototype.run = function () {
         var target = this.__target;
         if (!target || target === this) {
-            throw SyntaxError('Thread::run() > override me!');
+            throw new SyntaxError('Thread::run() > override me!');
         } else {
             return target.run();
         }
@@ -155,6 +155,6 @@
     //-------- namespace --------
     ns.threading.Thread = Thread;
 
-    ns.threading.register('Thread');
+    ns.threading.registers('Thread');
 
 })(MONKEY);

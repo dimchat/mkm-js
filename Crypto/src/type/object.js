@@ -70,6 +70,7 @@
     //  Object
     //
     var obj = function () {
+        Object.call(this);
     };
     ns.Class(obj, Object, null);
 
@@ -83,6 +84,6 @@
     //-------- namespace --------
     ns.type.Object = obj;
 
-    ns.type.register('Object');
+    ns.type.registers('Object');
 
 })(MONKEY);

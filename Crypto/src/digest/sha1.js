@@ -35,6 +35,7 @@
 (function (ns) {
     'use strict';
 
+    var obj = ns.type.Object;
     var Hash = ns.digest.Hash;
     var Lib = ns.digest.HashLib;
 
@@ -42,8 +43,9 @@
     //  SHA1
     //
     var sha1 = function () {
+        obj.call(this);
     };
-    ns.Class(sha1, ns.type.Object, [Hash]);
+    ns.Class(sha1, obj, [Hash]);
     // noinspection JSUnusedLocalSymbols
     sha1.prototype.digest = function (data) {
         console.assert(false, 'SHA1 not implemented');
@@ -53,6 +55,6 @@
     //-------- namespace --------
     ns.digest.SHA1 = new Lib(new sha1());
 
-    ns.digest.register('SHA1');
+    ns.digest.registers('SHA1');
 
 })(MONKEY);

@@ -104,6 +104,6 @@
     //-------- namespace --------
     ns.crypto.CryptographyKey = CryptographyKey;
 
-    ns.crypto.register('CryptographyKey');
+    ns.crypto.registers('CryptographyKey');
 
 })(MONKEY);

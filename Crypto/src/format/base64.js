@@ -36,6 +36,7 @@
 (function (ns) {
     'use strict';
 
+    var obj = ns.type.Object;
     var Data = ns.type.Data;
     var Coder = ns.format.BaseCoder;
     var Lib = ns.format.CoderLib;
@@ -159,8 +160,9 @@
     //  Base64
     //
     var base64 = function () {
+        obj.call(this);
     };
-    ns.Class(base64, ns.type.Object, [Coder]);
+    ns.Class(base64, obj, [Coder]);
 
     base64.prototype.encode = function (data) {
         return base64_encode(data);
@@ -172,6 +174,6 @@
     //-------- namespace --------
     ns.format.Base64 = new Lib(new base64());
 
-    ns.format.register('Base64');
+    ns.format.registers('Base64');
 
 })(MONKEY);

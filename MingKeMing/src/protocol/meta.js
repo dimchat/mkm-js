@@ -168,7 +168,7 @@
     //-------- namespace --------
     ns.protocol.Meta = Meta;
 
-    ns.protocol.register('Meta');
+    ns.protocol.registers('Meta');
 
 })(MingKeMing);
 

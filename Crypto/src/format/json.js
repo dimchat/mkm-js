@@ -36,6 +36,7 @@
 (function (ns) {
     'use strict';
 
+    var obj = ns.type.Object;
     var Parser = ns.format.DataParser;
     var Lib = ns.format.ParserLib;
 
@@ -43,8 +44,9 @@
     //  JSON
     //
     var json = function () {
+        obj.call(this);
     };
-    ns.Class(json, ns.type.Object, [Parser]);
+    ns.Class(json, obj, [Parser]);
 
     json.prototype.encode = function (container) {
         var string = JSON.stringify(container);
@@ -70,6 +72,6 @@
     //-------- namespace --------//
     ns.format.JSON = new Lib(new json());
 
-    ns.format.register('JSON');
+    ns.format.registers('JSON');
 
 })(MONKEY);
