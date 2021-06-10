@@ -111,7 +111,9 @@ if (typeof MONKEY !== 'object') {
     var export_one = function (from, to, name) {
         var source = from[name];
         var target = to[name];
-        if (typeof target === 'undefined') {
+        if (source === target) {
+            // same object, do nothing
+        } else if (typeof target === 'undefined') {
             // target not exists, copy directly
             to[name] = source;
         } else if (is_space(source)) {

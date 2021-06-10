@@ -41,7 +41,7 @@
     var ID = ns.protocol.ID;
     var Document = ns.protocol.Document;
     var Visa = ns.protocol.Visa;
-    var BaseDocument = ns.BaseDocument;
+    var BaseDocument = ns.mkm.BaseDocument;
 
     /**
      *  Create base visa document

@@ -49,16 +49,18 @@ if (typeof MONKEY !== "object") {
     var export_one = function(from, to, name) {
         var source = from[name];
         var target = to[name];
-        if (typeof target === "undefined") {
-            to[name] = source
-        } else {
-            if (is_space(source)) {
-                if (!is_space(target)) {
-                    namespacefy(target)
-                }
-                source.exports(target)
+        if (source === target) {} else {
+            if (typeof target === "undefined") {
+                to[name] = source
             } else {
-                export_all(source, target)
+                if (is_space(source)) {
+                    if (!is_space(target)) {
+                        namespacefy(target)
+                    }
+                    source.exports(target)
+                } else {
+                    export_all(source, target)
+                }
             }
         }
     };
