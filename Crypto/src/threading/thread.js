@@ -101,8 +101,8 @@
         this.__running = true;
         var thread = this;
         this.__thread_id = setInterval(function () {
-            var running = thread.isRunning() && thread.run();
-            if (!running) {
+            var ran = thread.isRunning() && thread.run();
+            if (!ran) {
                 stop(thread);
             }
         }, this.getInterval());

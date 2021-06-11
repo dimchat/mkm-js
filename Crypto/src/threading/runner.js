@@ -149,21 +149,19 @@
     };
 
     Runner.prototype.handle = function () {
-        while (this.process()) {
-            // one job processed,
-            // still have job(s) waiting
-            if (this.isRunning()) {
-                // if still running,
+        while (this.isRunning()) {
+            // process one job
+            if (this.process()) {
+                // one job processed, still have job(s) waiting
                 // continue to do it again immediately
-                continue;
+            } else {
+                // no more job waiting now,
+                // return true to try it again after a while
+                return true;
             }
-            // forced to stopped
-            return false;
         }
-        // no job waiting now
-        // if still running, have a rest;
-        // else, exit handling.
-        return this.isRunning();
+        // stopped, return false to exit handling
+        return false;
     };
 
     Runner.prototype.finish = function () {
