@@ -99,29 +99,28 @@
      */
     Thread.prototype.start = function () {
         this.__running = true;
-        run(this);
+        var thread = this;
+        this.__thread_id = setInterval(function () {
+            var running = thread.isRunning() && thread.run();
+            if (!running) {
+                stop(thread);
+            }
+        }, this.getInterval());
     };
+    var stop = function (thread) {
+        var tid = thread.__thread_id;
+        if (tid > 0) {
+            thread.__thread_id = 0;
+            clearInterval(tid);
+        }
+    }
     /**
      *  Stop running
      */
     Thread.prototype.stop = function () {
+        // force to stop immediately
+        stop(this);
         this.__running = false;
-        // force to stop
-        var tid = this.__thread_id;
-        if (tid > 0) {
-            this.__thread_id = 0;
-            clearTimeout(tid);
-        }
-    };
-
-    var run = function (thread) {
-        if (thread.isRunning() && thread.run()) {
-            // not finished yet, call it after sleeping a while
-            thread.__thread_id = setTimeout(function () {
-                thread.__thread_id = 0;
-                run(thread);
-            }, thread.getInterval());
-        }
     };
 
     /**
