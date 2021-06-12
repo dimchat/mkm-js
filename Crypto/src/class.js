@@ -45,14 +45,25 @@
     var conforms = function (object, protocol) {
         if (!object) {
             return false;
-        }
-        if (object instanceof protocol) {
+        } else if (object instanceof protocol) {
             return true;
+        } else if (ns.type.Object.isBaseType(object)) {
+            // ignore base types: String, Number, Boolean, Date, ...
+            return false;
         }
         var child = Object.getPrototypeOf(object);
+        if (child === Object.getPrototypeOf({})) {
+            // define interface methods directly?
+            child = object;
+        }
         var names = Object.getOwnPropertyNames(protocol.prototype);
+        var p;
         for (var i = 0; i < names.length; ++i) {
-            if (!child.hasOwnProperty(names[i])) {
+            p = names[i];
+            if (p === 'constructor') {
+                continue;
+            }
+            if (!child.hasOwnProperty(p)) {
                 // TODO: check properties in ancestors' prototype?
                 return false;
             }
