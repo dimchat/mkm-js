@@ -83,6 +83,11 @@
         var k;
         for (var i = 0; i < len1; ++i) {
             k = keys1[i];
+            // check key
+            if (keys2.indexOf(k) < 0) {
+                return false;
+            }
+            // check value
             if (!objects_equal(dict1[k], dict2[k])) {
                 return false;
             }
@@ -93,31 +98,31 @@
     var objects_equal = function (obj1, obj2) {
         // compare directly
         if (obj1 === obj2) {
-            return true; // same objects
+            return true;   // same object
         } else if (!obj1) {
-            return !obj2; // object1 is undefined but object2 is not
+            return !obj2;  // object1 is undefined but object2 is not
         } else if (!obj2) {
-            return false; // object2 is undefined but object1 is not
-        } else if (typeof obj1 === 'string' || typeof obj2 === 'string') {
-            return false; // obj1 === obj2;
+            return false;  // object2 is undefined but object1 is not
         } else if (typeof obj1['equals'] === 'function') {
+            // compare via 'equals()'
             return obj1.equals(obj2);
         } else if (typeof obj2['equals'] === 'function') {
+            // compare via 'equals()'
             return obj2.equals(obj1);
-        }
-        // check array
-        if (is_array(obj1)) {
-            if (is_array(obj2)) {
-                // compare as array
-                return arrays_equal(obj1, obj2);
-            } else {
-                return false;
-            }
+        } else if (ns.type.Object.isBaseType(obj1)) {
+            // compare base types: String, Number, Boolean, Date, ...
+            return obj1 === obj2;
+        } else if (ns.type.Object.isBaseType(obj2)) {
+            return false;  // object2 is base type but object1 is not
+        } else if (is_array(obj1)) {
+            // compare arrays
+            return is_array(obj2) && arrays_equal(obj1, obj2);
         } else if (is_array(obj2)) {
-            return false;
+            return false;  // object2 is an array but object1 is not
+        } else {
+            // compare as maps
+            return maps_equal(obj1, obj2);
         }
-        // compare as dictionary
-        return maps_equal(obj1, obj2);
     };
 
     /**
