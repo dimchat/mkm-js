@@ -574,6 +574,9 @@ if (typeof MingKeMing !== "object") {
             name = pair[0];
             address = Address.parse(pair[1])
         }
+        if (!address) {
+            return null
+        }
         return new Identifier(string, name, address, terminal)
     };
     var IDFactory = function() {
