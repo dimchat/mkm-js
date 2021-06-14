@@ -123,6 +123,7 @@
                     return true;
                 }
             } catch (e) {
+                console.error('Runner::handle() error', this, e);
             }
             // handling finished(or error), move on
             this.__stage = STAGE_CLEANING;
