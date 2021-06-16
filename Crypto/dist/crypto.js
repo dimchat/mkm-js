@@ -1621,17 +1621,8 @@ if (typeof MONKEY !== "object") {
     var base64_encode = function(data) {
         var base64 = "";
         var length = data.length;
-        var tail = "";
         var remainder = length % 3;
-        if (remainder === 1) {
-            length -= 1;
-            tail = "=="
-        } else {
-            if (remainder === 2) {
-                length -= 2;
-                tail = "="
-            }
-        }
+        length -= remainder;
         var x1, x2, x3;
         var i;
         for (i = 0; i < length; i += 3) {
@@ -1646,17 +1637,19 @@ if (typeof MONKEY !== "object") {
         if (remainder === 1) {
             x1 = data[i];
             base64 += base64_chars.charAt((x1 & 252) >> 2);
-            base64 += base64_chars.charAt((x1 & 3) << 4)
+            base64 += base64_chars.charAt((x1 & 3) << 4);
+            base64 += "=="
         } else {
             if (remainder === 2) {
                 x1 = data[i];
                 x2 = data[i + 1];
                 base64 += base64_chars.charAt((x1 & 252) >> 2);
                 base64 += base64_chars.charAt(((x1 & 3) << 4) | ((x2 & 240) >> 4));
-                base64 += base64_chars.charAt((x2 & 15) << 2)
+                base64 += base64_chars.charAt((x2 & 15) << 2);
+                base64 += "="
             }
         }
-        return base64 + tail
+        return base64
     };
     var base64_decode = function(string) {
         var str = string.replace(/[^A-Za-z0-9+\/=]/g, "");
