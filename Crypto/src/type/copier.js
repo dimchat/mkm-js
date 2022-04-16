@@ -3,12 +3,12 @@
 //
 //  MONKEY: Memory Object aNd KEYs
 //
-//                               Written in 2021 by Moky <albert.moky@gmail.com>
+//                               Written in 2022 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2021 Albert Moky
+// Copyright (c) 2022 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -44,46 +44,11 @@
     // var Enum = ns.type.Enum;
 
     /**
-     *  Get inner String
-     *  ~~~~~~~~~~~~~~~~
-     *  Remove first wrapper
-     *
-     * @param {Stringer} str
-     */
-    var fetch_string = function (str) {
-        if (ns.Interface.conforms(str, Stringer)) {
-            return str.toString();
-        } else {
-            // console.assert(str instanceof String, 'string error: ' + str);
-            return str;
-        }
-    };
-
-    /**
-     *  Get inner Map
-     *  ~~~~~~~~~~~~~
-     *  Remove first wrapper
-     *
-     * @param {Mapper} dict
-     */
-    var fetch_map = function (dict) {
-        if (ns.Interface.conforms(dict, Mapper)) {
-            return dict.toMap();
-        } else {
-            // console.assert(dict instanceof {}, 'map error: ' + dict);
-            return dict;
-        }
-    };
-
-    /**
-     *  Unwrap recursively
-     *  ~~~~~~~~~~~~~~~~~~
-     *  Remove all wrappers
+     *  Shallow Copy
      *
      * @param {*} object
-     * @return {*}
      */
-    var unwrap = function (object) {
+    var copy = function (object) {
         if (obj.isNull(object)) {
             // empty
             return null;
@@ -97,67 +62,114 @@
             // get inner string
             return object.toString();
         // } else if (ns.Interface.conforms(object, Mapper)) {
-        //     // unwrap inner map
-        //     return unwrap_map(object.toMap());
+        //     // copy inner map
+        //     return copy_map(object.toMap());
         } else if (!ns.type.Arrays.isArray(object)) {
             // unwrap as a map
-            return unwrap_map(object);
+            return copy_map(object);
         } else if (object instanceof Array) {
             // unwrap as a list
-            return unwrap_list(object);
+            return copy_list(object);
         } else {
             // base array?
             return object;
         }
     };
 
-    var unwrap_map = function (dict) {
+    var copy_map = function (dict) {
         if (ns.Interface.conforms(dict, Mapper)) {
             dict = dict.toMap();
         }
+        var clone = {};
         var allKeys = Object.keys(dict);
         var key;
-        var naked, value;
         var count = allKeys.length;
         for (var i = 0; i < count; ++i) {
             key = allKeys[i];
-            // if (key instanceof Stringer) {
-            //     key = key.toString();
-            // }
-            value = dict[key];
-            naked = unwrap(value);
-            if (naked !== value) {
-                dict[key] = naked;
-            }
+            clone[key] = dict[key];
         }
-        return dict;
+        return clone;
     };
 
-    var unwrap_list = function (array) {
-        var naked, item;
+    var copy_list = function (array) {
+        var clone = [];
         var count = array.length;
         for (var i = 0; i < count; ++i) {
-            item = array[i];
-            naked = unwrap(item);
-            if (naked !== item) {
-                array[i] = naked;
-            }
+            clone.push(array[i]);
         }
-        return array;
+        return clone;
+    };
+
+    /**
+     *  Shallow Copy
+     *
+     * @param {*} object
+     */
+    var deep_copy = function (object) {
+        if (obj.isNull(object)) {
+            // empty
+            return null;
+        } else if (obj.isBaseType(object)) {
+            // return as base type
+            return object;
+        // } else if (object instanceof Enum) {
+        //     // get enum value
+        //     return object.valueOf();
+        } else if (ns.Interface.conforms(object, Stringer)) {
+            // get inner string
+            return object.toString();
+        // } else if (ns.Interface.conforms(object, Mapper)) {
+        //     // copy inner map
+        //     return deep_copy_map(object.toMap());
+        } else if (!ns.type.Arrays.isArray(object)) {
+            // unwrap as a map
+            return deep_copy_map(object);
+        } else if (object instanceof Array) {
+            // unwrap as a list
+            return deep_copy_list(object);
+        } else {
+            // base array?
+            return object;
+        }
+    };
+
+    var deep_copy_map = function (dict) {
+        if (ns.Interface.conforms(dict, Mapper)) {
+            dict = dict.toMap();
+        }
+        var clone = {};
+        var allKeys = Object.keys(dict);
+        var key;
+        var count = allKeys.length;
+        for (var i = 0; i < count; ++i) {
+            key = allKeys[i];
+            clone[key] = deep_copy(dict[key]);
+        }
+        return clone;
+    };
+
+    var deep_copy_list = function (array) {
+        var clone = [];
+        var count = array.length;
+        for (var i = 0; i < count; ++i) {
+            clone.push(deep_copy(array[i]));
+        }
+        return clone;
     };
 
     //-------- namespace --------
-    ns.type.Wrapper = {
-        // remove first wrapper
-        fetchString: fetch_string,
-        fetchMap: fetch_map,
+    ns.type.Copier = {
+        // shallow copy
+        copy: copy,
+        copyMap: copy_map,
+        copyList: copy_list,
 
-        // remove all wrappers
-        unwrap: unwrap,
-        unwrapMap: unwrap_map,
-        unwrapList: unwrap_list
+        // deep copy
+        deepCopy: deep_copy,
+        deepCopyMap: deep_copy_map,
+        deepCopyList: deep_copy_list
     };
 
-    ns.type.registers('Wrapper');
+    ns.type.registers('Copier');
 
 })(MONKEY);

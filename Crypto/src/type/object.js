@@ -67,23 +67,48 @@
     };
 
     //
-    //  Object
+    //  Object Interface
     //
-    var obj = function () {
+    var IObject = function () {};
+    ns.Interface(IObject, null);
+
+    /**
+     *  Check whether objects equal
+     *
+     * @param {Object|IObject} other - another object
+     * @return {boolean}
+     */
+    IObject.prototype.equals = function (other) {
+        console.assert(false, 'implement me!');
+        return false;
+    };
+
+    IObject.prototype.valueOf = function () {
+        console.assert(false, 'implement me!');
+        return false;
+    };
+
+    IObject.isNull = is_null;
+    IObject.isBaseType = is_base_type;
+
+    //
+    //  Base class for Object
+    //
+    var BaseObject = function () {
         Object.call(this);
     };
-    ns.Class(obj, Object, null);
+    ns.Class(BaseObject, Object, [IObject]);
 
-    obj.isNull = is_null;
-    obj.isBaseType = is_base_type;
-
-    obj.prototype.equals = function (other) {
+    // Override
+    BaseObject.prototype.equals = function (other) {
         return this === other;
     };
 
     //-------- namespace --------
-    ns.type.Object = obj;
+    ns.type.Object = IObject;
+    ns.type.BaseObject = BaseObject;
 
     ns.type.registers('Object');
+    ns.type.registers('BaseObject');
 
 })(MONKEY);

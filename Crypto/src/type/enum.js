@@ -35,15 +35,41 @@
 (function (ns) {
     'use strict';
 
-    var obj = ns.type.Object;
+    var base = ns.type.BaseObject;
 
-    //
-    //  Enumeration
-    //
+    /**
+     *  Define Enum with elements names & values
+     *
+     * @param {*} enumeration - enum constructor
+     * @param {{}} elements
+     * @return {Class}
+     */
+    var enumify = function(enumeration, elements) {
+        if (!enumeration) {
+            enumeration = function (value, alias) {
+                Enum.call(this, value, alias);
+            }
+        }
+        ns.Class(enumeration, Enum, null);
+        var e, v;
+        for (var name in elements) {
+            if (!elements.hasOwnProperty(name)) {
+                continue;
+            }
+            v = elements[name];
+            if (v instanceof Enum) {
+                v = v.__value;
+            } else if (typeof v !== 'number') {
+                throw new TypeError('Enum value must be a number!');
+            }
+            e = new enumeration(v, name);
+            enumeration[name] = e;
+        }
+        return enumeration;
+    };
 
-    var get_alias = function (value) {
-        // searching exists elements for alias
-        var enumeration = this.constructor;
+    // searching exists elements for alias
+    var get_alias = function (enumeration, value) {
         var e;
         for (var k in enumeration) {
             if (!enumeration.hasOwnProperty(k)) {
@@ -62,82 +88,47 @@
     /**
      *  Create Enum with value & alias
      *
-     * @param {Number|base_enum} value
+     * @param {Number|Enum} value
      * @param {String} alias
      */
-    var base_enum = function (value, alias) {
-        obj.call(this);
+    var Enum = function (value, alias) {
+        base.call(this);
         if (!alias) {
-            if (value instanceof base_enum) {
+            if (value instanceof Enum) {
                 alias = value.__alias;
             } else {
-                alias = get_alias.call(this, value);
+                alias = get_alias(this.constructor, value);
             }
         }
-        if (value instanceof base_enum) {
+        if (value instanceof Enum) {
             value = value.__value;
         }
         this.__value = value;
         this.__alias = alias;
     };
-    ns.Class(base_enum, obj, null);
+    ns.Class(Enum, base, null);
 
-    /**
-     *  Check whether values equal
-     *
-     * @param {base_enum|Number} other
-     * @return {boolean}
-     */
-    base_enum.prototype.equals = function (other) {
+    // Override
+    Enum.prototype.equals = function (other) {
         if (!other) {
             return !this.__value;
-        // } else if (obj.prototype.equals.call(this, other)) {
+        // } else if (base.prototype.equals.call(this, other)) {
         //     return true;
-        } else if (other instanceof base_enum) {
+        } else if (other instanceof Enum) {
             return this.__value === other.valueOf();
         } else {
             return this.__value === other;
         }
     };
 
-    base_enum.prototype.valueOf = function () {
+    // Override
+    Enum.prototype.valueOf = function () {
         return this.__value;
     };
 
-    base_enum.prototype.toString = function () {
+    Enum.prototype.toString = function () {
         return '<' + this.__alias.toString()
             + ': ' + this.__value.toString() + '>';
-    };
-
-    /**
-     *  Define Enum with elements names & values
-     *
-     * @param {*} enumeration - enum constructor
-     * @param {{}} elements
-     * @return {Class}
-     */
-    var enumify = function(enumeration, elements) {
-        if (!enumeration) {
-            enumeration = function (value, alias) {
-                base_enum.call(this, value, alias);
-            }
-        }
-        ns.Class(enumeration, base_enum, null);
-        var e, v;
-        for (var name in elements) {
-            if (!elements.hasOwnProperty(name)) {
-                continue;
-            }
-            v = elements[name];
-            if (v instanceof base_enum) {
-                v = v.__value;
-            } else if (typeof v !== 'number') {
-                throw new TypeError('Enum value must be a number!');
-            }
-            e = new enumeration(v, name);
-            enumeration[name] = e;
-        }
-        return enumeration;
     };
 
     //-------- namespace --------

@@ -35,45 +35,99 @@
 (function (ns) {
     'use strict';
 
-    var obj = ns.type.Object;
-
     //
-    //  String
+    //  String Interface
     //
-
-    /**
-     *  Create String
-     *
-     * @param {String|str} value
-     */
-    var str = function (value) {
-        obj.call(this);
-        if (!value) {
-            value = '';
-        } else if (value instanceof str) {
-            value = value.toString();
-        }
-        this.__string = value;
-    };
-    ns.Class(str, obj, null);
+    var Stringer = function () {};
+    ns.Interface(Stringer, [ns.type.Object]);
 
     /**
      *  Check whether strings equal
      *
-     * @param {str|String} other - another string
+     * @param {String|Stringer} other - another string
      * @return {boolean}
      */
-    str.prototype.equals = function (other) {
-        if (!other) {
+    Stringer.prototype.equalsIgnoreCase = function (other) {
+        console.assert(false, 'implement me!');
+        return false;
+    };
+
+    /**
+     *  Get inner string
+     *
+     * @return {String}
+     */
+    Stringer.prototype.toString = function () {
+        console.assert(false, 'implement me!');
+        return null;
+    };
+
+    /**
+     *  Get length of inner string
+     *
+     * @return {number}
+     */
+    Stringer.prototype.getLength = function () {
+        console.assert(false, 'implement me!');
+        return 0;
+    };
+
+    //-------- namespace --------
+    ns.type.Stringer = Stringer;
+
+    ns.type.registers('Stringer');
+
+})(MONKEY);
+
+(function (ns) {
+    'use strict';
+
+    var BaseObject = ns.type.BaseObject;
+    var Stringer = ns.type.Stringer;
+
+    /**
+     *  Create String
+     *
+     * @param {String|Stringer} str
+     */
+    var ConstantString = function (str) {
+        BaseObject.call(this);
+        if (!str) {
+            str = '';
+        } else if (ns.Interface.conforms(str, Stringer)) {
+            str = str.toString();
+        }
+        this.__string = str;
+    };
+    ns.Class(ConstantString, BaseObject, [Stringer]);
+
+    // Override
+    ConstantString.prototype.equals = function (other) {
+        if (BaseObject.prototype.equals.call(this, other)) {
+            return true;
+        } else if (!other) {
             return !this.__string;
-        } else if (other instanceof str) {
-            return this.__string === other.__string;
+        } else if (ns.Interface.conforms(other, Stringer)) {
+            return this.__string === other.toString();
         } else {
             // console.assert(other instanceof String, 'other string error');
             return this.__string === other;
         }
     };
 
+    // Override
+    ConstantString.prototype.equalsIgnoreCase = function (other) {
+        if (this.equals(other)) {
+            return true;
+        } else if (!other) {
+            return !this.__string;
+        } else if (ns.Interface.conforms(other, Stringer)) {
+            return equalsIgnoreCase(this.__string, other.toString());
+        } else {
+            // console.assert(other instanceof String, 'other string error');
+            return equalsIgnoreCase(this.__string, other);
+        }
+    };
     var equalsIgnoreCase = function (str1, str2) {
         if (str1.length !== str2.length) {
             return false;
@@ -82,32 +136,25 @@
         var low2 = str2.toLowerCase();
         return low1 === low2;
     };
-    str.prototype.equalsIgnoreCase = function (other) {
-        if (!other) {
-            return !this.__string;
-        } else if (other instanceof str) {
-            return equalsIgnoreCase(this.__string, other.__string);
-        } else {
-            // console.assert(other instanceof String, 'other string error');
-            return equalsIgnoreCase(this.__string, other);
-        }
-    };
 
-    str.prototype.valueOf = function () {
+    // Override
+    ConstantString.prototype.valueOf = function () {
         return this.__string;
     };
 
-    str.prototype.toString = function () {
+    // Override
+    ConstantString.prototype.toString = function () {
         return this.__string;
     };
 
-    str.prototype.getLength = function() {
+    // Override
+    ConstantString.prototype.getLength = function() {
         return this.__string.length;
     };
 
     //-------- namespace --------
-    ns.type.String = str;
+    ns.type.ConstantString = ConstantString;
 
-    ns.type.registers('String');
+    ns.type.registers('ConstantString');
 
 })(MONKEY);

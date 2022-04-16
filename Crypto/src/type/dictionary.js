@@ -35,57 +35,11 @@
 (function (ns) {
     'use strict';
 
-    var map = function () {
-    };
-    ns.Interface(map, null);
-
-    /**
-     *  Get inner map
-     *
-     * @return {Map} built-in map
-     */
-    map.prototype.getMap = function () {
-        console.assert(false, 'implement me!');
-        return null;
-    };
-
-    /**
-     *  Clone inner map
-     *
-     * @return {Map} copied built-in map
-     */
-    map.prototype.copyMap = function () {
-        console.assert(false, 'implement me!');
-        return null;
-    };
-    map.copyMap = function (dictionary) {
-        if (ns.Interface.conforms(dictionary, map)) {
-            dictionary = dictionary.getMap();
-        }
-        var json = ns.format.JSON.encode(dictionary);
-        return ns.format.JSON.decode(json);
-    };
-
-    /**
-     *  Check whether all entities equal
-     *
-     * @param {map|{}} other - another map
-     * @return {boolean}
-     */
-    map.prototype.equals = function (other) {
-        console.assert(false, 'implement me!');
-        return false;
-    };
-
-    /**
-     *  Get all keys in dictionary
-     *
-     * @return {String[]}
-     */
-    map.prototype.allKeys = function() {
-        console.assert(false, 'implement me!');
-        return null;
-    };
+    //
+    //  Map Interface
+    //
+    var Mapper = function () {};
+    ns.Interface(Mapper, [ns.type.Object]);
 
     /**
      *  Get value for key
@@ -93,7 +47,7 @@
      * @param {String} key
      * @return {*}
      */
-    map.prototype.getValue = function (key) {
+    Mapper.prototype.getValue = function (key) {
         console.assert(false, 'implement me!');
         return null;
     };
@@ -102,76 +56,108 @@
      *  Set value for key
      *
      * @param {String} key
-     * @param {Object} value
+     * @param {*} value
      */
-    map.prototype.setValue = function (key, value) {
+    Mapper.prototype.setValue = function (key, value) {
         console.assert(false, 'implement me!');
     };
 
-    //-------- namespace --------
-    ns.type.Map = map;
+    /**
+     *  Remove value for key
+     *
+     * @param {String} key
+     */
+    Mapper.prototype.removeValue = function (key) {
+        console.assert(false, 'implement me!');
+    };
 
-    ns.type.registers('Map');
+    /**
+     *  Get all keys in map
+     *
+     * @return {String[]}
+     */
+    Mapper.prototype.allKeys = function() {
+        console.assert(false, 'implement me!');
+        return null;
+    };
+
+    /**
+     *  Get inner map
+     *
+     * @return {{}} built-in map
+     */
+    Mapper.prototype.toMap = function () {
+        console.assert(false, 'implement me!');
+        return null;
+    };
+
+    /**
+     *  Clone inner map
+     *
+     * @param {boolean} deepCopy
+     * @return {{}} copied built-in map
+     */
+    Mapper.prototype.copyMap = function (deepCopy) {
+        console.assert(false, 'implement me!');
+        return null;
+    };
+
+    //-------- namespace --------
+    ns.type.Mapper = Mapper;
+
+    ns.type.registers('Mapper');
 
 })(MONKEY);
 
 (function (ns) {
     'use strict';
 
-    var obj = ns.type.Object;
-    var map = ns.type.Map;
-    var Arrays = ns.type.Arrays;
-
-    //
-    //  Dictionary
-    //
+    var BaseObject = ns.type.BaseObject;
+    var Mapper = ns.type.Mapper;
 
     /**
      *  Create dictionary with values or JSON string
      *
-     * @param {{}|map} dictionary
+     * @param {{}} dict
      */
-    var dict = function (dictionary) {
-        obj.call(this);
-        if (!dictionary) {
-            dictionary = {};
-        } else if (ns.Interface.conforms(dictionary, map)) {
-            dictionary = dictionary.getMap();
+    var Dictionary = function (dict) {
+        BaseObject.call(this);
+        if (!dict) {
+            dict = {};
+        } else if (ns.Interface.conforms(dict, Mapper)) {
+            dict = dict.toMap();
         }
-        this.__dictionary = dictionary;
+        this.__dictionary = dict;
     };
-    ns.Class(dict, obj, [map]);
+    ns.Class(Dictionary, BaseObject, [Mapper]);
 
-    dict.prototype.getMap = function () {
-        return this.__dictionary;
-    };
-    dict.prototype.copyMap = function () {
-        return map.copyMap(this.__dictionary);
-    };
-
-    dict.prototype.valueOf = function () {
-        return this.__dictionary;
-    };
-
-    dict.prototype.equals = function (other) {
-        if (!other) {
+    // Override
+    Dictionary.prototype.equals = function (other) {
+        if (this.equals(other)) {
+            return true;
+        } else if (!other) {
             return !this.__dictionary;
-        } else if (ns.Interface.conforms(other, map)) {
-            return Arrays.equals(this.__dictionary, other.getMap());
+        } else if (ns.Interface.conforms(other, Mapper)) {
+            return ns.type.Arrays.equals(this.__dictionary, other.toMap());
         } else {
-            return Arrays.equals(this.__dictionary, other);
+            return ns.type.Arrays.equals(this.__dictionary, other);
         }
     };
 
-    dict.prototype.allKeys = function() {
-        return Object.keys(this.__dictionary);
+    // Override
+    Dictionary.prototype.valueOf = function () {
+        return this.__dictionary;
     };
 
-    dict.prototype.getValue = function (key) {
+    //-------- Mapper
+
+    // Override
+    Dictionary.prototype.getValue = function (key) {
         return this.__dictionary[key];
     };
 
-    dict.prototype.setValue = function (key, value) {
+    // Override
+    Dictionary.prototype.setValue = function (key, value) {
         if (value) {
             this.__dictionary[key] = value;
         } else if (this.__dictionary.hasOwnProperty(key)) {
@@ -179,8 +165,34 @@
         }
     };
 
+    // Override
+    Dictionary.prototype.removeValue = function (key) {
+        if (this.__dictionary.hasOwnProperty(key)) {
+            delete this.__dictionary[key];
+        }
+    };
+
+    // Override
+    Dictionary.prototype.allKeys = function() {
+        return Object.keys(this.__dictionary);
+    };
+
+    // Override
+    Dictionary.prototype.toMap = function () {
+        return this.__dictionary;
+    };
+
+    // Override
+    Dictionary.prototype.copyMap = function (deepCopy) {
+        if (deepCopy) {
+            return ns.type.Copier.deepCopyMap(this.__dictionary);
+        } else {
+            return ns.type.Copier.copyMap(this.__dictionary);
+        }
+    };
+
     //-------- namespace --------
-    ns.type.Dictionary = dict;
+    ns.type.Dictionary = Dictionary;
 
     ns.type.registers('Dictionary');
 
