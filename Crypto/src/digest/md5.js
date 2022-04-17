@@ -35,25 +35,39 @@
 (function (ns) {
     'use strict';
 
-    var obj = ns.type.Object;
-    var Hash = ns.digest.Hash;
-    var Lib = ns.digest.HashLib;
+    var MD5 = {
+        /**
+         *  Get digest of binary data
+         *
+         * @param {Uint8Array} data - binary data
+         * @return {Uint8Array} binary data
+         */
+        digest: function (data) {
+            return this.getDigester().digest(data);
+        },
 
-    //
-    //  MD5
-    //
-    var md5 = function () {
-        obj.call(this);
+        /**
+         *  Get MD5 Digester
+         *
+         * @return {DataDigester}
+         */
+        getDigester: function () {
+            return md5Digester;
+        },
+
+        /**
+         *  Set MD5 Digester
+         * @param {DataDigester} digester
+         */
+        setDigester: function (digester) {
+            md5Digester = digester;
+        }
     };
-    ns.Class(md5, obj, [Hash]);
-    // noinspection JSUnusedLocalSymbols
-    md5.prototype.digest = function (data) {
-        console.assert(false, 'MD5 not implemented');
-        return null;
-    };
+
+    var md5Digester = null;
 
     //-------- namespace --------
-    ns.digest.MD5 = new Lib(new md5());
+    ns.digest.MD5 = MD5;
 
     ns.digest.registers('MD5');
 

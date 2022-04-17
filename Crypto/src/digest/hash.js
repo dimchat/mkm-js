@@ -35,44 +35,28 @@
 (function (ns) {
     'use strict';
 
-    var obj = ns.type.Object;
-
-    //
-    //  Hash interface
-    //
-    var hash = function () {
-    };
-    ns.Interface(hash, null);
+    /**
+     *  Data Digester
+     *  ~~~~~~~~~~~~~
+     *  MD5, SHA1, SHA256, Keccak256, RipeMD160, ...
+     */
+    var DataDigester = function () {};
+    ns.Interface(DataDigester, null);
 
     /**
-     *  Get digest of data
+     *  Get digest of binary data
      *
-     * @param {Uint8Array} data
-     * @return {Uint8Array}
+     * @param {Uint8Array} data - binary data
+     * @return {Uint8Array} binary data
      */
-    hash.prototype.digest = function (data) {
+    DataDigester.prototype.digest = function (data) {
         console.assert(false, 'implement me!');
         return null;
     };
 
-    //
-    //  Hash Lib
-    //
-    var lib = function (hash) {
-        obj.call(this);
-        this.hash = hash;
-    };
-    ns.Class(lib, obj, [hash]);
-
-    lib.prototype.digest = function (data) {
-        return this.hash.digest(data);
-    };
-
     //-------- namespace --------
-    ns.digest.Hash = hash;
-    ns.digest.HashLib = lib;
+    ns.digest.DataDigester = DataDigester;
 
-    ns.digest.registers('Hash');
-    ns.digest.registers('HashLib');
+    ns.digest.registers('DataDigester');
 
 })(MONKEY);

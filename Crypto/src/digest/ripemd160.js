@@ -35,25 +35,39 @@
 (function (ns) {
     'use strict';
 
-    var obj = ns.type.Object;
-    var Hash = ns.digest.Hash;
-    var Lib = ns.digest.HashLib;
+    var RipeMD160 = {
+        /**
+         *  Get digest of binary data
+         *
+         * @param {Uint8Array} data - binary data
+         * @return {Uint8Array} binary data
+         */
+        digest: function (data) {
+            return this.getDigester().digest(data);
+        },
 
-    //
-    //  RIPEMD160
-    //
-    var ripemd160 = function () {
-        obj.call(this);
+        /**
+         *  Get RipeMD160 Digester
+         *
+         * @return {DataDigester}
+         */
+        getDigester: function () {
+            return ripemd160Digester;
+        },
+
+        /**
+         *  Set RipeMD160 Digester
+         * @param {DataDigester} digester
+         */
+        setDigester: function (digester) {
+            ripemd160Digester = digester;
+        }
     };
-    ns.Class(ripemd160, obj, [Hash]);
-    // noinspection JSUnusedLocalSymbols
-    ripemd160.prototype.digest = function (data) {
-        console.assert(false, 'RIPEMD160 not implemented');
-        return null;
-    };
+
+    var ripemd160Digester = null;
 
     //-------- namespace --------
-    ns.digest.RIPEMD160 = new Lib(new ripemd160());
+    ns.digest.RIPEMD160 = RipeMD160;
 
     ns.digest.registers('RIPEMD160');
 

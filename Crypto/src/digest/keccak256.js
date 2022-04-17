@@ -35,26 +35,39 @@
 (function (ns) {
     'use strict';
 
-    var obj = ns.type.Object;
+    var Keccak256 = {
+        /**
+         *  Get digest of binary data
+         *
+         * @param {Uint8Array} data - binary data
+         * @return {Uint8Array} binary data
+         */
+        digest: function (data) {
+            return this.getDigester().digest(data);
+        },
 
-    var Hash = ns.digest.Hash;
-    var Lib = ns.digest.HashLib;
+        /**
+         *  Get Keccak256 Digester
+         *
+         * @return {DataDigester}
+         */
+        getDigester: function () {
+            return keccak256Digester;
+        },
 
-    //
-    //  KECCAK256
-    //
-    var keccak256 = function () {
-        obj.call(this);
+        /**
+         *  Set Keccak256 Digester
+         * @param {DataDigester} digester
+         */
+        setDigester: function (digester) {
+            keccak256Digester = digester;
+        }
     };
-    ns.Class(keccak256, obj, [Hash]);
-    // noinspection JSUnusedLocalSymbols
-    keccak256.prototype.digest = function (data) {
-        console.assert(false, 'KECCAK256 not implemented');
-        return null;
-    };
+
+    var keccak256Digester = null;
 
     //-------- namespace --------
-    ns.digest.KECCAK256 = new Lib(new keccak256());
+    ns.digest.KECCAK256 = Keccak256;
 
     ns.digest.registers('KECCAK256');
 

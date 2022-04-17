@@ -35,25 +35,39 @@
 (function (ns) {
     'use strict';
 
-    var obj = ns.type.Object;
-    var Hash = ns.digest.Hash;
-    var Lib = ns.digest.HashLib;
+    var SHA256 = {
+        /**
+         *  Get digest of binary data
+         *
+         * @param {Uint8Array} data - binary data
+         * @return {Uint8Array} binary data
+         */
+        digest: function (data) {
+            return this.getDigester().digest(data);
+        },
 
-    //
-    //  SHA256
-    //
-    var sha256 = function () {
-        obj.call(this);
+        /**
+         *  Get SHA256 Digester
+         *
+         * @return {DataDigester}
+         */
+        getDigester: function () {
+            return sha256Digester;
+        },
+
+        /**
+         *  Set SHA256 Digester
+         * @param {DataDigester} digester
+         */
+        setDigester: function (digester) {
+            sha256Digester = digester;
+        }
     };
-    ns.Class(sha256, obj, [Hash]);
-    // noinspection JSUnusedLocalSymbols
-    sha256.prototype.digest = function (data) {
-        console.assert(false, 'SHA256 not implemented');
-        return null;
-    };
+
+    var sha256Digester = null;
 
     //-------- namespace --------
-    ns.digest.SHA256 = new Lib(new sha256());
+    ns.digest.SHA256 = SHA256;
 
     ns.digest.registers('SHA256');
 
