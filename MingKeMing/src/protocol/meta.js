@@ -37,8 +37,11 @@
 (function (ns) {
     'use strict';
 
-    var map = ns.type.Map;
+    var Mapper = ns.type.Mapper;
+    var Base64 = ns.format.Base64;
+    var UTF8 = ns.format.UTF8;
     var PublicKey = ns.crypto.PublicKey;
+    var Address = ns.protocol.Address;
     var ID = ns.protocol.ID;
 
     /**
@@ -56,9 +59,8 @@
      *      algorithm:
      *          fingerprint = sign(seed, SK);
      */
-    var Meta = function () {
-    };
-    ns.Interface(Meta, [map]);
+    var Meta = function () {};
+    ns.Interface(Meta, [Mapper]);
 
     /**
      *  Meta algorithm version
@@ -73,14 +75,6 @@
         console.assert(false, 'implement me!');
         return 0;
     };
-    Meta.getType = function (meta) {
-        var version = meta['type'];
-        if (!version) {
-            // compatible with v1.0
-            version = meta['version'];
-        }
-        return version;
-    };
 
     /**
      *  Public key (used for signature)
@@ -91,13 +85,6 @@
         console.assert(false, 'implement me!');
         return null;
     };
-    Meta.getKey = function (meta) {
-        var key = meta['key'];
-        if (!key) {
-            throw new TypeError('meta key not found: ' + meta);
-        }
-        return PublicKey.parse(key);
-    };
 
     /**
      *  Seed to generate fingerprint
@@ -107,9 +94,6 @@
     Meta.prototype.getSeed = function () {
         console.assert(false, 'implement me!');
         return null;
-    };
-    Meta.getSeed = function (meta) {
-        return meta['seed'];
     };
 
     /**
@@ -122,73 +106,133 @@
         console.assert(false, 'implement me!');
         return null;
     };
+
+    /**
+     *  Generate Address with network(type)
+     *
+     * @param {uint} network - ID.type
+     * @return {Address}
+     */
+    Meta.prototype.generateAddress = function (network) {
+        console.assert(false, 'implement me!');
+        return null;
+    };
+
+    Meta.getType = function (meta) {
+        var version = meta['type'];
+        if (!version) {
+            // compatible with v1.0
+            version = meta['version'];
+        }
+        return version;
+    };
+    Meta.getKey = function (meta) {
+        var key = meta['key'];
+        if (!key) {
+            throw new TypeError('meta key not found: ' + meta);
+        }
+        return PublicKey.parse(key);
+    };
+    Meta.getSeed = function (meta) {
+        return meta['seed'];
+    };
     Meta.getFingerprint = function (meta) {
         var base64 = meta['fingerprint'];
         if (!base64) {
             return null;
         }
-        return ns.format.Base64.decode(base64);
+        return Base64.decode(base64);
     };
 
     /**
      *  Check meta valid
      *  (must call this when received a new meta from network)
      *
+     * @param {Meta} meta
      * @return true on valid
      */
-    Meta.prototype.isValid = function () {
-        console.assert(false, 'implement me!');
-        return false;
+    Meta.check = function (meta) {
+        var key = meta.getKey();
+        if (!key) {
+            // meta.key should not be empty
+            return false;
+        }
+        if (!MetaType.hasSeed(meta.getType())) {
+            // this meta has no seed, so no signature too
+            return true;
+        }
+        // check seed with signature
+        var seed = meta.getSeed();
+        var fingerprint = meta.getFingerprint();
+        if (!seed || !fingerprint) {
+            // seed and fingerprint should not be empty
+            return false;
+        }
+        // verify fingerprint
+        return key.verify(UTF8.encode(seed), fingerprint);
     };
 
     /**
-     *  Generate ID with terminal
+     *  Check whether meta match with ID/PK
      *
-     * @param {uint} type - ID.type
-     * @param {String} terminal - ID.terminal
-     * @return {ID}
+     * @param {Meta} meta
+     * @param {ID|PublicKey} id_or_key
      */
-    Meta.prototype.generateID = function (type, terminal) {
-        console.assert(false, 'implement me!');
-        return null;
+    Meta.matches = function (meta, id_or_key) {
+        if (ns.Interface.conforms(id_or_key, ID)) {
+            return match_id(meta, id_or_key);
+        } else if (ns.Interface.conforms(id_or_key, PublicKey)) {
+            return match_key(meta, id_or_key);
+        } else {
+            return false;
+        }
+    };
+    var match_id = function (meta, id) {
+        // check ID.name
+        if (MetaType.hasSeed(meta.getType())) {
+            if (meta.getSeed() !== id.getName()) {
+                return false;
+            }
+        }
+        // check ID.address
+        var address = Address.generate(meta, id.getType());
+        return id.getAddress().equals(address);
+    };
+    var match_key = function (meta, key) {
+        // check whether the public key equals to meta.key
+        if (meta.getKey().equals(key)) {
+            return true;
+        }
+        // check with seed & signature
+        if (MetaType.hasSeed(meta.getType())) {
+            // check whether keys equal by verifying signature
+            var seed = meta.getSeed();
+            var fingerprint = meta.getFingerprint();
+            return key.every(UTF8.encode(seed), fingerprint);
+        } else {
+            // ID with BTC/ETH address has no username,
+            // so we can just compare the key.data to check matching
+            return false;
+        }
     };
 
-    /**
-     *  Check whether meta matches ID (or PublicKey)
-     *  (must call this when received a new meta from network)
-     *
-     * @param {ID|PublicKey} id_or_key - ID or PublicKey
-     * @returns {boolean}
-     */
-    Meta.prototype.matches = function (id_or_key) {
-        console.assert(false, 'implement me!');
-        return false;
+    var EnumToUint = function (type) {
+        if (typeof type === 'number') {
+            return type;
+        } else {
+            return type.valueOf();
+        }
     };
-
-    //-------- namespace --------
-    ns.protocol.Meta = Meta;
-
-    ns.protocol.registers('Meta');
-
-})(MingKeMing);
-
-(function (ns) {
-    'use strict';
-
-    var map = ns.type.Map;
-    var MetaType = ns.protocol.MetaType;
-    var Meta = ns.protocol.Meta;
 
     /**
      *  Meta Factory
      *  ~~~~~~~~~~~~
      */
-    var MetaFactory = function () {
-    };
+    var MetaFactory = function () {};
     ns.Interface(MetaFactory, null);
 
     // noinspection JSUnusedLocalSymbols
-    MetaFactory.prototype.createMeta = function (key, seed, fingerprint) {
+    MetaFactory.prototype.createMeta = function (pKey, seed, fingerprint) {
         console.assert(false, 'implement me!');
         return null;
     };
@@ -207,6 +251,9 @@
 
     Meta.Factory = MetaFactory;
 
+    //
+    //  Instances of MetaFactory
+    //
     var s_factories = {};  // type(uint8|MetaType) -> MetaFactory
 
     /**
@@ -215,17 +262,11 @@
      * @param {MetaType|uint} type
      * @param {MetaFactory} factory
      */
-    Meta.register = function (type, factory) {
-        if (type instanceof MetaType) {
-            type = type.valueOf();
-        }
-        s_factories[type] = factory;
+    Meta.setFactory = function (type, factory) {
+        s_factories[EnumToUint(type)] = factory;
     };
     Meta.getFactory = function (type) {
-        if (type instanceof MetaType) {
-            type = type.valueOf();
-        }
-        return s_factories[type];
+        return s_factories[EnumToUint(type)];
     };
 
     /**
@@ -264,7 +305,7 @@
     /**
      *  Parse map object to meta
      *
-     * @param {{String:Object}} meta - meta info
+     * @param {*} meta - meta info
      * @return {Meta}
      */
     Meta.parse = function (meta) {
@@ -272,15 +313,19 @@
             return null;
         } else if (ns.Interface.conforms(meta, Meta)) {
             return meta;
-        } else if (ns.Interface.conforms(meta, map)) {
-            meta = meta.getMap();
         }
+        meta = ns.type.Wrapper.fetchMap(meta);
         var type = Meta.getType(meta);
         var factory = Meta.getFactory(type);
         if (!factory) {
-            factory = Meta.getFactory(0);
+            factory = Meta.getFactory(0);  // unknown
         }
         return factory.parseMeta(meta);
     };
+
+    //-------- namespace --------
+    ns.protocol.Meta = Meta;
+
+    ns.protocol.registers('Meta');
 
 })(MingKeMing);

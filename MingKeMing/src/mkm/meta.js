@@ -53,12 +53,17 @@
 (function (ns) {
     'use strict';
 
+    var Base64 = ns.format.Base64;
     var Dictionary = ns.type.Dictionary;
-    var PublicKey = ns.crypto.PublicKey;
-
-    var MetaType = ns.protocol.MetaType;
-    var ID = ns.protocol.ID;
     var Meta = ns.protocol.Meta;
+
+    var EnumToUint = function (type) {
+        if (typeof type === 'number') {
+            return type;
+        } else {
+            return type.valueOf();
+        }
+    };
 
     /**
      *  Create Meta
@@ -70,7 +75,7 @@
      */
     var BaseMeta = function () {
         var type, key, seed, fingerprint;
-        var meta, status;
+        var meta;
         if (arguments.length === 1) {
             // new BaseMeta(map);
             meta = arguments[0];
@@ -78,37 +83,28 @@
             key = Meta.getKey(meta);
             seed = Meta.getSeed(meta);
             fingerprint = Meta.getFingerprint(meta);
-            status = 0;
         } else if (arguments.length === 2) {
             // new BaseMeta(type, key);
-            type = arguments[0];
+            type = EnumToUint(arguments[0]);
             key = arguments[1];
             seed = null;
             fingerprint = null;
-            if (type instanceof MetaType) {
-                type = type.valueOf();
-            }
             meta = {
                 'type': type,
-                'key': key.getMap()
+                'key': key.toMap()
             };
-            status = 1;
         } else if (arguments.length === 4) {
             // new BaseMeta(type, key, seed, fingerprint);
-            type = arguments[0];
+            type = EnumToUint(arguments[0]);
             key = arguments[1];
             seed = arguments[2];
             fingerprint = arguments[3];
-            if (type instanceof MetaType) {
-                type = type.valueOf();
-            }
             meta = {
                 'type': type,
-                'key': key.getMap(),
+                'key': key.toMap(),
                 'seed': seed,
-                'fingerprint': ns.format.Base64.encode(fingerprint)
+                'fingerprint': Base64.encode(fingerprint)
             };
-            status = 1;
         } else {
             throw new SyntaxError('meta arguments error: ' + arguments);
         }
@@ -117,118 +113,27 @@
         this.__key = key;
         this.__seed = seed;
         this.__fingerprint = fingerprint;
-        this.__status = status;  // 1 for valid, -1 for invalid
     };
     ns.Class(BaseMeta, Dictionary, [Meta]);
 
+    // Override
     BaseMeta.prototype.getType = function () {
         return this.__type;
     };
+
+    // Override
     BaseMeta.prototype.getKey = function () {
         return this.__key;
     };
+
+    // Override
     BaseMeta.prototype.getSeed = function () {
         return this.__seed;
     };
+
+    // Override
     BaseMeta.prototype.getFingerprint = function () {
         return this.__fingerprint;
-    };
-
-    /**
-     *  Check whether meta.key valid
-     *
-     * @returns {boolean}
-     */
-    BaseMeta.prototype.isValid = function () {
-        if (this.__status === 0) {
-            if (!this.__key) {
-                // meta.key should not be empty
-                this.__status = -1;
-            } else if (MetaType.hasSeed(this.__type)) {
-                if (!this.__seed || !this.__fingerprint) {
-                    // seed and fingerprint should not be empty
-                    this.__status = -1;
-                } else if (this.__key.verify(ns.format.UTF8.encode(this.__seed), this.__fingerprint)) {
-                    // fingerprint matched
-                    this.__status = 1;
-                } else {
-                    // fingerprint not matched
-                    this.__status = -1;
-                }
-            } else {
-                this.__status = 1;
-            }
-        }
-        return this.__status === 1;
-    };
-
-    // noinspection JSUnusedLocalSymbols
-    /**
-     *  Generate address with meta info and address type
-     *
-     * @param {NetworkType|int} network - Network ID (0 ~ 255)
-     * @returns {Address}
-     */
-    BaseMeta.prototype.generateAddress = function (network) {
-        console.assert(false, 'implement me!');
-        return null;
-    };
-
-    BaseMeta.prototype.generateID = function (type, terminal) {
-        var address = this.generateAddress(type);
-        if (!address) {
-            return null;
-        }
-        return ID.create(this.getSeed(), address, terminal);
-    };
-
-    /**
-     *  Check whether meta matches Public Key, ID, or Address
-     *  (must call this when received a new meta from network)
-     *
-     * @param {ID|PublicKey} id_or_key - ID or PublicKey
-     * @returns {boolean}
-     */
-    BaseMeta.prototype.matches = function (id_or_key) {
-        if (!this.isValid()) {
-            return false;
-        }
-        if (ns.Interface.conforms(id_or_key, ID)) {
-            return match_identifier.call(this, id_or_key);
-        } else if (ns.Interface.conforms(id_or_key, PublicKey)) {
-            return match_public_key.call(this, id_or_key);
-        }
-        // console.assert(false, 'error: ' + key_id_addr);
-        return false;
-    };
-
-    var match_identifier = function (identifier) {
-        // check with seed & address
-        if (MetaType.hasSeed(this.__type)) {
-            if (identifier.getName() !== this.__seed) {
-                return false;
-            }
-        }
-        var address = this.generateAddress(identifier.getType());
-        return identifier.getAddress().equals(address);
-    };
-
-    var match_public_key = function (publicKey) {
-        // check whether the public key equals to meta.key
-        if (this.__key.equals(publicKey)) {
-            return true;
-        }
-        // check with seed & fingerprint
-        if (MetaType.hasSeed(this.__type)) {
-            // check whether keys equal by verifying signature
-            var data = ns.format.UTF8.encode(this.__seed);
-            var signature = this.__fingerprint;
-            return publicKey.verify(data, signature);
-        } else {
-            // ID with BTC/ETH address has no username
-            // so we can just compare the key.data to check matching
-            return false;
-        }
     };
 
     //-------- namespace --------

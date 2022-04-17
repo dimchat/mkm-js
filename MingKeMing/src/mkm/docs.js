@@ -68,15 +68,9 @@
     };
     ns.Class(BaseVisa, BaseDocument, [Visa]);
 
-    /**
-     *  Public key (used for encryption, can be same with meta.key)
-     *
-     *      RSA
-     *
-     * @returns {EncryptKey}
-     */
+    // Override
     BaseVisa.prototype.getKey = function () {
-        if (!this.__key) {
+        if (this.__key === null) {
             var key = this.getProperty('key');
             if (key) {
                 key = PublicKey.parse(key);
@@ -87,17 +81,21 @@
         }
         return this.__key;
     };
+
+    // Override
     BaseVisa.prototype.setKey = function (publicKey) {
-        this.setProperty('key', publicKey.getMap());
+        this.setProperty('key', publicKey.toMap());
         this.__key = publicKey;
     };
 
     //-------- extra info --------
 
+    // Override
     BaseVisa.prototype.getAvatar = function () {
         return this.getProperty('avatar');
     };
 
+    // Override
     BaseVisa.prototype.setAvatar = function (url) {
         this.setProperty('avatar', url);
     };
@@ -144,11 +142,7 @@
 
     //-------- extra info --------
 
-    /**
-     *  Get group assistants
-     *
-     * @return {ID[]} bot ID list
-     */
+    // Override
     BaseBulletin.prototype.getAssistants = function () {
         if (!this.__assistants) {
             var assistants = this.getProperty('assistants');
@@ -158,10 +152,8 @@
         }
         return this.__assistants;
     };
-    /**
-     *  Set group assistants
-     * @param {ID[]} assistants
-     */
+
+    // Override
     BaseBulletin.prototype.setAssistants = function (assistants) {
         if (assistants && assistants.length > 0) {
             this.setProperty('assistants', ID.revert(assistants));

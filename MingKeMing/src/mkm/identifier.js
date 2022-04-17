@@ -35,7 +35,7 @@
 (function (ns) {
     'use strict';
 
-    var str = ns.type.String;
+    var ConstantString = ns.type.ConstantString;
     var ID = ns.protocol.ID;
 
     /**
@@ -49,33 +49,44 @@
      *          terminal - entity login resource(device), OPTIONAL
      */
     var Identifier = function (identifier, name, address, terminal) {
-        str.call(this, identifier);
+        ConstantString.call(this, identifier);
         this.__name = name;
         this.__address = address;
         this.__terminal = terminal;
     };
-    ns.Class(Identifier, str, [ID]);
+    ns.Class(Identifier, ConstantString, [ID]);
 
+    // Override
     Identifier.prototype.getName = function () {
         return this.__name;
     };
+
+    // Override
     Identifier.prototype.getAddress = function () {
         return this.__address;
     };
+
+    // Override
     Identifier.prototype.getTerminal = function () {
         return this.__terminal;
     };
 
+    // Override
     Identifier.prototype.getType = function () {
         return this.getAddress().getNetwork();
     };
 
+    // Override
     Identifier.prototype.isBroadcast = function () {
         return this.getAddress().isBroadcast();
     };
+
+    // Override
     Identifier.prototype.isUser = function () {
         return this.getAddress().isUser();
     };
+
+    // Override
     Identifier.prototype.isGroup = function () {
         return this.getAddress().isGroup();
     };
@@ -90,7 +101,6 @@
 (function (ns) {
     'use strict';
 
-    var obj = ns.type.Object;
     var Address = ns.protocol.Address;
     var ID = ns.protocol.ID;
     var Identifier = ns.mkm.Identifier;
@@ -148,11 +158,18 @@
     };
 
     var IDFactory = function () {
-        obj.call(this);
+        Object.call(this);
         this.__identifiers = {};  // String -> ID
     };
-    ns.Class(IDFactory, obj, [ID.Factory])
+    ns.Class(IDFactory, Object, [ID.Factory])
 
+    // Override
+    IDFactory.prototype.generateID = function (meta, network, terminal) {
+        var address = Address.generate(meta, network);
+        return ID.create(meta.getSeed(), address, terminal);
+    };
+
+    // Override
     IDFactory.prototype.createID = function (name, address, terminal) {
         var string = concat(name, address, terminal);
         var id = this.__identifiers[string];
@@ -163,6 +180,7 @@
         return id;
     }
 
+    // Override
     IDFactory.prototype.parseID = function (identifier) {
         var id = this.__identifiers[identifier];
         if (!id) {

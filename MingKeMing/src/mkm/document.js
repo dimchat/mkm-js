@@ -35,6 +35,9 @@
 (function (ns) {
     'use strict';
 
+    var UTF8 = ns.format.UTF8;
+    var Base64 = ns.format.Base64;
+    var JSON = ns.format.JSON;
     var Dictionary = ns.type.Dictionary;
     var Document = ns.protocol.Document;
 
@@ -49,26 +52,26 @@
      *      new BaseDocument(identifier, data, signature);
      */
     var BaseDocument = function () {
-        var identifier, data, signature;
         var map, status;
+        var identifier, data;
         var properties;
         if (arguments.length === 1) {
             // new BaseDocument(map);
             map = arguments[0];
-            identifier = Document.getIdentifier(map);
-            data = Document.getData(map);
-            signature = Document.getSignature(map);
-            properties = null;
             status = 0;
+            // lazy
+            identifier = null;
+            data = null;
+            properties = null;
         } else if (arguments.length === 2) {
             // new BaseDocument(identifier, type);
             identifier = arguments[0];
             var type = arguments[1];
-            data = null;
-            signature = null;
             map = {
                 'ID': identifier.toString()
             };
+            status = 0;
+            data = null;
             if (type && type.length > 1) {
                 properties = {
                     'type': type
@@ -76,67 +79,83 @@
             } else {
                 properties = null;
             }
-            status = 0;
         } else if (arguments.length === 3) {
             // new BaseDocument(identifier, data, signature);
             identifier = arguments[0];
             data = arguments[1];
-            signature = arguments[2];
+            var signature = arguments[2];
             map = {
                 'ID': identifier.toString(),
-                'data': ns.format.UTF8.decode(data),
-                'signature': ns.format.Base64.encode(signature)
+                'data': data,
+                'signature': signature
             }
+            status = 1;  // all documents must be verified before saving into local storage
             properties = null;
-            // all documents must be verified before saving into local storage
-            status = 1;
         } else {
             throw new SyntaxError('document arguments error: ' + arguments);
         }
         Dictionary.call(this, map);
         this.__identifier = identifier;
-        this.__data = data;            // JsON.encode(properties)
-        this.__signature = signature;  // LocalUser(identifier).sign(data)
+        this.__json = data;      // JsON.encode(properties)
+        this.__sig = null;       // LocalUser(identifier).sign(data)
         this.__properties = properties;
-        this.__status = status;        // 1 for valid, -1 for invalid
+        this.__status = status;  // 1 for valid, -1 for invalid
     };
     ns.Class(BaseDocument, Dictionary, [Document]);
 
+    // Override
     BaseDocument.prototype.isValid = function () {
         return this.__status > 0;
     };
 
+    // Override
     BaseDocument.prototype.getType = function () {
         var type = this.getProperty('type');
         if (!type) {
-            type = Document.getType(this.getMap());
+            type = Document.getType(this.toMap());
         }
         return type;
     };
 
+    // Override
     BaseDocument.prototype.getIdentifier = function () {
+        if (this.__identifier === null) {
+            this.__identifier = Document.getIdentifier(this.toMap());
+        }
         return this.__identifier;
+    };
+
+    // private
+    BaseDocument.prototype.getData = function () {
+        if (this.__json === null) {
+            this.__json = this.getValue('data');
+        }
+        return this.__json;
+    };
+
+    // private
+    BaseDocument.prototype.getSignature = function () {
+        if (this.__sig === null) {
+            var base64 = this.getValue('signature');
+            if (base64) {
+                this.__sig = Base64.decode(base64);
+            }
+        }
+        return this.__sig;
     };
 
     //-------- properties --------
 
-    BaseDocument.prototype.allPropertyNames = function () {
-        var dict = this.getProperties();
-        if (!dict) {
-            return null;
-        }
-        return Object.keys(dict);
-    };
-
-    BaseDocument.prototype.getProperties = function () {
+    // Override
+    BaseDocument.prototype.allProperties = function () {
         if (this.__status < 0) {
             // invalid
             return null;
         }
-        if (!this.__properties) {
-            var data = this.__data;
+        if (this.__properties === null) {
+            var data = this.getData();
             if (data) {
-                this.__properties = ns.format.JSON.decode(data);
+                this.__properties = JSON.decode(data);
             } else {
                 this.__properties = {};
             }
@@ -144,36 +163,39 @@
         return this.__properties;
     };
 
+    // Override
     BaseDocument.prototype.getProperty = function (name) {
-        var dict = this.getProperties();
+        var dict = this.allProperties();
         if (!dict) {
             return null;
         }
         return dict[name];
     };
 
+    // Override
     BaseDocument.prototype.setProperty = function (name, value) {
         // 1. reset status
         this.__status = 0;
         // 2. update property value with name
-        var dict = this.getProperties();
+        var dict = this.allProperties();
         dict[name] = value;
         // 3. clear data signature after properties changed
-        this.setValue('data', null);
-        this.setValue('signature', null);
-        this.__data = null;
-        this.__signature = null;
+        this.removeValue('data');
+        this.removeValue('signature');
+        this.__json = null;
+        this.__sig = null;
     };
 
     //-------- signature --------
 
+    // Override
     BaseDocument.prototype.verify = function (publicKey) {
         if (this.__status > 0) {
             // already verify OK
             return true;
         }
-        var data = this.__data;
-        var signature = this.__signature;
+        var data = this.getData();
+        var signature = this.getSignature();
         if (!data) {
             // NOTICE: if data is empty, signature should be empty at the same time
             //         this happen while profile not found
@@ -186,7 +208,7 @@
         } else if (!signature) {
             // signature error
             this.__status = -1;
-        } else if (publicKey.verify(data, signature)) {
+        } else if (publicKey.verify(UTF8.encode(data), signature)) {
             // signature matched
             this.__status = 1;
         }
@@ -195,26 +217,33 @@
         return this.__status > 0;
     };
 
+    // Override
     BaseDocument.prototype.sign = function (privateKey) {
         if (this.__status > 0) {
             // already signed/verified
-            return this.__signature;
+            return this.getSignature();
         }
         // update sign time
         var now = new Date();
-        this.setProperty('time', now.getTime() / 1000);
+        this.setProperty('time', now.getTime() / 1000.0);
         // update status
         this.__status = 1;
         // sign
-        this.__data = ns.format.JSON.encode(this.getProperties());
-        this.__signature = privateKey.sign(this.__data);
-        this.setValue('data', ns.format.UTF8.decode(this.__data));
-        this.setValue('signature', ns.format.Base64.encode(this.__signature));
-        return this.__signature;
+        var dict = this.allProperties();
+        var json = JSON.encode(dict);
+        var data = UTF8.encode(json);
+        var sig = privateKey.sign(data);
+        var b64 = Base64.encode(sig);
+        this.__json = json;
+        this.__sig = sig;
+        this.setValue('data', json);
+        this.setValue('signature', b64);
+        return this.__sig;
     };
 
     //-------- extra info --------
 
+    // Override
     BaseDocument.prototype.getTime = function () {
         var timestamp = this.getProperty('time');
         if (timestamp) {
@@ -224,10 +253,12 @@
         }
     };
 
+    // Override
     BaseDocument.prototype.getName = function () {
         return this.getProperty('name');
     };
 
+    // Override
     BaseDocument.prototype.setName = function (name) {
         this.setProperty('name', name);
     };

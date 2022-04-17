@@ -30,117 +30,46 @@
 // =============================================================================
 //
 
-//! require 'protocol/types.js'
 //! require 'protocol/address.js'
 
 (function (ns) {
     'use strict';
 
-    var str = ns.type.String;
-    var NetworkType = ns.protocol.NetworkType;
-    var Address = ns.protocol.Address;
-
-    //
-    //  Address for broadcast
-    //
-    var BroadcastAddress = function (string, network) {
-        str.call(this, string);
-        if (network instanceof NetworkType) {
-            network = network.valueOf();
-        }
-        this.__network = network;
-    };
-    ns.Class(BroadcastAddress, str, [Address]);
-
-    BroadcastAddress.prototype.getNetwork = function () {
-        return this.__network;
-    };
-
-    BroadcastAddress.prototype.isBroadcast = function () {
-        return true;
-    };
-    BroadcastAddress.prototype.isUser = function () {
-        return NetworkType.isUser(this.__network);
-    };
-    BroadcastAddress.prototype.isGroup = function () {
-        return NetworkType.isGroup(this.__network);
-    };
-
-    /**
-     *  Address for broadcast
-     */
-    Address.ANYWHERE = new BroadcastAddress('anywhere', NetworkType.MAIN);
-    Address.EVERYWHERE = new BroadcastAddress('everywhere', NetworkType.GROUP);
-
-    //-------- namespace --------
-    ns.mkm.BroadcastAddress = BroadcastAddress;
-
-    ns.mkm.registers('BroadcastAddress')
-
-})(MingKeMing);
-
-(function (ns) {
-    'use strict';
-
-    var obj = ns.type.Object;
     var Address = ns.protocol.Address;
 
     var AddressFactory = function () {
-        obj.call(this);
+        Object.call(this);
         this.__addresses = {};  // String -> Address
         // cache broadcast addresses
         this.__addresses[Address.ANYWHERE.toString()] = Address.ANYWHERE;
         this.__addresses[Address.EVERYWHERE.toString()] = Address.EVERYWHERE;
     };
-    ns.Class(AddressFactory, obj, [Address.Factory])
+    ns.Class(AddressFactory, Object, [Address.Factory])
 
+    // Override
+    AddressFactory.prototype.generateAddress = function (meta, network) {
+        var address = meta.generateAddress(network);
+        if (address) {
+            this.__addresses[address.toString()] = address;
+        }
+        return address;
+    };
+
+    // Override
     AddressFactory.prototype.parseAddress = function (string) {
         var address = this.__addresses[string];
         if (!address) {
-            address = this.createAddress(string);
+            address = Address.create(string);
             if (address) {
                 this.__addresses[string] = address;
             }
         }
         return address;
     };
-    // noinspection JSUnusedLocalSymbols
-    /**
-     *  Create address from string
-     *
-     * @param {String} address - address string
-     * @return {Address}
-     */
-    AddressFactory.prototype.createAddress = function (address) {
-        console.assert(false, 'implement me!');
-        return null;
-    };
 
     //-------- namespace --------
     ns.mkm.AddressFactory = AddressFactory;
 
     ns.mkm.registers('AddressFactory');
-
-})(MingKeMing);
-
-(function (ns) {
-    'use strict';
-
-    var ID = ns.protocol.ID;
-    var Address = ns.protocol.Address;
-    var IDFactory = ns.mkm.IDFactory;
-
-    var factory = new IDFactory();
-    ID.setFactory(factory);
-
-    /**
-     *  ID for broadcast
-     */
-    ID.ANYONE = factory.createID('anyone', Address.ANYWHERE, null);
-    ID.EVERYONE = factory.createID('everyone', Address.EVERYWHERE, null);
-    /**
-     *  DIM Founder
-     */
-    ID.FOUNDER = factory.createID('moky', Address.ANYWHERE, null);
 
 })(MingKeMing);

@@ -35,6 +35,7 @@
 (function (ns) {
     'use strict';
 
+    var Stringer = ns.type.Stringer;
     var Address = ns.protocol.Address;
 
     /**
@@ -47,9 +48,14 @@
      *          address  - a string to identify an entity
      *          terminal - entity login resource(device), OPTIONAL
      */
-    var ID = function () {
-    };
-    ns.Interface(ID, null);
+    var ID = function () {};
+    ns.Interface(ID, [Stringer]);
+
+    //  ID for broadcast
+    ID.ANYONE = null;    // 'anyone@anywhere'
+    ID.EVERYONE = null;  // 'everyone@everywhere'
+    //  DIM Founder
+    ID.FOUNDER = null;   // 'moky@anywhere'
 
     /**
      *  Get ID.name
@@ -103,16 +109,6 @@
     };
 
     /**
-     *  ID for broadcast
-     */
-    ID.ANYONE = null;    // 'anyone@anywhere'
-    ID.EVERYONE = null;  // 'everyone@everywhere'
-    /**
-     *  DIM Founder
-     */
-    ID.FOUNDER = null;   // 'moky@anywhere'
-
-    /**
      *  Convert Strings to IDs
      *
      * @param {String[]} members
@@ -141,35 +137,27 @@
         var id;
         for (var i = 0; i < members.length; ++i) {
             id = members[i];
-            if (typeof id === 'string') {
-                array.push(id);
-            } else {
+            if (ns.Interface.conforms(id, Stringer)) {
                 array.push(id.toString());
+            } else if (typeof id === 'string') {
+                array.push(id);
             }
         }
         return array;
     };
 
-    //-------- namespace --------
-    ns.protocol.ID = ID;
-
-    ns.protocol.registers('ID');
-
-})(MingKeMing);
-
-(function (ns) {
-    'use strict';
-
-    var str = ns.type.String;
-    var ID = ns.protocol.ID;
-
     /**
      *  ID Factory
      *  ~~~~~~~~~~
      */
-    var IDFactory = function () {
-    };
+    var IDFactory = function () {};
     ns.Interface(IDFactory, null);
+
+    // noinspection JSUnusedLocalSymbols
+    IDFactory.prototype.generateID = function (meta, network, terminal) {
+        console.assert(false, 'implement me!');
+        return null;
+    };
 
     // noinspection JSUnusedLocalSymbols
     IDFactory.prototype.createID = function (name, address, terminal) {
@@ -185,13 +173,34 @@
 
     ID.Factory = IDFactory;
 
+    //
+    //  Instances of ID.Factory
+    //
     var s_factory;
 
+    /**
+     *  Register ID factory
+     *
+     * @param {IDFactory} factory
+     */
+    ID.setFactory = function (factory) {
+        s_factory = factory;
+    };
     ID.getFactory = function () {
         return s_factory;
     };
-    ID.setFactory = function (factory) {
-        s_factory = factory;
+
+    /**
+     *  Generate ID
+     *
+     * @param {Meta} meta       - meta info
+     * @param {uint} network    - ID.type
+     * @param {String} terminal - ID.terminal
+     * @return {ID}
+     */
+    ID.generate = function (meta, network, terminal) {
+        var factory = ID.getFactory();
+        return factory.generateID(meta, network, terminal);
     };
 
     /**
@@ -203,13 +212,14 @@
      * @return {ID}
      */
     ID.create = function (name, address, terminal) {
-        return ID.getFactory().createID(name, address, terminal);
+        var factory = ID.getFactory();
+        return factory.createID(name, address, terminal);
     };
 
     /**
      *  Parse string object to ID
      *
-     * @param {String} identifier - ID string
+     * @param {*} identifier - ID string
      * @return {ID}
      */
     ID.parse = function (identifier) {
@@ -217,10 +227,15 @@
             return null;
         } else if (ns.Interface.conforms(identifier, ID)) {
             return identifier;
-        } else if (identifier instanceof str) {
-            identifier = identifier.toString();
         }
-        return ID.getFactory().parseID(identifier);
+        identifier = ns.type.Wrapper.fetchString(identifier);
+        var factory = ID.getFactory();
+        return factory.parseID(identifier);
     };
+
+    //-------- namespace --------
+    ns.protocol.ID = ID;
+
+    ns.protocol.registers('ID');
 
 })(MingKeMing);

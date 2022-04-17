@@ -30,7 +30,7 @@
 // =============================================================================
 //
 
-//! require 'tai.js'
+//! require 'document.js'
 
 (function (ns) {
     'use strict';
@@ -43,8 +43,7 @@
      *  This interface is defined for authorizing other apps to login,
      *  which can generate a temporary asymmetric key pair for messaging.
      */
-    var Visa = function () {
-    };
+    var Visa = function () {};
     ns.Interface(Visa, [Document]);
 
     /**
@@ -56,7 +55,7 @@
         console.assert(false, 'implement me!');
         return null;
     };
-    // noinspection JSUnusedLocalSymbols
+
     /**
      *  Set public key for other user to encrypt message
      *
@@ -75,6 +74,7 @@
         console.assert(false, 'implement me!');
         return null;
     };
+
     /**
      *  Set avatar URL
      *
@@ -100,8 +100,7 @@
      *  Group Document
      *  ~~~~~~~~~~~~~~
      */
-    var Bulletin = function () {
-    };
+    var Bulletin = function () {};
     ns.Interface(Bulletin, [Document]);
 
     /**
@@ -113,6 +112,7 @@
         console.assert(false, 'implement me!');
         return null;
     };
+
     /**
      *  Set group assistants
      *

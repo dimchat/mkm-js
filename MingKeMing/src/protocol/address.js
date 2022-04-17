@@ -35,6 +35,8 @@
 (function (ns) {
     'use strict';
 
+    var Stringer = ns.type.Stringer;
+
     /**
      *  Address for MKM ID
      *  ~~~~~~~~~~~~~~~~~~
@@ -44,14 +46,17 @@
      *          network - address type
      *          number  - search number
      */
-    var Address = function () {
-    };
-    ns.Interface(Address, null);
+    var Address = function () {};
+    ns.Interface(Address, [Stringer]);
+
+    // Address for broadcast
+    Address.ANYWHERE = null;    // 'anywhere'
+    Address.EVERYWHERE = null;  // 'everywhere'
 
     /**
      *  get address type
      *
-     * @returns {int} 0 ~ 255
+     * @returns {uint} 0 ~ 255
      */
     Address.prototype.getNetwork = function () {
         console.assert(false, 'implement me!');
@@ -72,31 +77,23 @@
     };
 
     /**
-     *  Address for broadcast
-     */
-    Address.ANYWHERE = null;    // 'anywhere'
-    Address.EVERYWHERE = null;  // 'everywhere'
-
-    //-------- namespace --------
-    ns.protocol.Address = Address;
-
-    ns.protocol.registers('Address');
-
-})(MingKeMing);
-
-(function (ns) {
-    'use strict';
-
-    var str = ns.type.String;
-    var Address = ns.protocol.Address;
-
-    /**
      *  Address Factory
      *  ~~~~~~~~~~~~~~~
      */
-    var AddressFactory = function () {
-    };
+    var AddressFactory = function () {};
     ns.Interface(AddressFactory, null);
+
+    // noinspection JSUnusedLocalSymbols
+    AddressFactory.prototype.generateAddress = function (meta, network) {
+        console.assert(false, 'implement me!');
+        return null;
+    };
+
+    // noinspection JSUnusedLocalSymbols
+    AddressFactory.prototype.createAddress = function (address) {
+        console.assert(false, 'implement me!');
+        return null;
+    };
 
     // noinspection JSUnusedLocalSymbols
     AddressFactory.prototype.parseAddress = function (address) {
@@ -106,19 +103,50 @@
 
     Address.Factory = AddressFactory;
 
+    //
+    //  Instances of Address.Factory
+    //
     var s_factory = null;
 
+    /**
+     *  Register address factory
+     *
+     * @param {AddressFactory} factory
+     */
+    Address.setFactory = function (factory) {
+        s_factory = factory;
+    };
     Address.getFactory = function () {
         return s_factory;
     };
-    Address.setFactory = function (factory) {
-        s_factory = factory;
+
+    /**
+     *  Generate address with meta & network
+     *
+     * @param {Meta} meta - meta info
+     * @param {uint} network - address.type
+     * @return {Address}
+     */
+    Address.generate = function (meta, network) {
+        var factory = Address.getFactory();
+        return factory.generateAddress(meta, network);
+    };
+
+    /**
+     *  Create address with string
+     *
+     * @param {String} address - address string
+     * @return {Address}
+     */
+    Address.create = function (address) {
+        var factory = Address.getFactory();
+        return factory.createAddress(address);
     };
 
     /**
      *  Parse string object to address
      *
-     * @param {String} address - address string
+     * @param {*} address - address string
      * @return {Address}
      */
     Address.parse = function (address) {
@@ -126,10 +154,15 @@
             return null;
         } else if (ns.Interface.conforms(address, Address)) {
             return address;
-        } else if (address instanceof str) {
-            address = address.toString();
         }
-        return Address.getFactory().parseAddress(address);
+        address = ns.type.Wrapper.fetchString(address);
+        var factory = Address.getFactory();
+        return factory.parseAddress(address);
     };
+
+    //-------- namespace --------
+    ns.protocol.Address = Address;
+
+    ns.protocol.registers('Address');
 
 })(MingKeMing);
