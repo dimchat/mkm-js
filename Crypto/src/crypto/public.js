@@ -35,39 +35,29 @@
 (function (ns) {
     'use strict';
 
+    var CryptographyKey = ns.crypto.CryptographyKey;
     var AsymmetricKey = ns.crypto.AsymmetricKey;
     var VerifyKey = ns.crypto.VerifyKey;
 
-    var PublicKey = function () {
-    };
+    var PublicKey = function () {};
     ns.Interface(PublicKey, [VerifyKey]);
 
     PublicKey.RSA = AsymmetricKey.RSA;
     PublicKey.ECC = AsymmetricKey.ECC;
 
-    //-------- namespace --------
-    ns.crypto.PublicKey = PublicKey;
-
-    ns.crypto.registers('PublicKey');
-
-})(MONKEY);
-
-(function (ns) {
-    'use strict';
-
-    var map = ns.type.Map;
-    var CryptographyKey = ns.crypto.CryptographyKey;
-    var PublicKey = ns.crypto.PublicKey;
-
     /**
      *  Key Factory
      *  ~~~~~~~~~~~
      */
-    var PublicKeyFactory = function () {
-    };
+    var PublicKeyFactory = function () {};
     ns.Interface(PublicKeyFactory, null);
 
-    // noinspection JSUnusedLocalSymbols
+    /**
+     *  Parse map object to key
+     *
+     * @param {{}} key - key info
+     * @return {PublicKey}
+     */
     PublicKeyFactory.prototype.parsePublicKey = function (key) {
         console.assert(false, 'implement me!');
         return null;
@@ -75,6 +65,9 @@
 
     PublicKey.Factory = PublicKeyFactory;
 
+    //
+    //  Instances of PublicKey.Factory
+    //
     var s_factories = {};  // algorithm(String) -> PublicKeyFactory
 
     /**
@@ -83,7 +76,7 @@
      * @param {String} algorithm
      * @param {PublicKeyFactory} factory
      */
-    PublicKey.register = function (algorithm, factory) {
+    PublicKey.setFactory = function (algorithm, factory) {
         s_factories[algorithm] = factory;
     };
     PublicKey.getFactory = function (algorithm) {
@@ -93,7 +86,7 @@
     /**
      *  Parse map object to key
      *
-     * @param {{String:Object}} key - key info
+     * @param {PublicKey|{}} key - key info
      * @return {PublicKey}
      */
     PublicKey.parse = function (key) {
@@ -101,9 +94,8 @@
             return null;
         } else if (ns.Interface.conforms(key, PublicKey)) {
             return key;
-        } else if (ns.Interface.conforms(key, map)) {
-            key = key.getMap();
         }
+        key = ns.type.Wrapper.fetchMap(key);
         var algorithm = CryptographyKey.getAlgorithm(key);
         var factory = PublicKey.getFactory(algorithm);
         if (!factory) {
@@ -111,5 +103,10 @@
         }
         return factory.parsePublicKey(key);
     }
+
+    //-------- namespace --------
+    ns.crypto.PublicKey = PublicKey;
+
+    ns.crypto.registers('PublicKey');
 
 })(MONKEY);

@@ -35,11 +35,11 @@
 (function (ns) {
     'use strict';
 
+    var CryptographyKey = ns.crypto.CryptographyKey;
     var AsymmetricKey = ns.crypto.AsymmetricKey;
     var SignKey = ns.crypto.SignKey;
 
-    var PrivateKey = function () {
-    };
+    var PrivateKey = function () {};
     ns.Interface(PrivateKey, [SignKey]);
 
     PrivateKey.RSA = AsymmetricKey.RSA;
@@ -55,34 +55,29 @@
         return null;
     };
 
-    //-------- namespace --------
-    ns.crypto.PrivateKey = PrivateKey;
-
-    ns.crypto.registers('PrivateKey');
-
-})(MONKEY);
-
-(function (ns) {
-    'use strict';
-
-    var map = ns.type.Map;
-    var CryptographyKey = ns.crypto.CryptographyKey;
-    var PrivateKey = ns.crypto.PrivateKey;
-
     /**
      *  Key Factory
      *  ~~~~~~~~~~~
      */
-    var PrivateKeyFactory = function () {
-    };
+    var PrivateKeyFactory = function () {};
     ns.Interface(PrivateKeyFactory, null);
 
+    /**
+     *  Generate key
+     *
+     * @return {PrivateKey}
+     */
     PrivateKeyFactory.prototype.generatePrivateKey = function () {
         console.assert(false, 'implement me!');
         return null;
     };
 
-    // noinspection JSUnusedLocalSymbols
+    /**
+     *  Parse map object to key
+     *
+     * @param {{}} key - key info
+     * @return {PrivateKey}
+     */
     PrivateKeyFactory.prototype.parsePrivateKey = function (key) {
         console.assert(false, 'implement me!');
         return null;
@@ -90,6 +85,9 @@
 
     PrivateKey.Factory = PrivateKeyFactory;
 
+    //
+    //  Instances of PrivateKey.Factory
+    //
     var s_factories = {};  // algorithm(String) -> PrivateKeyFactory
 
     /**
@@ -98,7 +96,7 @@
      * @param {String} algorithm
      * @param {PrivateKeyFactory} factory
      */
-    PrivateKey.register = function (algorithm, factory) {
+    PrivateKey.setFactory = function (algorithm, factory) {
         s_factories[algorithm] = factory;
     };
     PrivateKey.getFactory = function (algorithm) {
@@ -108,7 +106,7 @@
     /**
      *  Generate key with algorithm name
      *
-     * @param {String} algorithm - algorithm name ('AES')
+     * @param {String} algorithm - algorithm name ('RSA', 'ECC')
      * @return {PrivateKey}
      */
     PrivateKey.generate = function (algorithm) {
@@ -122,7 +120,7 @@
     /**
      *  Parse map object to key
      *
-     * @param {{String:Object}} key - key info
+     * @param {PrivateKey|{}} key - key info
      * @return {PrivateKey}
      */
     PrivateKey.parse = function (key) {
@@ -130,9 +128,8 @@
             return null;
         } else if (ns.Interface.conforms(key, PrivateKey)) {
             return key;
-        } else if (ns.Interface.conforms(key, map)) {
-            key = key.getMap();
         }
+        key = ns.type.Wrapper.fetchMap(key);
         var algorithm = CryptographyKey.getAlgorithm(key);
         var factory = PrivateKey.getFactory(algorithm);
         if (!factory) {
@@ -140,5 +137,10 @@
         }
         return factory.parsePrivateKey(key);
     }
+
+    //-------- namespace --------
+    ns.crypto.PrivateKey = PrivateKey;
+
+    ns.crypto.registers('PrivateKey');
 
 })(MONKEY);
