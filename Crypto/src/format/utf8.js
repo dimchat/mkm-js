@@ -30,17 +30,14 @@
 // =============================================================================
 //
 
-//! require 'data.js'
-//! require 'parser.js'
+//! require 'coder.js'
 
 (function (ns) {
     'use strict';
 
-    var obj = ns.type.Object;
-    var Data = ns.type.Data;
-    var Parser = ns.format.DataParser;
-    var Lib = ns.format.ParserLib;
+    var StringCoder = ns.format.StringCoder;
 
+    //-------- UTF-8 algorithm begin --------
     /**
      *  Encode string to UTF8 data array
      *
@@ -49,7 +46,7 @@
      */
     var utf8_encode = function (string) {
         var len = string.length;
-        var array = new Data(len);
+        var array = [];
         var c, l;
         for (var i = 0; i < len; ++i) {
             c = string.charCodeAt(i);
@@ -81,7 +78,7 @@
                 array.push(0x80 | ((c >>  0) & 0x3F));
             }
         }
-        return array.getBytes();
+        return Uint8Array.from(array);
     };
 
     /**
@@ -130,20 +127,67 @@
         }
         return string;
     };
+    //-------- UTF-8 algorithm end --------
 
-    //
-    //  UTF-8
-    //
-    var utf8 = function () {
-        obj.call(this);
+    var UTF8Coder = function () {
+        Object.call(this);
     };
-    ns.Class(utf8, obj, [Parser]);
+    ns.Class(UTF8Coder, Object, [StringCoder])
 
-    utf8.prototype.encode = utf8_encode;
-    utf8.prototype.decode = utf8_decode;
+    // Override
+    UTF8Coder.prototype.encode = function (string) {
+        return utf8_encode(string);
+    };
 
-    //-------- namespace --------//
-    ns.format.UTF8 = new Lib(new utf8());
+    // Override
+    UTF8Coder.prototype.decode = function (data) {
+        return utf8_decode(data);
+    };
+
+    var UTF8 = {
+        /**
+         *  Encode local string to binary data
+         *
+         * @param {String} string
+         * @return {Uint8Array}
+         */
+        encode: function (string) {
+            return this.getCoder().encode(string);
+        },
+
+        /**
+         *  Decode binary data to local string
+         *
+         * @param {Uint8Array} data
+         * @return {String}
+         */
+        decode: function (data) {
+            return this.getCoder().decode(data);
+        },
+
+        /**
+         *  Get UTF8 Coder
+         *
+         * @return {StringCoder}
+         */
+        getCoder: function () {
+            return utf8Coder;
+        },
+
+        /**
+         *  Set UTF8 Coder
+         *
+         * @param {StringCoder} coder
+         */
+        setCoder: function (coder) {
+            utf8Coder = coder
+        }
+    };
+
+    var utf8Coder = new UTF8Coder();
+
+    //-------- namespace --------
+    ns.format.UTF8 = UTF8;
 
     ns.format.registers('UTF8');
 

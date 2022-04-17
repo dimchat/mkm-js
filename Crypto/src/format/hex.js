@@ -30,16 +30,12 @@
 // =============================================================================
 //
 
-//! require 'data.js'
 //! require 'coder.js'
 
 (function (ns) {
     'use strict';
 
-    var obj = ns.type.Object;
-    var Data = ns.type.Data;
-    var Coder = ns.format.BaseCoder;
-    var Lib = ns.format.CoderLib;
+    var DataCoder = ns.format.DataCoder;
 
     //-------- HEX algorithm begin --------
     var hex_chars = '0123456789abcdef';
@@ -81,46 +77,94 @@
      * @return {Uint8Array}
      */
     var hex_decode = function (string) {
-        var i = 0;
+        // TODO: check Hex format?
         var len = string.length;
         if (len > 2) {
-            // skip '0x'
+            // check Hex header: '0x'
             if (string[0] === '0') {
                 if (string[1] === 'x' || string[1] === 'X') {
-                    i += 2;
+                    // skip '0x'
+                    string = string.substring(2);
+                    len -= 2;
                 }
             }
         }
-        var size = Math.floor(len / 2);
-        var data = new Data(size);
-        --len; // for condition: i < (len - 1)
-        var hi, lo;
-        for (; i < len; i+=2) {
-            hi = hex_values[string.charCodeAt(i)];
-            lo = hex_values[string.charCodeAt(i+1)];
-            data.push((hi << 4) | lo);
+        if (len % 2 === 1) {
+            // byte alignment
+            string = '0' + string;
+            len += 1;
         }
-        return data.getBytes();
+        var cnt = len >> 1;
+        var hi, lo;
+        var data = new Uint8Array(cnt);
+        for (var i = 0, j = 0; i < cnt; ++i, j += 2) {
+            hi = hex_values[string.charCodeAt(j)];
+            lo = hex_values[string.charCodeAt(j+1)];
+            data[i] = (hi << 4) | lo;
+        }
+        return data;
     };
     //-------- HEX algorithm end --------
 
-    //
-    //  Hex
-    //
-    var hex = function () {
-        obj.call(this);
+    var HexCoder = function () {
+        Object.call(this);
     };
-    ns.Class(hex, obj, [Coder]);
+    ns.Class(HexCoder, Object, [DataCoder])
 
-    hex.prototype.encode = function (data) {
+    // Override
+    HexCoder.prototype.encode = function (data) {
         return hex_encode(data);
     };
-    hex.prototype.decode = function (str) {
-        return hex_decode(str);
+
+    // Override
+    HexCoder.prototype.decode = function (string) {
+        return hex_decode(string);
     };
 
+    var Hex = {
+        /**
+         *  Encode binary data to Hex string
+         *
+         * @param {Uint8Array} data
+         * @return {String}
+         */
+        encode: function (data) {
+            return this.getCoder().encode(data);
+        },
+
+        /**
+         *  Decode Hex string to binary data
+         *
+         * @param string
+         * @return {Uint8Array}
+         */
+        decode: function (string) {
+            return this.getCoder().decode(string);
+        },
+
+        /**
+         *  Get Hex Coder
+         *
+         * @return {DataCoder}
+         */
+        getCoder: function () {
+            return hexCoder;
+        },
+
+        /**
+         *  Set Hex Coder
+         *
+         * @param {DataCoder} coder
+         */
+        setCoder: function (coder) {
+            hexCoder = coder
+        }
+    };
+
+    var hexCoder = new HexCoder();
+
     //-------- namespace --------
-    ns.format.Hex = new Lib(new hex());
+    ns.format.Hex = Hex;
 
     ns.format.registers('Hex');
 

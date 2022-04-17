@@ -35,58 +35,112 @@
 (function (ns) {
     'use strict';
 
-    var obj = ns.type.Object;
-
-    //
-    //  BaseCoder interface
-    //
-    var coder = function () {
-    };
-    ns.Interface(coder, null);
+    /**
+     *  Data Coder
+     *  ~~~~~~~~~~
+     *  Hex, Base58, Base64, ...
+     *
+     *  1. encode binary data to string;
+     *  2. decode string to binary data.
+     */
+    var DataCoder = function () {};
+    ns.Interface(DataCoder, null);
 
     /**
-     *  Encode binary data to text string
+     *  Encode binary data to local string
      *
      * @param {Uint8Array} data
      * @return {String}
      */
-    coder.prototype.encode = function (data) {
+    DataCoder.prototype.encode = function (data) {
         console.assert(false, 'implement me!');
         return null;
     };
 
     /**
-     *  Decode text string to binary data
+     *  Decode local string to binary data
      *
      * @param {String} string
      * @return {Uint8Array}
      */
-    coder.prototype.decode = function (string) {
+    DataCoder.prototype.decode = function (string) {
         console.assert(false, 'implement me!');
         return null;
     };
 
-    //
-    //  Coder Lib
-    //
-    var lib = function (coder) {
-        obj.call(this);
-        this.coder = coder;
-    };
-    ns.Class(lib, obj, [coder]);
+    /**
+     *  Object Coder
+     *  ~~~~~~~~~~~~
+     *  JsON, XML, ...
+     *
+     *  1. encode object to string;
+     *  2. decode string to object.
+     */
+    var ObjectCoder = function () {};
+    ns.Interface(ObjectCoder, null);
 
-    lib.prototype.encode = function (data) {
-        return this.coder.encode(data);
+    /**
+     *  Encode Map/List object to string
+     *
+     * @param {{}|[]} object - Map or List
+     * @return {String} serialized string
+     */
+    ObjectCoder.prototype.encode = function (object) {
+        console.assert(false, 'implement me!');
+        return null;
     };
-    lib.prototype.decode = function (string) {
-        return this.coder.decode(string);
+
+    /**
+     *  Decode string to Map/List object
+     *
+     * @param {String} string - serialized string
+     * @return {{}|[]} Map or List
+     */
+    ObjectCoder.prototype.decode = function (string) {
+        console.assert(false, 'implement me!');
+        return null;
+    };
+
+    /**
+     *  String Coder
+     *  ~~~~~~~~~~~~
+     *  UTF-8, UTF-16, GBK, GB2312, ...
+     *
+     *  1. encode string to binary data;
+     *  2. decode binary data to string.
+     */
+    var StringCoder = function () {};
+    ns.Interface(StringCoder, null);
+
+    /**
+     *  Encode local string to binary data
+     *
+     * @param {String} string
+     * @return {Uint8Array}
+     */
+    StringCoder.prototype.encode = function (string) {
+        console.assert(false, 'implement me!');
+        return null;
+    };
+
+    /**
+     *  Decode binary data to local string
+     *
+     * @param {Uint8Array} data
+     * @return {String}
+     */
+    StringCoder.prototype.decode = function (data) {
+        console.assert(false, 'implement me!');
+        return null;
     };
 
     //-------- namespace --------
-    ns.format.BaseCoder = coder;
-    ns.format.CoderLib = lib;
+    ns.format.DataCoder = DataCoder;
+    ns.format.ObjectCoder = ObjectCoder;
+    ns.format.StringCoder = StringCoder;
 
-    ns.format.registers('BaseCoder');
-    ns.format.registers('CoderLib');
+    ns.format.registers('DataCoder');
+    ns.format.registers('ObjectCoder');
+    ns.format.registers('StringCoder');
 
 })(MONKEY);

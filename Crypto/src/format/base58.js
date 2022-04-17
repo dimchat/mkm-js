@@ -35,30 +35,50 @@
 (function (ns) {
     'use strict';
 
-    var obj = ns.type.Object;
-    var Coder = ns.format.BaseCoder;
-    var Lib = ns.format.CoderLib;
+    var Base58 = {
+        /**
+         *  Encode binary data to Base58 string
+         *
+         * @param {Uint8Array} data
+         * @return {String}
+         */
+        encode: function (data) {
+            return this.getCoder().encode(data);
+        },
 
-    //
-    //  Base58
-    //
-    var base58 = function () {
-        obj.call(this);
+        /**
+         *  Decode Base58 string to binary data
+         *
+         * @param string
+         * @return {Uint8Array}
+         */
+        decode: function (string) {
+            return this.getCoder().decode(string);
+        },
+
+        /**
+         *  Get Base58 Coder
+         *
+         * @return {DataCoder}
+         */
+        getCoder: function () {
+            return base58Coder;
+        },
+
+        /**
+         *  Set Base58 Coder
+         *
+         * @param {DataCoder} coder
+         */
+        setCoder: function (coder) {
+            base58Coder = coder
+        }
     };
-    ns.Class(base58, obj, [Coder]);
-    // noinspection JSUnusedLocalSymbols
-    base58.prototype.encode = function (data) {
-        console.assert(false, 'Base58 encode not implemented');
-        return null;
-    };
-    // noinspection JSUnusedLocalSymbols
-    base58.prototype.decode = function (string) {
-        console.assert(false, 'Base58 decode not implemented');
-        return null;
-    };
+
+    var base58Coder = null;
 
     //-------- namespace --------
-    ns.format.Base58 = new Lib(new base58());
+    ns.format.Base58 = Base58;
 
     ns.format.registers('Base58');
 

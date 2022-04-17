@@ -31,46 +31,72 @@
 //
 
 //! require 'json2.js' (https://github.com/douglascrockford/JSON-js)
-//! require 'parser.js'
+//! require 'coder.js'
 
 (function (ns) {
     'use strict';
 
-    var obj = ns.type.Object;
-    var Parser = ns.format.DataParser;
-    var Lib = ns.format.ParserLib;
+    var ObjectCoder = ns.format.ObjectCoder;
 
-    //
-    //  JSON
-    //
-    var json = function () {
-        obj.call(this);
+    var JsonCoder = function () {
+        Object.call(this);
     };
-    ns.Class(json, obj, [Parser]);
+    ns.Class(JsonCoder, Object, [ObjectCoder])
 
-    json.prototype.encode = function (container) {
-        var string = JSON.stringify(container);
-        if (!string) {
-            throw new TypeError('failed to encode JSON object: ' + container);
-        }
-        return ns.format.UTF8.encode(string);
+    // Override
+    JsonCoder.prototype.encode = function (object) {
+        return JSON.stringify(object);
     };
-    json.prototype.decode = function (json) {
-        var string;
-        if (typeof json === 'string') {
-            string = json;
-        } else {
-            // convert UTF-8 data bytes to String
-            string = ns.format.UTF8.decode(json);
-        }
-        if (!string) {
-            throw new TypeError('failed to decode JSON data: ' + json);
-        }
+
+    // Override
+    JsonCoder.prototype.decode = function (string) {
         return JSON.parse(string);
     };
 
+    var JsON = {
+        /**
+         *  Encode Map/List object to string
+         *
+         * @param {{}|[]} object - Map or List
+         * @return {String} JsON string
+         */
+        encode: function (object) {
+            return this.getCoder().encode(object);
+        },
+
+        /**
+         *  Decode string to Map/List object
+         *
+         * @param {String} string - JsON string
+         * @return {{}|[]} Map or List
+         */
+        decode: function (string) {
+            return this.getCoder().decode(string);
+        },
+
+        /**
+         *  Get JsON Coder
+         *
+         * @return {ObjectCoder}
+         */
+        getCoder: function () {
+            return jsonCoder;
+        },
+
+        /**
+         *  Set JsON Coder
+         *
+         * @param {ObjectCoder} coder
+         */
+        setCoder: function (coder) {
+            jsonCoder = coder
+        }
+    };
+
+    var jsonCoder = new JsonCoder();
+
     //-------- namespace --------//
-    ns.format.JSON = new Lib(new json());
+    ns.format.JSON = JsON;
 
     ns.format.registers('JSON');
 
