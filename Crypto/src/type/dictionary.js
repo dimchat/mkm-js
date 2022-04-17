@@ -118,7 +118,7 @@
     /**
      *  Create dictionary with values or JSON string
      *
-     * @param {{}} dict
+     * @param {Mapper|{}} dict
      */
     var Dictionary = function (dict) {
         BaseObject.call(this);
@@ -133,7 +133,7 @@
 
     // Override
     Dictionary.prototype.equals = function (other) {
-        if (this.equals(other)) {
+        if (BaseObject.prototype.equals.call(this, other)) {
             return true;
         } else if (!other) {
             return !this.__dictionary;

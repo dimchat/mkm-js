@@ -55,7 +55,7 @@
 
     var JsON = {
         /**
-         *  Encode Map/List object to string
+         *  Encode Map/List object to JsON string
          *
          * @param {{}|[]} object - Map or List
          * @return {String} JsON string
@@ -65,7 +65,7 @@
         },
 
         /**
-         *  Decode string to Map/List object
+         *  Decode JsON string to Map/List object
          *
          * @param {String} string - JsON string
          * @return {{}|[]} Map or List

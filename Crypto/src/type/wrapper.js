@@ -48,7 +48,8 @@
      *  ~~~~~~~~~~~~~~~~
      *  Remove first wrapper
      *
-     * @param {Stringer} str
+     * @param {Stringer|String} str
+     * @return {String}
      */
     var fetch_string = function (str) {
         if (ns.Interface.conforms(str, Stringer)) {
@@ -64,7 +65,8 @@
      *  ~~~~~~~~~~~~~
      *  Remove first wrapper
      *
-     * @param {Mapper} dict
+     * @param {Mapper|{}} dict
+     * @return {{}}
      */
     var fetch_map = function (dict) {
         if (ns.Interface.conforms(dict, Mapper)) {
