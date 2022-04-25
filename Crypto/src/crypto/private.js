@@ -62,22 +62,12 @@
     var PrivateKeyFactory = function () {};
     ns.Interface(PrivateKeyFactory, null);
 
-    /**
-     *  Generate key
-     *
-     * @return {PrivateKey}
-     */
     PrivateKeyFactory.prototype.generatePrivateKey = function () {
         console.assert(false, 'implement me!');
         return null;
     };
 
-    /**
-     *  Parse map object to key
-     *
-     * @param {{}} key - key info
-     * @return {PrivateKey}
-     */
+    // noinspection JSUnusedLocalSymbols
     PrivateKeyFactory.prototype.parsePrivateKey = function (key) {
         console.assert(false, 'implement me!');
         return null;
@@ -88,7 +78,7 @@
     //
     //  Instances of PrivateKey.Factory
     //
-    var s_factories = {};  // algorithm(String) -> PrivateKeyFactory
+    var s_private_factories = {};  // algorithm(String) -> PrivateKeyFactory
 
     /**
      *  Register private key factory with algorithm
@@ -97,11 +87,11 @@
      * @param {PrivateKeyFactory} factory
      */
     PrivateKey.setFactory = function (algorithm, factory) {
-        s_factories[algorithm] = factory;
+        s_private_factories[algorithm] = factory;
     };
     PrivateKey.getFactory = function (algorithm) {
-        return s_factories[algorithm];
-    }
+        return s_private_factories[algorithm];
+    };
 
     /**
      *  Generate key with algorithm name
@@ -120,7 +110,7 @@
     /**
      *  Parse map object to key
      *
-     * @param {PrivateKey|{}} key - key info
+     * @param {*} key - key info
      * @return {PrivateKey}
      */
     PrivateKey.parse = function (key) {
@@ -136,7 +126,7 @@
             factory = PrivateKey.getFactory('*');  // unknown
         }
         return factory.parsePrivateKey(key);
-    }
+    };
 
     //-------- namespace --------
     ns.crypto.PrivateKey = PrivateKey;

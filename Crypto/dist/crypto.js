@@ -2,7 +2,7 @@
  * Cryptography JavaScript Library (v0.2.0)
  *
  * @author    moKy <albert.moky at gmail.com>
- * @date      Apr. 17, 2022
+ * @date      Apr. 18, 2022
  * @copyright (c) 2022 Albert Moky
  * @license   {@link https://mit-license.org | MIT License}
  */;
@@ -1361,12 +1361,12 @@ if (typeof MONKEY !== "object") {
         return null;
     };
     SymmetricKey.Factory = SymmetricKeyFactory;
-    var s_factories = {};
+    var s_symmetric_factories = {};
     SymmetricKey.setFactory = function (algorithm, factory) {
-        s_factories[algorithm] = factory;
+        s_symmetric_factories[algorithm] = factory;
     };
     SymmetricKey.getFactory = function (algorithm) {
-        return s_factories[algorithm];
+        return s_symmetric_factories[algorithm];
     };
     SymmetricKey.generate = function (algorithm) {
         var factory = SymmetricKey.getFactory(algorithm);
@@ -1409,12 +1409,12 @@ if (typeof MONKEY !== "object") {
         return null;
     };
     PublicKey.Factory = PublicKeyFactory;
-    var s_factories = {};
+    var s_public_factories = {};
     PublicKey.setFactory = function (algorithm, factory) {
-        s_factories[algorithm] = factory;
+        s_public_factories[algorithm] = factory;
     };
     PublicKey.getFactory = function (algorithm) {
-        return s_factories[algorithm];
+        return s_public_factories[algorithm];
     };
     PublicKey.parse = function (key) {
         if (!key) {
@@ -1458,12 +1458,12 @@ if (typeof MONKEY !== "object") {
         return null;
     };
     PrivateKey.Factory = PrivateKeyFactory;
-    var s_factories = {};
+    var s_private_factories = {};
     PrivateKey.setFactory = function (algorithm, factory) {
-        s_factories[algorithm] = factory;
+        s_private_factories[algorithm] = factory;
     };
     PrivateKey.getFactory = function (algorithm) {
-        return s_factories[algorithm];
+        return s_private_factories[algorithm];
     };
     PrivateKey.generate = function (algorithm) {
         var factory = PrivateKey.getFactory(algorithm);

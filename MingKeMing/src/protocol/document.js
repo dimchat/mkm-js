@@ -36,6 +36,8 @@
     'use strict';
 
     var Mapper = ns.type.Mapper;
+    var UTF8 = ns.format.UTF8;
+    var Base64 = ns.format.Base64;
     var TAI = ns.protocol.TAI;
     var ID = ns.protocol.ID;
 
@@ -110,22 +112,6 @@
     };
     Document.getIdentifier = function (doc) {
         return ID.parse(doc['ID']);
-    };
-    Document.getData = function (doc) {
-        var utf8 = doc['data'];
-        if (utf8) {
-            return ns.format.UTF8.encode(utf8);
-        } else {
-            return null;
-        }
-    };
-    Document.getSignature = function (doc) {
-        var base64 = doc['signature'];
-        if (base64) {
-            return ns.format.Base64.decode(base64);
-        } else {
-            return null;
-        }
     };
 
     /**

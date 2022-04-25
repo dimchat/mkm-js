@@ -32,7 +32,7 @@
 
 //! require 'protocol/types.js'
 //! require 'protocol/address.js'
-//! require 'mkm/identifier.js'
+//! require 'identifier.js'
 
 (function (ns) {
     'use strict';

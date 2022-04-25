@@ -30,7 +30,7 @@
 // =============================================================================
 //
 
-//! require 'protocol/tai.js'
+//! require 'protocol/document.js'
 
 (function (ns) {
     'use strict';
@@ -112,7 +112,8 @@
     BaseDocument.prototype.getType = function () {
         var type = this.getProperty('type');
         if (!type) {
-            type = Document.getType(this.toMap());
+            var dict = this.toMap();
+            type = Document.getType(dict);
         }
         return type;
     };
@@ -120,7 +121,8 @@
     // Override
     BaseDocument.prototype.getIdentifier = function () {
         if (this.__identifier === null) {
-            this.__identifier = Document.getIdentifier(this.toMap());
+            var dict = this.toMap();
+            this.__identifier = Document.getIdentifier(dict);
         }
         return this.__identifier;
     };
@@ -155,7 +157,8 @@
         if (this.__properties === null) {
             var data = this.getData();
             if (data) {
-                this.__properties = JSON.decode(data);
+                var json = UTF8.decode(data);
+                this.__properties = JSON.decode(json);
             } else {
                 this.__properties = {};
             }

@@ -52,12 +52,7 @@
     var PublicKeyFactory = function () {};
     ns.Interface(PublicKeyFactory, null);
 
-    /**
-     *  Parse map object to key
-     *
-     * @param {{}} key - key info
-     * @return {PublicKey}
-     */
+    // noinspection JSUnusedLocalSymbols
     PublicKeyFactory.prototype.parsePublicKey = function (key) {
         console.assert(false, 'implement me!');
         return null;
@@ -68,7 +63,7 @@
     //
     //  Instances of PublicKey.Factory
     //
-    var s_factories = {};  // algorithm(String) -> PublicKeyFactory
+    var s_public_factories = {};  // algorithm(String) -> PublicKeyFactory
 
     /**
      *  Register public key factory with algorithm
@@ -77,16 +72,16 @@
      * @param {PublicKeyFactory} factory
      */
     PublicKey.setFactory = function (algorithm, factory) {
-        s_factories[algorithm] = factory;
+        s_public_factories[algorithm] = factory;
     };
     PublicKey.getFactory = function (algorithm) {
-        return s_factories[algorithm];
-    }
+        return s_public_factories[algorithm];
+    };
 
     /**
      *  Parse map object to key
      *
-     * @param {PublicKey|{}} key - key info
+     * @param {*} key - key info
      * @return {PublicKey}
      */
     PublicKey.parse = function (key) {
@@ -102,7 +97,7 @@
             factory = PublicKey.getFactory('*');  // unknown
         }
         return factory.parsePublicKey(key);
-    }
+    };
 
     //-------- namespace --------
     ns.crypto.PublicKey = PublicKey;

@@ -85,22 +85,12 @@
     var SymmetricKeyFactory = function () {};
     ns.Interface(SymmetricKeyFactory, null);
 
-    /**
-     *  Generate key
-     *
-     * @return {SymmetricKey}
-     */
     SymmetricKeyFactory.prototype.generateSymmetricKey = function () {
         console.assert(false, 'implement me!');
         return null;
     };
 
-    /**
-     *  Parse map object to key
-     *
-     * @param {{}} key - key info
-     * @return {SymmetricKey}
-     */
+    // noinspection JSUnusedLocalSymbols
     SymmetricKeyFactory.prototype.parseSymmetricKey = function (key) {
         console.assert(false, 'implement me!');
         return null;
@@ -111,7 +101,7 @@
     //
     //  Instances of SymmetricKey.Factory
     //
-    var s_factories = {};  // algorithm(String) -> SymmetricKeyFactory
+    var s_symmetric_factories = {};  // algorithm(String) -> SymmetricKeyFactory
 
     /**
      *  Register symmetric key factory with algorithm
@@ -120,11 +110,11 @@
      * @param {SymmetricKeyFactory} factory
      */
     SymmetricKey.setFactory = function (algorithm, factory) {
-        s_factories[algorithm] = factory;
+        s_symmetric_factories[algorithm] = factory;
     };
     SymmetricKey.getFactory = function (algorithm) {
-        return s_factories[algorithm];
-    }
+        return s_symmetric_factories[algorithm];
+    };
 
     /**
      *  Generate key with algorithm name
@@ -143,7 +133,7 @@
     /**
      *  Parse map object to key
      *
-     * @param {SymmetricKey|{}} key - key info
+     * @param {*} key - key info
      * @return {SymmetricKey}
      */
     SymmetricKey.parse = function (key) {
@@ -159,7 +149,7 @@
             factory = SymmetricKey.getFactory('*');  // unknown
         }
         return factory.parseSymmetricKey(key);
-    }
+    };
 
     //-------- namespace --------
     ns.crypto.SymmetricKey = SymmetricKey;
