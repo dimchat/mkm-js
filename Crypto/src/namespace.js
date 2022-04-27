@@ -150,9 +150,6 @@ if (typeof MONKEY !== 'object') {
     if (typeof ns.type !== 'object') {
         ns.type = new ns.Namespace();
     }
-    if (typeof ns.threading !== 'object') {
-        ns.threading = new ns.Namespace();
-    }
     if (typeof ns.format !== 'object') {
         ns.format = new ns.Namespace();
     }
@@ -164,7 +161,6 @@ if (typeof MONKEY !== 'object') {
     }
 
     ns.registers('type');
-    ns.registers('threading');
     ns.registers('format');
     ns.registers('digest');
     ns.registers('crypto');
