@@ -42,6 +42,7 @@
     var UTF8 = ns.format.UTF8;
     var PublicKey = ns.crypto.PublicKey;
     var Address = ns.protocol.Address;
+    var MetaType = ns.protocol.MetaType;
     var ID = ns.protocol.ID;
 
     /**

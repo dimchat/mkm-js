@@ -43,11 +43,11 @@ mkm_tests = [];
         var seed = 'moky';
         var meta = Meta.generate(MetaType.DEFAULT, SK, seed);
         log('generated meta: ', meta);
-        assert(meta.isValid() === true, 'failed to generate meta');
+        assert(meta.getKey() != null, 'failed to generate meta');
 
-        var id = meta.generateID(NetworkType.MAIN, null);
-        log('generated ID: ', id);
-        assert(id.getType() === 0x08, 'failed to generate ID')
+        var address = meta.generateAddress(NetworkType.MAIN);
+        log('generated address: ', address);
+        assert(address.getNetwork() === 0x08, 'failed to generate ID')
     };
     mkm_tests.push(test_meta);
 

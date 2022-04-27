@@ -37,7 +37,7 @@
 
     var UTF8 = ns.format.UTF8;
     var Base64 = ns.format.Base64;
-    var JSON = ns.format.JSON;
+    var JsON = ns.format.JSON;
     var Dictionary = ns.type.Dictionary;
     var Document = ns.protocol.Document;
 
@@ -158,7 +158,7 @@
             var data = this.getData();
             if (data) {
                 var json = UTF8.decode(data);
-                this.__properties = JSON.decode(json);
+                this.__properties = JsON.decode(json);
             } else {
                 this.__properties = {};
             }
@@ -233,7 +233,7 @@
         this.__status = 1;
         // sign
         var dict = this.allProperties();
-        var json = JSON.encode(dict);
+        var json = JsON.encode(dict);
         var data = UTF8.encode(json);
         var sig = privateKey.sign(data);
         var b64 = Base64.encode(sig);
