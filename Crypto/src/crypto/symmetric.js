@@ -63,7 +63,7 @@
      */
     SymmetricKey.matches = function (pKey, sKey) {
         // check by encryption
-        var promise = CryptographyKey.promise;
+        var promise = CryptographyKey.getPromise();
         var ciphertext = pKey.encrypt(promise);
         var plaintext = sKey.decrypt(ciphertext);
         // check equals

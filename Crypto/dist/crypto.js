@@ -1233,11 +1233,15 @@ if (typeof MONKEY !== "object") {
     CryptographyKey.getAlgorithm = function (key) {
         return key["algorithm"];
     };
-    CryptographyKey.promise = ns.format.UTF8.encode(
-        "Moky loves May Lee forever!"
-    );
+    var promise = "Moky loves May Lee forever!";
+    CryptographyKey.getPromise = function () {
+        if (typeof promise === "string") {
+            promise = ns.format.UTF8.encode(promise);
+        }
+        return promise;
+    };
     AsymmetricKey.matches = function (sKey, pKey) {
-        var promise = CryptographyKey.promise;
+        var promise = CryptographyKey.getPromise();
         var signature = sKey.sign(promise);
         return pKey.verify(promise, signature);
     };
@@ -1251,7 +1255,7 @@ if (typeof MONKEY !== "object") {
     SymmetricKey.AES = "AES";
     SymmetricKey.DES = "DES";
     SymmetricKey.matches = function (pKey, sKey) {
-        var promise = CryptographyKey.promise;
+        var promise = CryptographyKey.getPromise();
         var ciphertext = pKey.encrypt(promise);
         var plaintext = sKey.decrypt(ciphertext);
         if (!plaintext || plaintext.length !== promise.length) {

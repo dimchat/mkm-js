@@ -205,7 +205,13 @@
     };
 
     // sample data for checking keys
-    CryptographyKey.promise = ns.format.UTF8.encode('Moky loves May Lee forever!');
+    var promise = 'Moky loves May Lee forever!';
+    CryptographyKey.getPromise = function () {
+        if (typeof promise === 'string') {
+            promise = ns.format.UTF8.encode(promise);
+        }
+        return promise;
+    };
 
     /**
      *  Check key pair by encryption
@@ -215,7 +221,7 @@
      */
     AsymmetricKey.matches = function (sKey, pKey) {
         // check by encryption
-        var promise = CryptographyKey.promise;
+        var promise = CryptographyKey.getPromise();
         var signature = sKey.sign(promise);
         return pKey.verify(promise, signature);
     };
