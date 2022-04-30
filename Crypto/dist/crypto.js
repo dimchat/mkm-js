@@ -100,67 +100,52 @@ if (typeof MONKEY !== "object") {
         } else {
             if (object instanceof protocol) {
                 return true;
-            } else {
-                if (ns.type.Object.isBaseType(object)) {
-                    return false;
-                }
             }
         }
-        var child = Object.getPrototypeOf(object);
-        if (child === Object.getPrototypeOf({})) {
-            child = object;
-        }
-        var names = Object.getOwnPropertyNames(protocol.prototype);
-        var p;
-        for (var i = 0; i < names.length; ++i) {
-            p = names[i];
-            if (p === "constructor") {
-                continue;
-            }
-            if (!child.hasOwnProperty(p)) {
-                return false;
-            }
-        }
-        return true;
+        return check_class(object.constructor, protocol);
     };
-    var inherits = function (child, parent) {
-        var prototype = parent.prototype;
-        var names = Object.getOwnPropertyNames(prototype);
-        var key;
-        for (var i = 0; i < names.length; ++i) {
-            key = names[i];
-            if (child.prototype.hasOwnProperty(key)) {
-                continue;
+    var check_class = function (child, protocol) {
+        var interfaces = child._interfaces;
+        if (!interfaces) {
+            return false;
+        } else {
+            if (check_interfaces(interfaces, protocol)) {
+                return true;
             }
-            var fn = prototype[key];
-            if (typeof fn !== "function") {
-                continue;
-            }
-            child.prototype[key] = fn;
         }
-        return child;
+        var parent = child._parent;
+        return parent && check_class(parent, protocol);
     };
-    var inherits_interfaces = function (child, interfaces) {
+    var check_interfaces = function (interfaces, protocol) {
+        var child, parents;
         for (var i = 0; i < interfaces.length; ++i) {
-            child = inherits(child, interfaces[i]);
+            child = interfaces[i];
+            if (child === protocol) {
+                return true;
+            }
+            parents = child._parents;
+            if (parents && check_interfaces(parents, protocol)) {
+                return true;
+            }
         }
-        return child;
+        return false;
     };
     var interfacefy = function (child, parents) {
         if (!child) {
             child = function () {};
         }
-        if (parents) {
-            var ancestors;
+        if (!parents) {
+            child._parents = [];
+        } else {
             if (parents instanceof Array) {
-                ancestors = parents;
+                child._parents = parents;
             } else {
-                ancestors = [];
+                parents = [];
                 for (var i = 1; i < arguments.length; ++i) {
-                    ancestors.push(arguments[i]);
+                    parents.push(arguments[i]);
                 }
+                child._parents = parents;
             }
-            child = inherits_interfaces(child, ancestors);
         }
         return child;
     };
@@ -169,23 +154,25 @@ if (typeof MONKEY !== "object") {
         if (!child) {
             child = function () {};
         }
-        if (!parent) {
+        if (!interfaces) {
+            child._interfaces = [];
+        } else {
+            if (interfaces instanceof Array) {
+                child._interfaces = interfaces;
+            } else {
+                interfaces = [];
+                for (var i = 2; i < arguments.length; ++i) {
+                    interfaces.push(arguments[i]);
+                }
+                child._interfaces = interfaces;
+            }
+        }
+        if (parent) {
+            child._parent = parent;
+        } else {
             parent = Object;
         }
         child.prototype = Object.create(parent.prototype);
-        inherits(child, parent);
-        if (interfaces) {
-            var ancestors;
-            if (interfaces instanceof Array) {
-                ancestors = interfaces;
-            } else {
-                ancestors = [];
-                for (var i = 2; i < arguments.length; ++i) {
-                    ancestors.push(arguments[i]);
-                }
-            }
-            child = inherits_interfaces(child, ancestors);
-        }
         child.prototype.constructor = child;
         return child;
     };

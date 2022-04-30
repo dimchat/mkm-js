@@ -8,6 +8,98 @@ crypto_tests = [];
 (function (ns) {
     'use strict';
 
+    var assert = function (condition, message) {
+        if (condition) {
+            console.log('Assertion OK: ' + message);
+        } else {
+            console.assert(false, message);
+        }
+    };
+
+    var BaseObject = ns.type.BaseObject;
+
+    var Named = function () {};
+    ns.Interface(Named, [ns.type.Object]);
+
+    Named.prototype.getName = function () {
+        console.assert(false, "implement me!");
+        return null;
+    };
+
+    // sing()
+    var Singer = function () {};
+    ns.Interface(Singer, [Named]);
+
+    Singer.prototype.sing = function () {
+        console.assert(false, "implement me!");
+    };
+
+    // fly()
+    var Flyer = function () {};
+    ns.Interface(Flyer, [Named]);
+
+    Flyer.prototype.fly = function () {
+        console.assert(false, "implement me!");
+    };
+
+    // run()
+    var Runner = function () {};
+    ns.Interface(Runner, [Named]);
+
+    Runner.prototype.run = function () {
+        console.assert(false, "implement me!");
+    };
+
+    // Bird extends BaseObject implements Singer, Flyer
+    var Bird = function (name) {
+        BaseObject.call(this);
+        this.__name = name;
+    };
+    ns.Class(Bird, BaseObject, [Singer, Flyer]);
+
+    // Override
+    Bird.prototype.getName = function () {
+        return this.__name;
+    };
+
+    // Override
+    Bird.prototype.sing = function () {
+        var name = this.getName();
+        console.log(name + ' is singing');
+    };
+
+    var Ostrich = function (name) {
+        Bird.call(this, name);
+    };
+    ns.Class(Ostrich, Bird, []);
+
+    // Override
+    Ostrich.prototype.fly = function () {
+        var name = this.getName();
+        console.log(name + ' cannot fly');
+    };
+
+    var test_class = function () {
+        var ostrich = new Ostrich('ostrich');
+        ostrich.sing();
+        ostrich.fly();
+        assert(ostrich instanceof BaseObject, 'ostrich instanceof BaseObject');
+        assert(ostrich instanceof Named, 'ostrich instanceof Named');
+        assert(ostrich instanceof Singer, 'ostrich instanceof Singer');
+        assert(ostrich instanceof Flyer, 'ostrich instanceof Flyer');
+        assert(ostrich instanceof Runner, 'ostrich instanceof Runner');
+        assert(ns.Interface.conforms(ostrich, Named), 'ostrich conforms Named');
+        assert(ns.Interface.conforms(ostrich, Singer), 'ostrich conforms Singer');
+        assert(ns.Interface.conforms(ostrich, Flyer), 'ostrich conforms Flyer');
+        assert(ns.Interface.conforms(ostrich, Runner), 'ostrich conforms Runner');
+    };
+    crypto_tests.push(test_class);
+
+})(MONKEY);
+
+(function (ns) {
+    'use strict';
+
     var Dictionary = ns.type.Dictionary;
     var UTF8 = ns.format.UTF8;
 

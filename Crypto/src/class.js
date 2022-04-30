@@ -39,7 +39,7 @@
      *  Check whether the object is an instance of the interface
      *
      * @param {Object} object - instance
-     * @param {Class} protocol - interface
+     * @param {Interface} protocol - interface
      * @return {boolean}
      */
     var conforms = function (object, protocol) {
@@ -47,91 +47,71 @@
             return false;
         } else if (object instanceof protocol) {
             return true;
-        } else if (ns.type.Object.isBaseType(object)) {
-            // ignore base types: String, Number, Boolean, Date, ...
+        // } else if (ns.type.Object.isBaseType(object)) {
+        //     // ignore base types: String, Number, Boolean, Date, ...
+        //     return false;
+        }
+        // var child = Object.getPrototypeOf(object);
+        // if (child === Object.getPrototypeOf({})) {
+        //     // define interface methods directly?
+        //     return false;
+        // }
+        return check_class(object.constructor, protocol);
+    };
+
+    var check_class = function (child, protocol) {
+        var interfaces = child._interfaces;
+        if (!interfaces) {
+            // reach the root
             return false;
+        } else if (check_interfaces(interfaces, protocol)) {
+            // matched in this level
+            return true;
         }
-        var child = Object.getPrototypeOf(object);
-        if (child === Object.getPrototypeOf({})) {
-            // define interface methods directly?
-            child = object;
-        }
-        var names = Object.getOwnPropertyNames(protocol.prototype);
-        var p;
-        for (var i = 0; i < names.length; ++i) {
-            p = names[i];
-            if (p === 'constructor') {
-                continue;
-            }
-            if (!child.hasOwnProperty(p)) {
-                // TODO: check properties in ancestors' prototype?
-                return false;
-            }
-        }
-        return true;
+        // check next level (super class)
+        var parent = child._parent;
+        return parent && check_class(parent, protocol);
     };
-
-    /**
-     *  Inherits from an interface
-     *
-     * @param {Class} child - sub class
-     * @param {Class} parent - class or interface
-     * @return {Class}
-     */
-    var inherits = function (child, parent) {
-        var prototype = parent.prototype;
-        var names = Object.getOwnPropertyNames(prototype);
-        var key;
-        for (var i = 0; i < names.length; ++i) {
-            key = names[i];
-            if (child.prototype.hasOwnProperty(key)) {
-                continue;
-            }
-            var fn = prototype[key];
-            if (typeof fn !== 'function') {
-                continue;
-            }
-            child.prototype[key] = fn;
-        }
-        return child;
-    };
-
-    /**
-     *  Inherits from all interfaces
-     *
-     * @param {Class} child
-     * @param {Class[]} interfaces
-     * @return {Class}
-     */
-    var inherits_interfaces = function (child, interfaces) {
+    var check_interfaces = function (interfaces, protocol) {
+        var child, parents;
         for (var i = 0; i < interfaces.length; ++i) {
-            child = inherits(child, interfaces[i]);
+            child = interfaces[i];
+            if (child === protocol) {
+                // found the interface in this level
+                return true;
+            }
+            // check next level (super interfaces)
+            parents = child._parents;
+            if (parents && check_interfaces(parents, protocol)) {
+                // matched in next level
+                return true;
+            }
         }
-        return child;
+        return false;
     };
 
     /**
      *  Create an interface inherits from other interfaces
      *
-     * @param {Class} child         - sub interface
-     * @param {Class|Array} parents - parent interfaces
+     * @param {Interface} child         - sub interface
+     * @param {Interface[]|*} parents - parent interfaces
      */
     var interfacefy = function (child, parents) {
         if (!child) {
-            child = function () {
-            };
+            child = function () {};
         }
-        if (parents) {
-            var ancestors;
-            if (parents instanceof Array) {
-                ancestors = parents;
-            } else {
-                ancestors = [];
-                for (var i = 1; i < arguments.length; ++i) {
-                    ancestors.push(arguments[i]);
-                }
+        if (!parents) {
+            child._parents = [];
+        } else if (parents instanceof Array) {
+            // Interface(child, [super1, super2, ...])
+            child._parents = parents;
+        } else {
+            // Interface(child, super1, super2, ...)
+            parents = [];
+            for (var i = 1; i < arguments.length; ++i) {
+                parents.push(arguments[i]);
             }
-            child = inherits_interfaces(child, ancestors);
+            child._parents = parents;
         }
         return child;
     };
@@ -143,34 +123,34 @@
      *
      * @param {Class} child - sub class
      * @param {Class} parent - super class
-     * @param {Class|Array} interfaces
+     * @param {Interface[]|*} interfaces
      * @return {Class}
      */
     var classify = function (child, parent, interfaces) {
         if (!child) {
-            child = function () {
-            };
+            child = function () {};
         }
-        if (!parent) {
+        // implements super interfaces
+        if (!interfaces) {
+            child._interfaces = [];
+        } else if (interfaces instanceof Array) {
+            // Class(child, parent, [super1, super2, ...])
+            child._interfaces = interfaces;
+        } else {
+            // Class(child, parent, super1, super2, ...)
+            interfaces = [];
+            for (var i = 2; i < arguments.length; ++i) {
+                interfaces.push(arguments[i]);
+            }
+            child._interfaces = interfaces;
+        }
+        if (parent) {
+            child._parent = parent;
+        } else {
             parent = Object;
         }
-        // extends BaseClass
+        // extends base class
         child.prototype = Object.create(parent.prototype);
-        inherits(child, parent);
-        // implements Interface(s)
-        if (interfaces) {
-            var ancestors;
-            if (interfaces instanceof Array) {
-                ancestors = interfaces;
-            } else {
-                ancestors = [];
-                for (var i = 2; i < arguments.length; ++i) {
-                    ancestors.push(arguments[i]);
-                }
-            }
-            child = inherits_interfaces(child, ancestors);
-        }
-        // noinspection JSUnusedGlobalSymbols
         child.prototype.constructor = child;
         return child;
     };
