@@ -114,7 +114,7 @@
         this.__seed = seed;
         this.__fingerprint = fingerprint;
     };
-    ns.Class(BaseMeta, Dictionary, [Meta], {});
+    ns.Class(BaseMeta, Dictionary, [Meta], null);
 
     // Override
     BaseMeta.prototype.getType = function () {

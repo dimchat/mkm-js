@@ -44,7 +44,7 @@
         this.__addresses[Address.ANYWHERE.toString()] = Address.ANYWHERE;
         this.__addresses[Address.EVERYWHERE.toString()] = Address.EVERYWHERE;
     };
-    ns.Class(AddressFactory, Object, [Address.Factory], {})
+    ns.Class(AddressFactory, Object, [Address.Factory], null);
 
     // Override
     AddressFactory.prototype.generateAddress = function (meta, network) {

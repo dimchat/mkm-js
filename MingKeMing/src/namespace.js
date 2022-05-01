@@ -42,7 +42,9 @@ if (typeof MingKeMing !== 'object') {
     // exports namespace from Crypto
     base.exports(ns);
 
-    ns.assert = console.assert;
+    if (typeof ns.assert !== 'function') {
+        ns.assert = console.assert;
+    }
 
     //-------- namespace --------
     if (typeof ns.protocol !== 'object') {

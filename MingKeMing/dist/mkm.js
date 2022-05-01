@@ -11,7 +11,9 @@ if (typeof MingKeMing !== "object") {
 }
 (function (ns, base) {
     base.exports(ns);
-    ns.assert = console.assert;
+    if (typeof ns.assert !== "function") {
+        ns.assert = console.assert;
+    }
     if (typeof ns.protocol !== "object") {
         ns.protocol = new ns.Namespace();
     }
@@ -553,7 +555,7 @@ if (typeof MingKeMing !== "object") {
         this.__address = address;
         this.__terminal = terminal;
     };
-    ns.Class(Identifier, ConstantString, [ID], {});
+    ns.Class(Identifier, ConstantString, [ID], null);
     Identifier.prototype.getName = function () {
         return this.__name;
     };
@@ -617,7 +619,7 @@ if (typeof MingKeMing !== "object") {
         Object.call(this);
         this.__identifiers = {};
     };
-    ns.Class(IDFactory, Object, [ID.Factory], {});
+    ns.Class(IDFactory, Object, [ID.Factory], null);
     IDFactory.prototype.generateID = function (meta, network, terminal) {
         var address = Address.generate(meta, network);
         return ID.create(meta.getSeed(), address, terminal);
@@ -652,7 +654,7 @@ if (typeof MingKeMing !== "object") {
         this.__addresses[Address.ANYWHERE.toString()] = Address.ANYWHERE;
         this.__addresses[Address.EVERYWHERE.toString()] = Address.EVERYWHERE;
     };
-    ns.Class(AddressFactory, Object, [Address.Factory], {});
+    ns.Class(AddressFactory, Object, [Address.Factory], null);
     AddressFactory.prototype.generateAddress = function (meta, network) {
         var address = meta.generateAddress(network);
         if (address) {
@@ -684,7 +686,7 @@ if (typeof MingKeMing !== "object") {
         }
         this.__network = network;
     };
-    ns.Class(BroadcastAddress, ConstantString, [Address], {});
+    ns.Class(BroadcastAddress, ConstantString, [Address], null);
     BroadcastAddress.prototype.getNetwork = function () {
         return this.__network;
     };
@@ -762,7 +764,7 @@ if (typeof MingKeMing !== "object") {
         this.__seed = seed;
         this.__fingerprint = fingerprint;
     };
-    ns.Class(BaseMeta, Dictionary, [Meta], {});
+    ns.Class(BaseMeta, Dictionary, [Meta], null);
     BaseMeta.prototype.getType = function () {
         return this.__type;
     };
