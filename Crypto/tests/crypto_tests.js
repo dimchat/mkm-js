@@ -287,13 +287,13 @@ crypto_tests = [];
     'use strict';
 
     var Arrays = ns.type.Arrays;
-    var JSON = ns.format.JSON;
+    var JsON = ns.format.JSON;
 
     var test_json = function () {
         var container = [1, 2, 3];
-        var str = JSON.encode(container);
+        var str = JsON.encode(container);
         log('json: ', str);
-        var dec = JSON.decode(str);
+        var dec = JsON.decode(str);
         log('json dec: ', dec);
         assert(Arrays.equals(container, dec) === true, 'JSON decode error');
     };

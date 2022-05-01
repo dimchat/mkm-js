@@ -35,7 +35,7 @@
 (function (ns) {
     'use strict';
 
-    var base = ns.type.BaseObject;
+    var BaseObject = ns.type.BaseObject;
 
     /**
      *  Define Enum with elements names & values
@@ -92,7 +92,7 @@
      * @param {String} alias
      */
     var Enum = function (value, alias) {
-        base.call(this);
+        BaseObject.call(this);
         if (!alias) {
             if (value instanceof Enum) {
                 alias = value.__alias;
@@ -106,13 +106,13 @@
         this.__value = value;
         this.__alias = alias;
     };
-    ns.Class(Enum, base, null, null);
+    ns.Class(Enum, BaseObject, null, null);
 
     // Override
     Enum.prototype.equals = function (other) {
         if (!other) {
             return !this.__value;
-        // } else if (base.prototype.equals.call(this, other)) {
+        // } else if (BaseObject.prototype.equals.call(this, other)) {
         //     return true;
         } else if (other instanceof Enum) {
             return this.__value === other.valueOf();

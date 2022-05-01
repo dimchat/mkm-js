@@ -1,6 +1,6 @@
 ;
 
-log = function () {
+log = function (...data) {
     console.log.apply(console, arguments);
 };
 

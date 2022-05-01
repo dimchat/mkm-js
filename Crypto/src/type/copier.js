@@ -38,7 +38,7 @@
 (function (ns) {
     'use strict';
 
-    var obj = ns.type.Object;
+    var IObject = ns.type.Object;
     var Stringer = ns.type.Stringer;
     var Mapper = ns.type.Mapper;
     // var Enum = ns.type.Enum;
@@ -49,10 +49,10 @@
      * @param {*} object
      */
     var copy = function (object) {
-        if (obj.isNull(object)) {
+        if (IObject.isNull(object)) {
             // empty
             return null;
-        } else if (obj.isBaseType(object)) {
+        } else if (IObject.isBaseType(object)) {
             // return as base type
             return object;
         // } else if (object instanceof Enum) {
@@ -106,10 +106,10 @@
      * @param {*} object
      */
     var deep_copy = function (object) {
-        if (obj.isNull(object)) {
+        if (IObject.isNull(object)) {
             // empty
             return null;
-        } else if (obj.isBaseType(object)) {
+        } else if (IObject.isBaseType(object)) {
             // return as base type
             return object;
         // } else if (object instanceof Enum) {
