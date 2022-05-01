@@ -79,12 +79,12 @@
      * @return {boolean}
      */
     IObject.prototype.equals = function (other) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return false;
     };
 
     IObject.prototype.valueOf = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return false;
     };
 
@@ -97,12 +97,12 @@
     var BaseObject = function () {
         Object.call(this);
     };
-    ns.Class(BaseObject, Object, [IObject]);
-
-    // Override
-    BaseObject.prototype.equals = function (other) {
-        return this === other;
-    };
+    ns.Class(BaseObject, Object, [IObject], {
+        // Override
+        'equals': function (other) {
+            return this === other;
+        }
+    });
 
     //-------- namespace --------
     ns.type.Object = IObject;

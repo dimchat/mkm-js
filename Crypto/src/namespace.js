@@ -146,7 +146,10 @@ if (typeof MONKEY !== 'object') {
 (function (ns) {
     "use strict";
 
-    //-------- namespace --------
+    ns.assert = console.assert;
+    ns.registers('assert');
+
+    //-------- namespaces --------
     if (typeof ns.type !== 'object') {
         ns.type = new ns.Namespace();
     }

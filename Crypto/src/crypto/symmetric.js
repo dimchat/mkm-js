@@ -86,13 +86,12 @@
     ns.Interface(SymmetricKeyFactory, null);
 
     SymmetricKeyFactory.prototype.generateSymmetricKey = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
-    // noinspection JSUnusedLocalSymbols
     SymmetricKeyFactory.prototype.parseSymmetricKey = function (key) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 

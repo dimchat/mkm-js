@@ -60,7 +60,7 @@
     };
 
     var check_class = function (child, protocol) {
-        var interfaces = child._interfaces;
+        var interfaces = child._mk_interfaces;
         if (!interfaces) {
             // reach the root
             return false;
@@ -69,7 +69,7 @@
             return true;
         }
         // check next level (super class)
-        var parent = child._parent;
+        var parent = child._mk_parent;
         return parent && check_class(parent, protocol);
     };
     var check_interfaces = function (interfaces, protocol) {
@@ -81,7 +81,7 @@
                 return true;
             }
             // check next level (super interfaces)
-            parents = child._parents;
+            parents = child._mk_parents;
             if (parents && check_interfaces(parents, protocol)) {
                 // matched in next level
                 return true;
@@ -91,28 +91,57 @@
     };
 
     /**
+     *  Get interfaces
+     * @param {Interface|Array} interfaces
+     * @return {Interface[]}
+     */
+    var get_interfaces = function (interfaces) {
+        if (!interfaces) {
+            return [];
+        } else if (interfaces instanceof Array) {
+            return interfaces;
+        } else {
+            return [interfaces];
+        }
+    };
+
+    /**
+     *  Extends function for child class/interface
+     *
+     * @param {Class|Interface} child
+     * @param {{}} functions
+     * @return {Class|Interface}
+     */
+    var set_functions = function (child, functions) {
+        if (functions) {
+            var names = Object.getOwnPropertyNames(functions);
+            var key, fn;
+            for (var idx = 0; idx < names.length; ++idx) {
+                key = names[idx];
+                if (key === 'constructor') {
+                    continue;
+                }
+                fn = functions[key];
+                if (typeof fn === 'function') {
+                    child.prototype[key] = fn;
+                }
+            }
+        }
+        return child;
+    };
+
+    /**
      *  Create an interface inherits from other interfaces
      *
      * @param {Interface} child         - sub interface
-     * @param {Interface[]|*} parents - parent interfaces
+     * @param {Interface|Array} parents - super interfaces
      */
     var interfacefy = function (child, parents) {
         if (!child) {
             child = function () {};
         }
-        if (!parents) {
-            child._parents = [];
-        } else if (parents instanceof Array) {
-            // Interface(child, [super1, super2, ...])
-            child._parents = parents;
-        } else {
-            // Interface(child, super1, super2, ...)
-            parents = [];
-            for (var i = 1; i < arguments.length; ++i) {
-                parents.push(arguments[i]);
-            }
-            child._parents = parents;
-        }
+        // set super interfaces
+        child._mk_parents = get_interfaces(parents);
         return child;
     };
 
@@ -121,37 +150,28 @@
     /**
      *  Create a child class inherits from parent class and interfaces
      *
-     * @param {Class} child - sub class
+     * @param {Class} child  - sub class
      * @param {Class} parent - super class
-     * @param {Interface[]|*} interfaces
+     * @param {Interface|Array} interfaces
+     * @param {{}} functions
      * @return {Class}
      */
-    var classify = function (child, parent, interfaces) {
+    var classify = function (child, parent, interfaces, functions) {
         if (!child) {
             child = function () {};
         }
-        // implements super interfaces
-        if (!interfaces) {
-            child._interfaces = [];
-        } else if (interfaces instanceof Array) {
-            // Class(child, parent, [super1, super2, ...])
-            child._interfaces = interfaces;
-        } else {
-            // Class(child, parent, super1, super2, ...)
-            interfaces = [];
-            for (var i = 2; i < arguments.length; ++i) {
-                interfaces.push(arguments[i]);
-            }
-            child._interfaces = interfaces;
-        }
+        // extends super class
         if (parent) {
-            child._parent = parent;
+            child._mk_parent = parent;
         } else {
             parent = Object;
         }
-        // extends base class
         child.prototype = Object.create(parent.prototype);
         child.prototype.constructor = child;
+        // set interfaces
+        child._mk_interfaces = get_interfaces(interfaces);
+        // extends functions
+        set_functions(child, functions);
         return child;
     };
 

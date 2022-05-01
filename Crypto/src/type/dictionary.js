@@ -48,7 +48,7 @@
      * @return {*}
      */
     Mapper.prototype.getValue = function (key) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
@@ -59,7 +59,7 @@
      * @param {*} value
      */
     Mapper.prototype.setValue = function (key, value) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
     };
 
     /**
@@ -68,7 +68,7 @@
      * @param {String} key
      */
     Mapper.prototype.removeValue = function (key) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
     };
 
     /**
@@ -77,7 +77,7 @@
      * @return {String[]}
      */
     Mapper.prototype.allKeys = function() {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
@@ -87,7 +87,7 @@
      * @return {{}} built-in map
      */
     Mapper.prototype.toMap = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
@@ -98,7 +98,7 @@
      * @return {{}} copied built-in map
      */
     Mapper.prototype.copyMap = function (deepCopy) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
@@ -129,7 +129,7 @@
         }
         this.__dictionary = dict;
     };
-    ns.Class(Dictionary, BaseObject, [Mapper]);
+    ns.Class(Dictionary, BaseObject, [Mapper], null);
 
     // Override
     Dictionary.prototype.equals = function (other) {

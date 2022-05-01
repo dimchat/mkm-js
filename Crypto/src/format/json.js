@@ -41,17 +41,16 @@
     var JsonCoder = function () {
         Object.call(this);
     };
-    ns.Class(JsonCoder, Object, [ObjectCoder])
-
-    // Override
-    JsonCoder.prototype.encode = function (object) {
-        return JSON.stringify(object);
-    };
-
-    // Override
-    JsonCoder.prototype.decode = function (string) {
-        return JSON.parse(string);
-    };
+    ns.Class(JsonCoder, Object, [ObjectCoder], {
+        // Override
+        'encode': function (object) {
+            return JSON.stringify(object);
+        },
+        // Override
+        'decode': function (string) {
+            return JSON.parse(string);
+        }
+    });
 
     var JsON = {
         /**

@@ -50,7 +50,7 @@
                 Enum.call(this, value, alias);
             }
         }
-        ns.Class(enumeration, Enum, null);
+        ns.Class(enumeration, Enum, null, null);
         var e, v;
         for (var name in elements) {
             if (!elements.hasOwnProperty(name)) {
@@ -106,7 +106,7 @@
         this.__value = value;
         this.__alias = alias;
     };
-    ns.Class(Enum, base, null);
+    ns.Class(Enum, base, null, null);
 
     // Override
     Enum.prototype.equals = function (other) {

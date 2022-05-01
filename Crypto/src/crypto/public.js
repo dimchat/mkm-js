@@ -52,9 +52,8 @@
     var PublicKeyFactory = function () {};
     ns.Interface(PublicKeyFactory, null);
 
-    // noinspection JSUnusedLocalSymbols
     PublicKeyFactory.prototype.parsePublicKey = function (key) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 

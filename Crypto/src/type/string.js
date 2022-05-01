@@ -48,7 +48,7 @@
      * @return {boolean}
      */
     Stringer.prototype.equalsIgnoreCase = function (other) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return false;
     };
 
@@ -58,7 +58,7 @@
      * @return {String}
      */
     Stringer.prototype.toString = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
@@ -68,7 +68,7 @@
      * @return {number}
      */
     Stringer.prototype.getLength = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return 0;
     };
 
@@ -99,7 +99,7 @@
         }
         this.__string = str;
     };
-    ns.Class(ConstantString, BaseObject, [Stringer]);
+    ns.Class(ConstantString, BaseObject, [Stringer], null);
 
     // Override
     ConstantString.prototype.equals = function (other) {
@@ -110,7 +110,7 @@
         } else if (ns.Interface.conforms(other, Stringer)) {
             return this.__string === other.toString();
         } else {
-            // console.assert(other instanceof String, 'other string error');
+            // ns.assert(other instanceof String, 'other string error');
             return this.__string === other;
         }
     };
@@ -124,7 +124,7 @@
         } else if (ns.Interface.conforms(other, Stringer)) {
             return equalsIgnoreCase(this.__string, other.toString());
         } else {
-            // console.assert(other instanceof String, 'other string error');
+            // ns.assert(other instanceof String, 'other string error');
             return equalsIgnoreCase(this.__string, other);
         }
     };

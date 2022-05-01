@@ -50,7 +50,7 @@
      * @return {Uint8Array} binary data
      */
     DataDigester.prototype.digest = function (data) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 

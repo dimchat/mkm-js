@@ -109,17 +109,16 @@
     var HexCoder = function () {
         Object.call(this);
     };
-    ns.Class(HexCoder, Object, [DataCoder])
-
-    // Override
-    HexCoder.prototype.encode = function (data) {
-        return hex_encode(data);
-    };
-
-    // Override
-    HexCoder.prototype.decode = function (string) {
-        return hex_decode(string);
-    };
+    ns.Class(HexCoder, Object, [DataCoder], {
+        // Override
+        'encode': function (data) {
+            return hex_encode(data);
+        },
+        // Override
+        'decode': function (string) {
+            return hex_decode(string);
+        }
+    });
 
     var Hex = {
         /**

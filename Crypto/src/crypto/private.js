@@ -51,7 +51,7 @@
      * @return {PublicKey}
      */
     PrivateKey.prototype.getPublicKey = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
@@ -63,13 +63,12 @@
     ns.Interface(PrivateKeyFactory, null);
 
     PrivateKeyFactory.prototype.generatePrivateKey = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
-    // noinspection JSUnusedLocalSymbols
     PrivateKeyFactory.prototype.parsePrivateKey = function (key) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 

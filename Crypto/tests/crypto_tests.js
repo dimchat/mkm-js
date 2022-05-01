@@ -22,7 +22,7 @@ crypto_tests = [];
     ns.Interface(Named, [ns.type.Object]);
 
     Named.prototype.getName = function () {
-        console.assert(false, "implement me!");
+        assert(false, "implement me!");
         return null;
     };
 
@@ -31,7 +31,7 @@ crypto_tests = [];
     ns.Interface(Singer, [Named]);
 
     Singer.prototype.sing = function () {
-        console.assert(false, "implement me!");
+        assert(false, "implement me!");
     };
 
     // fly()
@@ -39,7 +39,7 @@ crypto_tests = [];
     ns.Interface(Flyer, [Named]);
 
     Flyer.prototype.fly = function () {
-        console.assert(false, "implement me!");
+        assert(false, "implement me!");
     };
 
     // run()
@@ -47,7 +47,7 @@ crypto_tests = [];
     ns.Interface(Runner, [Named]);
 
     Runner.prototype.run = function () {
-        console.assert(false, "implement me!");
+        assert(false, "implement me!");
     };
 
     // Bird extends BaseObject implements Singer, Flyer
@@ -55,29 +55,28 @@ crypto_tests = [];
         BaseObject.call(this);
         this.__name = name;
     };
-    ns.Class(Bird, BaseObject, [Singer, Flyer]);
-
-    // Override
-    Bird.prototype.getName = function () {
-        return this.__name;
-    };
-
-    // Override
-    Bird.prototype.sing = function () {
-        var name = this.getName();
-        console.log(name + ' is singing');
-    };
+    ns.Class(Bird, BaseObject, [Singer, Flyer], {
+        // Override
+        'getName': function () {
+            return this.__name;
+        },
+        // Override
+        'sing': function () {
+            var name = this.getName();
+            console.log(name + ' is singing');
+        }
+    });
 
     var Ostrich = function (name) {
         Bird.call(this, name);
     };
-    ns.Class(Ostrich, Bird, []);
-
-    // Override
-    Ostrich.prototype.fly = function () {
-        var name = this.getName();
-        console.log(name + ' cannot fly');
-    };
+    ns.Class(Ostrich, Bird, null, {
+        // Override
+        'fly': function () {
+            var name = this.getName();
+            console.log(name + ' cannot fly');
+        }
+    });
 
     var test_class = function () {
         var ostrich = new Ostrich('ostrich');
@@ -100,8 +99,9 @@ crypto_tests = [];
 (function (ns) {
     'use strict';
 
-    var Dictionary = ns.type.Dictionary;
     var UTF8 = ns.format.UTF8;
+    var Dictionary = ns.type.Dictionary;
+    var ConstantString = ns.type.ConstantString;
 
     var test_dictionary = function () {
         var obj1 = {
@@ -150,7 +150,7 @@ crypto_tests = [];
 
     var test_string = function () {
         var data = 'Moky';
-        var str = new ns.type.ConstantString(data);
+        var str = new ConstantString(data);
         log('string: ', str);
         assert(str.equalsIgnoreCase('moky') === true, 'String comparing error');
     };
@@ -158,8 +158,8 @@ crypto_tests = [];
 
     var test_utf8 = function () {
         var data = '《道德经》';
-        var str = new ns.type.ConstantString(data);
-        console.assert(str.getLength() === 5, 'UTF-8 length error');
+        var str = new ConstantString(data);
+        assert(str.getLength() === 5, 'UTF-8 length error');
         var bytes = UTF8.encode(str.toString());
         log('utf-8: ', bytes);
         assert(bytes.length === 15, 'bytes length error');
@@ -167,7 +167,7 @@ crypto_tests = [];
         exp = new Uint8Array(exp);
         assert(bytes.toString() === exp.toString(), 'UTF-8 bytes value error');
 
-        var dec = new ns.type.ConstantString(UTF8.decode(exp));
+        var dec = new ConstantString(UTF8.decode(exp));
         assert(dec.equals(str) === true, 'UTF-8 decode error');
         assert(dec.toString() === data, 'UTF-8 string value error');
     };
@@ -182,8 +182,9 @@ crypto_tests = [];
     var Hex = ns.format.Hex;
     var Base64 = ns.format.Base64;
     var Base58 = ns.format.Base58;
+    var ConstantString = ns.type.ConstantString;
 
-    var str = new ns.type.ConstantString('moky');
+    var str = new ConstantString('moky');
     var bytes = UTF8.encode(str.toString());
 
     var test_hex = function () {
@@ -193,7 +194,7 @@ crypto_tests = [];
         assert(enc === exp, 'encode error');
 
         var dec = Hex.decode(exp);
-        var str2 = new ns.type.ConstantString(UTF8.decode(dec));
+        var str2 = new ConstantString(UTF8.decode(dec));
         log('str2: ', str2);
         assert(str2.equals(str) === true, 'Hex decode error');
     };
@@ -207,7 +208,7 @@ crypto_tests = [];
         assert(enc === exp, 'encode error');
 
         var dec = Base64.decode(enc);
-        var str2 = new ns.type.ConstantString(UTF8.decode(dec));
+        var str2 = new ConstantString(UTF8.decode(dec));
         log('str2: ', str2);
         assert(str2.equals(str) === true, 'BASE-64 decode error');
     };
@@ -221,7 +222,7 @@ crypto_tests = [];
         assert(enc === exp, 'Base-58 encode error');
 
         var dec = Base58.decode(enc);
-        var str2 = new ns.type.ConstantString(UTF8.decode(dec));
+        var str2 = new ConstantString(UTF8.decode(dec));
         log('str2: ', str2);
         assert(str2.equals(str) === true, 'BASE-58 decode error');
     };
@@ -239,7 +240,9 @@ crypto_tests = [];
     var SHA256 = ns.digest.SHA256;
     var RIPEMD160 = ns.digest.RIPEMD160;
 
-    var str = new ns.type.ConstantString('moky');
+    var ConstantString = ns.type.ConstantString;
+
+    var str = new ConstantString('moky');
     var bytes = UTF8.encode(str.toString());
 
     // md5(moky) = d0e5edd3fd12b89154bbe7a5e4c82569
@@ -306,12 +309,13 @@ crypto_tests = [];
     var Base64 = ns.format.Base64;
 
     var Arrays = ns.type.Arrays;
+    var ConstantString = ns.type.ConstantString;
 
     var AsymmetricKey = ns.crypto.AsymmetricKey;
     var PrivateKey = ns.crypto.PrivateKey;
     var PublicKey = ns.crypto.PublicKey;
 
-    var str = new ns.type.ConstantString('moky');
+    var str = new ConstantString('moky');
     var bytes = UTF8.encode(str.toString());
 
     var test_rsa = function () {
@@ -381,12 +385,12 @@ crypto_tests = [];
         var enc = PK.encrypt(bytes);
         log('RSA encrypt:(', str, '): ', Base64.encode(enc));
         var dec = SK.decrypt(enc);
-        var result = new ns.type.ConstantString(UTF8.decode(dec));
+        var result = new ConstantString(UTF8.decode(dec));
         log('RSA decrypt:', result);
         assert(str.toString() === result.toString(), 'RSA encrypt error');
 
         dec = SK.decrypt(Base64.decode(expect));
-        result = new ns.type.ConstantString(UTF8.decode(dec));
+        result = new ConstantString(UTF8.decode(dec));
         log('RSA decrypt:', result);
         assert(str.toString() === result.toString(), 'RSA decrypt error');
     };
@@ -402,10 +406,11 @@ crypto_tests = [];
     var Base64 = ns.format.Base64;
 
     var Arrays = ns.type.Arrays;
+    var ConstantString = ns.type.ConstantString;
 
     var SymmetricKey = ns.crypto.SymmetricKey;
 
-    var str = new ns.type.ConstantString('moky');
+    var str = new ConstantString('moky');
     var bytes = UTF8.encode(str.toString());
 
     var test_aes = function () {
@@ -431,7 +436,7 @@ crypto_tests = [];
         assert(Base64.encode(enc) === expect, 'AES encrypt error');
 
         var dec = pwd.decrypt(enc);
-        var result = new ns.type.ConstantString(UTF8.decode(dec));
+        var result = new ConstantString(UTF8.decode(dec));
         log('AES decrypt("' + expect + '"): "' + result + '"');
         assert(result.equals(str) === true, 'AES decrypt error');
     };

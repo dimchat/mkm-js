@@ -38,7 +38,7 @@
 (function (ns) {
     'use strict';
 
-    var obj = ns.type.Object;
+    var IObject = ns.type.Object;
     var Stringer = ns.type.Stringer;
     var Mapper = ns.type.Mapper;
     // var Enum = ns.type.Enum;
@@ -55,7 +55,7 @@
         if (ns.Interface.conforms(str, Stringer)) {
             return str.toString();
         } else {
-            // console.assert(str instanceof String, 'string error: ' + str);
+            // ns.assert(str instanceof String, 'string error: ' + str);
             return str;
         }
     };
@@ -72,7 +72,7 @@
         if (ns.Interface.conforms(dict, Mapper)) {
             return dict.toMap();
         } else {
-            // console.assert(dict instanceof {}, 'map error: ' + dict);
+            // ns.assert(dict instanceof {}, 'map error: ' + dict);
             return dict;
         }
     };
@@ -86,10 +86,10 @@
      * @return {*}
      */
     var unwrap = function (object) {
-        if (obj.isNull(object)) {
+        if (IObject.isNull(object)) {
             // empty
             return null;
-        } else if (obj.isBaseType(object)) {
+        } else if (IObject.isBaseType(object)) {
             // return as base type
             return object;
         // } else if (object instanceof Enum) {

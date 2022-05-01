@@ -53,7 +53,7 @@
      * @return {String}
      */
     DataCoder.prototype.encode = function (data) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
@@ -64,7 +64,7 @@
      * @return {Uint8Array}
      */
     DataCoder.prototype.decode = function (string) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
@@ -86,7 +86,7 @@
      * @return {String} serialized string
      */
     ObjectCoder.prototype.encode = function (object) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
@@ -97,7 +97,7 @@
      * @return {{}|[]} Map or List
      */
     ObjectCoder.prototype.decode = function (string) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
@@ -119,7 +119,7 @@
      * @return {Uint8Array}
      */
     StringCoder.prototype.encode = function (string) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
@@ -130,7 +130,7 @@
      * @return {String}
      */
     StringCoder.prototype.decode = function (data) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 

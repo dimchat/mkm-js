@@ -57,7 +57,7 @@
      * @return {String} algorithm name
      */
     CryptographyKey.prototype.getAlgorithm = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
@@ -67,7 +67,7 @@
      * @return {Uint8Array}
      */
     CryptographyKey.prototype.getData = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
@@ -82,7 +82,7 @@
      * @return {Uint8Array}
      */
     EncryptKey.prototype.encrypt = function (plaintext) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
@@ -97,9 +97,10 @@
      * @return {Uint8Array}
      */
     DecryptKey.prototype.decrypt = function (ciphertext) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
+
     /**
      *  OK = decrypt(encrypt(data, SK), PK) == data
      *
@@ -107,7 +108,7 @@
      * @return {boolean} true on signature matched
      */
     DecryptKey.prototype.matches = function (pKey) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return false;
     };
 
@@ -153,7 +154,7 @@
      * @return {Uint8Array}
      */
     SignKey.prototype.sign = function (data) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
@@ -168,7 +169,7 @@
      * @return {boolean}
      */
     VerifyKey.prototype.verify = function (data, signature) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return false;
     };
 
@@ -179,7 +180,7 @@
      * @return {boolean} true on signature matched
      */
     VerifyKey.prototype.matches = function (sKey) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return false;
     };
 
