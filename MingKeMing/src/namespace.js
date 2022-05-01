@@ -42,6 +42,8 @@ if (typeof MingKeMing !== 'object') {
     // exports namespace from Crypto
     base.exports(ns);
 
+    ns.assert = console.assert;
+
     //-------- namespace --------
     if (typeof ns.protocol !== 'object') {
         ns.protocol = new ns.Namespace();

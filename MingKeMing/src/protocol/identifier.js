@@ -63,7 +63,7 @@
      * @returns {String}
      */
     ID.prototype.getName = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
     /**
@@ -72,7 +72,7 @@
      * @returns {Address}
      */
     ID.prototype.getAddress = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
     /**
@@ -81,7 +81,7 @@
      * @returns {String}
      */
     ID.prototype.getTerminal = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
@@ -91,20 +91,20 @@
      * @returns {uint} 0 ~ 255
      */
     ID.prototype.getType = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return 0;
     };
 
     ID.prototype.isBroadcast = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return false;
     };
     ID.prototype.isUser = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return false;
     };
     ID.prototype.isGroup = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return false;
     };
 
@@ -153,21 +153,18 @@
     var IDFactory = function () {};
     ns.Interface(IDFactory, null);
 
-    // noinspection JSUnusedLocalSymbols
     IDFactory.prototype.generateID = function (meta, network, terminal) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
-    // noinspection JSUnusedLocalSymbols
     IDFactory.prototype.createID = function (name, address, terminal) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
-    // noinspection JSUnusedLocalSymbols
     IDFactory.prototype.parseID = function (identifier) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 

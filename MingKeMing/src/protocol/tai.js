@@ -53,7 +53,7 @@
      * @returns {boolean}
      */
     TAI.prototype.isValid = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return false;
     };
 
@@ -66,7 +66,7 @@
      * @returns {boolean}
      */
     TAI.prototype.verify = function (publicKey) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return false;
     };
 
@@ -77,7 +77,7 @@
      * @returns {Uint8Array}
      */
     TAI.prototype.sign = function (privateKey) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
@@ -89,7 +89,7 @@
      * @returns {{}} mapping(String => Object)
      */
     TAI.prototype.allProperties = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
@@ -100,7 +100,7 @@
      * @returns {Object}
      */
     TAI.prototype.getProperty = function (name) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
@@ -112,7 +112,7 @@
      * @param {Object} value - property value
      */
     TAI.prototype.setProperty = function (name, value) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
     };
 
     //-------- namespace --------

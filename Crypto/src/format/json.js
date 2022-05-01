@@ -43,11 +43,11 @@
     };
     ns.Class(JsonCoder, Object, [ObjectCoder], {
         // Override
-        'encode': function (object) {
+        encode: function (object) {
             return JSON.stringify(object);
         },
         // Override
-        'decode': function (string) {
+        decode: function (string) {
             return JSON.parse(string);
         }
     });

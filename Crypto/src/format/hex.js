@@ -111,11 +111,11 @@
     };
     ns.Class(HexCoder, Object, [DataCoder], {
         // Override
-        'encode': function (data) {
+        encode: function (data) {
             return hex_encode(data);
         },
         // Override
-        'decode': function (string) {
+        decode: function (string) {
             return hex_decode(string);
         }
     });

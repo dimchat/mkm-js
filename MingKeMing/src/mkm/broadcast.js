@@ -51,7 +51,7 @@
         }
         this.__network = network;
     };
-    ns.Class(BroadcastAddress, ConstantString, [Address]);
+    ns.Class(BroadcastAddress, ConstantString, [Address], {});
 
     // Override
     BroadcastAddress.prototype.getNetwork = function () {

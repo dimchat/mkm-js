@@ -67,39 +67,37 @@
         }
         this.__key = null;
     };
-    ns.Class(BaseVisa, BaseDocument, [Visa]);
-
-    // Override
-    BaseVisa.prototype.getKey = function () {
-        if (this.__key === null) {
-            var key = this.getProperty('key');
-            if (key) {
-                key = PublicKey.parse(key);
-                if (ns.Interface.conforms(key, EncryptKey)) {
-                    this.__key = key;
+    ns.Class(BaseVisa, BaseDocument, [Visa], {
+        // Override
+        getKey: function () {
+            if (this.__key === null) {
+                var key = this.getProperty('key');
+                if (key) {
+                    key = PublicKey.parse(key);
+                    if (ns.Interface.conforms(key, EncryptKey)) {
+                        this.__key = key;
+                    }
                 }
             }
+            return this.__key;
+        },
+        // Override
+        setKey: function (publicKey) {
+            this.setProperty('key', publicKey.toMap());
+            this.__key = publicKey;
+        },
+
+        //-------- extra info --------
+
+        // Override
+        getAvatar: function () {
+            return this.getProperty('avatar');
+        },
+        // Override
+        setAvatar: function (url) {
+            this.setProperty('avatar', url);
         }
-        return this.__key;
-    };
-
-    // Override
-    BaseVisa.prototype.setKey = function (publicKey) {
-        this.setProperty('key', publicKey.toMap());
-        this.__key = publicKey;
-    };
-
-    //-------- extra info --------
-
-    // Override
-    BaseVisa.prototype.getAvatar = function () {
-        return this.getProperty('avatar');
-    };
-
-    // Override
-    BaseVisa.prototype.setAvatar = function (url) {
-        this.setProperty('avatar', url);
-    };
+    });
 
     //-------- namespace --------
     ns.mkm.BaseVisa = BaseVisa;
@@ -139,29 +137,26 @@
         }
         this.__assistants = null;
     };
-    ns.Class(BaseBulletin, BaseDocument, [Bulletin]);
-
-    //-------- extra info --------
-
-    // Override
-    BaseBulletin.prototype.getAssistants = function () {
-        if (!this.__assistants) {
-            var assistants = this.getProperty('assistants');
-            if (assistants) {
-                this.__assistants = ID.convert(assistants);
+    ns.Class(BaseBulletin, BaseDocument, [Bulletin], {
+        // Override
+        getAssistants: function () {
+            if (!this.__assistants) {
+                var assistants = this.getProperty('assistants');
+                if (assistants) {
+                    this.__assistants = ID.convert(assistants);
+                }
+            }
+            return this.__assistants;
+        },
+        // Override
+        setAssistants: function (assistants) {
+            if (assistants && assistants.length > 0) {
+                this.setProperty('assistants', ID.revert(assistants));
+            } else {
+                this.setProperty('assistants', null);
             }
         }
-        return this.__assistants;
-    };
-
-    // Override
-    BaseBulletin.prototype.setAssistants = function (assistants) {
-        if (assistants && assistants.length > 0) {
-            this.setProperty('assistants', ID.revert(assistants));
-        } else {
-            this.setProperty('assistants', null);
-        }
-    };
+    });
 
     //-------- namespace --------
     ns.mkm.BaseBulletin = BaseBulletin;

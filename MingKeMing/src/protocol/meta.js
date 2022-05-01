@@ -73,7 +73,7 @@
      *      0x05 - username@eth_address
      */
     Meta.prototype.getType = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return 0;
     };
 
@@ -83,7 +83,7 @@
      *      RSA / ECC
      */
     Meta.prototype.getKey = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
@@ -93,7 +93,7 @@
      *      Username / Group-X
      */
     Meta.prototype.getSeed = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
@@ -104,7 +104,7 @@
      *      Check: verify(seed, fingerprint, publicKey)
      */
     Meta.prototype.getFingerprint = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
@@ -115,7 +115,7 @@
      * @return {Address}
      */
     Meta.prototype.generateAddress = function (network) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
@@ -232,21 +232,18 @@
     var MetaFactory = function () {};
     ns.Interface(MetaFactory, null);
 
-    // noinspection JSUnusedLocalSymbols
     MetaFactory.prototype.createMeta = function (pKey, seed, fingerprint) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
-    // noinspection JSUnusedLocalSymbols
     MetaFactory.prototype.generateMeta = function (sKey, seed) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
-    // noinspection JSUnusedLocalSymbols
     MetaFactory.prototype.parseMeta = function (meta) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 

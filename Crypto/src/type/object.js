@@ -99,7 +99,7 @@
     };
     ns.Class(BaseObject, Object, [IObject], {
         // Override
-        'equals': function (other) {
+        equals: function (other) {
             return this === other;
         }
     });

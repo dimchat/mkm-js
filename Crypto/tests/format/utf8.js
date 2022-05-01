@@ -134,11 +134,11 @@
     };
     ns.Class(Utf8Coder, Object, [StringCoder], {
         // Override
-        'encode': function (string) {
+        encode: function (string) {
             return utf8_encode(string);
         },
         // Override
-        'decode': function (data) {
+        decode: function (data) {
             return utf8_decode(data);
         }
     });

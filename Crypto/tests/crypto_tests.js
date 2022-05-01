@@ -57,11 +57,11 @@ crypto_tests = [];
     };
     ns.Class(Bird, BaseObject, [Singer, Flyer], {
         // Override
-        'getName': function () {
+        getName: function () {
             return this.__name;
         },
         // Override
-        'sing': function () {
+        sing: function () {
             var name = this.getName();
             console.log(name + ' is singing');
         }
@@ -72,7 +72,7 @@ crypto_tests = [];
     };
     ns.Class(Ostrich, Bird, null, {
         // Override
-        'fly': function () {
+        fly: function () {
             var name = this.getName();
             console.log(name + ' cannot fly');
         }

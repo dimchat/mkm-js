@@ -101,170 +101,170 @@
         this.__properties = properties;
         this.__status = status;  // 1 for valid, -1 for invalid
     };
-    ns.Class(BaseDocument, Dictionary, [Document]);
+    ns.Class(BaseDocument, Dictionary, [Document], {
+        // Override
+        isValid: function () {
+            return this.__status > 0;
+        },
 
-    // Override
-    BaseDocument.prototype.isValid = function () {
-        return this.__status > 0;
-    };
-
-    // Override
-    BaseDocument.prototype.getType = function () {
-        var type = this.getProperty('type');
-        if (!type) {
-            var dict = this.toMap();
-            type = Document.getType(dict);
-        }
-        return type;
-    };
-
-    // Override
-    BaseDocument.prototype.getIdentifier = function () {
-        if (this.__identifier === null) {
-            var dict = this.toMap();
-            this.__identifier = Document.getIdentifier(dict);
-        }
-        return this.__identifier;
-    };
-
-    // private
-    BaseDocument.prototype.getData = function () {
-        if (this.__json === null) {
-            this.__json = this.getValue('data');
-        }
-        return this.__json;
-    };
-
-    // private
-    BaseDocument.prototype.getSignature = function () {
-        if (this.__sig === null) {
-            var base64 = this.getValue('signature');
-            if (base64) {
-                this.__sig = Base64.decode(base64);
+        // Override
+        getType: function () {
+            var type = this.getProperty('type');
+            if (!type) {
+                var dict = this.toMap();
+                type = Document.getType(dict);
             }
-        }
-        return this.__sig;
-    };
+            return type;
+        },
 
-    //-------- properties --------
+        // Override
+        getIdentifier: function () {
+            if (this.__identifier === null) {
+                var dict = this.toMap();
+                this.__identifier = Document.getIdentifier(dict);
+            }
+            return this.__identifier;
+        },
 
-    // Override
-    BaseDocument.prototype.allProperties = function () {
-        if (this.__status < 0) {
-            // invalid
-            return null;
-        }
-        if (this.__properties === null) {
+        // private
+        getData: function () {
+            if (this.__json === null) {
+                this.__json = this.getValue('data');
+            }
+            return this.__json;
+        },
+
+        // private
+        getSignature: function () {
+            if (this.__sig === null) {
+                var base64 = this.getValue('signature');
+                if (base64) {
+                    this.__sig = Base64.decode(base64);
+                }
+            }
+            return this.__sig;
+        },
+
+        //-------- properties --------
+
+        // Override
+        allProperties: function () {
+            if (this.__status < 0) {
+                // invalid
+                return null;
+            }
+            if (this.__properties === null) {
+                var data = this.getData();
+                if (data) {
+                    var json = UTF8.decode(data);
+                    this.__properties = JsON.decode(json);
+                } else {
+                    this.__properties = {};
+                }
+            }
+            return this.__properties;
+        },
+
+        // Override
+        getProperty: function (name) {
+            var dict = this.allProperties();
+            if (!dict) {
+                return null;
+            }
+            return dict[name];
+        },
+
+        // Override
+        setProperty: function (name, value) {
+            // 1. reset status
+            this.__status = 0;
+            // 2. update property value with name
+            var dict = this.allProperties();
+            dict[name] = value;
+            // 3. clear data signature after properties changed
+            this.removeValue('data');
+            this.removeValue('signature');
+            this.__json = null;
+            this.__sig = null;
+        },
+
+        //-------- signature --------
+
+        // Override
+        verify: function (publicKey) {
+            if (this.__status > 0) {
+                // already verify OK
+                return true;
+            }
             var data = this.getData();
-            if (data) {
-                var json = UTF8.decode(data);
-                this.__properties = JsON.decode(json);
-            } else {
-                this.__properties = {};
-            }
-        }
-        return this.__properties;
-    };
-
-    // Override
-    BaseDocument.prototype.getProperty = function (name) {
-        var dict = this.allProperties();
-        if (!dict) {
-            return null;
-        }
-        return dict[name];
-    };
-
-    // Override
-    BaseDocument.prototype.setProperty = function (name, value) {
-        // 1. reset status
-        this.__status = 0;
-        // 2. update property value with name
-        var dict = this.allProperties();
-        dict[name] = value;
-        // 3. clear data signature after properties changed
-        this.removeValue('data');
-        this.removeValue('signature');
-        this.__json = null;
-        this.__sig = null;
-    };
-
-    //-------- signature --------
-
-    // Override
-    BaseDocument.prototype.verify = function (publicKey) {
-        if (this.__status > 0) {
-            // already verify OK
-            return true;
-        }
-        var data = this.getData();
-        var signature = this.getSignature();
-        if (!data) {
-            // NOTICE: if data is empty, signature should be empty at the same time
-            //         this happen while profile not found
-            if (!signature) {
-                this.__status = 0;
-            } else {
-                // data signature error
+            var signature = this.getSignature();
+            if (!data) {
+                // NOTICE: if data is empty, signature should be empty at the same time
+                //         this happen while profile not found
+                if (!signature) {
+                    this.__status = 0;
+                } else {
+                    // data signature error
+                    this.__status = -1;
+                }
+            } else if (!signature) {
+                // signature error
                 this.__status = -1;
+            } else if (publicKey.verify(UTF8.encode(data), signature)) {
+                // signature matched
+                this.__status = 1;
             }
-        } else if (!signature) {
-            // signature error
-            this.__status = -1;
-        } else if (publicKey.verify(UTF8.encode(data), signature)) {
-            // signature matched
+            // NOTICE: if status is 0, it doesn't mean the profile is invalid,
+            //         try another key
+            return this.__status > 0;
+        },
+
+        // Override
+        sign: function (privateKey) {
+            if (this.__status > 0) {
+                // already signed/verified
+                return this.getSignature();
+            }
+            // update sign time
+            var now = new Date();
+            this.setProperty('time', now.getTime() / 1000.0);
+            // update status
             this.__status = 1;
+            // sign
+            var dict = this.allProperties();
+            var json = JsON.encode(dict);
+            var data = UTF8.encode(json);
+            var sig = privateKey.sign(data);
+            var b64 = Base64.encode(sig);
+            this.__json = json;
+            this.__sig = sig;
+            this.setValue('data', json);
+            this.setValue('signature', b64);
+            return this.__sig;
+        },
+
+        //-------- extra info --------
+
+        // Override
+        getTime: function () {
+            var timestamp = this.getProperty('time');
+            if (timestamp) {
+                return new Date(timestamp * 1000);
+            } else {
+                return null;
+            }
+        },
+
+        // Override
+        getName: function () {
+            return this.getProperty('name');
+        },
+
+        // Override
+        setName: function (name) {
+            this.setProperty('name', name);
         }
-        // NOTICE: if status is 0, it doesn't mean the profile is invalid,
-        //         try another key
-        return this.__status > 0;
-    };
-
-    // Override
-    BaseDocument.prototype.sign = function (privateKey) {
-        if (this.__status > 0) {
-            // already signed/verified
-            return this.getSignature();
-        }
-        // update sign time
-        var now = new Date();
-        this.setProperty('time', now.getTime() / 1000.0);
-        // update status
-        this.__status = 1;
-        // sign
-        var dict = this.allProperties();
-        var json = JsON.encode(dict);
-        var data = UTF8.encode(json);
-        var sig = privateKey.sign(data);
-        var b64 = Base64.encode(sig);
-        this.__json = json;
-        this.__sig = sig;
-        this.setValue('data', json);
-        this.setValue('signature', b64);
-        return this.__sig;
-    };
-
-    //-------- extra info --------
-
-    // Override
-    BaseDocument.prototype.getTime = function () {
-        var timestamp = this.getProperty('time');
-        if (timestamp) {
-            return new Date(timestamp * 1000);
-        } else {
-            return null;
-        }
-    };
-
-    // Override
-    BaseDocument.prototype.getName = function () {
-        return this.getProperty('name');
-    };
-
-    // Override
-    BaseDocument.prototype.setName = function (name) {
-        this.setProperty('name', name);
-    };
+    });
 
     //-------- namespace --------
     ns.mkm.BaseDocument = BaseDocument;

@@ -59,20 +59,20 @@
      * @returns {uint} 0 ~ 255
      */
     Address.prototype.getNetwork = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return 0;
     };
 
     Address.prototype.isBroadcast = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return false;
     };
     Address.prototype.isUser = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return false;
     };
     Address.prototype.isGroup = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return false;
     };
 
@@ -83,21 +83,18 @@
     var AddressFactory = function () {};
     ns.Interface(AddressFactory, null);
 
-    // noinspection JSUnusedLocalSymbols
     AddressFactory.prototype.generateAddress = function (meta, network) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
-    // noinspection JSUnusedLocalSymbols
     AddressFactory.prototype.createAddress = function (address) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
-    // noinspection JSUnusedLocalSymbols
     AddressFactory.prototype.parseAddress = function (address) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 

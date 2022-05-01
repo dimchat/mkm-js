@@ -54,7 +54,7 @@
         this.__address = address;
         this.__terminal = terminal;
     };
-    ns.Class(Identifier, ConstantString, [ID]);
+    ns.Class(Identifier, ConstantString, [ID], {});
 
     // Override
     Identifier.prototype.getName = function () {
@@ -161,7 +161,7 @@
         Object.call(this);
         this.__identifiers = {};  // String -> ID
     };
-    ns.Class(IDFactory, Object, [ID.Factory])
+    ns.Class(IDFactory, Object, [ID.Factory], {})
 
     // Override
     IDFactory.prototype.generateID = function (meta, network, terminal) {

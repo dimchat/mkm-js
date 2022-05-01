@@ -52,7 +52,7 @@
      * @returns {EncryptKey} public key as visa.key
      */
     Visa.prototype.getKey = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
@@ -62,7 +62,7 @@
      * @param {EncryptKey} publicKey - public key as visa.key
      */
     Visa.prototype.setKey = function (publicKey) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
     };
 
     /**
@@ -71,7 +71,7 @@
      * @returns {String} URL string
      */
     Visa.prototype.getAvatar = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
@@ -81,7 +81,7 @@
      * @param {String} url - URL string
      */
     Visa.prototype.setAvatar = function (url) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
     };
 
     //-------- namespace --------
@@ -109,7 +109,7 @@
      * @return {ID[]} bot ID list
      */
     Bulletin.prototype.getAssistants = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
@@ -119,7 +119,7 @@
      * @param {ID[]} assistants - bot ID list
      */
     Bulletin.prototype.setAssistants = function (assistants) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
     };
 
     //-------- namespace --------

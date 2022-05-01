@@ -36,8 +36,6 @@
     'use strict';
 
     var Mapper = ns.type.Mapper;
-    var UTF8 = ns.format.UTF8;
-    var Base64 = ns.format.Base64;
     var TAI = ns.protocol.TAI;
     var ID = ns.protocol.ID;
 
@@ -68,7 +66,7 @@
      * @return {String}
      */
     Document.prototype.getType = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
@@ -78,7 +76,7 @@
      * @returns {ID}
      */
     Document.prototype.getIdentifier = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
@@ -90,7 +88,7 @@
      * @return {Date}
      */
     Document.prototype.getTime = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
@@ -100,11 +98,11 @@
      * @return {String}
      */
     Document.prototype.getName = function () {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
     Document.prototype.setName = function (name) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
     };
 
     Document.getType = function (doc) {
@@ -121,15 +119,13 @@
     var DocumentFactory = function () {};
     ns.Interface(DocumentFactory, null);
 
-    // noinspection JSUnusedLocalSymbols
     DocumentFactory.prototype.createDocument = function (identifier, data, signature) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 
-    // noinspection JSUnusedLocalSymbols
     DocumentFactory.prototype.parseDocument = function (doc) {
-        console.assert(false, 'implement me!');
+        ns.assert(false, 'implement me!');
         return null;
     };
 

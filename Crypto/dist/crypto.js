@@ -77,7 +77,6 @@ if (typeof MONKEY !== "object") {
 })(MONKEY);
 (function (ns) {
     ns.assert = console.assert;
-    ns.registers("assert");
     if (typeof ns.type !== "object") {
         ns.type = new ns.Namespace();
     }
