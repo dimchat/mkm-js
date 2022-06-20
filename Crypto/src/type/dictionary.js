@@ -66,9 +66,11 @@
      *  Remove value for key
      *
      * @param {String} key
+     * @return {*} removed value
      */
     Mapper.prototype.removeValue = function (key) {
         ns.assert(false, 'implement me!');
+        return null;
     };
 
     /**
@@ -167,9 +169,14 @@
 
     // Override
     Dictionary.prototype.removeValue = function (key) {
+        var value;
         if (this.__dictionary.hasOwnProperty(key)) {
+            value = this.__dictionary[key];
             delete this.__dictionary[key];
+        } else {
+            value = null;
         }
+        return value;
     };
 
     // Override

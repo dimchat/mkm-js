@@ -2,7 +2,7 @@
  * Cryptography JavaScript Library (v0.2.0)
  *
  * @author    moKy <albert.moky at gmail.com>
- * @date      Apr. 18, 2022
+ * @date      Jun. 20, 2022
  * @copyright (c) 2022 Albert Moky
  * @license   {@link https://mit-license.org | MIT License}
  */;
@@ -600,6 +600,7 @@ if (typeof MONKEY !== "object") {
     };
     Mapper.prototype.removeValue = function (key) {
         ns.assert(false, "implement me!");
+        return null;
     };
     Mapper.prototype.allKeys = function () {
         ns.assert(false, "implement me!");
@@ -662,9 +663,14 @@ if (typeof MONKEY !== "object") {
         }
     };
     Dictionary.prototype.removeValue = function (key) {
+        var value;
         if (this.__dictionary.hasOwnProperty(key)) {
+            value = this.__dictionary[key];
             delete this.__dictionary[key];
+        } else {
+            value = null;
         }
+        return value;
     };
     Dictionary.prototype.allKeys = function () {
         return Object.keys(this.__dictionary);

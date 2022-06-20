@@ -228,8 +228,6 @@
             // update sign time
             var now = new Date();
             this.setProperty('time', now.getTime() / 1000.0);
-            // update status
-            this.__status = 1;
             // sign
             var dict = this.allProperties();
             var json = JsON.encode(dict);
@@ -238,8 +236,13 @@
             var b64 = Base64.encode(sig);
             this.__json = json;
             this.__sig = sig;
+            // update 'data' & 'signature' fields
             this.setValue('data', json);
             this.setValue('signature', b64);
+            // update status
+            if (sig && sig.length > 0) {
+                this.__status = 1;
+            }
             return this.__sig;
         },
 

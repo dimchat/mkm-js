@@ -2,7 +2,7 @@
  * MingKeMing - User Module (v0.2.0)
  *
  * @author    moKy <albert.moky at gmail.com>
- * @date      Apr. 18, 2022
+ * @date      Jun. 20, 2022
  * @copyright (c) 2022 Albert Moky
  * @license   {@link https://mit-license.org | MIT License}
  */;
@@ -922,7 +922,6 @@ if (typeof MingKeMing !== "object") {
             }
             var now = new Date();
             this.setProperty("time", now.getTime() / 1000);
-            this.__status = 1;
             var dict = this.allProperties();
             var json = JsON.encode(dict);
             var data = UTF8.encode(json);
@@ -932,6 +931,9 @@ if (typeof MingKeMing !== "object") {
             this.__sig = sig;
             this.setValue("data", json);
             this.setValue("signature", b64);
+            if (sig && sig.length > 0) {
+                this.__status = 1;
+            }
             return this.__sig;
         },
         getTime: function () {
