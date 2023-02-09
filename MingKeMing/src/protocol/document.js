@@ -35,9 +35,16 @@
 (function (ns) {
     'use strict';
 
-    var Mapper = ns.type.Mapper;
+    var Interface = ns.type.Interface;
+    var Mapper    = ns.type.Mapper;
+
     var TAI = ns.protocol.TAI;
-    var ID = ns.protocol.ID;
+    var ID  = ns.protocol.ID;
+
+    var general_factory = function () {
+        var man = ns.mkm.FactoryManager;
+        return man.generalFactory;
+    };
 
     /**
      *  User/Group Profile
@@ -50,8 +57,7 @@
      *          signature: "..."  // signature = sign(data, SK);
      *      }
      */
-    var Document = function () {};
-    ns.Interface(Document, [TAI, Mapper]);
+    var Document = Interface(null, [TAI, Mapper]);
 
     //
     //  Document types
@@ -66,8 +72,7 @@
      * @return {String}
      */
     Document.prototype.getType = function () {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     /**
@@ -76,8 +81,7 @@
      * @returns {ID}
      */
     Document.prototype.getIdentifier = function () {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     //---- properties getter/setter
@@ -88,8 +92,7 @@
      * @return {Date}
      */
     Document.prototype.getTime = function () {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     /**
@@ -98,43 +101,27 @@
      * @return {String}
      */
     Document.prototype.getName = function () {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
     Document.prototype.setName = function (name) {
-        ns.assert(false, 'implement me!');
-    };
-
-    Document.getType = function (doc) {
-        return doc['type'];
-    };
-    Document.getIdentifier = function (doc) {
-        return ID.parse(doc['ID']);
+        throw new Error('NotImplemented');
     };
 
     /**
      *  Document Factory
      *  ~~~~~~~~~~~~~~~~
      */
-    var DocumentFactory = function () {};
-    ns.Interface(DocumentFactory, null);
+    var DocumentFactory = Interface(null, null);
 
     DocumentFactory.prototype.createDocument = function (identifier, data, signature) {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     DocumentFactory.prototype.parseDocument = function (doc) {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     Document.Factory = DocumentFactory;
-
-    //
-    //  Instances of DocumentFactory
-    //
-    var s_factories = {};  // type(String) -> DocumentFactory
 
     /**
      *  Register document factory with type
@@ -143,10 +130,12 @@
      * @param {DocumentFactory} factory
      */
     Document.setFactory = function (type, factory) {
-        s_factories[type] = factory;
+        var gf = general_factory();
+        gf.setDocumentFactory(type, factory);
     };
     Document.getFactory = function (type) {
-        return s_factories[type];
+        var gf = general_factory();
+        return gf.getDocumentFactory(type);
     };
 
     /**
@@ -161,11 +150,8 @@
      * @return {Document}
      */
     Document.create = function (type, identifier, data, signature) {
-        var factory = Document.getFactory(type);
-        if (!factory) {
-            throw new ReferenceError('document type not support: ' + type);
-        }
-        return factory.createDocument(identifier, data, signature);
+        var gf = general_factory();
+        return gf.createDocument(type, identifier, data, signature);
     };
 
     /**
@@ -175,23 +161,11 @@
      * @return {Document}
      */
     Document.parse = function (doc) {
-        if (!doc) {
-            return null;
-        } else if (ns.Interface.conforms(doc, Document)) {
-            return doc;
-        }
-        doc = ns.type.Wrapper.fetchMap(doc);
-        var type = Document.getType(doc);
-        var factory = Document.getFactory(type);
-        if (!factory) {
-            factory = Document.getFactory('*');  // unknown
-        }
-        return factory.parseDocument(doc);
+        var gf = general_factory();
+        return gf.parseDocument(doc);
     };
 
     //-------- namespace --------
     ns.protocol.Document = Document;
-
-    ns.protocol.registers('Document');
 
 })(MingKeMing);

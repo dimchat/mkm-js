@@ -32,29 +32,30 @@
 
 //! require 'protocol/types.js'
 //! require 'protocol/address.js'
-//! require 'identifier.js'
 
 (function (ns) {
     'use strict';
 
+    var Class          = ns.type.Class;
     var ConstantString = ns.type.ConstantString;
-    var NetworkType = ns.protocol.NetworkType;
-    var Address = ns.protocol.Address;
+
+    var EntityType = ns.protocol.EntityType;
+    var Address    = ns.protocol.Address;
 
     //
     //  Address for broadcast
     //
     var BroadcastAddress = function (string, network) {
         ConstantString.call(this, string);
-        if (network instanceof NetworkType) {
+        if (network instanceof EntityType) {
             network = network.valueOf();
         }
         this.__network = network;
     };
-    ns.Class(BroadcastAddress, ConstantString, [Address], null);
+    Class(BroadcastAddress, ConstantString, [Address]);
 
     // Override
-    BroadcastAddress.prototype.getNetwork = function () {
+    BroadcastAddress.prototype.getType = function () {
         return this.__network;
     };
 
@@ -65,45 +66,23 @@
 
     // Override
     BroadcastAddress.prototype.isUser = function () {
-        return NetworkType.isUser(this.__network);
+        var any = EntityType.ANY.valueOf();
+        return this.__network === any;
     };
 
     // Override
     BroadcastAddress.prototype.isGroup = function () {
-        return NetworkType.isGroup(this.__network);
+        var every = EntityType.EVERY.valueOf();
+        return this.__network === every;
     };
 
     /**
      *  Address for broadcast
      */
-    Address.ANYWHERE = new BroadcastAddress('anywhere', NetworkType.MAIN);
-    Address.EVERYWHERE = new BroadcastAddress('everywhere', NetworkType.GROUP);
+    Address.ANYWHERE = new BroadcastAddress('anywhere', EntityType.ANY);
+    Address.EVERYWHERE = new BroadcastAddress('everywhere', EntityType.EVERY);
 
     //-------- namespace --------
     ns.mkm.BroadcastAddress = BroadcastAddress;
-
-    ns.mkm.registers('BroadcastAddress')
-
-})(MingKeMing);
-
-(function (ns) {
-    'use strict';
-
-    var ID = ns.protocol.ID;
-    var Address = ns.protocol.Address;
-    var IDFactory = ns.mkm.IDFactory;
-
-    var factory = new IDFactory();
-    ID.setFactory(factory);
-
-    /**
-     *  ID for broadcast
-     */
-    ID.ANYONE = factory.createID('anyone', Address.ANYWHERE, null);
-    ID.EVERYONE = factory.createID('everyone', Address.EVERYWHERE, null);
-    /**
-     *  DIM Founder
-     */
-    ID.FOUNDER = factory.createID('moky', Address.ANYWHERE, null);
 
 })(MingKeMing);

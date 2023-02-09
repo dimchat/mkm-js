@@ -30,12 +30,18 @@
 // =============================================================================
 //
 
-//! require 'namespace.js'
+//! require 'types.js'
 
 (function (ns) {
     'use strict';
 
-    var Stringer = ns.type.Stringer;
+    var Interface = ns.type.Interface;
+    var Stringer  = ns.type.Stringer;
+
+    var general_factory = function () {
+        var man = ns.mkm.FactoryManager;
+        return man.generalFactory;
+    };
 
     /**
      *  Address for MKM ID
@@ -46,8 +52,7 @@
      *          network - address type
      *          number  - search number
      */
-    var Address = function () {};
-    ns.Interface(Address, [Stringer]);
+    var Address = Interface(null, [Stringer]);
 
     // Address for broadcast
     Address.ANYWHERE = null;    // 'anywhere'
@@ -58,52 +63,40 @@
      *
      * @returns {uint} 0 ~ 255
      */
-    Address.prototype.getNetwork = function () {
-        ns.assert(false, 'implement me!');
-        return 0;
+    Address.prototype.getType = function () {
+        throw new Error('NotImplemented');
     };
 
+    // address types
     Address.prototype.isBroadcast = function () {
-        ns.assert(false, 'implement me!');
-        return false;
+        throw new Error('NotImplemented');
     };
     Address.prototype.isUser = function () {
-        ns.assert(false, 'implement me!');
-        return false;
+        throw new Error('NotImplemented');
     };
     Address.prototype.isGroup = function () {
-        ns.assert(false, 'implement me!');
-        return false;
+        throw new Error('NotImplemented');
     };
 
     /**
      *  Address Factory
      *  ~~~~~~~~~~~~~~~
      */
-    var AddressFactory = function () {};
-    ns.Interface(AddressFactory, null);
+    var AddressFactory = Interface(null, null);
 
     AddressFactory.prototype.generateAddress = function (meta, network) {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     AddressFactory.prototype.createAddress = function (address) {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     AddressFactory.prototype.parseAddress = function (address) {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     Address.Factory = AddressFactory;
-
-    //
-    //  Instances of Address.Factory
-    //
-    var s_factory = null;
 
     /**
      *  Register address factory
@@ -111,10 +104,12 @@
      * @param {AddressFactory} factory
      */
     Address.setFactory = function (factory) {
-        s_factory = factory;
+        var gf = general_factory();
+        gf.setAddressFactory(factory);
     };
     Address.getFactory = function () {
-        return s_factory;
+        var gf = general_factory();
+        return gf.getAddressFactory();
     };
 
     /**
@@ -125,8 +120,8 @@
      * @return {Address}
      */
     Address.generate = function (meta, network) {
-        var factory = Address.getFactory();
-        return factory.generateAddress(meta, network);
+        var gf = general_factory();
+        return gf.generateAddress(meta, network);
     };
 
     /**
@@ -136,8 +131,8 @@
      * @return {Address}
      */
     Address.create = function (address) {
-        var factory = Address.getFactory();
-        return factory.createAddress(address);
+        var gf = general_factory();
+        return gf.createAddress(address);
     };
 
     /**
@@ -147,19 +142,11 @@
      * @return {Address}
      */
     Address.parse = function (address) {
-        if (!address) {
-            return null;
-        } else if (ns.Interface.conforms(address, Address)) {
-            return address;
-        }
-        address = ns.type.Wrapper.fetchString(address);
-        var factory = Address.getFactory();
-        return factory.parseAddress(address);
+        var gf = general_factory();
+        return gf.parseAddress(address);
     };
 
     //-------- namespace --------
     ns.protocol.Address = Address;
-
-    ns.protocol.registers('Address');
 
 })(MingKeMing);

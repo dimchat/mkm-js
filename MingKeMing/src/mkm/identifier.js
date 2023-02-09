@@ -32,11 +32,16 @@
 
 //! require 'protocol/identifier.js'
 
+//! require 'broadcast.js'
+
 (function (ns) {
     'use strict';
 
+    var Class          = ns.type.Class;
     var ConstantString = ns.type.ConstantString;
-    var ID = ns.protocol.ID;
+
+    var ID      = ns.protocol.ID;
+    var Address = ns.protocol.Address;
 
     /**
      *  ID for entity (User/Group)
@@ -54,7 +59,7 @@
         this.__address = address;
         this.__terminal = terminal;
     };
-    ns.Class(Identifier, ConstantString, [ID], null);
+    Class(Identifier, ConstantString, [ID]);
 
     // Override
     Identifier.prototype.getName = function () {
@@ -73,7 +78,7 @@
 
     // Override
     Identifier.prototype.getType = function () {
-        return this.getAddress().getNetwork();
+        return this.getAddress().getType();
     };
 
     // Override
@@ -91,110 +96,17 @@
         return this.getAddress().isGroup();
     };
 
+    /**
+     *  ID for broadcast
+     */
+    ID.ANYONE = new Identifier("anyone@anywhere", "anyone", Address.ANYWHERE, null);
+    ID.EVERYONE = new Identifier("everyone@everywhere", "everyone", Address.EVERYWHERE, null);
+    /**
+     *  DIM Founder
+     */
+    ID.FOUNDER = new Identifier("moky@anywhere", "moky", Address.ANYWHERE, null);
+
     //-------- namespace --------
     ns.mkm.Identifier = Identifier;
-
-    ns.mkm.registers('Identifier');
-
-})(MingKeMing);
-
-(function (ns) {
-    'use strict';
-
-    var Address = ns.protocol.Address;
-    var ID = ns.protocol.ID;
-    var Identifier = ns.mkm.Identifier;
-
-    /**
-     *  Concat ID with components
-     *
-     * @param {String} name
-     * @param {Address} address
-     * @param {String} terminal
-     * @return {String}
-     */
-    var concat = function (name, address, terminal) {
-        var string = address.toString();
-        if (name && name.length > 0) {
-            string = name + '@' + string;
-        }
-        if (terminal && terminal.length > 0) {
-            string = string + '/' + terminal;
-        }
-        return string;
-    };
-
-    /**
-     *  Parse ID from string
-     *
-     * @param {String} string
-     * @return {Identifier}
-     */
-    var parse = function (string) {
-        var name, address, terminal;
-        // split ID string for terminal
-        var pair = string.split('/');
-        if (pair.length === 1) {
-            // no terminal
-            terminal = null;
-        } else {
-            // got terminal
-            terminal = pair[1];
-        }
-        // name @ address
-        pair = pair[0].split('@');
-        if (pair.length === 1) {
-            // got address without name
-            name = null;
-            address = Address.parse(pair[0]);
-        } else {
-            name = pair[0];
-            address = Address.parse(pair[1]);
-        }
-        if (!address) {
-            return null;
-        }
-        return new Identifier(string, name, address, terminal);
-    };
-
-    var IDFactory = function () {
-        Object.call(this);
-        this.__identifiers = {};  // String -> ID
-    };
-    ns.Class(IDFactory, Object, [ID.Factory], null);
-
-    // Override
-    IDFactory.prototype.generateID = function (meta, network, terminal) {
-        var address = Address.generate(meta, network);
-        return ID.create(meta.getSeed(), address, terminal);
-    };
-
-    // Override
-    IDFactory.prototype.createID = function (name, address, terminal) {
-        var string = concat(name, address, terminal);
-        var id = this.__identifiers[string];
-        if (!id) {
-            id = new Identifier(string, name, address, terminal);
-            this.__identifiers[string] = id;
-        }
-        return id;
-    }
-
-    // Override
-    IDFactory.prototype.parseID = function (identifier) {
-        var id = this.__identifiers[identifier];
-        if (!id) {
-            id = parse(identifier);
-            if (id) {
-                this.__identifiers[identifier] = id;
-            }
-        }
-        return id;
-    };
-
-    //-------- namespace --------
-    ns.mkm.IDFactory = IDFactory;
-
-    ns.mkm.registers('IDFactory');
 
 })(MingKeMing);

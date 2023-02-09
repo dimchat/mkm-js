@@ -36,6 +36,8 @@
 (function (ns) {
     'use strict';
 
+    var Interface = ns.type.Interface;
+
     /**
      *  The Additional Information
      *
@@ -44,8 +46,7 @@
      *      'TAI' is the variable part,
      *          which could contain a public key for asymmetric encryption.
      */
-    var TAI = function () {};
-    ns.Interface(TAI, null);
+    var TAI = Interface(null, null);
 
     /**
      *  Check if signature matched
@@ -53,8 +54,7 @@
      * @returns {boolean}
      */
     TAI.prototype.isValid = function () {
-        ns.assert(false, 'implement me!');
-        return false;
+        throw new Error('NotImplemented');
     };
 
     //-------- signature --------
@@ -66,8 +66,7 @@
      * @returns {boolean}
      */
     TAI.prototype.verify = function (publicKey) {
-        ns.assert(false, 'implement me!');
-        return false;
+        throw new Error('NotImplemented');
     };
 
     /**
@@ -77,8 +76,7 @@
      * @returns {Uint8Array}
      */
     TAI.prototype.sign = function (privateKey) {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     //-------- properties --------
@@ -89,8 +87,7 @@
      * @returns {{}} mapping(String => Object)
      */
     TAI.prototype.allProperties = function () {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     /**
@@ -100,8 +97,7 @@
      * @returns {Object}
      */
     TAI.prototype.getProperty = function (name) {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     /**
@@ -112,12 +108,10 @@
      * @param {Object} value - property value
      */
     TAI.prototype.setProperty = function (name, value) {
-        ns.assert(false, 'implement me!');
+        throw new Error('NotImplemented');
     };
 
     //-------- namespace --------
     ns.protocol.TAI = TAI;
-
-    ns.protocol.registers('TAI');
 
 })(MingKeMing);

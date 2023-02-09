@@ -8,13 +8,13 @@ mkm_tests = [];
 (function (ns) {
     'use strict';
 
-    var NetworkType = ns.protocol.NetworkType;
+    var EntityType = ns.protocol.EntityType;
     var ID = ns.protocol.ID;
 
     var test_broadcast_id = function () {
         var anyone = ID.ANYONE;
         log('anyone: ' , anyone);
-        assert(NetworkType.MAIN.equals(anyone.getType()) === true, 'ID type error');
+        assert(EntityType.ANY.equals(anyone.getType()) === true, 'ID type error');
     };
     mkm_tests.push(test_broadcast_id);
 
@@ -33,7 +33,7 @@ mkm_tests = [];
     var AsymmetricKey = ns.crypto.AsymmetricKey;
     var PrivateKey = ns.crypto.PrivateKey;
 
-    var NetworkType = ns.protocol.NetworkType;
+    var EntityType = ns.protocol.EntityType;
 
     var MetaType = ns.protocol.MetaType;
     var Meta = ns.protocol.Meta;
@@ -45,9 +45,9 @@ mkm_tests = [];
         log('generated meta: ', meta);
         assert(meta.getKey() != null, 'failed to generate meta');
 
-        var address = meta.generateAddress(NetworkType.MAIN);
+        var address = meta.generateAddress(EntityType.USER);
         log('generated address: ', address);
-        assert(address.getNetwork() === 0x08, 'failed to generate ID')
+        assert(address.getType() === 0, 'failed to generate ID')
     };
     mkm_tests.push(test_meta);
 

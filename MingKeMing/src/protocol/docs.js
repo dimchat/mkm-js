@@ -35,7 +35,8 @@
 (function (ns) {
     'use strict';
 
-    var Document = ns.protocol.Document;
+    var Interface = ns.type.Interface;
+    var Document  = ns.protocol.Document;
 
     /**
      *  User Document
@@ -43,8 +44,7 @@
      *  This interface is defined for authorizing other apps to login,
      *  which can generate a temporary asymmetric key pair for messaging.
      */
-    var Visa = function () {};
-    ns.Interface(Visa, [Document]);
+    var Visa = Interface(null, [Document]);
 
     /**
      *  Get public key to encrypt message for user
@@ -52,8 +52,7 @@
      * @returns {EncryptKey} public key as visa.key
      */
     Visa.prototype.getKey = function () {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     /**
@@ -62,7 +61,7 @@
      * @param {EncryptKey} publicKey - public key as visa.key
      */
     Visa.prototype.setKey = function (publicKey) {
-        ns.assert(false, 'implement me!');
+        throw new Error('NotImplemented');
     };
 
     /**
@@ -71,8 +70,7 @@
      * @returns {String} URL string
      */
     Visa.prototype.getAvatar = function () {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     /**
@@ -81,27 +79,14 @@
      * @param {String} url - URL string
      */
     Visa.prototype.setAvatar = function (url) {
-        ns.assert(false, 'implement me!');
+        throw new Error('NotImplemented');
     };
-
-    //-------- namespace --------
-    ns.protocol.Visa = Visa;
-
-    ns.protocol.registers('Visa');
-
-})(MingKeMing);
-
-(function (ns) {
-    'use strict';
-
-    var Document = ns.protocol.Document;
 
     /**
      *  Group Document
      *  ~~~~~~~~~~~~~~
      */
-    var Bulletin = function () {};
-    ns.Interface(Bulletin, [Document]);
+    var Bulletin = Interface(null, [Document]);
 
     /**
      *  Get group assistants
@@ -109,8 +94,7 @@
      * @return {ID[]} bot ID list
      */
     Bulletin.prototype.getAssistants = function () {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     /**
@@ -119,12 +103,11 @@
      * @param {ID[]} assistants - bot ID list
      */
     Bulletin.prototype.setAssistants = function (assistants) {
-        ns.assert(false, 'implement me!');
+        throw new Error('NotImplemented');
     };
 
     //-------- namespace --------
+    ns.protocol.Visa = Visa;
     ns.protocol.Bulletin = Bulletin;
-
-    ns.protocol.registers('Bulletin');
 
 })(MingKeMing);

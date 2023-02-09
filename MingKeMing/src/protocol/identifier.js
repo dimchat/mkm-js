@@ -35,8 +35,14 @@
 (function (ns) {
     'use strict';
 
-    var Stringer = ns.type.Stringer;
-    var Address = ns.protocol.Address;
+    var Interface = ns.type.Interface;
+    var Stringer  = ns.type.Stringer;
+    var Address   = ns.protocol.Address;
+
+    var general_factory = function () {
+        var man = ns.mkm.FactoryManager;
+        return man.generalFactory;
+    };
 
     /**
      *  ID for entity (User/Group)
@@ -48,8 +54,7 @@
      *          address  - a string to identify an entity
      *          terminal - entity login resource(device), OPTIONAL
      */
-    var ID = function () {};
-    ns.Interface(ID, [Stringer]);
+    var ID = Interface(null, [Stringer]);
 
     //  ID for broadcast
     ID.ANYONE = null;    // 'anyone@anywhere'
@@ -63,8 +68,7 @@
      * @returns {String}
      */
     ID.prototype.getName = function () {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
     /**
      *  Get ID.address
@@ -72,8 +76,7 @@
      * @returns {Address}
      */
     ID.prototype.getAddress = function () {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
     /**
      *  Get ID.terminal
@@ -81,8 +84,7 @@
      * @returns {String}
      */
     ID.prototype.getTerminal = function () {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     /**
@@ -91,89 +93,60 @@
      * @returns {uint} 0 ~ 255
      */
     ID.prototype.getType = function () {
-        ns.assert(false, 'implement me!');
-        return 0;
+        throw new Error('NotImplemented');
     };
 
     ID.prototype.isBroadcast = function () {
-        ns.assert(false, 'implement me!');
-        return false;
+        throw new Error('NotImplemented');
     };
     ID.prototype.isUser = function () {
-        ns.assert(false, 'implement me!');
-        return false;
+        throw new Error('NotImplemented');
     };
     ID.prototype.isGroup = function () {
-        ns.assert(false, 'implement me!');
-        return false;
+        throw new Error('NotImplemented');
     };
 
     /**
      *  Convert Strings to IDs
      *
-     * @param {String[]} members
+     * @param {String[]} list
      * @returns {ID[]}
      */
-    ID.convert = function (members) {
-        var array = [];
-        var id;
-        for (var i = 0; i < members.length; ++i) {
-            id = ID.parse(members[i]);
-            if (id) {
-                array.push(id);
-            }
-        }
-        return array;
+    ID.convert = function (list) {
+        var gf = general_factory();
+        return gf.convertIDList(list);
     };
 
     /**
      *  Convert IDs to Strings
      *
-     * @param {ID[]} members
+     * @param {ID[]} list
      * @return {String[]}
      */
-    ID.revert = function (members) {
-        var array = [];
-        var id;
-        for (var i = 0; i < members.length; ++i) {
-            id = members[i];
-            if (ns.Interface.conforms(id, Stringer)) {
-                array.push(id.toString());
-            } else if (typeof id === 'string') {
-                array.push(id);
-            }
-        }
-        return array;
+    ID.revert = function (list) {
+        var gf = general_factory();
+        return gf.revertIDList(list);
     };
 
     /**
      *  ID Factory
      *  ~~~~~~~~~~
      */
-    var IDFactory = function () {};
-    ns.Interface(IDFactory, null);
+    var IDFactory = Interface(null, null);
 
     IDFactory.prototype.generateID = function (meta, network, terminal) {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     IDFactory.prototype.createID = function (name, address, terminal) {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     IDFactory.prototype.parseID = function (identifier) {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     ID.Factory = IDFactory;
-
-    //
-    //  Instances of ID.Factory
-    //
-    var s_factory;
 
     /**
      *  Register ID factory
@@ -181,10 +154,12 @@
      * @param {IDFactory} factory
      */
     ID.setFactory = function (factory) {
-        s_factory = factory;
+        var gf = general_factory();
+        gf.setIDFactory(factory);
     };
     ID.getFactory = function () {
-        return s_factory;
+        var gf = general_factory();
+        return gf.getIDFactory();
     };
 
     /**
@@ -196,8 +171,8 @@
      * @return {ID}
      */
     ID.generate = function (meta, network, terminal) {
-        var factory = ID.getFactory();
-        return factory.generateID(meta, network, terminal);
+        var gf = general_factory();
+        return gf.generateID(meta, network, terminal);
     };
 
     /**
@@ -209,8 +184,8 @@
      * @return {ID}
      */
     ID.create = function (name, address, terminal) {
-        var factory = ID.getFactory();
-        return factory.createID(name, address, terminal);
+        var gf = general_factory();
+        return gf.createID(name, address, terminal);
     };
 
     /**
@@ -220,19 +195,11 @@
      * @return {ID}
      */
     ID.parse = function (identifier) {
-        if (!identifier) {
-            return null;
-        } else if (ns.Interface.conforms(identifier, ID)) {
-            return identifier;
-        }
-        identifier = ns.type.Wrapper.fetchString(identifier);
-        var factory = ID.getFactory();
-        return factory.parseID(identifier);
+        var gf = general_factory();
+        return gf.parseID(identifier);
     };
 
     //-------- namespace --------
     ns.protocol.ID = ID;
-
-    ns.protocol.registers('ID');
 
 })(MingKeMing);
