@@ -30,7 +30,28 @@
 // =============================================================================
 //
 
-//! require 'namespace.js'
+if (typeof MONKEY !== 'object') {
+    MONKEY = {};
+}
+
+(function (ns) {
+    "use strict";
+
+    //-------- namespaces --------
+    if (typeof ns.type !== 'object') {
+        ns.type = {};
+    }
+    if (typeof ns.format !== 'object') {
+        ns.format = {};
+    }
+    if (typeof ns.digest !== 'object') {
+        ns.digest = {};
+    }
+    if (typeof ns.crypto !== 'object') {
+        ns.crypto = {};
+    }
+
+})(MONKEY);
 
 (function (ns) {
     'use strict';
@@ -58,18 +79,14 @@
         // }
         return check_class(object.constructor, protocol);
     };
-
-    var check_class = function (child, protocol) {
-        var interfaces = child._mk_interfaces;
-        if (!interfaces) {
-            // reach the root
-            return false;
-        } else if (check_interfaces(interfaces, protocol)) {
+    var check_class = function (constructor, protocol) {
+        var interfaces = constructor._mk_interfaces;
+        if (interfaces && check_interfaces(interfaces, protocol)) {
             // matched in this level
             return true;
         }
         // check next level (super class)
-        var parent = child._mk_parent;
+        var parent = constructor._mk_parent;
         return parent && check_class(parent, protocol);
     };
     var check_interfaces = function (interfaces, protocol) {
@@ -91,57 +108,20 @@
     };
 
     /**
-     *  Get interfaces
-     * @param {Interface|Array} interfaces
-     * @return {Interface[]}
-     */
-    var get_interfaces = function (interfaces) {
-        if (!interfaces) {
-            return [];
-        } else if (interfaces instanceof Array) {
-            return interfaces;
-        } else {
-            return [interfaces];
-        }
-    };
-
-    /**
-     *  Extends function for child class/interface
-     *
-     * @param {Class|Interface} child
-     * @param {{}} functions
-     * @return {Class|Interface}
-     */
-    var set_functions = function (child, functions) {
-        if (functions) {
-            var names = Object.getOwnPropertyNames(functions);
-            var key, fn;
-            for (var idx = 0; idx < names.length; ++idx) {
-                key = names[idx];
-                if (key === 'constructor') {
-                    continue;
-                }
-                fn = functions[key];
-                if (typeof fn === 'function') {
-                    child.prototype[key] = fn;
-                }
-            }
-        }
-        return child;
-    };
-
-    /**
      *  Create an interface inherits from other interfaces
      *
-     * @param {Interface} child         - sub interface
-     * @param {Interface|Array} parents - super interfaces
+     * @param {Interface} child     - sub interface
+     * @param {Interface[]} parents - super interfaces
+     * @return {Interface} sub interface
      */
     var interfacefy = function (child, parents) {
         if (!child) {
             child = function () {};
         }
         // set super interfaces
-        child._mk_parents = get_interfaces(parents);
+        if (parents) {
+            child._mk_parents = parents;
+        }
         return child;
     };
 
@@ -152,13 +132,14 @@
      *
      * @param {Class} child  - sub class
      * @param {Class} parent - super class
-     * @param {Interface|Array} interfaces
-     * @param {{}} functions
-     * @return {Class}
+     * @param {Interface[]} interfaces
+     * @return {Class} sub class
      */
-    var classify = function (child, parent, interfaces, functions) {
+    var classify = function (child, parent, interfaces) {
         if (!child) {
-            child = function () {};
+            child = function () {
+                Object.call(this);
+            };
         }
         // extends super class
         if (parent) {
@@ -169,17 +150,14 @@
         child.prototype = Object.create(parent.prototype);
         child.prototype.constructor = child;
         // set interfaces
-        child._mk_interfaces = get_interfaces(interfaces);
-        // extends functions
-        set_functions(child, functions);
+        if (interfaces) {
+            child._mk_interfaces = interfaces;
+        }
         return child;
     };
 
     //-------- namespace --------
-    ns.Interface = interfacefy;
-    ns.Class = classify;
-
-    ns.registers('Interface');
-    ns.registers('Class');
+    ns.type.Interface = interfacefy;
+    ns.type.Class = classify;
 
 })(MONKEY);

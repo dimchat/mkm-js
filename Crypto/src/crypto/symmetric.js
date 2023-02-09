@@ -30,14 +30,22 @@
 // =============================================================================
 //
 
-//! require 'cryptography.js'
+//! require 'type/class.js'
+
+//! require 'keys.js'
 
 (function (ns) {
     'use strict';
 
-    var CryptographyKey = ns.crypto.CryptographyKey;
+    var Interface = ns.type.Interface;
+
     var EncryptKey = ns.crypto.EncryptKey;
     var DecryptKey = ns.crypto.DecryptKey;
+
+    var general_factory = function () {
+        var man = ns.crypto.FactoryManager;
+        return man.generalFactory;
+    };
 
     //
     //  Symmetric Cryptography Key
@@ -49,58 +57,26 @@
     //      ...
     //  }
     //
-    var SymmetricKey = function () {};
-    ns.Interface(SymmetricKey, [EncryptKey, DecryptKey]);
+    var SymmetricKey = Interface(null, [EncryptKey, DecryptKey]);
 
     SymmetricKey.AES = 'AES'; //-- "AES/CBC/PKCS7Padding"
     SymmetricKey.DES = 'DES';
 
     /**
-     *  Check key pair by encryption
-     *
-     * @param {EncryptKey} pKey
-     * @param {DecryptKey} sKey
-     */
-    SymmetricKey.matches = function (pKey, sKey) {
-        // check by encryption
-        var promise = CryptographyKey.getPromise();
-        var ciphertext = pKey.encrypt(promise);
-        var plaintext = sKey.decrypt(ciphertext);
-        // check equals
-        if (!plaintext || plaintext.length !== promise.length) {
-            return false;
-        }
-        for (var i = 0; i < promise.length; ++i) {
-            if (plaintext[i] !== promise[i]) {
-                return false;
-            }
-        }
-        return true;
-    };
-
-    /**
      *  Key Factory
      *  ~~~~~~~~~~~
      */
-    var SymmetricKeyFactory = function () {};
-    ns.Interface(SymmetricKeyFactory, null);
+    var SymmetricKeyFactory = Interface(null, null);
 
     SymmetricKeyFactory.prototype.generateSymmetricKey = function () {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     SymmetricKeyFactory.prototype.parseSymmetricKey = function (key) {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     SymmetricKey.Factory = SymmetricKeyFactory;
-
-    //
-    //  Instances of SymmetricKey.Factory
-    //
-    var s_symmetric_factories = {};  // algorithm(String) -> SymmetricKeyFactory
 
     /**
      *  Register symmetric key factory with algorithm
@@ -109,10 +85,12 @@
      * @param {SymmetricKeyFactory} factory
      */
     SymmetricKey.setFactory = function (algorithm, factory) {
-        s_symmetric_factories[algorithm] = factory;
+        var gf = general_factory();
+        gf.setSymmetricKeyFactory(algorithm, factory);
     };
     SymmetricKey.getFactory = function (algorithm) {
-        return s_symmetric_factories[algorithm];
+        var gf = general_factory();
+        return gf.getSymmetricKeyFactory(algorithm);
     };
 
     /**
@@ -122,11 +100,8 @@
      * @return {SymmetricKey}
      */
     SymmetricKey.generate = function (algorithm) {
-        var factory = SymmetricKey.getFactory(algorithm);
-        if (!factory) {
-            throw new ReferenceError('key algorithm not support: ' + algorithm);
-        }
-        return factory.generateSymmetricKey();
+        var gf = general_factory();
+        return gf.generateSymmetricKey(algorithm);
     };
 
     /**
@@ -136,23 +111,11 @@
      * @return {SymmetricKey}
      */
     SymmetricKey.parse = function (key) {
-        if (!key) {
-            return null;
-        } else if (ns.Interface.conforms(key, SymmetricKey)) {
-            return key;
-        }
-        key = ns.type.Wrapper.fetchMap(key);
-        var algorithm = CryptographyKey.getAlgorithm(key);
-        var factory = SymmetricKey.getFactory(algorithm);
-        if (!factory) {
-            factory = SymmetricKey.getFactory('*');  // unknown
-        }
-        return factory.parseSymmetricKey(key);
+        var gf = general_factory();
+        return gf.parseSymmetricKey(key);
     };
 
     //-------- namespace --------
     ns.crypto.SymmetricKey = SymmetricKey;
-
-    ns.crypto.registers('SymmetricKey');
 
 })(MONKEY);

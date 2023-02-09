@@ -80,6 +80,4 @@
     //-------- namespace --------
     ns.format.UTF8 = UTF8;
 
-    ns.format.registers('UTF8');
-
 })(MONKEY);

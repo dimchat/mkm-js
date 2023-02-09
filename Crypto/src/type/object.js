@@ -35,6 +35,9 @@
 (function (ns) {
     'use strict';
 
+    var Interface = ns.type.Interface;
+    var Class = ns.type.Class;
+
     var is_null = function (object) {
         if (typeof object === 'undefined') {
             return true;
@@ -48,6 +51,7 @@
         if (t === 'string' || t === 'number' || t === 'boolean' || t === 'function') {
             return true;
         }
+        /*/
         if (object instanceof String) {
             return true;
         }
@@ -57,6 +61,7 @@
         if (object instanceof Boolean) {
             return true;
         }
+        /*/
         if (object instanceof Date) {
             return true;
         }
@@ -69,23 +74,24 @@
     //
     //  Object Interface
     //
-    var IObject = function () {};
-    ns.Interface(IObject, null);
+    var IObject = Interface(null, null);
+
+    IObject.prototype.toString = function () {
+        throw new Error('NotImplemented');
+    };
+
+    IObject.prototype.valueOf = function () {
+        throw new Error('NotImplemented');
+    };
 
     /**
      *  Check whether objects equal
      *
-     * @param {Object|IObject} other - another object
+     * @param {Object} other - another object
      * @return {boolean}
      */
     IObject.prototype.equals = function (other) {
-        ns.assert(false, 'implement me!');
-        return false;
-    };
-
-    IObject.prototype.valueOf = function () {
-        ns.assert(false, 'implement me!');
-        return false;
+        throw new Error('NotImplemented');
     };
 
     IObject.isNull = is_null;
@@ -97,18 +103,15 @@
     var BaseObject = function () {
         Object.call(this);
     };
-    ns.Class(BaseObject, Object, [IObject], {
-        // Override
-        equals: function (other) {
-            return this === other;
-        }
-    });
+    Class(BaseObject, Object, [IObject]);
+
+    // Override
+    BaseObject.prototype.equals = function (other) {
+        return this === other;
+    };
 
     //-------- namespace --------
     ns.type.Object = IObject;
     ns.type.BaseObject = BaseObject;
-
-    ns.type.registers('Object');
-    ns.type.registers('BaseObject');
 
 })(MONKEY);

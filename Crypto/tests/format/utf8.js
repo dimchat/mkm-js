@@ -35,6 +35,7 @@
 (function (ns) {
     'use strict';
 
+    var Class = ns.type.Class;
     var StringCoder = ns.format.StringCoder;
 
     //-------- UTF-8 algorithm begin --------
@@ -132,16 +133,15 @@
     var Utf8Coder = function () {
         Object.call(this);
     };
-    ns.Class(Utf8Coder, Object, [StringCoder], {
-        // Override
-        encode: function (string) {
-            return utf8_encode(string);
-        },
-        // Override
-        decode: function (data) {
-            return utf8_decode(data);
-        }
-    });
+    Class(Utf8Coder, Object, [StringCoder]);
+    // Override
+    Utf8Coder.prototype.encode = function (string) {
+        return utf8_encode(string);
+    };
+    // Override
+    Utf8Coder.prototype.decode = function (data) {
+        return utf8_decode(data);
+    };
 
     //-------- namespace --------
     ns.format.UTF8.setCoder(new Utf8Coder());

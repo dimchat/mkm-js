@@ -30,17 +30,24 @@
 // =============================================================================
 //
 
-//! require 'asymmetric.js'
+//! require 'type/class.js'
+
+//! require 'keys.js'
 
 (function (ns) {
     'use strict';
 
-    var CryptographyKey = ns.crypto.CryptographyKey;
+    var Interface = ns.type.Interface;
+
     var AsymmetricKey = ns.crypto.AsymmetricKey;
     var SignKey = ns.crypto.SignKey;
 
-    var PrivateKey = function () {};
-    ns.Interface(PrivateKey, [SignKey]);
+    var general_factory = function () {
+        var man = ns.crypto.FactoryManager;
+        return man.generalFactory;
+    };
+
+    var PrivateKey = Interface(null, [SignKey]);
 
     PrivateKey.RSA = AsymmetricKey.RSA;
     PrivateKey.ECC = AsymmetricKey.ECC;
@@ -51,33 +58,24 @@
      * @return {PublicKey}
      */
     PrivateKey.prototype.getPublicKey = function () {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     /**
      *  Key Factory
      *  ~~~~~~~~~~~
      */
-    var PrivateKeyFactory = function () {};
-    ns.Interface(PrivateKeyFactory, null);
+    var PrivateKeyFactory = Interface(null, null);
 
     PrivateKeyFactory.prototype.generatePrivateKey = function () {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     PrivateKeyFactory.prototype.parsePrivateKey = function (key) {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     PrivateKey.Factory = PrivateKeyFactory;
-
-    //
-    //  Instances of PrivateKey.Factory
-    //
-    var s_private_factories = {};  // algorithm(String) -> PrivateKeyFactory
 
     /**
      *  Register private key factory with algorithm
@@ -86,10 +84,12 @@
      * @param {PrivateKeyFactory} factory
      */
     PrivateKey.setFactory = function (algorithm, factory) {
-        s_private_factories[algorithm] = factory;
+        var gf = general_factory();
+        gf.setPrivateKeyFactory(algorithm, factory);
     };
     PrivateKey.getFactory = function (algorithm) {
-        return s_private_factories[algorithm];
+        var gf = general_factory();
+        return gf.getPrivateKeyFactory(algorithm);
     };
 
     /**
@@ -99,11 +99,8 @@
      * @return {PrivateKey}
      */
     PrivateKey.generate = function (algorithm) {
-        var factory = PrivateKey.getFactory(algorithm);
-        if (!factory) {
-            throw new ReferenceError('key algorithm not support: ' + algorithm);
-        }
-        return factory.generatePrivateKey();
+        var gf = general_factory();
+        return gf.generatePrivateKey(algorithm);
     };
 
     /**
@@ -113,23 +110,11 @@
      * @return {PrivateKey}
      */
     PrivateKey.parse = function (key) {
-        if (!key) {
-            return null;
-        } else if (ns.Interface.conforms(key, PrivateKey)) {
-            return key;
-        }
-        key = ns.type.Wrapper.fetchMap(key);
-        var algorithm = CryptographyKey.getAlgorithm(key);
-        var factory = PrivateKey.getFactory(algorithm);
-        if (!factory) {
-            factory = PrivateKey.getFactory('*');  // unknown
-        }
-        return factory.parsePrivateKey(key);
+        var gf = general_factory();
+        return gf.parsePrivateKey(key);
     };
 
     //-------- namespace --------
     ns.crypto.PrivateKey = PrivateKey;
-
-    ns.crypto.registers('PrivateKey');
 
 })(MONKEY);

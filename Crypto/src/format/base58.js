@@ -80,6 +80,4 @@
     //-------- namespace --------
     ns.format.Base58 = Base58;
 
-    ns.format.registers('Base58');
-
 })(MONKEY);

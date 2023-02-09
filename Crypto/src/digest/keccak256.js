@@ -69,6 +69,4 @@
     //-------- namespace --------
     ns.digest.KECCAK256 = Keccak256;
 
-    ns.digest.registers('KECCAK256');
-
 })(MONKEY);

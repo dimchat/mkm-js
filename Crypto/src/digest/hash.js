@@ -30,18 +30,19 @@
 // =============================================================================
 //
 
-//! require 'object.js'
+//! require 'type/class.js'
 
 (function (ns) {
     'use strict';
+
+    var Interface = ns.type.Interface;
 
     /**
      *  Data Digester
      *  ~~~~~~~~~~~~~
      *  MD5, SHA1, SHA256, Keccak256, RipeMD160, ...
      */
-    var DataDigester = function () {};
-    ns.Interface(DataDigester, null);
+    var DataDigester = Interface(null, null);
 
     /**
      *  Get digest of binary data
@@ -50,13 +51,10 @@
      * @return {Uint8Array} binary data
      */
     DataDigester.prototype.digest = function (data) {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     //-------- namespace --------
     ns.digest.DataDigester = DataDigester;
-
-    ns.digest.registers('DataDigester');
 
 })(MONKEY);

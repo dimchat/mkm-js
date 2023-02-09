@@ -30,27 +30,21 @@
 // =============================================================================
 //
 
+//! require 'class.js'
 //! require 'object.js'
 
 (function (ns) {
     'use strict';
 
+    var Interface = ns.type.Interface;
+    var Class = ns.type.Class;
+    var IObject = ns.type.Object;
+    var BaseObject = ns.type.BaseObject;
+
     //
     //  String Interface
     //
-    var Stringer = function () {};
-    ns.Interface(Stringer, [ns.type.Object]);
-
-    /**
-     *  Check whether strings equal
-     *
-     * @param {String|Stringer} other - another string
-     * @return {boolean}
-     */
-    Stringer.prototype.equalsIgnoreCase = function (other) {
-        ns.assert(false, 'implement me!');
-        return false;
-    };
+    var Stringer = Interface(null, [IObject]);
 
     /**
      *  Get inner string
@@ -58,8 +52,7 @@
      * @return {String}
      */
     Stringer.prototype.toString = function () {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     /**
@@ -68,22 +61,22 @@
      * @return {number}
      */
     Stringer.prototype.getLength = function () {
-        ns.assert(false, 'implement me!');
-        return 0;
+        throw new Error('NotImplemented');
     };
 
-    //-------- namespace --------
-    ns.type.Stringer = Stringer;
+    Stringer.prototype.isEmpty = function () {
+        throw new Error('NotImplemented');
+    };
 
-    ns.type.registers('Stringer');
-
-})(MONKEY);
-
-(function (ns) {
-    'use strict';
-
-    var BaseObject = ns.type.BaseObject;
-    var Stringer = ns.type.Stringer;
+    /**
+     *  Check whether strings equal
+     *
+     * @param {String|Stringer} other - another string
+     * @return {boolean}
+     */
+    Stringer.prototype.equalsIgnoreCase = function (other) {
+        throw new Error('NotImplemented');
+    };
 
     /**
      *  Create String
@@ -94,47 +87,25 @@
         BaseObject.call(this);
         if (!str) {
             str = '';
-        } else if (ns.Interface.conforms(str, Stringer)) {
+        } else if (Interface.conforms(str, Stringer)) {
             str = str.toString();
         }
         this.__string = str;
     };
-    ns.Class(ConstantString, BaseObject, [Stringer], null);
+    Class(ConstantString, BaseObject, [Stringer]);
 
     // Override
     ConstantString.prototype.equals = function (other) {
-        if (BaseObject.prototype.equals.call(this, other)) {
+        if (this === other) {
             return true;
         } else if (!other) {
             return !this.__string;
-        } else if (ns.Interface.conforms(other, Stringer)) {
+        } else if (Interface.conforms(other, Stringer)) {
             return this.__string === other.toString();
         } else {
-            // ns.assert(other instanceof String, 'other string error');
+            // assert(other instanceof String, 'other string error');
             return this.__string === other;
         }
-    };
-
-    // Override
-    ConstantString.prototype.equalsIgnoreCase = function (other) {
-        if (this.equals(other)) {
-            return true;
-        } else if (!other) {
-            return !this.__string;
-        } else if (ns.Interface.conforms(other, Stringer)) {
-            return equalsIgnoreCase(this.__string, other.toString());
-        } else {
-            // ns.assert(other instanceof String, 'other string error');
-            return equalsIgnoreCase(this.__string, other);
-        }
-    };
-    var equalsIgnoreCase = function (str1, str2) {
-        if (str1.length !== str2.length) {
-            return false;
-        }
-        var low1 = str1.toLowerCase();
-        var low2 = str2.toLowerCase();
-        return low1 === low2;
     };
 
     // Override
@@ -152,9 +123,36 @@
         return this.__string.length;
     };
 
-    //-------- namespace --------
-    ns.type.ConstantString = ConstantString;
+    // Override
+    ConstantString.prototype.isEmpty = function () {
+        return this.__string.length === 0
+    };
 
-    ns.type.registers('ConstantString');
+    // Override
+    ConstantString.prototype.equalsIgnoreCase = function (other) {
+        if (this === other) {
+            return true;
+        } else if (!other) {
+            return !this.__string;
+        } else if (Interface.conforms(other, Stringer)) {
+            return equalsIgnoreCase(this.__string, other.toString());
+        } else {
+            // assert(other instanceof String, 'other string error');
+            return equalsIgnoreCase(this.__string, other);
+        }
+    };
+
+    var equalsIgnoreCase = function (str1, str2) {
+        if (str1.length !== str2.length) {
+            return false;
+        }
+        var low1 = str1.toLowerCase();
+        var low2 = str2.toLowerCase();
+        return low1 === low2;
+    };
+
+    //-------- namespace --------
+    ns.type.Stringer = Stringer;
+    ns.type.ConstantString = ConstantString;
 
 })(MONKEY);

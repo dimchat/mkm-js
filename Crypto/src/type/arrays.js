@@ -35,6 +35,8 @@
 (function (ns) {
     'use strict';
 
+    var IObject = ns.type.Object;
+
     var is_array = function (obj) {
         if (obj instanceof Array) {
             return true;
@@ -109,10 +111,10 @@
         } else if (typeof obj2['equals'] === 'function') {
             // compare via 'equals()'
             return obj2.equals(obj1);
-        } else if (ns.type.Object.isBaseType(obj1)) {
+        } else if (IObject.isBaseType(obj1)) {
             // compare base types: String, Number, Boolean, Date, ...
             return obj1 === obj2;
-        } else if (ns.type.Object.isBaseType(obj2)) {
+        } else if (IObject.isBaseType(obj2)) {
             return false;  // object2 is base type but object1 is not
         } else if (is_array(obj1)) {
             // compare arrays
@@ -227,7 +229,5 @@
         isArray: is_array,
         copy: copy_items
     };
-
-    ns.type.registers('Arrays');
 
 })(MONKEY);

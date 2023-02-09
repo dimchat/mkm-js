@@ -30,43 +30,30 @@
 // =============================================================================
 //
 
-//! require 'hash.js'
+//! require <crypto.js>
+
+//! require 'json2.js' (https://github.com/douglascrockford/JSON-js)
 
 (function (ns) {
     'use strict';
 
-    var SHA256 = {
-        /**
-         *  Get digest of binary data
-         *
-         * @param {Uint8Array} data - binary data
-         * @return {Uint8Array} binary data
-         */
-        digest: function (data) {
-            return this.getDigester().digest(data);
-        },
+    var Class = ns.type.Class;
+    var ObjectCoder = ns.format.ObjectCoder;
 
-        /**
-         *  Get SHA256 Digester
-         *
-         * @return {DataDigester}
-         */
-        getDigester: function () {
-            return sha256Digester;
-        },
-
-        /**
-         *  Set SHA256 Digester
-         * @param {DataDigester} digester
-         */
-        setDigester: function (digester) {
-            sha256Digester = digester;
-        }
+    var JsonCoder = function () {
+        Object.call(this);
+    };
+    Class(JsonCoder, Object, [ObjectCoder]);
+    // Override
+    JsonCoder.prototype.encode = function (object) {
+        return JSON.stringify(object);
+    };
+    // Override
+    JsonCoder.prototype.decode = function (string) {
+        return JSON.parse(string);
     };
 
-    var sha256Digester = null;
-
-    //-------- namespace --------
-    ns.digest.SHA256 = SHA256;
+    //-------- namespace --------//
+    ns.format.JSON.setCoder(new JsonCoder());
 
 })(MONKEY);

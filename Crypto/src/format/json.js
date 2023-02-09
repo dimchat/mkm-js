@@ -30,27 +30,10 @@
 // =============================================================================
 //
 
-//! require 'json2.js' (https://github.com/douglascrockford/JSON-js)
 //! require 'coder.js'
 
 (function (ns) {
     'use strict';
-
-    var ObjectCoder = ns.format.ObjectCoder;
-
-    var JsonCoder = function () {
-        Object.call(this);
-    };
-    ns.Class(JsonCoder, Object, [ObjectCoder], {
-        // Override
-        encode: function (object) {
-            return JSON.stringify(object);
-        },
-        // Override
-        decode: function (string) {
-            return JSON.parse(string);
-        }
-    });
 
     var JsON = {
         /**
@@ -92,11 +75,9 @@
         }
     };
 
-    var jsonCoder = new JsonCoder();
+    var jsonCoder = null;
 
     //-------- namespace --------//
     ns.format.JSON = JsON;
-
-    ns.format.registers('JSON');
 
 })(MONKEY);

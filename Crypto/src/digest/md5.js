@@ -69,6 +69,4 @@
     //-------- namespace --------
     ns.digest.MD5 = MD5;
 
-    ns.digest.registers('MD5');
-
 })(MONKEY);

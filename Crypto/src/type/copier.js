@@ -30,18 +30,22 @@
 // =============================================================================
 //
 
-//! require 'string.js'
+//! require 'class.js'
+//! require 'object.js'
 //! require 'enum.js'
+//! require 'string.js'
 //! require 'arrays.js'
 //! require 'dictionary.js'
 
 (function (ns) {
     'use strict';
 
+    var Interface = ns.type.Interface;
     var IObject = ns.type.Object;
+    var Enum = ns.type.Enum;
     var Stringer = ns.type.Stringer;
+    var Arrays = ns.type.Arrays;
     var Mapper = ns.type.Mapper;
-    // var Enum = ns.type.Enum;
 
     /**
      *  Shallow Copy
@@ -55,16 +59,16 @@
         } else if (IObject.isBaseType(object)) {
             // return as base type
             return object;
-        // } else if (object instanceof Enum) {
-        //     // get enum value
-        //     return object.valueOf();
-        } else if (ns.Interface.conforms(object, Stringer)) {
+        } else if (Enum.isEnum(object)) {
+            // get enum value
+            return object.valueOf();
+        } else if (Interface.conforms(object, Stringer)) {
             // get inner string
             return object.toString();
-        // } else if (ns.Interface.conforms(object, Mapper)) {
-        //     // copy inner map
-        //     return copy_map(object.toMap());
-        } else if (!ns.type.Arrays.isArray(object)) {
+        } else if (Interface.conforms(object, Mapper)) {
+            // copy inner map
+            return copy_map(object.toMap());
+        } else if (!Arrays.isArray(object)) {
             // unwrap as a map
             return copy_map(object);
         } else if (object instanceof Array) {
@@ -77,9 +81,6 @@
     };
 
     var copy_map = function (dict) {
-        if (ns.Interface.conforms(dict, Mapper)) {
-            dict = dict.toMap();
-        }
         var clone = {};
         var allKeys = Object.keys(dict);
         var key;
@@ -112,16 +113,16 @@
         } else if (IObject.isBaseType(object)) {
             // return as base type
             return object;
-        // } else if (object instanceof Enum) {
-        //     // get enum value
-        //     return object.valueOf();
-        } else if (ns.Interface.conforms(object, Stringer)) {
+        } else if (Enum.isEnum(object)) {
+            // get enum value
+            return object.valueOf();
+        } else if (Interface.conforms(object, Stringer)) {
             // get inner string
             return object.toString();
-        // } else if (ns.Interface.conforms(object, Mapper)) {
-        //     // copy inner map
-        //     return deep_copy_map(object.toMap());
-        } else if (!ns.type.Arrays.isArray(object)) {
+        } else if (Interface.conforms(object, Mapper)) {
+            // copy inner map
+            return deep_copy_map(object.toMap());
+        } else if (!Arrays.isArray(object)) {
             // unwrap as a map
             return deep_copy_map(object);
         } else if (object instanceof Array) {
@@ -134,9 +135,6 @@
     };
 
     var deep_copy_map = function (dict) {
-        if (ns.Interface.conforms(dict, Mapper)) {
-            dict = dict.toMap();
-        }
         var clone = {};
         var allKeys = Object.keys(dict);
         var key;
@@ -169,7 +167,5 @@
         deepCopyMap: deep_copy_map,
         deepCopyList: deep_copy_list
     };
-
-    ns.type.registers('Copier');
 
 })(MONKEY);

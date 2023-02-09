@@ -69,6 +69,4 @@
     //-------- namespace --------
     ns.digest.SHA1 = SHA1;
 
-    ns.digest.registers('SHA1');
-
 })(MONKEY);

@@ -30,10 +30,12 @@
 // =============================================================================
 //
 
-//! require 'object.js'
+//! require 'type/class.js'
 
 (function (ns) {
     'use strict';
+
+    var Interface = ns.type.Interface;
 
     /**
      *  Data Coder
@@ -43,8 +45,7 @@
      *  1. encode binary data to string;
      *  2. decode string to binary data.
      */
-    var DataCoder = function () {};
-    ns.Interface(DataCoder, null);
+    var DataCoder = Interface(null, null);
 
     /**
      *  Encode binary data to local string
@@ -53,8 +54,7 @@
      * @return {String}
      */
     DataCoder.prototype.encode = function (data) {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     /**
@@ -64,8 +64,7 @@
      * @return {Uint8Array}
      */
     DataCoder.prototype.decode = function (string) {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     /**
@@ -76,8 +75,7 @@
      *  1. encode object to string;
      *  2. decode string to object.
      */
-    var ObjectCoder = function () {};
-    ns.Interface(ObjectCoder, null);
+    var ObjectCoder = Interface(null, null);
 
     /**
      *  Encode Map/List object to string
@@ -86,8 +84,7 @@
      * @return {String} serialized string
      */
     ObjectCoder.prototype.encode = function (object) {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     /**
@@ -97,8 +94,7 @@
      * @return {{}|[]} Map or List
      */
     ObjectCoder.prototype.decode = function (string) {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     /**
@@ -109,8 +105,7 @@
      *  1. encode string to binary data;
      *  2. decode binary data to string.
      */
-    var StringCoder = function () {};
-    ns.Interface(StringCoder, null);
+    var StringCoder = Interface(null, null);
 
     /**
      *  Encode local string to binary data
@@ -119,8 +114,7 @@
      * @return {Uint8Array}
      */
     StringCoder.prototype.encode = function (string) {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     /**
@@ -130,17 +124,12 @@
      * @return {String}
      */
     StringCoder.prototype.decode = function (data) {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     //-------- namespace --------
     ns.format.DataCoder = DataCoder;
     ns.format.ObjectCoder = ObjectCoder;
     ns.format.StringCoder = StringCoder;
-
-    ns.format.registers('DataCoder');
-    ns.format.registers('ObjectCoder');
-    ns.format.registers('StringCoder');
 
 })(MONKEY);

@@ -12,9 +12,7 @@
     <script>
         !function (ns) {
             var sources = [
-                'src/namespace.js',
-                'src/class.js',
-
+                'src/type/class.js',
                 'src/type/object.js',
                 'src/type/arrays.js',
                 'src/type/enum.js',
@@ -41,12 +39,17 @@
                 'src/crypto/symmetric.js',
                 'src/crypto/public.js',
                 'src/crypto/private.js',
+                'src/crypto/factory.js',
                 null
             ];
             var dist = 'dist/crypto.js';
 
             var tests = [
                 'tests/format/utf8.js',
+                'tests/format/json.js',
+                'tests/format/hex.js',
+                'tests/format/base58.js',
+                'tests/format/base64.js',
                 'tests/crypto_tests.js',
                 null
             ];

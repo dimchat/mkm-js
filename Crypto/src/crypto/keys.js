@@ -30,12 +30,13 @@
 // =============================================================================
 //
 
-//! require 'arrays.js'
-//! require 'utf8.js'
+//! require 'type/class.js'
+//! require 'type/dictionary.js'
 
 (function (ns) {
     'use strict';
 
+    var Interface = ns.type.Interface;
     var Mapper = ns.type.Mapper;
 
     //
@@ -48,8 +49,7 @@
     //      ...
     //  }
     //
-    var CryptographyKey = function () {};
-    ns.Interface(CryptographyKey, [Mapper]);
+    var CryptographyKey = Interface(null, [Mapper]);
 
     /**
      *  Get key algorithm name
@@ -57,8 +57,7 @@
      * @return {String} algorithm name
      */
     CryptographyKey.prototype.getAlgorithm = function () {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     /**
@@ -67,12 +66,10 @@
      * @return {Uint8Array}
      */
     CryptographyKey.prototype.getData = function () {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
-    var EncryptKey = function () {};
-    ns.Interface(EncryptKey, [CryptographyKey]);
+    var EncryptKey = Interface(null, [CryptographyKey]);
 
     /**
      *  ciphertext = encrypt(plaintext, PW)
@@ -82,12 +79,10 @@
      * @return {Uint8Array}
      */
     EncryptKey.prototype.encrypt = function (plaintext) {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
-    var DecryptKey = function () {};
-    ns.Interface(DecryptKey, [CryptographyKey]);
+    var DecryptKey = Interface(null, [CryptographyKey]);
 
     /**
      *  plaintext = decrypt(ciphertext, PW);
@@ -97,8 +92,7 @@
      * @return {Uint8Array}
      */
     DecryptKey.prototype.decrypt = function (ciphertext) {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
     /**
@@ -107,9 +101,8 @@
      * @param {EncryptKey} pKey - encrypt key
      * @return {boolean} true on signature matched
      */
-    DecryptKey.prototype.matches = function (pKey) {
-        ns.assert(false, 'implement me!');
-        return false;
+    DecryptKey.prototype.match = function (pKey) {
+        throw new Error('NotImplemented');
     };
 
     //-------- namespace --------
@@ -117,15 +110,12 @@
     ns.crypto.EncryptKey = EncryptKey;
     ns.crypto.DecryptKey = DecryptKey;
 
-    ns.crypto.registers('CryptographyKey');
-    ns.crypto.registers('EncryptKey');
-    ns.crypto.registers('DecryptKey');
-
 })(MONKEY);
 
 (function (ns) {
     'use strict';
 
+    var Interface = ns.type.Interface;
     var CryptographyKey = ns.crypto.CryptographyKey;
 
     //
@@ -138,14 +128,12 @@
     //      ...
     //  }
     //
-    var AsymmetricKey = function () {};
-    ns.Interface(AsymmetricKey, [CryptographyKey]);
+    var AsymmetricKey = Interface(null, [CryptographyKey]);
 
     AsymmetricKey.RSA = 'RSA'; //-- "RSA/ECB/PKCS1Padding", "SHA256withRSA"
     AsymmetricKey.ECC = 'ECC';
 
-    var SignKey = function () {};
-    ns.Interface(SignKey, [AsymmetricKey]);
+    var SignKey = Interface(null, [AsymmetricKey]);
 
     /**
      *  signature = sign(data, SK);
@@ -154,12 +142,10 @@
      * @return {Uint8Array}
      */
     SignKey.prototype.sign = function (data) {
-        ns.assert(false, 'implement me!');
-        return null;
+        throw new Error('NotImplemented');
     };
 
-    var VerifyKey = function () {};
-    ns.Interface(VerifyKey, [AsymmetricKey]);
+    var VerifyKey = Interface(null, [AsymmetricKey]);
 
     /**
      *  OK = verify(data, signature, PK)
@@ -169,8 +155,7 @@
      * @return {boolean}
      */
     VerifyKey.prototype.verify = function (data, signature) {
-        ns.assert(false, 'implement me!');
-        return false;
+        throw new Error('NotImplemented');
     };
 
     /**
@@ -179,52 +164,13 @@
      * @param {SignKey} sKey - private key
      * @return {boolean} true on signature matched
      */
-    VerifyKey.prototype.matches = function (sKey) {
-        ns.assert(false, 'implement me!');
-        return false;
+    VerifyKey.prototype.match = function (sKey) {
+        throw new Error('NotImplemented');
     };
 
     //-------- namespace --------
     ns.crypto.AsymmetricKey = AsymmetricKey;
     ns.crypto.SignKey = SignKey;
     ns.crypto.VerifyKey = VerifyKey;
-
-    ns.crypto.registers('AsymmetricKey');
-    ns.crypto.registers('SignKey');
-    ns.crypto.registers('VerifyKey');
-
-})(MONKEY);
-
-(function (ns) {
-    'use strict';
-
-    var CryptographyKey = ns.crypto.CryptographyKey;
-    var AsymmetricKey = ns.crypto.AsymmetricKey;
-
-    CryptographyKey.getAlgorithm = function (key) {
-        return key['algorithm'];
-    };
-
-    // sample data for checking keys
-    var promise = 'Moky loves May Lee forever!';
-    CryptographyKey.getPromise = function () {
-        if (typeof promise === 'string') {
-            promise = ns.format.UTF8.encode(promise);
-        }
-        return promise;
-    };
-
-    /**
-     *  Check key pair by encryption
-     *
-     * @param {SignKey}   sKey
-     * @param {VerifyKey} pKey
-     */
-    AsymmetricKey.matches = function (sKey, pKey) {
-        // check by encryption
-        var promise = CryptographyKey.getPromise();
-        var signature = sKey.sign(promise);
-        return pKey.verify(promise, signature);
-    };
 
 })(MONKEY);

@@ -80,6 +80,4 @@
     //-------- namespace --------
     ns.format.Base64 = Base64;
 
-    ns.format.registers('Base64');
-
 })(MONKEY);

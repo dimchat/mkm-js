@@ -30,18 +30,22 @@
 // =============================================================================
 //
 
-//! require 'string.js'
+//! require 'class.js'
+//! require 'object.js'
 //! require 'enum.js'
+//! require 'string.js'
 //! require 'arrays.js'
 //! require 'dictionary.js'
 
 (function (ns) {
     'use strict';
 
+    var Interface = ns.type.Interface;
     var IObject = ns.type.Object;
+    var Enum = ns.type.Enum;
     var Stringer = ns.type.Stringer;
+    var Arrays = ns.type.Arrays;
     var Mapper = ns.type.Mapper;
-    // var Enum = ns.type.Enum;
 
     /**
      *  Get inner String
@@ -52,10 +56,10 @@
      * @return {String}
      */
     var fetch_string = function (str) {
-        if (ns.Interface.conforms(str, Stringer)) {
+        if (Interface.conforms(str, Stringer)) {
             return str.toString();
         } else {
-            // ns.assert(str instanceof String, 'string error: ' + str);
+            // assert(str instanceof String, 'string error: ' + str);
             return str;
         }
     };
@@ -65,14 +69,14 @@
      *  ~~~~~~~~~~~~~
      *  Remove first wrapper
      *
-     * @param {Mapper|{}} dict
+     * @param {*} dict
      * @return {{}}
      */
     var fetch_map = function (dict) {
-        if (ns.Interface.conforms(dict, Mapper)) {
+        if (Interface.conforms(dict, Mapper)) {
             return dict.toMap();
         } else {
-            // ns.assert(dict instanceof {}, 'map error: ' + dict);
+            // assert(dict instanceof {}, 'map error: ' + dict);
             return dict;
         }
     };
@@ -92,16 +96,16 @@
         } else if (IObject.isBaseType(object)) {
             // return as base type
             return object;
-        // } else if (object instanceof Enum) {
-        //     // get enum value
-        //     return object.valueOf();
-        } else if (ns.Interface.conforms(object, Stringer)) {
+        } else if (Enum.isEnum(object)) {
+            // get enum value
+            return object.valueOf();
+        } else if (Interface.conforms(object, Stringer)) {
             // get inner string
             return object.toString();
-        // } else if (ns.Interface.conforms(object, Mapper)) {
-        //     // unwrap inner map
-        //     return unwrap_map(object.toMap());
-        } else if (!ns.type.Arrays.isArray(object)) {
+        } else if (Interface.conforms(object, Mapper)) {
+            // unwrap inner map
+            return unwrap_map(object.toMap());
+        } else if (!Arrays.isArray(object)) {
             // unwrap as a map
             return unwrap_map(object);
         } else if (object instanceof Array) {
@@ -114,38 +118,27 @@
     };
 
     var unwrap_map = function (dict) {
-        if (ns.Interface.conforms(dict, Mapper)) {
-            dict = dict.toMap();
-        }
+        var result = {};
         var allKeys = Object.keys(dict);
         var key;
-        var naked, value;
         var count = allKeys.length;
         for (var i = 0; i < count; ++i) {
             key = allKeys[i];
             // if (key instanceof Stringer) {
             //     key = key.toString();
             // }
-            value = dict[key];
-            naked = unwrap(value);
-            if (naked !== value) {
-                dict[key] = naked;
-            }
+            result[key] = unwrap(dict[key]);
         }
-        return dict;
+        return result;
     };
 
     var unwrap_list = function (array) {
-        var naked, item;
+        var result = [];
         var count = array.length;
         for (var i = 0; i < count; ++i) {
-            item = array[i];
-            naked = unwrap(item);
-            if (naked !== item) {
-                array[i] = naked;
-            }
+            result[i] = unwrap(array[i]);
         }
-        return array;
+        return result;
     };
 
     //-------- namespace --------
@@ -159,7 +152,5 @@
         unwrapMap: unwrap_map,
         unwrapList: unwrap_list
     };
-
-    ns.type.registers('Wrapper');
 
 })(MONKEY);

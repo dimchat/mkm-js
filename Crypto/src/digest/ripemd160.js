@@ -69,6 +69,4 @@
     //-------- namespace --------
     ns.digest.RIPEMD160 = RipeMD160;
 
-    ns.digest.registers('RIPEMD160');
-
 })(MONKEY);

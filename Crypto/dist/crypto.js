@@ -1,100 +1,27 @@
 /**
- * Cryptography JavaScript Library (v0.2.0)
+ * Cryptography JavaScript Library (v0.2.2)
  *
  * @author    moKy <albert.moky at gmail.com>
- * @date      Jun. 20, 2022
- * @copyright (c) 2022 Albert Moky
+ * @date      Feb. 9, 2023
+ * @copyright (c) 2023 Albert Moky
  * @license   {@link https://mit-license.org | MIT License}
  */;
 if (typeof MONKEY !== "object") {
     MONKEY = {};
 }
 (function (ns) {
-    var namespacefy = function (space) {
-        space.__all__ = [];
-        space.registers = namespace.prototype.registers;
-        space.exports = namespace.prototype.exports;
-        return space;
-    };
-    var is_space = function (space) {
-        if (space instanceof namespace) {
-            return true;
-        }
-        if (typeof space.exports !== "function") {
-            return false;
-        }
-        if (typeof space.registers !== "function") {
-            return false;
-        }
-        return space.__all__ instanceof Array;
-    };
-    var namespace = function () {
-        this.__all__ = [];
-    };
-    namespace.prototype.registers = function (name) {
-        if (this.__all__.indexOf(name) < 0) {
-            this.__all__.push(name);
-        }
-    };
-    namespace.prototype.exports = function (to) {
-        var names = this.__all__;
-        var name;
-        for (var i = 0; i < names.length; ++i) {
-            name = names[i];
-            export_one(this, to, name);
-            to.registers(name);
-        }
-        return to;
-    };
-    var export_one = function (from, to, name) {
-        var source = from[name];
-        var target = to[name];
-        if (source === target) {
-        } else {
-            if (typeof target === "undefined") {
-                to[name] = source;
-            } else {
-                if (is_space(source)) {
-                    if (!is_space(target)) {
-                        namespacefy(target);
-                    }
-                    source.exports(target);
-                } else {
-                    export_all(source, target);
-                }
-            }
-        }
-    };
-    var export_all = function (from, to) {
-        var names = Object.getOwnPropertyNames(from);
-        for (var i = 0; i < names.length; ++i) {
-            export_one(from, to, names[i]);
-        }
-    };
-    ns.Namespace = namespace;
-    namespacefy(ns);
-    ns.registers("Namespace");
-})(MONKEY);
-(function (ns) {
-    if (typeof ns.assert !== "function") {
-        ns.assert = console.assert;
-    }
     if (typeof ns.type !== "object") {
-        ns.type = new ns.Namespace();
+        ns.type = {};
     }
     if (typeof ns.format !== "object") {
-        ns.format = new ns.Namespace();
+        ns.format = {};
     }
     if (typeof ns.digest !== "object") {
-        ns.digest = new ns.Namespace();
+        ns.digest = {};
     }
     if (typeof ns.crypto !== "object") {
-        ns.crypto = new ns.Namespace();
+        ns.crypto = {};
     }
-    ns.registers("type");
-    ns.registers("format");
-    ns.registers("digest");
-    ns.registers("crypto");
 })(MONKEY);
 (function (ns) {
     var conforms = function (object, protocol) {
@@ -107,16 +34,12 @@ if (typeof MONKEY !== "object") {
         }
         return check_class(object.constructor, protocol);
     };
-    var check_class = function (child, protocol) {
-        var interfaces = child._mk_interfaces;
-        if (!interfaces) {
-            return false;
-        } else {
-            if (check_interfaces(interfaces, protocol)) {
-                return true;
-            }
+    var check_class = function (constructor, protocol) {
+        var interfaces = constructor._mk_interfaces;
+        if (interfaces && check_interfaces(interfaces, protocol)) {
+            return true;
         }
-        var parent = child._mk_parent;
+        var parent = constructor._mk_parent;
         return parent && check_class(parent, protocol);
     };
     var check_interfaces = function (interfaces, protocol) {
@@ -133,45 +56,21 @@ if (typeof MONKEY !== "object") {
         }
         return false;
     };
-    var get_interfaces = function (interfaces) {
-        if (!interfaces) {
-            return [];
-        } else {
-            if (interfaces instanceof Array) {
-                return interfaces;
-            } else {
-                return [interfaces];
-            }
-        }
-    };
-    var set_functions = function (child, functions) {
-        if (functions) {
-            var names = Object.getOwnPropertyNames(functions);
-            var key, fn;
-            for (var idx = 0; idx < names.length; ++idx) {
-                key = names[idx];
-                if (key === "constructor") {
-                    continue;
-                }
-                fn = functions[key];
-                if (typeof fn === "function") {
-                    child.prototype[key] = fn;
-                }
-            }
-        }
-        return child;
-    };
     var interfacefy = function (child, parents) {
         if (!child) {
             child = function () {};
         }
-        child._mk_parents = get_interfaces(parents);
+        if (parents) {
+            child._mk_parents = parents;
+        }
         return child;
     };
     interfacefy.conforms = conforms;
-    var classify = function (child, parent, interfaces, functions) {
+    var classify = function (child, parent, interfaces) {
         if (!child) {
-            child = function () {};
+            child = function () {
+                Object.call(this);
+            };
         }
         if (parent) {
             child._mk_parent = parent;
@@ -180,16 +79,17 @@ if (typeof MONKEY !== "object") {
         }
         child.prototype = Object.create(parent.prototype);
         child.prototype.constructor = child;
-        child._mk_interfaces = get_interfaces(interfaces);
-        set_functions(child, functions);
+        if (interfaces) {
+            child._mk_interfaces = interfaces;
+        }
         return child;
     };
-    ns.Interface = interfacefy;
-    ns.Class = classify;
-    ns.registers("Interface");
-    ns.registers("Class");
+    ns.type.Interface = interfacefy;
+    ns.type.Class = classify;
 })(MONKEY);
 (function (ns) {
+    var Interface = ns.type.Interface;
+    var Class = ns.type.Class;
     var is_null = function (object) {
         if (typeof object === "undefined") {
             return true;
@@ -207,15 +107,6 @@ if (typeof MONKEY !== "object") {
         ) {
             return true;
         }
-        if (object instanceof String) {
-            return true;
-        }
-        if (object instanceof Number) {
-            return true;
-        }
-        if (object instanceof Boolean) {
-            return true;
-        }
         if (object instanceof Date) {
             return true;
         }
@@ -224,32 +115,30 @@ if (typeof MONKEY !== "object") {
         }
         return object instanceof Error;
     };
-    var IObject = function () {};
-    ns.Interface(IObject, null);
-    IObject.prototype.equals = function (other) {
-        ns.assert(false, "implement me!");
-        return false;
+    var IObject = Interface(null, null);
+    IObject.prototype.toString = function () {
+        throw new Error("NotImplemented");
     };
     IObject.prototype.valueOf = function () {
-        ns.assert(false, "implement me!");
-        return false;
+        throw new Error("NotImplemented");
+    };
+    IObject.prototype.equals = function (other) {
+        throw new Error("NotImplemented");
     };
     IObject.isNull = is_null;
     IObject.isBaseType = is_base_type;
     var BaseObject = function () {
         Object.call(this);
     };
-    ns.Class(BaseObject, Object, [IObject], {
-        equals: function (other) {
-            return this === other;
-        }
-    });
+    Class(BaseObject, Object, [IObject]);
+    BaseObject.prototype.equals = function (other) {
+        return this === other;
+    };
     ns.type.Object = IObject;
     ns.type.BaseObject = BaseObject;
-    ns.type.registers("Object");
-    ns.type.registers("BaseObject");
 })(MONKEY);
 (function (ns) {
+    var IObject = ns.type.Object;
     var is_array = function (obj) {
         if (obj instanceof Array) {
             return true;
@@ -339,10 +228,10 @@ if (typeof MONKEY !== "object") {
                         if (typeof obj2["equals"] === "function") {
                             return obj2.equals(obj1);
                         } else {
-                            if (ns.type.Object.isBaseType(obj1)) {
+                            if (IObject.isBaseType(obj1)) {
                                 return obj1 === obj2;
                             } else {
-                                if (ns.type.Object.isBaseType(obj2)) {
+                                if (IObject.isBaseType(obj2)) {
                                     return false;
                                 } else {
                                     if (is_array(obj1)) {
@@ -425,46 +314,20 @@ if (typeof MONKEY !== "object") {
         isArray: is_array,
         copy: copy_items
     };
-    ns.type.registers("Arrays");
 })(MONKEY);
 (function (ns) {
+    var Class = ns.type.Class;
     var BaseObject = ns.type.BaseObject;
-    var enumify = function (enumeration, elements) {
-        if (!enumeration) {
-            enumeration = function (value, alias) {
-                Enum.call(this, value, alias);
-            };
-        }
-        ns.Class(enumeration, Enum, null, null);
-        var e, v;
-        for (var name in elements) {
-            if (!elements.hasOwnProperty(name)) {
-                continue;
-            }
-            v = elements[name];
-            if (v instanceof Enum) {
-                v = v.__value;
-            } else {
-                if (typeof v !== "number") {
-                    throw new TypeError("Enum value must be a number!");
-                }
-            }
-            e = new enumeration(v, name);
-            enumeration[name] = e;
-        }
-        return enumeration;
+    var is_enum = function (obj) {
+        return obj instanceof Enum;
     };
     var get_alias = function (enumeration, value) {
+        var keys = Object.keys(enumeration);
         var e;
-        for (var k in enumeration) {
-            if (!enumeration.hasOwnProperty(k)) {
-                continue;
-            }
+        for (var k in keys) {
             e = enumeration[k];
-            if (e instanceof enumeration) {
-                if (e.equals(value)) {
-                    return e.__alias;
-                }
+            if (e instanceof Enum && e.equals(value)) {
+                return e.__alias;
             }
         }
         return null;
@@ -472,19 +335,12 @@ if (typeof MONKEY !== "object") {
     var Enum = function (value, alias) {
         BaseObject.call(this);
         if (!alias) {
-            if (value instanceof Enum) {
-                alias = value.__alias;
-            } else {
-                alias = get_alias(this.constructor, value);
-            }
-        }
-        if (value instanceof Enum) {
-            value = value.__value;
+            alias = get_alias(this, value);
         }
         this.__value = value;
         this.__alias = alias;
     };
-    ns.Class(Enum, BaseObject, null, null);
+    Class(Enum, BaseObject, null);
     Enum.prototype.equals = function (other) {
         if (!other) {
             return !this.__value;
@@ -502,50 +358,70 @@ if (typeof MONKEY !== "object") {
     Enum.prototype.toString = function () {
         return "<" + this.__alias.toString() + ": " + this.__value.toString() + ">";
     };
+    var enumify = function (enumeration, elements) {
+        if (!enumeration) {
+            enumeration = function (value, alias) {
+                Enum.call(this, value, alias);
+            };
+        }
+        Class(enumeration, Enum, null);
+        var keys = Object.keys(elements);
+        var alias, value;
+        for (var i = 0; i < keys.length; ++i) {
+            alias = keys[i];
+            value = elements[alias];
+            if (value instanceof Enum) {
+                value = value.valueOf();
+            } else {
+                if (typeof value !== "number") {
+                    throw new TypeError("Enum value must be a number!");
+                }
+            }
+            enumeration[alias] = new enumeration(value, alias);
+        }
+        return enumeration;
+    };
+    enumify.isEnum = is_enum;
     ns.type.Enum = enumify;
-    ns.type.registers("Enum");
 })(MONKEY);
 (function (ns) {
-    var Stringer = function () {};
-    ns.Interface(Stringer, [ns.type.Object]);
-    Stringer.prototype.equalsIgnoreCase = function (other) {
-        ns.assert(false, "implement me!");
-        return false;
-    };
+    var Interface = ns.type.Interface;
+    var Class = ns.type.Class;
+    var IObject = ns.type.Object;
+    var BaseObject = ns.type.BaseObject;
+    var Stringer = Interface(null, [IObject]);
     Stringer.prototype.toString = function () {
-        ns.assert(false, "implement me!");
-        return null;
+        throw new Error("NotImplemented");
     };
     Stringer.prototype.getLength = function () {
-        ns.assert(false, "implement me!");
-        return 0;
+        throw new Error("NotImplemented");
     };
-    ns.type.Stringer = Stringer;
-    ns.type.registers("Stringer");
-})(MONKEY);
-(function (ns) {
-    var BaseObject = ns.type.BaseObject;
-    var Stringer = ns.type.Stringer;
+    Stringer.prototype.isEmpty = function () {
+        throw new Error("NotImplemented");
+    };
+    Stringer.prototype.equalsIgnoreCase = function (other) {
+        throw new Error("NotImplemented");
+    };
     var ConstantString = function (str) {
         BaseObject.call(this);
         if (!str) {
             str = "";
         } else {
-            if (ns.Interface.conforms(str, Stringer)) {
+            if (Interface.conforms(str, Stringer)) {
                 str = str.toString();
             }
         }
         this.__string = str;
     };
-    ns.Class(ConstantString, BaseObject, [Stringer], null);
+    Class(ConstantString, BaseObject, [Stringer]);
     ConstantString.prototype.equals = function (other) {
-        if (BaseObject.prototype.equals.call(this, other)) {
+        if (this === other) {
             return true;
         } else {
             if (!other) {
                 return !this.__string;
             } else {
-                if (ns.Interface.conforms(other, Stringer)) {
+                if (Interface.conforms(other, Stringer)) {
                     return this.__string === other.toString();
                 } else {
                     return this.__string === other;
@@ -553,14 +429,26 @@ if (typeof MONKEY !== "object") {
             }
         }
     };
+    ConstantString.prototype.valueOf = function () {
+        return this.__string;
+    };
+    ConstantString.prototype.toString = function () {
+        return this.__string;
+    };
+    ConstantString.prototype.getLength = function () {
+        return this.__string.length;
+    };
+    ConstantString.prototype.isEmpty = function () {
+        return this.__string.length === 0;
+    };
     ConstantString.prototype.equalsIgnoreCase = function (other) {
-        if (this.equals(other)) {
+        if (this === other) {
             return true;
         } else {
             if (!other) {
                 return !this.__string;
             } else {
-                if (ns.Interface.conforms(other, Stringer)) {
+                if (Interface.conforms(other, Stringer)) {
                     return equalsIgnoreCase(this.__string, other.toString());
                 } else {
                     return equalsIgnoreCase(this.__string, other);
@@ -576,79 +464,108 @@ if (typeof MONKEY !== "object") {
         var low2 = str2.toLowerCase();
         return low1 === low2;
     };
-    ConstantString.prototype.valueOf = function () {
-        return this.__string;
-    };
-    ConstantString.prototype.toString = function () {
-        return this.__string;
-    };
-    ConstantString.prototype.getLength = function () {
-        return this.__string.length;
-    };
+    ns.type.Stringer = Stringer;
     ns.type.ConstantString = ConstantString;
-    ns.type.registers("ConstantString");
 })(MONKEY);
 (function (ns) {
-    var Mapper = function () {};
-    ns.Interface(Mapper, [ns.type.Object]);
-    Mapper.prototype.getValue = function (key) {
-        ns.assert(false, "implement me!");
-        return null;
+    var Interface = ns.type.Interface;
+    var Class = ns.type.Class;
+    var IObject = ns.type.Object;
+    var BaseObject = ns.type.BaseObject;
+    var arrays_equals = function (a1, a2) {
+        return ns.type.Arrays.equals(a1, a2);
     };
-    Mapper.prototype.setValue = function (key, value) {
-        ns.assert(false, "implement me!");
+    var copy_map = function (map, deep) {
+        if (deep) {
+            return ns.type.Copier.deepCopyMap(this.__dictionary);
+        } else {
+            return ns.type.Copier.copyMap(this.__dictionary);
+        }
     };
-    Mapper.prototype.removeValue = function (key) {
-        ns.assert(false, "implement me!");
-        return null;
+    var json_encode = function (dict) {
+        return ns.format.JSON.encode(dict);
     };
-    Mapper.prototype.allKeys = function () {
-        ns.assert(false, "implement me!");
-        return null;
-    };
+    var Mapper = Interface(null, [IObject]);
     Mapper.prototype.toMap = function () {
-        ns.assert(false, "implement me!");
-        return null;
+        throw new Error("NotImplemented");
     };
     Mapper.prototype.copyMap = function (deepCopy) {
-        ns.assert(false, "implement me!");
-        return null;
+        throw new Error("NotImplemented");
     };
-    ns.type.Mapper = Mapper;
-    ns.type.registers("Mapper");
-})(MONKEY);
-(function (ns) {
-    var BaseObject = ns.type.BaseObject;
-    var Mapper = ns.type.Mapper;
+    Mapper.prototype.allKeys = function () {
+        throw new Error("NotImplemented");
+    };
+    Mapper.prototype.getValue = function (key) {
+        throw new Error("NotImplemented");
+    };
+    Mapper.prototype.setValue = function (key, value) {
+        throw new Error("NotImplemented");
+    };
+    Mapper.prototype.removeValue = function (key) {
+        throw new Error("NotImplemented");
+    };
+    Mapper.prototype.getString = function (key) {
+        throw new Error("NotImplemented");
+    };
+    Mapper.prototype.getBoolean = function (key) {
+        throw new Error("NotImplemented");
+    };
+    Mapper.prototype.getNumber = function (key) {
+        throw new Error("NotImplemented");
+    };
+    Mapper.prototype.getTime = function (key) {
+        throw new Error("NotImplemented");
+    };
+    Mapper.prototype.setTime = function (key, time) {
+        throw new Error("NotImplemented");
+    };
+    Mapper.prototype.setString = function (key, stringer) {
+        throw new Error("NotImplemented");
+    };
+    Mapper.prototype.setMap = function (key, mapper) {
+        throw new Error("NotImplemented");
+    };
     var Dictionary = function (dict) {
         BaseObject.call(this);
         if (!dict) {
             dict = {};
         } else {
-            if (ns.Interface.conforms(dict, Mapper)) {
+            if (Interface.conforms(dict, Mapper)) {
                 dict = dict.toMap();
             }
         }
         this.__dictionary = dict;
     };
-    ns.Class(Dictionary, BaseObject, [Mapper], null);
+    Class(Dictionary, BaseObject, [Mapper]);
     Dictionary.prototype.equals = function (other) {
-        if (BaseObject.prototype.equals.call(this, other)) {
+        if (this === other) {
             return true;
         } else {
             if (!other) {
                 return !this.__dictionary;
             } else {
-                if (ns.Interface.conforms(other, Mapper)) {
-                    return ns.type.Arrays.equals(this.__dictionary, other.toMap());
+                if (Interface.conforms(other, Mapper)) {
+                    return arrays_equals(this.__dictionary, other.toMap());
                 } else {
-                    return ns.type.Arrays.equals(this.__dictionary, other);
+                    return arrays_equals(this.__dictionary, other);
                 }
             }
         }
     };
     Dictionary.prototype.valueOf = function () {
         return this.__dictionary;
+    };
+    Dictionary.prototype.toString = function () {
+        return json_encode(this.__dictionary);
+    };
+    Dictionary.prototype.toMap = function () {
+        return this.__dictionary;
+    };
+    Dictionary.prototype.copyMap = function (deepCopy) {
+        return copy_map(this.__dictionary, deepCopy);
+    };
+    Dictionary.prototype.allKeys = function () {
+        return Object.keys(this.__dictionary);
     };
     Dictionary.prototype.getValue = function (key) {
         return this.__dictionary[key];
@@ -672,35 +589,62 @@ if (typeof MONKEY !== "object") {
         }
         return value;
     };
-    Dictionary.prototype.allKeys = function () {
-        return Object.keys(this.__dictionary);
+    Dictionary.prototype.getString = function (key) {
+        return this.__dictionary[key];
     };
-    Dictionary.prototype.toMap = function () {
-        return this.__dictionary;
+    Dictionary.prototype.getBoolean = function (key) {
+        var value = this.__dictionary[key];
+        return value === null ? 0 : value.valueOf();
     };
-    Dictionary.prototype.copyMap = function (deepCopy) {
-        if (deepCopy) {
-            return ns.type.Copier.deepCopyMap(this.__dictionary);
-        } else {
-            return ns.type.Copier.copyMap(this.__dictionary);
+    Dictionary.prototype.getNumber = function (key) {
+        var value = this.__dictionary[key];
+        return value === null ? 0 : value.valueOf();
+    };
+    Dictionary.prototype.getTime = function (key) {
+        var seconds = this.getNumber(key);
+        if (seconds <= 0) {
+            return null;
         }
+        var millis = seconds * 1000;
+        return new Date(millis);
     };
+    Dictionary.prototype.setTime = function (key, time) {
+        if (time instanceof Date) {
+            time = time.getTime() / 1000;
+        }
+        this.setValue(key, time);
+    };
+    Dictionary.prototype.setString = function (key, string) {
+        if (string) {
+            string = string.toString();
+        }
+        this.setValue(key, string);
+    };
+    Dictionary.prototype.setMap = function (key, map) {
+        if (map) {
+            map = map.toMap();
+        }
+        this.setValue(key, map);
+    };
+    ns.type.Mapper = Mapper;
     ns.type.Dictionary = Dictionary;
-    ns.type.registers("Dictionary");
 })(MONKEY);
 (function (ns) {
+    var Interface = ns.type.Interface;
     var IObject = ns.type.Object;
+    var Enum = ns.type.Enum;
     var Stringer = ns.type.Stringer;
+    var Arrays = ns.type.Arrays;
     var Mapper = ns.type.Mapper;
     var fetch_string = function (str) {
-        if (ns.Interface.conforms(str, Stringer)) {
+        if (Interface.conforms(str, Stringer)) {
             return str.toString();
         } else {
             return str;
         }
     };
     var fetch_map = function (dict) {
-        if (ns.Interface.conforms(dict, Mapper)) {
+        if (Interface.conforms(dict, Mapper)) {
             return dict.toMap();
         } else {
             return dict;
@@ -713,16 +657,24 @@ if (typeof MONKEY !== "object") {
             if (IObject.isBaseType(object)) {
                 return object;
             } else {
-                if (ns.Interface.conforms(object, Stringer)) {
-                    return object.toString();
+                if (Enum.isEnum(object)) {
+                    return object.valueOf();
                 } else {
-                    if (!ns.type.Arrays.isArray(object)) {
-                        return unwrap_map(object);
+                    if (Interface.conforms(object, Stringer)) {
+                        return object.toString();
                     } else {
-                        if (object instanceof Array) {
-                            return unwrap_list(object);
+                        if (Interface.conforms(object, Mapper)) {
+                            return unwrap_map(object.toMap());
                         } else {
-                            return object;
+                            if (!Arrays.isArray(object)) {
+                                return unwrap_map(object);
+                            } else {
+                                if (object instanceof Array) {
+                                    return unwrap_list(object);
+                                } else {
+                                    return object;
+                                }
+                            }
                         }
                     }
                 }
@@ -730,34 +682,23 @@ if (typeof MONKEY !== "object") {
         }
     };
     var unwrap_map = function (dict) {
-        if (ns.Interface.conforms(dict, Mapper)) {
-            dict = dict.toMap();
-        }
+        var result = {};
         var allKeys = Object.keys(dict);
         var key;
-        var naked, value;
         var count = allKeys.length;
         for (var i = 0; i < count; ++i) {
             key = allKeys[i];
-            value = dict[key];
-            naked = unwrap(value);
-            if (naked !== value) {
-                dict[key] = naked;
-            }
+            result[key] = unwrap(dict[key]);
         }
-        return dict;
+        return result;
     };
     var unwrap_list = function (array) {
-        var naked, item;
+        var result = [];
         var count = array.length;
         for (var i = 0; i < count; ++i) {
-            item = array[i];
-            naked = unwrap(item);
-            if (naked !== item) {
-                array[i] = naked;
-            }
+            result[i] = unwrap(array[i]);
         }
-        return array;
+        return result;
     };
     ns.type.Wrapper = {
         fetchString: fetch_string,
@@ -766,11 +707,13 @@ if (typeof MONKEY !== "object") {
         unwrapMap: unwrap_map,
         unwrapList: unwrap_list
     };
-    ns.type.registers("Wrapper");
 })(MONKEY);
 (function (ns) {
+    var Interface = ns.type.Interface;
     var IObject = ns.type.Object;
+    var Enum = ns.type.Enum;
     var Stringer = ns.type.Stringer;
+    var Arrays = ns.type.Arrays;
     var Mapper = ns.type.Mapper;
     var copy = function (object) {
         if (IObject.isNull(object)) {
@@ -779,16 +722,24 @@ if (typeof MONKEY !== "object") {
             if (IObject.isBaseType(object)) {
                 return object;
             } else {
-                if (ns.Interface.conforms(object, Stringer)) {
-                    return object.toString();
+                if (Enum.isEnum(object)) {
+                    return object.valueOf();
                 } else {
-                    if (!ns.type.Arrays.isArray(object)) {
-                        return copy_map(object);
+                    if (Interface.conforms(object, Stringer)) {
+                        return object.toString();
                     } else {
-                        if (object instanceof Array) {
-                            return copy_list(object);
+                        if (Interface.conforms(object, Mapper)) {
+                            return copy_map(object.toMap());
                         } else {
-                            return object;
+                            if (!Arrays.isArray(object)) {
+                                return copy_map(object);
+                            } else {
+                                if (object instanceof Array) {
+                                    return copy_list(object);
+                                } else {
+                                    return object;
+                                }
+                            }
                         }
                     }
                 }
@@ -796,9 +747,6 @@ if (typeof MONKEY !== "object") {
         }
     };
     var copy_map = function (dict) {
-        if (ns.Interface.conforms(dict, Mapper)) {
-            dict = dict.toMap();
-        }
         var clone = {};
         var allKeys = Object.keys(dict);
         var key;
@@ -824,16 +772,24 @@ if (typeof MONKEY !== "object") {
             if (IObject.isBaseType(object)) {
                 return object;
             } else {
-                if (ns.Interface.conforms(object, Stringer)) {
-                    return object.toString();
+                if (Enum.isEnum(object)) {
+                    return object.valueOf();
                 } else {
-                    if (!ns.type.Arrays.isArray(object)) {
-                        return deep_copy_map(object);
+                    if (Interface.conforms(object, Stringer)) {
+                        return object.toString();
                     } else {
-                        if (object instanceof Array) {
-                            return deep_copy_list(object);
+                        if (Interface.conforms(object, Mapper)) {
+                            return deep_copy_map(object.toMap());
                         } else {
-                            return object;
+                            if (!Arrays.isArray(object)) {
+                                return deep_copy_map(object);
+                            } else {
+                                if (object instanceof Array) {
+                                    return deep_copy_list(object);
+                                } else {
+                                    return object;
+                                }
+                            }
                         }
                     }
                 }
@@ -841,9 +797,6 @@ if (typeof MONKEY !== "object") {
         }
     };
     var deep_copy_map = function (dict) {
-        if (ns.Interface.conforms(dict, Mapper)) {
-            dict = dict.toMap();
-        }
         var clone = {};
         var allKeys = Object.keys(dict);
         var key;
@@ -870,17 +823,14 @@ if (typeof MONKEY !== "object") {
         deepCopyMap: deep_copy_map,
         deepCopyList: deep_copy_list
     };
-    ns.type.registers("Copier");
 })(MONKEY);
 (function (ns) {
-    var DataDigester = function () {};
-    ns.Interface(DataDigester, null);
+    var Interface = ns.type.Interface;
+    var DataDigester = Interface(null, null);
     DataDigester.prototype.digest = function (data) {
-        ns.assert(false, "implement me!");
-        return null;
+        throw new Error("NotImplemented");
     };
     ns.digest.DataDigester = DataDigester;
-    ns.digest.registers("DataDigester");
 })(MONKEY);
 (function (ns) {
     var MD5 = {
@@ -896,7 +846,6 @@ if (typeof MONKEY !== "object") {
     };
     var md5Digester = null;
     ns.digest.MD5 = MD5;
-    ns.digest.registers("MD5");
 })(MONKEY);
 (function (ns) {
     var SHA1 = {
@@ -912,7 +861,6 @@ if (typeof MONKEY !== "object") {
     };
     var sha1Digester = null;
     ns.digest.SHA1 = SHA1;
-    ns.digest.registers("SHA1");
 })(MONKEY);
 (function (ns) {
     var SHA256 = {
@@ -928,7 +876,6 @@ if (typeof MONKEY !== "object") {
     };
     var sha256Digester = null;
     ns.digest.SHA256 = SHA256;
-    ns.digest.registers("SHA256");
 })(MONKEY);
 (function (ns) {
     var RipeMD160 = {
@@ -944,7 +891,6 @@ if (typeof MONKEY !== "object") {
     };
     var ripemd160Digester = null;
     ns.digest.RIPEMD160 = RipeMD160;
-    ns.digest.registers("RIPEMD160");
 })(MONKEY);
 (function (ns) {
     var Keccak256 = {
@@ -960,107 +906,35 @@ if (typeof MONKEY !== "object") {
     };
     var keccak256Digester = null;
     ns.digest.KECCAK256 = Keccak256;
-    ns.digest.registers("KECCAK256");
 })(MONKEY);
 (function (ns) {
-    var DataCoder = function () {};
-    ns.Interface(DataCoder, null);
+    var Interface = ns.type.Interface;
+    var DataCoder = Interface(null, null);
     DataCoder.prototype.encode = function (data) {
-        ns.assert(false, "implement me!");
-        return null;
+        throw new Error("NotImplemented");
     };
     DataCoder.prototype.decode = function (string) {
-        ns.assert(false, "implement me!");
-        return null;
+        throw new Error("NotImplemented");
     };
-    var ObjectCoder = function () {};
-    ns.Interface(ObjectCoder, null);
+    var ObjectCoder = Interface(null, null);
     ObjectCoder.prototype.encode = function (object) {
-        ns.assert(false, "implement me!");
-        return null;
+        throw new Error("NotImplemented");
     };
     ObjectCoder.prototype.decode = function (string) {
-        ns.assert(false, "implement me!");
-        return null;
+        throw new Error("NotImplemented");
     };
-    var StringCoder = function () {};
-    ns.Interface(StringCoder, null);
+    var StringCoder = Interface(null, null);
     StringCoder.prototype.encode = function (string) {
-        ns.assert(false, "implement me!");
-        return null;
+        throw new Error("NotImplemented");
     };
     StringCoder.prototype.decode = function (data) {
-        ns.assert(false, "implement me!");
-        return null;
+        throw new Error("NotImplemented");
     };
     ns.format.DataCoder = DataCoder;
     ns.format.ObjectCoder = ObjectCoder;
     ns.format.StringCoder = StringCoder;
-    ns.format.registers("DataCoder");
-    ns.format.registers("ObjectCoder");
-    ns.format.registers("StringCoder");
 })(MONKEY);
 (function (ns) {
-    var DataCoder = ns.format.DataCoder;
-    var hex_chars = "0123456789abcdef";
-    var hex_values = new Int8Array(128);
-    (function (chars, values) {
-        for (var i = 0; i < chars.length; ++i) {
-            values[chars.charCodeAt(i)] = i;
-        }
-        values["A".charCodeAt(0)] = 10;
-        values["B".charCodeAt(0)] = 11;
-        values["C".charCodeAt(0)] = 12;
-        values["D".charCodeAt(0)] = 13;
-        values["E".charCodeAt(0)] = 14;
-        values["F".charCodeAt(0)] = 15;
-    })(hex_chars, hex_values);
-    var hex_encode = function (data) {
-        var len = data.length;
-        var str = "";
-        var byt;
-        for (var i = 0; i < len; ++i) {
-            byt = data[i];
-            str += hex_chars[byt >> 4];
-            str += hex_chars[byt & 15];
-        }
-        return str;
-    };
-    var hex_decode = function (string) {
-        var len = string.length;
-        if (len > 2) {
-            if (string[0] === "0") {
-                if (string[1] === "x" || string[1] === "X") {
-                    string = string.substring(2);
-                    len -= 2;
-                }
-            }
-        }
-        if (len % 2 === 1) {
-            string = "0" + string;
-            len += 1;
-        }
-        var cnt = len >> 1;
-        var hi, lo;
-        var data = new Uint8Array(cnt);
-        for (var i = 0, j = 0; i < cnt; ++i, j += 2) {
-            hi = hex_values[string.charCodeAt(j)];
-            lo = hex_values[string.charCodeAt(j + 1)];
-            data[i] = (hi << 4) | lo;
-        }
-        return data;
-    };
-    var HexCoder = function () {
-        Object.call(this);
-    };
-    ns.Class(HexCoder, Object, [DataCoder], {
-        encode: function (data) {
-            return hex_encode(data);
-        },
-        decode: function (string) {
-            return hex_decode(string);
-        }
-    });
     var Hex = {
         encode: function (data) {
             return this.getCoder().encode(data);
@@ -1075,9 +949,8 @@ if (typeof MONKEY !== "object") {
             hexCoder = coder;
         }
     };
-    var hexCoder = new HexCoder();
+    var hexCoder = null;
     ns.format.Hex = Hex;
-    ns.format.registers("Hex");
 })(MONKEY);
 (function (ns) {
     var Base58 = {
@@ -1096,7 +969,6 @@ if (typeof MONKEY !== "object") {
     };
     var base58Coder = null;
     ns.format.Base58 = Base58;
-    ns.format.registers("Base58");
 })(MONKEY);
 (function (ns) {
     var Base64 = {
@@ -1115,7 +987,6 @@ if (typeof MONKEY !== "object") {
     };
     var base64Coder = null;
     ns.format.Base64 = Base64;
-    ns.format.registers("Base64");
 })(MONKEY);
 (function (ns) {
     var UTF8 = {
@@ -1134,21 +1005,8 @@ if (typeof MONKEY !== "object") {
     };
     var utf8Coder = null;
     ns.format.UTF8 = UTF8;
-    ns.format.registers("UTF8");
 })(MONKEY);
 (function (ns) {
-    var ObjectCoder = ns.format.ObjectCoder;
-    var JsonCoder = function () {
-        Object.call(this);
-    };
-    ns.Class(JsonCoder, Object, [ObjectCoder], {
-        encode: function (object) {
-            return JSON.stringify(object);
-        },
-        decode: function (string) {
-            return JSON.parse(string);
-        }
-    });
     var JsON = {
         encode: function (object) {
             return this.getCoder().encode(object);
@@ -1163,253 +1021,285 @@ if (typeof MONKEY !== "object") {
             jsonCoder = coder;
         }
     };
-    var jsonCoder = new JsonCoder();
+    var jsonCoder = null;
     ns.format.JSON = JsON;
-    ns.format.registers("JSON");
 })(MONKEY);
 (function (ns) {
+    var Interface = ns.type.Interface;
     var Mapper = ns.type.Mapper;
-    var CryptographyKey = function () {};
-    ns.Interface(CryptographyKey, [Mapper]);
+    var CryptographyKey = Interface(null, [Mapper]);
     CryptographyKey.prototype.getAlgorithm = function () {
-        ns.assert(false, "implement me!");
-        return null;
+        throw new Error("NotImplemented");
     };
     CryptographyKey.prototype.getData = function () {
-        ns.assert(false, "implement me!");
-        return null;
+        throw new Error("NotImplemented");
     };
-    var EncryptKey = function () {};
-    ns.Interface(EncryptKey, [CryptographyKey]);
+    var EncryptKey = Interface(null, [CryptographyKey]);
     EncryptKey.prototype.encrypt = function (plaintext) {
-        ns.assert(false, "implement me!");
-        return null;
+        throw new Error("NotImplemented");
     };
-    var DecryptKey = function () {};
-    ns.Interface(DecryptKey, [CryptographyKey]);
+    var DecryptKey = Interface(null, [CryptographyKey]);
     DecryptKey.prototype.decrypt = function (ciphertext) {
-        ns.assert(false, "implement me!");
-        return null;
+        throw new Error("NotImplemented");
     };
-    DecryptKey.prototype.matches = function (pKey) {
-        ns.assert(false, "implement me!");
-        return false;
+    DecryptKey.prototype.match = function (pKey) {
+        throw new Error("NotImplemented");
     };
     ns.crypto.CryptographyKey = CryptographyKey;
     ns.crypto.EncryptKey = EncryptKey;
     ns.crypto.DecryptKey = DecryptKey;
-    ns.crypto.registers("CryptographyKey");
-    ns.crypto.registers("EncryptKey");
-    ns.crypto.registers("DecryptKey");
 })(MONKEY);
 (function (ns) {
+    var Interface = ns.type.Interface;
     var CryptographyKey = ns.crypto.CryptographyKey;
-    var AsymmetricKey = function () {};
-    ns.Interface(AsymmetricKey, [CryptographyKey]);
+    var AsymmetricKey = Interface(null, [CryptographyKey]);
     AsymmetricKey.RSA = "RSA";
     AsymmetricKey.ECC = "ECC";
-    var SignKey = function () {};
-    ns.Interface(SignKey, [AsymmetricKey]);
+    var SignKey = Interface(null, [AsymmetricKey]);
     SignKey.prototype.sign = function (data) {
-        ns.assert(false, "implement me!");
-        return null;
+        throw new Error("NotImplemented");
     };
-    var VerifyKey = function () {};
-    ns.Interface(VerifyKey, [AsymmetricKey]);
+    var VerifyKey = Interface(null, [AsymmetricKey]);
     VerifyKey.prototype.verify = function (data, signature) {
-        ns.assert(false, "implement me!");
-        return false;
+        throw new Error("NotImplemented");
     };
-    VerifyKey.prototype.matches = function (sKey) {
-        ns.assert(false, "implement me!");
-        return false;
+    VerifyKey.prototype.match = function (sKey) {
+        throw new Error("NotImplemented");
     };
     ns.crypto.AsymmetricKey = AsymmetricKey;
     ns.crypto.SignKey = SignKey;
     ns.crypto.VerifyKey = VerifyKey;
-    ns.crypto.registers("AsymmetricKey");
-    ns.crypto.registers("SignKey");
-    ns.crypto.registers("VerifyKey");
 })(MONKEY);
 (function (ns) {
-    var CryptographyKey = ns.crypto.CryptographyKey;
-    var AsymmetricKey = ns.crypto.AsymmetricKey;
-    CryptographyKey.getAlgorithm = function (key) {
-        return key["algorithm"];
+    var Interface = ns.type.Interface;
+    var EncryptKey = ns.crypto.EncryptKey;
+    var DecryptKey = ns.crypto.DecryptKey;
+    var general_factory = function () {
+        var man = ns.crypto.FactoryManager;
+        return man.generalFactory;
     };
+    var SymmetricKey = Interface(null, [EncryptKey, DecryptKey]);
+    SymmetricKey.AES = "AES";
+    SymmetricKey.DES = "DES";
+    var SymmetricKeyFactory = Interface(null, null);
+    SymmetricKeyFactory.prototype.generateSymmetricKey = function () {
+        throw new Error("NotImplemented");
+    };
+    SymmetricKeyFactory.prototype.parseSymmetricKey = function (key) {
+        throw new Error("NotImplemented");
+    };
+    SymmetricKey.Factory = SymmetricKeyFactory;
+    SymmetricKey.setFactory = function (algorithm, factory) {
+        var gf = general_factory();
+        gf.setSymmetricKeyFactory(algorithm, factory);
+    };
+    SymmetricKey.getFactory = function (algorithm) {
+        var gf = general_factory();
+        return gf.getSymmetricKeyFactory(algorithm);
+    };
+    SymmetricKey.generate = function (algorithm) {
+        var gf = general_factory();
+        return gf.generateSymmetricKey(algorithm);
+    };
+    SymmetricKey.parse = function (key) {
+        var gf = general_factory();
+        return gf.parseSymmetricKey(key);
+    };
+    ns.crypto.SymmetricKey = SymmetricKey;
+})(MONKEY);
+(function (ns) {
+    var Interface = ns.type.Interface;
+    var AsymmetricKey = ns.crypto.AsymmetricKey;
+    var VerifyKey = ns.crypto.VerifyKey;
+    var general_factory = function () {
+        var man = ns.crypto.FactoryManager;
+        return man.generalFactory;
+    };
+    var PublicKey = Interface(null, [VerifyKey]);
+    PublicKey.RSA = AsymmetricKey.RSA;
+    PublicKey.ECC = AsymmetricKey.ECC;
+    var PublicKeyFactory = Interface(null, null);
+    PublicKeyFactory.prototype.parsePublicKey = function (key) {
+        throw new Error("NotImplemented");
+    };
+    PublicKey.Factory = PublicKeyFactory;
+    PublicKey.setFactory = function (algorithm, factory) {
+        var gf = general_factory();
+        gf.setPublicKeyFactory(algorithm, factory);
+    };
+    PublicKey.getFactory = function (algorithm) {
+        var gf = general_factory();
+        return gf.getPublicKeyFactory(algorithm);
+    };
+    PublicKey.parse = function (key) {
+        var gf = general_factory();
+        return gf.parsePublicKey(key);
+    };
+    ns.crypto.PublicKey = PublicKey;
+})(MONKEY);
+(function (ns) {
+    var Interface = ns.type.Interface;
+    var AsymmetricKey = ns.crypto.AsymmetricKey;
+    var SignKey = ns.crypto.SignKey;
+    var general_factory = function () {
+        var man = ns.crypto.FactoryManager;
+        return man.generalFactory;
+    };
+    var PrivateKey = Interface(null, [SignKey]);
+    PrivateKey.RSA = AsymmetricKey.RSA;
+    PrivateKey.ECC = AsymmetricKey.ECC;
+    PrivateKey.prototype.getPublicKey = function () {
+        throw new Error("NotImplemented");
+    };
+    var PrivateKeyFactory = Interface(null, null);
+    PrivateKeyFactory.prototype.generatePrivateKey = function () {
+        throw new Error("NotImplemented");
+    };
+    PrivateKeyFactory.prototype.parsePrivateKey = function (key) {
+        throw new Error("NotImplemented");
+    };
+    PrivateKey.Factory = PrivateKeyFactory;
+    PrivateKey.setFactory = function (algorithm, factory) {
+        var gf = general_factory();
+        gf.setPrivateKeyFactory(algorithm, factory);
+    };
+    PrivateKey.getFactory = function (algorithm) {
+        var gf = general_factory();
+        return gf.getPrivateKeyFactory(algorithm);
+    };
+    PrivateKey.generate = function (algorithm) {
+        var gf = general_factory();
+        return gf.generatePrivateKey(algorithm);
+    };
+    PrivateKey.parse = function (key) {
+        var gf = general_factory();
+        return gf.parsePrivateKey(key);
+    };
+    ns.crypto.PrivateKey = PrivateKey;
+})(MONKEY);
+(function (ns) {
+    var Interface = ns.type.Interface;
+    var Class = ns.type.Class;
+    var Wrapper = ns.type.Wrapper;
+    var SymmetricKey = ns.crypto.SymmetricKey;
+    var PrivateKey = ns.crypto.PrivateKey;
+    var PublicKey = ns.crypto.PublicKey;
     var promise = "Moky loves May Lee forever!";
-    CryptographyKey.getPromise = function () {
+    var get_promise = function () {
         if (typeof promise === "string") {
             promise = ns.format.UTF8.encode(promise);
         }
         return promise;
     };
-    AsymmetricKey.matches = function (sKey, pKey) {
-        var promise = CryptographyKey.getPromise();
-        var signature = sKey.sign(promise);
-        return pKey.verify(promise, signature);
+    var GeneralFactory = function () {
+        this.__symmetricKeyFactories = {};
+        this.__publicKeyFactories = {};
+        this.__privateKeyFactories = {};
     };
-})(MONKEY);
-(function (ns) {
-    var CryptographyKey = ns.crypto.CryptographyKey;
-    var EncryptKey = ns.crypto.EncryptKey;
-    var DecryptKey = ns.crypto.DecryptKey;
-    var SymmetricKey = function () {};
-    ns.Interface(SymmetricKey, [EncryptKey, DecryptKey]);
-    SymmetricKey.AES = "AES";
-    SymmetricKey.DES = "DES";
-    SymmetricKey.matches = function (pKey, sKey) {
-        var promise = CryptographyKey.getPromise();
-        var ciphertext = pKey.encrypt(promise);
+    Class(GeneralFactory, null, null);
+    GeneralFactory.prototype.matchSignKey = function (sKey, pKey) {
+        var data = get_promise();
+        var signature = sKey.sign(data);
+        return pKey.verify(data, signature);
+    };
+    GeneralFactory.prototype.matchEncryptKey = function (pKey, sKey) {
+        var data = get_promise();
+        var ciphertext = pKey.encrypt(data);
         var plaintext = sKey.decrypt(ciphertext);
-        if (!plaintext || plaintext.length !== promise.length) {
+        if (!plaintext || plaintext.length !== data.length) {
             return false;
         }
-        for (var i = 0; i < promise.length; ++i) {
-            if (plaintext[i] !== promise[i]) {
+        for (var i = 0; i < data.length; ++i) {
+            if (plaintext[i] !== data[i]) {
                 return false;
             }
         }
         return true;
     };
-    var SymmetricKeyFactory = function () {};
-    ns.Interface(SymmetricKeyFactory, null);
-    SymmetricKeyFactory.prototype.generateSymmetricKey = function () {
-        ns.assert(false, "implement me!");
-        return null;
+    GeneralFactory.prototype.getAlgorithm = function (key) {
+        return key["algorithm"];
     };
-    SymmetricKeyFactory.prototype.parseSymmetricKey = function (key) {
-        ns.assert(false, "implement me!");
-        return null;
+    GeneralFactory.prototype.setSymmetricKeyFactory = function (
+        algorithm,
+        factory
+    ) {
+        this.__symmetricKeyFactories[algorithm] = factory;
     };
-    SymmetricKey.Factory = SymmetricKeyFactory;
-    var s_symmetric_factories = {};
-    SymmetricKey.setFactory = function (algorithm, factory) {
-        s_symmetric_factories[algorithm] = factory;
+    GeneralFactory.prototype.getSymmetricKeyFactory = function (algorithm) {
+        return this.__symmetricKeyFactories[algorithm];
     };
-    SymmetricKey.getFactory = function (algorithm) {
-        return s_symmetric_factories[algorithm];
-    };
-    SymmetricKey.generate = function (algorithm) {
-        var factory = SymmetricKey.getFactory(algorithm);
-        if (!factory) {
-            throw new ReferenceError("key algorithm not support: " + algorithm);
-        }
+    GeneralFactory.prototype.generateSymmetricKey = function (algorithm) {
+        var factory = this.getSymmetricKeyFactory(algorithm);
         return factory.generateSymmetricKey();
     };
-    SymmetricKey.parse = function (key) {
+    GeneralFactory.prototype.parseSymmetricKey = function (key) {
         if (!key) {
             return null;
         } else {
-            if (ns.Interface.conforms(key, SymmetricKey)) {
+            if (Interface.conforms(key, SymmetricKey)) {
                 return key;
             }
         }
-        key = ns.type.Wrapper.fetchMap(key);
-        var algorithm = CryptographyKey.getAlgorithm(key);
-        var factory = SymmetricKey.getFactory(algorithm);
+        var info = Wrapper.fetchMap(key);
+        var algorithm = this.getAlgorithm(info);
+        var factory = this.getSymmetricKeyFactory(algorithm);
         if (!factory) {
-            factory = SymmetricKey.getFactory("*");
+            factory = this.getSymmetricKeyFactory("*");
         }
-        return factory.parseSymmetricKey(key);
+        return factory.parseSymmetricKey(info);
     };
-    ns.crypto.SymmetricKey = SymmetricKey;
-    ns.crypto.registers("SymmetricKey");
-})(MONKEY);
-(function (ns) {
-    var CryptographyKey = ns.crypto.CryptographyKey;
-    var AsymmetricKey = ns.crypto.AsymmetricKey;
-    var VerifyKey = ns.crypto.VerifyKey;
-    var PublicKey = function () {};
-    ns.Interface(PublicKey, [VerifyKey]);
-    PublicKey.RSA = AsymmetricKey.RSA;
-    PublicKey.ECC = AsymmetricKey.ECC;
-    var PublicKeyFactory = function () {};
-    ns.Interface(PublicKeyFactory, null);
-    PublicKeyFactory.prototype.parsePublicKey = function (key) {
-        ns.assert(false, "implement me!");
-        return null;
+    GeneralFactory.prototype.setPrivateKeyFactory = function (
+        algorithm,
+        factory
+    ) {
+        this.__privateKeyFactories[algorithm] = factory;
     };
-    PublicKey.Factory = PublicKeyFactory;
-    var s_public_factories = {};
-    PublicKey.setFactory = function (algorithm, factory) {
-        s_public_factories[algorithm] = factory;
+    GeneralFactory.prototype.getPrivateKeyFactory = function (algorithm) {
+        return this.__privateKeyFactories[algorithm];
     };
-    PublicKey.getFactory = function (algorithm) {
-        return s_public_factories[algorithm];
-    };
-    PublicKey.parse = function (key) {
-        if (!key) {
-            return null;
-        } else {
-            if (ns.Interface.conforms(key, PublicKey)) {
-                return key;
-            }
-        }
-        key = ns.type.Wrapper.fetchMap(key);
-        var algorithm = CryptographyKey.getAlgorithm(key);
-        var factory = PublicKey.getFactory(algorithm);
-        if (!factory) {
-            factory = PublicKey.getFactory("*");
-        }
-        return factory.parsePublicKey(key);
-    };
-    ns.crypto.PublicKey = PublicKey;
-    ns.crypto.registers("PublicKey");
-})(MONKEY);
-(function (ns) {
-    var CryptographyKey = ns.crypto.CryptographyKey;
-    var AsymmetricKey = ns.crypto.AsymmetricKey;
-    var SignKey = ns.crypto.SignKey;
-    var PrivateKey = function () {};
-    ns.Interface(PrivateKey, [SignKey]);
-    PrivateKey.RSA = AsymmetricKey.RSA;
-    PrivateKey.ECC = AsymmetricKey.ECC;
-    PrivateKey.prototype.getPublicKey = function () {
-        ns.assert(false, "implement me!");
-        return null;
-    };
-    var PrivateKeyFactory = function () {};
-    ns.Interface(PrivateKeyFactory, null);
-    PrivateKeyFactory.prototype.generatePrivateKey = function () {
-        ns.assert(false, "implement me!");
-        return null;
-    };
-    PrivateKeyFactory.prototype.parsePrivateKey = function (key) {
-        ns.assert(false, "implement me!");
-        return null;
-    };
-    PrivateKey.Factory = PrivateKeyFactory;
-    var s_private_factories = {};
-    PrivateKey.setFactory = function (algorithm, factory) {
-        s_private_factories[algorithm] = factory;
-    };
-    PrivateKey.getFactory = function (algorithm) {
-        return s_private_factories[algorithm];
-    };
-    PrivateKey.generate = function (algorithm) {
-        var factory = PrivateKey.getFactory(algorithm);
-        if (!factory) {
-            throw new ReferenceError("key algorithm not support: " + algorithm);
-        }
+    GeneralFactory.prototype.generatePrivateKey = function (algorithm) {
+        var factory = this.getPrivateKeyFactory(algorithm);
         return factory.generatePrivateKey();
     };
-    PrivateKey.parse = function (key) {
+    GeneralFactory.prototype.parsePrivateKey = function (key) {
         if (!key) {
             return null;
         } else {
-            if (ns.Interface.conforms(key, PrivateKey)) {
+            if (Interface.conforms(key, PrivateKey)) {
                 return key;
             }
         }
-        key = ns.type.Wrapper.fetchMap(key);
-        var algorithm = CryptographyKey.getAlgorithm(key);
-        var factory = PrivateKey.getFactory(algorithm);
+        var info = Wrapper.fetchMap(key);
+        var algorithm = this.getAlgorithm(info);
+        var factory = this.getPrivateKeyFactory(algorithm);
         if (!factory) {
-            factory = PrivateKey.getFactory("*");
+            factory = this.getPrivateKeyFactory("*");
         }
-        return factory.parsePrivateKey(key);
+        return factory.parsePrivateKey(info);
     };
-    ns.crypto.PrivateKey = PrivateKey;
-    ns.crypto.registers("PrivateKey");
+    GeneralFactory.prototype.setPublicKeyFactory = function (algorithm, factory) {
+        this.__publicKeyFactories[algorithm] = factory;
+    };
+    GeneralFactory.prototype.getPublicKeyFactory = function (algorithm) {
+        return this.__publicKeyFactories[algorithm];
+    };
+    GeneralFactory.prototype.parsePublicKey = function (key) {
+        if (!key) {
+            return null;
+        } else {
+            if (Interface.conforms(key, PublicKey)) {
+                return key;
+            }
+        }
+        var info = Wrapper.fetchMap(key);
+        var algorithm = this.getAlgorithm(info);
+        var factory = this.getPublicKeyFactory(algorithm);
+        if (!factory) {
+            factory = this.getPublicKeyFactory("*");
+        }
+        return factory.parsePublicKey(info);
+    };
+    var FactoryManager = { generalFactory: new GeneralFactory() };
+    ns.crypto.GeneralFactory = GeneralFactory;
+    ns.crypto.FactoryManager = FactoryManager;
 })(MONKEY);

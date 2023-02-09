@@ -16,38 +16,35 @@ crypto_tests = [];
         }
     };
 
+    var Interface = ns.type.Interface;
+    var Class = ns.type.Class;
     var BaseObject = ns.type.BaseObject;
 
-    var Named = function () {};
-    ns.Interface(Named, [ns.type.Object]);
+    var Named = Interface(null, null);
 
     Named.prototype.getName = function () {
-        assert(false, "implement me!");
-        return null;
+        throw new Error('NotImplemented');
     };
 
     // sing()
-    var Singer = function () {};
-    ns.Interface(Singer, [Named]);
+    var Singer = Interface(null, [Named]);
 
     Singer.prototype.sing = function () {
-        assert(false, "implement me!");
+        throw new Error('NotImplemented');
     };
 
     // fly()
-    var Flyer = function () {};
-    ns.Interface(Flyer, [Named]);
+    var Flyer = Interface(null, [Named]);
 
     Flyer.prototype.fly = function () {
-        assert(false, "implement me!");
+        throw new Error('NotImplemented');
     };
 
     // run()
-    var Runner = function () {};
-    ns.Interface(Runner, [Named]);
+    var Runner = Interface(null, [Named]);
 
     Runner.prototype.run = function () {
-        assert(false, "implement me!");
+        throw new Error('NotImplemented');
     };
 
     // Bird extends BaseObject implements Singer, Flyer
@@ -55,28 +52,26 @@ crypto_tests = [];
         BaseObject.call(this);
         this.__name = name;
     };
-    ns.Class(Bird, BaseObject, [Singer, Flyer], {
-        // Override
-        getName: function () {
-            return this.__name;
-        },
-        // Override
-        sing: function () {
-            var name = this.getName();
-            console.log(name + ' is singing');
-        }
-    });
+    Class(Bird, BaseObject, [Singer, Flyer]);
+    // Override
+    Bird.prototype.getName = function () {
+        return this.__name;
+    };
+    // Override
+    Bird.prototype.sing = function () {
+        var name = this.getName();
+        console.log(name + ' is singing');
+    };
 
     var Ostrich = function (name) {
         Bird.call(this, name);
     };
-    ns.Class(Ostrich, Bird, null, {
-        // Override
-        fly: function () {
-            var name = this.getName();
-            console.log(name + ' cannot fly');
-        }
-    });
+    Class(Ostrich, Bird, null);
+    // Override
+    Ostrich.prototype.fly = function () {
+        var name = this.getName();
+        console.log(name + ' cannot fly');
+    };
 
     var test_class = function () {
         var ostrich = new Ostrich('ostrich');
@@ -87,10 +82,10 @@ crypto_tests = [];
         assert(ostrich instanceof Singer, 'ostrich instanceof Singer');
         assert(ostrich instanceof Flyer, 'ostrich instanceof Flyer');
         assert(ostrich instanceof Runner, 'ostrich instanceof Runner');
-        assert(ns.Interface.conforms(ostrich, Named), 'ostrich conforms Named');
-        assert(ns.Interface.conforms(ostrich, Singer), 'ostrich conforms Singer');
-        assert(ns.Interface.conforms(ostrich, Flyer), 'ostrich conforms Flyer');
-        assert(ns.Interface.conforms(ostrich, Runner), 'ostrich conforms Runner');
+        assert(Interface.conforms(ostrich, Named), 'ostrich conforms Named');
+        assert(Interface.conforms(ostrich, Singer), 'ostrich conforms Singer');
+        assert(Interface.conforms(ostrich, Flyer), 'ostrich conforms Flyer');
+        assert(Interface.conforms(ostrich, Runner), 'ostrich conforms Runner');
     };
     crypto_tests.push(test_class);
 
@@ -100,6 +95,8 @@ crypto_tests = [];
     'use strict';
 
     var UTF8 = ns.format.UTF8;
+    var Enum = ns.type.Enum;
+    var Arrays = ns.type.Arrays;
     var Dictionary = ns.type.Dictionary;
     var ConstantString = ns.type.ConstantString;
 
@@ -114,13 +111,13 @@ crypto_tests = [];
         };
         var dict1 = new Dictionary(obj1);
         var dict2 = new Dictionary(obj2);
-        var equals = ns.type.Arrays.equals(dict1, dict2);
+        var equals = Arrays.equals(dict1, dict2);
         assert(equals === true, 'dictionary compare error');
     };
     crypto_tests.push(test_dictionary);
 
     var test_enum = function () {
-        var MetaType = ns.type.Enum(null, {
+        var MetaType = Enum(null, {
 
             Default: (0x01),
             MKM:     (0x01),  // 0000 0001
@@ -172,6 +169,24 @@ crypto_tests = [];
         assert(dec.toString() === data, 'UTF-8 string value error');
     };
     crypto_tests.push(test_utf8);
+
+})(MONKEY);
+
+(function (ns) {
+    'use strict';
+
+    var Arrays = ns.type.Arrays;
+    var JsON = ns.format.JSON;
+
+    var test_json = function () {
+        var container = [1, 2, 3];
+        var str = JsON.encode(container);
+        log('json: ', str);
+        var dec = JsON.decode(str);
+        log('json dec: ', dec);
+        assert(Arrays.equals(container, dec) === true, 'JSON decode error');
+    };
+    crypto_tests.push(test_json);
 
 })(MONKEY);
 
@@ -280,24 +295,6 @@ crypto_tests = [];
         assert(Hex.encode(hash) === exp, 'RIPEMD-160 digest error');
     };
     crypto_tests.push(test_ripemd160);
-
-})(MONKEY);
-
-(function (ns) {
-    'use strict';
-
-    var Arrays = ns.type.Arrays;
-    var JsON = ns.format.JSON;
-
-    var test_json = function () {
-        var container = [1, 2, 3];
-        var str = JsON.encode(container);
-        log('json: ', str);
-        var dec = JsON.decode(str);
-        log('json dec: ', dec);
-        assert(Arrays.equals(container, dec) === true, 'JSON decode error');
-    };
-    crypto_tests.push(test_json);
 
 })(MONKEY);
 
