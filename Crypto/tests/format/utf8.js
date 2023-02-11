@@ -133,7 +133,7 @@
     var Utf8Coder = function () {
         Object.call(this);
     };
-    Class(Utf8Coder, Object, [StringCoder]);
+    Class(Utf8Coder, Object, [StringCoder], null);
     // Override
     Utf8Coder.prototype.encode = function (string) {
         return utf8_encode(string);

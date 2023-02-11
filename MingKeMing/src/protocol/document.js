@@ -41,11 +41,6 @@
     var TAI = ns.protocol.TAI;
     var ID  = ns.protocol.ID;
 
-    var general_factory = function () {
-        var man = ns.mkm.FactoryManager;
-        return man.generalFactory;
-    };
-
     /**
      *  User/Group Profile
      *  ~~~~~~~~~~~~~~~~~~
@@ -122,6 +117,11 @@
     };
 
     Document.Factory = DocumentFactory;
+
+    var general_factory = function () {
+        var man = ns.mkm.FactoryManager;
+        return man.generalFactory;
+    };
 
     /**
      *  Register document factory with type

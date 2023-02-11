@@ -103,7 +103,7 @@
     var BaseObject = function () {
         Object.call(this);
     };
-    Class(BaseObject, Object, [IObject]);
+    Class(BaseObject, Object, [IObject], null);
 
     // Override
     BaseObject.prototype.equals = function (other) {

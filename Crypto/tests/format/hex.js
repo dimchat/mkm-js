@@ -110,7 +110,7 @@
     var HexCoder = function () {
         Object.call(this);
     };
-    Class(HexCoder, Object, [DataCoder]);
+    Class(HexCoder, Object, [DataCoder], null);
     // Override
     HexCoder.prototype.encode = function (data) {
         return hex_encode(data);

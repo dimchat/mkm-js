@@ -92,7 +92,7 @@
         }
         this.__string = str;
     };
-    Class(ConstantString, BaseObject, [Stringer]);
+    Class(ConstantString, BaseObject, [Stringer], null);
 
     // Override
     ConstantString.prototype.equals = function (other) {

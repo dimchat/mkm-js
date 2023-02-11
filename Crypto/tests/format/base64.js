@@ -157,7 +157,7 @@
     var Base64Coder = function () {
         Object.call(this);
     };
-    Class(Base64Coder, Object, [DataCoder]);
+    Class(Base64Coder, Object, [DataCoder], null);
 
     // Override
     Base64Coder.prototype.encode = function (data) {

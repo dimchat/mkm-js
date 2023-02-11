@@ -56,6 +56,18 @@ if (typeof MONKEY !== "object") {
         }
         return false;
     };
+    var def_methods = function (clazz, methods) {
+        var names = Object.keys(methods);
+        var key, fn;
+        for (var i = 0; i < names.length; ++i) {
+            key = names[i];
+            fn = methods[key];
+            if (typeof fn === "function") {
+                clazz.prototype[key] = fn;
+            }
+        }
+        return clazz;
+    };
     var interfacefy = function (child, parents) {
         if (!child) {
             child = function () {};
@@ -66,7 +78,7 @@ if (typeof MONKEY !== "object") {
         return child;
     };
     interfacefy.conforms = conforms;
-    var classify = function (child, parent, interfaces) {
+    var classify = function (child, parent, interfaces, methods) {
         if (!child) {
             child = function () {
                 Object.call(this);
@@ -81,6 +93,9 @@ if (typeof MONKEY !== "object") {
         child.prototype.constructor = child;
         if (interfaces) {
             child._mk_interfaces = interfaces;
+        }
+        if (methods) {
+            def_methods(child, methods);
         }
         return child;
     };
@@ -130,7 +145,7 @@ if (typeof MONKEY !== "object") {
     var BaseObject = function () {
         Object.call(this);
     };
-    Class(BaseObject, Object, [IObject]);
+    Class(BaseObject, Object, [IObject], null);
     BaseObject.prototype.equals = function (other) {
         return this === other;
     };
@@ -340,7 +355,7 @@ if (typeof MONKEY !== "object") {
         this.__value = value;
         this.__alias = alias;
     };
-    Class(Enum, BaseObject, null);
+    Class(Enum, BaseObject, null, null);
     Enum.prototype.equals = function (other) {
         if (!other) {
             return !this.__value;
@@ -364,7 +379,7 @@ if (typeof MONKEY !== "object") {
                 Enum.call(this, value, alias);
             };
         }
-        Class(enumeration, Enum, null);
+        Class(enumeration, Enum, null, null);
         var keys = Object.keys(elements);
         var alias, value;
         for (var i = 0; i < keys.length; ++i) {
@@ -413,7 +428,7 @@ if (typeof MONKEY !== "object") {
         }
         this.__string = str;
     };
-    Class(ConstantString, BaseObject, [Stringer]);
+    Class(ConstantString, BaseObject, [Stringer], null);
     ConstantString.prototype.equals = function (other) {
         if (this === other) {
             return true;
@@ -536,7 +551,7 @@ if (typeof MONKEY !== "object") {
         }
         this.__dictionary = dict;
     };
-    Class(Dictionary, BaseObject, [Mapper]);
+    Class(Dictionary, BaseObject, [Mapper], null);
     Dictionary.prototype.equals = function (other) {
         if (this === other) {
             return true;
@@ -1074,10 +1089,6 @@ if (typeof MONKEY !== "object") {
     var Interface = ns.type.Interface;
     var EncryptKey = ns.crypto.EncryptKey;
     var DecryptKey = ns.crypto.DecryptKey;
-    var general_factory = function () {
-        var man = ns.crypto.FactoryManager;
-        return man.generalFactory;
-    };
     var SymmetricKey = Interface(null, [EncryptKey, DecryptKey]);
     SymmetricKey.AES = "AES";
     SymmetricKey.DES = "DES";
@@ -1089,6 +1100,10 @@ if (typeof MONKEY !== "object") {
         throw new Error("NotImplemented");
     };
     SymmetricKey.Factory = SymmetricKeyFactory;
+    var general_factory = function () {
+        var man = ns.crypto.FactoryManager;
+        return man.generalFactory;
+    };
     SymmetricKey.setFactory = function (algorithm, factory) {
         var gf = general_factory();
         gf.setSymmetricKeyFactory(algorithm, factory);
@@ -1111,10 +1126,6 @@ if (typeof MONKEY !== "object") {
     var Interface = ns.type.Interface;
     var AsymmetricKey = ns.crypto.AsymmetricKey;
     var VerifyKey = ns.crypto.VerifyKey;
-    var general_factory = function () {
-        var man = ns.crypto.FactoryManager;
-        return man.generalFactory;
-    };
     var PublicKey = Interface(null, [VerifyKey]);
     PublicKey.RSA = AsymmetricKey.RSA;
     PublicKey.ECC = AsymmetricKey.ECC;
@@ -1123,6 +1134,10 @@ if (typeof MONKEY !== "object") {
         throw new Error("NotImplemented");
     };
     PublicKey.Factory = PublicKeyFactory;
+    var general_factory = function () {
+        var man = ns.crypto.FactoryManager;
+        return man.generalFactory;
+    };
     PublicKey.setFactory = function (algorithm, factory) {
         var gf = general_factory();
         gf.setPublicKeyFactory(algorithm, factory);
@@ -1141,10 +1156,6 @@ if (typeof MONKEY !== "object") {
     var Interface = ns.type.Interface;
     var AsymmetricKey = ns.crypto.AsymmetricKey;
     var SignKey = ns.crypto.SignKey;
-    var general_factory = function () {
-        var man = ns.crypto.FactoryManager;
-        return man.generalFactory;
-    };
     var PrivateKey = Interface(null, [SignKey]);
     PrivateKey.RSA = AsymmetricKey.RSA;
     PrivateKey.ECC = AsymmetricKey.ECC;
@@ -1159,6 +1170,10 @@ if (typeof MONKEY !== "object") {
         throw new Error("NotImplemented");
     };
     PrivateKey.Factory = PrivateKeyFactory;
+    var general_factory = function () {
+        var man = ns.crypto.FactoryManager;
+        return man.generalFactory;
+    };
     PrivateKey.setFactory = function (algorithm, factory) {
         var gf = general_factory();
         gf.setPrivateKeyFactory(algorithm, factory);
@@ -1196,7 +1211,7 @@ if (typeof MONKEY !== "object") {
         this.__publicKeyFactories = {};
         this.__privateKeyFactories = {};
     };
-    Class(GeneralFactory, null, null);
+    Class(GeneralFactory, null, null, null);
     GeneralFactory.prototype.matchSignKey = function (sKey, pKey) {
         var data = get_promise();
         var signature = sKey.sign(data);

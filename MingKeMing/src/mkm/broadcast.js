@@ -52,7 +52,7 @@
         }
         this.__network = network;
     };
-    Class(BroadcastAddress, ConstantString, [Address]);
+    Class(BroadcastAddress, ConstantString, [Address], null);
 
     // Override
     BroadcastAddress.prototype.getType = function () {

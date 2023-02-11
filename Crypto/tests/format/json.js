@@ -43,7 +43,7 @@
     var JsonCoder = function () {
         Object.call(this);
     };
-    Class(JsonCoder, Object, [ObjectCoder]);
+    Class(JsonCoder, Object, [ObjectCoder], null);
     // Override
     JsonCoder.prototype.encode = function (object) {
         return JSON.stringify(object);

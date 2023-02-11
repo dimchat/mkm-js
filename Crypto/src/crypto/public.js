@@ -42,11 +42,6 @@
     var AsymmetricKey = ns.crypto.AsymmetricKey;
     var VerifyKey = ns.crypto.VerifyKey;
 
-    var general_factory = function () {
-        var man = ns.crypto.FactoryManager;
-        return man.generalFactory;
-    };
-
     var PublicKey = Interface(null, [VerifyKey]);
 
     PublicKey.RSA = AsymmetricKey.RSA;
@@ -63,6 +58,11 @@
     };
 
     PublicKey.Factory = PublicKeyFactory;
+
+    var general_factory = function () {
+        var man = ns.crypto.FactoryManager;
+        return man.generalFactory;
+    };
 
     /**
      *  Register public key factory with algorithm

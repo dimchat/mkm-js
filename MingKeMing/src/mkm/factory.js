@@ -57,7 +57,7 @@
         this.__metaFactories = {};      // type => Meta.Factory
         this.__documentFactories = {};  // type => Document.Factory
     };
-    Class(GeneralFactory, null, null);
+    Class(GeneralFactory, null, null, null);
 
     //
     //  Address

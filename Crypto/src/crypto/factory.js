@@ -61,7 +61,7 @@
         this.__publicKeyFactories    = {};  // name => PublicKey.Factory
         this.__privateKeyFactories   = {};  // name => PrivateKey.Factory
     };
-    Class(GeneralFactory, null, null);
+    Class(GeneralFactory, null, null, null);
 
     /**
      *  Check whether keys matched

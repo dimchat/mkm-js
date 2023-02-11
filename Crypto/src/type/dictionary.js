@@ -204,7 +204,7 @@
         }
         this.__dictionary = dict;
     };
-    Class(Dictionary, BaseObject, [Mapper]);
+    Class(Dictionary, BaseObject, [Mapper], null);
 
     // Override
     Dictionary.prototype.equals = function (other) {

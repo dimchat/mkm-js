@@ -191,7 +191,7 @@
     var Base58Coder = function () {
         Object.call(this);
     };
-    Class(Base58Coder, Object, [DataCoder]);
+    Class(Base58Coder, Object, [DataCoder], null);
 
     // Override
     Base58Coder.prototype.encode = function (data) {

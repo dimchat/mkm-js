@@ -42,11 +42,6 @@
     var EncryptKey = ns.crypto.EncryptKey;
     var DecryptKey = ns.crypto.DecryptKey;
 
-    var general_factory = function () {
-        var man = ns.crypto.FactoryManager;
-        return man.generalFactory;
-    };
-
     //
     //  Symmetric Cryptography Key
     //  ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -77,6 +72,11 @@
     };
 
     SymmetricKey.Factory = SymmetricKeyFactory;
+
+    var general_factory = function () {
+        var man = ns.crypto.FactoryManager;
+        return man.generalFactory;
+    };
 
     /**
      *  Register symmetric key factory with algorithm

@@ -38,11 +38,6 @@
     var Interface = ns.type.Interface;
     var Stringer  = ns.type.Stringer;
 
-    var general_factory = function () {
-        var man = ns.mkm.FactoryManager;
-        return man.generalFactory;
-    };
-
     /**
      *  Address for MKM ID
      *  ~~~~~~~~~~~~~~~~~~
@@ -97,6 +92,11 @@
     };
 
     Address.Factory = AddressFactory;
+
+    var general_factory = function () {
+        var man = ns.mkm.FactoryManager;
+        return man.generalFactory;
+    };
 
     /**
      *  Register address factory

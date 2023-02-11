@@ -59,7 +59,7 @@
         this.__address = address;
         this.__terminal = terminal;
     };
-    Class(Identifier, ConstantString, [ID]);
+    Class(Identifier, ConstantString, [ID], null);
 
     // Override
     Identifier.prototype.getName = function () {

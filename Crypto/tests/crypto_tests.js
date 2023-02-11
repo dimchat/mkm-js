@@ -52,7 +52,7 @@ crypto_tests = [];
         BaseObject.call(this);
         this.__name = name;
     };
-    Class(Bird, BaseObject, [Singer, Flyer]);
+    Class(Bird, BaseObject, [Singer, Flyer], null);
     // Override
     Bird.prototype.getName = function () {
         return this.__name;
@@ -66,7 +66,7 @@ crypto_tests = [];
     var Ostrich = function (name) {
         Bird.call(this, name);
     };
-    Class(Ostrich, Bird, null);
+    Class(Ostrich, Bird, null, null);
     // Override
     Ostrich.prototype.fly = function () {
         var name = this.getName();

@@ -39,11 +39,6 @@
     var Stringer  = ns.type.Stringer;
     var Address   = ns.protocol.Address;
 
-    var general_factory = function () {
-        var man = ns.mkm.FactoryManager;
-        return man.generalFactory;
-    };
-
     /**
      *  ID for entity (User/Group)
      *
@@ -147,6 +142,11 @@
     };
 
     ID.Factory = IDFactory;
+
+    var general_factory = function () {
+        var man = ns.mkm.FactoryManager;
+        return man.generalFactory;
+    };
 
     /**
      *  Register ID factory

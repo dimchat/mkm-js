@@ -108,6 +108,26 @@ if (typeof MONKEY !== 'object') {
     };
 
     /**
+     *  Extends methods for child class/interface
+     *
+     * @param {Class} clazz
+     * @param {{}} methods
+     * @return {Class}
+     */
+    var def_methods = function (clazz, methods) {
+        var names = Object.keys(methods);
+        var key, fn;
+        for (var i = 0; i < names.length; ++i) {
+            key = names[i];
+            fn = methods[key];
+            if (typeof fn === 'function') {
+                clazz.prototype[key] = fn;
+            }
+        }
+        return clazz;
+    };
+
+    /**
      *  Create an interface inherits from other interfaces
      *
      * @param {Interface} child     - sub interface
@@ -133,9 +153,10 @@ if (typeof MONKEY !== 'object') {
      * @param {Class} child  - sub class
      * @param {Class} parent - super class
      * @param {Interface[]} interfaces
+     * @param {{}} methods   - functions
      * @return {Class} sub class
      */
-    var classify = function (child, parent, interfaces) {
+    var classify = function (child, parent, interfaces, methods) {
         if (!child) {
             child = function () {
                 Object.call(this);
@@ -152,6 +173,10 @@ if (typeof MONKEY !== 'object') {
         // set interfaces
         if (interfaces) {
             child._mk_interfaces = interfaces;
+        }
+        // extend functions
+        if (methods) {
+            def_methods(child, methods);
         }
         return child;
     };

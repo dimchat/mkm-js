@@ -75,10 +75,6 @@ if (typeof MingKeMing !== "object") {
 (function (ns) {
     var Interface = ns.type.Interface;
     var Stringer = ns.type.Stringer;
-    var general_factory = function () {
-        var man = ns.mkm.FactoryManager;
-        return man.generalFactory;
-    };
     var Address = Interface(null, [Stringer]);
     Address.ANYWHERE = null;
     Address.EVERYWHERE = null;
@@ -105,6 +101,10 @@ if (typeof MingKeMing !== "object") {
         throw new Error("NotImplemented");
     };
     Address.Factory = AddressFactory;
+    var general_factory = function () {
+        var man = ns.mkm.FactoryManager;
+        return man.generalFactory;
+    };
     Address.setFactory = function (factory) {
         var gf = general_factory();
         gf.setAddressFactory(factory);
@@ -131,10 +131,6 @@ if (typeof MingKeMing !== "object") {
     var Interface = ns.type.Interface;
     var Stringer = ns.type.Stringer;
     var Address = ns.protocol.Address;
-    var general_factory = function () {
-        var man = ns.mkm.FactoryManager;
-        return man.generalFactory;
-    };
     var ID = Interface(null, [Stringer]);
     ID.ANYONE = null;
     ID.EVERYONE = null;
@@ -179,6 +175,10 @@ if (typeof MingKeMing !== "object") {
         throw new Error("NotImplemented");
     };
     ID.Factory = IDFactory;
+    var general_factory = function () {
+        var man = ns.mkm.FactoryManager;
+        return man.generalFactory;
+    };
     ID.setFactory = function (factory) {
         var gf = general_factory();
         gf.setIDFactory(factory);
@@ -208,10 +208,6 @@ if (typeof MingKeMing !== "object") {
     var Address = ns.protocol.Address;
     var MetaType = ns.protocol.MetaType;
     var ID = ns.protocol.ID;
-    var general_factory = function () {
-        var man = ns.mkm.FactoryManager;
-        return man.generalFactory;
-    };
     var Meta = Interface(null, [Mapper]);
     Meta.prototype.getType = function () {
         throw new Error("NotImplemented");
@@ -242,15 +238,19 @@ if (typeof MingKeMing !== "object") {
     };
     var MetaFactory = Interface(null, null);
     MetaFactory.prototype.createMeta = function (pKey, seed, fingerprint) {
-        throw new Error('NotImplemented');
+        throw new Error("NotImplemented");
     };
     MetaFactory.prototype.generateMeta = function (sKey, seed) {
-        throw new Error('NotImplemented');
+        throw new Error("NotImplemented");
     };
     MetaFactory.prototype.parseMeta = function (meta) {
-        throw new Error('NotImplemented');
+        throw new Error("NotImplemented");
     };
     Meta.Factory = MetaFactory;
+    var general_factory = function () {
+        var man = ns.mkm.FactoryManager;
+        return man.generalFactory;
+    };
     Meta.setFactory = function (version, factory) {
         var gf = general_factory();
         gf.setMetaFactory(version, factory);
@@ -301,10 +301,6 @@ if (typeof MingKeMing !== "object") {
     var Mapper = ns.type.Mapper;
     var TAI = ns.protocol.TAI;
     var ID = ns.protocol.ID;
-    var general_factory = function () {
-        var man = ns.mkm.FactoryManager;
-        return man.generalFactory;
-    };
     var Document = Interface(null, [TAI, Mapper]);
     Document.VISA = "visa";
     Document.PROFILE = "profile";
@@ -336,6 +332,10 @@ if (typeof MingKeMing !== "object") {
         throw new Error("NotImplemented");
     };
     Document.Factory = DocumentFactory;
+    var general_factory = function () {
+        var man = ns.mkm.FactoryManager;
+        return man.generalFactory;
+    };
     Document.setFactory = function (type, factory) {
         var gf = general_factory();
         gf.setDocumentFactory(type, factory);
@@ -392,7 +392,7 @@ if (typeof MingKeMing !== "object") {
         }
         this.__network = network;
     };
-    Class(BroadcastAddress, ConstantString, [Address]);
+    Class(BroadcastAddress, ConstantString, [Address], null);
     BroadcastAddress.prototype.getType = function () {
         return this.__network;
     };
@@ -422,7 +422,7 @@ if (typeof MingKeMing !== "object") {
         this.__address = address;
         this.__terminal = terminal;
     };
-    Class(Identifier, ConstantString, [ID]);
+    Class(Identifier, ConstantString, [ID], null);
     Identifier.prototype.getName = function () {
         return this.__name;
     };
@@ -476,7 +476,7 @@ if (typeof MingKeMing !== "object") {
         this.__metaFactories = {};
         this.__documentFactories = {};
     };
-    Class(GeneralFactory, null, null);
+    Class(GeneralFactory, null, null, null);
     GeneralFactory.prototype.setAddressFactory = function (factory) {
         this.__addressFactory = factory;
     };

@@ -42,11 +42,6 @@
     var AsymmetricKey = ns.crypto.AsymmetricKey;
     var SignKey = ns.crypto.SignKey;
 
-    var general_factory = function () {
-        var man = ns.crypto.FactoryManager;
-        return man.generalFactory;
-    };
-
     var PrivateKey = Interface(null, [SignKey]);
 
     PrivateKey.RSA = AsymmetricKey.RSA;
@@ -76,6 +71,11 @@
     };
 
     PrivateKey.Factory = PrivateKeyFactory;
+
+    var general_factory = function () {
+        var man = ns.crypto.FactoryManager;
+        return man.generalFactory;
+    };
 
     /**
      *  Register private key factory with algorithm

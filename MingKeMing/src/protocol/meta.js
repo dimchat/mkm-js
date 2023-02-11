@@ -45,11 +45,6 @@
     var MetaType = ns.protocol.MetaType;
     var ID       = ns.protocol.ID;
 
-    var general_factory = function () {
-        var man = ns.mkm.FactoryManager;
-        return man.generalFactory;
-    };
-
     /**
      *  User/Group Meta data
      *  ~~~~~~~~~~~~~~~~~~~~
@@ -164,6 +159,11 @@
     };
 
     Meta.Factory = MetaFactory;
+
+    var general_factory = function () {
+        var man = ns.mkm.FactoryManager;
+        return man.generalFactory;
+    };
 
     /**
      *  Register meta factory with type

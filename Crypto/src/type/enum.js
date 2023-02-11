@@ -70,7 +70,7 @@
         this.__value = value;
         this.__alias = alias;
     };
-    Class(Enum, BaseObject, null);
+    Class(Enum, BaseObject, null, null);
 
     // Override
     Enum.prototype.equals = function (other) {
@@ -109,7 +109,7 @@
                 Enum.call(this, value, alias);
             }
         }
-        Class(enumeration, Enum, null);
+        Class(enumeration, Enum, null, null);
         var keys = Object.keys(elements)
         var alias, value;
         for (var i = 0; i < keys.length; ++i) {
