@@ -47,9 +47,9 @@
 
     var copy_map = function (map, deep) {
         if (deep) {
-            return ns.type.Copier.deepCopyMap(this.__dictionary);
+            return ns.type.Copier.deepCopyMap(map);
         } else {
-            return ns.type.Copier.copyMap(this.__dictionary);
+            return ns.type.Copier.copyMap(map);
         }
     };
 
