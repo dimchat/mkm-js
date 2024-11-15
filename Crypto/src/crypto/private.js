@@ -42,6 +42,17 @@
     var AsymmetricKey = ns.crypto.AsymmetricKey;
     var SignKey = ns.crypto.SignKey;
 
+
+    /** Asymmetric Cryptography Private Key
+     *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     *  This class is used to decrypt symmetric key or sign message data
+     *
+     *  key data format: {
+     *      algorithm : "RSA", // "ECC", ...
+     *      data      : "{BASE64_ENCODE}",
+     *      ...
+     *  }
+     */
     var PrivateKey = Interface(null, [SignKey]);
 
     PrivateKey.RSA = AsymmetricKey.RSA;
@@ -56,40 +67,13 @@
         throw new Error('NotImplemented');
     };
 
-    /**
-     *  Key Factory
-     *  ~~~~~~~~~~~
-     */
-    var PrivateKeyFactory = Interface(null, null);
-
-    PrivateKeyFactory.prototype.generatePrivateKey = function () {
-        throw new Error('NotImplemented');
-    };
-
-    PrivateKeyFactory.prototype.parsePrivateKey = function (key) {
-        throw new Error('NotImplemented');
-    };
-
-    PrivateKey.Factory = PrivateKeyFactory;
+    //
+    //  Factory methods
+    //
 
     var general_factory = function () {
         var man = ns.crypto.FactoryManager;
         return man.generalFactory;
-    };
-
-    /**
-     *  Register private key factory with algorithm
-     *
-     * @param {String} algorithm
-     * @param {PrivateKeyFactory} factory
-     */
-    PrivateKey.setFactory = function (algorithm, factory) {
-        var gf = general_factory();
-        gf.setPrivateKeyFactory(algorithm, factory);
-    };
-    PrivateKey.getFactory = function (algorithm) {
-        var gf = general_factory();
-        return gf.getPrivateKeyFactory(algorithm);
     };
 
     /**
@@ -114,7 +98,39 @@
         return gf.parsePrivateKey(key);
     };
 
+    /**
+     *  Register private key factory with algorithm
+     *
+     * @param {String} algorithm
+     * @param {PrivateKeyFactory} factory
+     */
+    PrivateKey.setFactory = function (algorithm, factory) {
+        var gf = general_factory();
+        gf.setPrivateKeyFactory(algorithm, factory);
+    };
+    PrivateKey.getFactory = function (algorithm) {
+        var gf = general_factory();
+        return gf.getPrivateKeyFactory(algorithm);
+    };
+
+    /**
+     *  Private Key Factory
+     *  ~~~~~~~~~~~~~~~~~~~
+     */
+    var PrivateKeyFactory = Interface(null, null);
+
+    PrivateKeyFactory.prototype.generatePrivateKey = function () {
+        throw new Error('NotImplemented');
+    };
+
+    PrivateKeyFactory.prototype.parsePrivateKey = function (key) {
+        throw new Error('NotImplemented');
+    };
+
+    PrivateKey.Factory = PrivateKeyFactory;
+
     //-------- namespace --------
     ns.crypto.PrivateKey = PrivateKey;
+    ns.crypto.PrivateKeyFactory = PrivateKeyFactory;
 
 })(MONKEY);

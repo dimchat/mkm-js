@@ -31,6 +31,7 @@
 //
 
 //! require 'type/class.js'
+//! require 'type/object.js'
 //! require 'type/wrapper.js'
 
 //! require 'keys.js'
@@ -87,8 +88,9 @@
     GeneralFactory.prototype.matchEncryptKey = function (pKey, sKey) {
         // check by encryption
         var data = get_promise();
-        var ciphertext = pKey.encrypt(data);
-        var plaintext = sKey.decrypt(ciphertext);
+        var extra = {};
+        var ciphertext = pKey.encrypt(data, extra);
+        var plaintext = sKey.decrypt(ciphertext, extra);
         // check equals
         if (!plaintext || plaintext.length !== data.length) {
             return false;

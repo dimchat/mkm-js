@@ -30,28 +30,7 @@
 // =============================================================================
 //
 
-if (typeof MONKEY !== 'object') {
-    MONKEY = {};
-}
-
-(function (ns) {
-    "use strict";
-
-    //-------- namespaces --------
-    if (typeof ns.type !== 'object') {
-        ns.type = {};
-    }
-    if (typeof ns.format !== 'object') {
-        ns.format = {};
-    }
-    if (typeof ns.digest !== 'object') {
-        ns.digest = {};
-    }
-    if (typeof ns.crypto !== 'object') {
-        ns.crypto = {};
-    }
-
-})(MONKEY);
+//! require 'namespace.js'
 
 (function (ns) {
     'use strict';

@@ -75,10 +75,11 @@
      *  ciphertext = encrypt(plaintext, PW)
      *  ciphertext = encrypt(plaintext, PK)
      *
-     * @param {Uint8Array} plaintext
+     * @param {Uint8Array} plaintext - plain data
+     * @param {*} extra              - store extra variables ('IV' for 'AES')
      * @return {Uint8Array}
      */
-    EncryptKey.prototype.encrypt = function (plaintext) {
+    EncryptKey.prototype.encrypt = function (plaintext, extra) {
         throw new Error('NotImplemented');
     };
 
@@ -88,10 +89,11 @@
      *  plaintext = decrypt(ciphertext, PW);
      *  plaintext = decrypt(ciphertext, SK);
      *
-     * @param {Uint8Array} ciphertext
+     * @param {Uint8Array} ciphertext - encrypted data
+     * @param {*} params              - extra params ('IV' for 'AES')
      * @return {Uint8Array}
      */
-    DecryptKey.prototype.decrypt = function (ciphertext) {
+    DecryptKey.prototype.decrypt = function (ciphertext, params) {
         throw new Error('NotImplemented');
     };
 
@@ -101,7 +103,7 @@
      * @param {EncryptKey} pKey - encrypt key
      * @return {boolean} true on signature matched
      */
-    DecryptKey.prototype.match = function (pKey) {
+    DecryptKey.prototype.matchEncryptKey = function (pKey) {
         throw new Error('NotImplemented');
     };
 
@@ -164,7 +166,7 @@
      * @param {SignKey} sKey - private key
      * @return {boolean} true on signature matched
      */
-    VerifyKey.prototype.match = function (sKey) {
+    VerifyKey.prototype.matchSignKey = function (sKey) {
         throw new Error('NotImplemented');
     };
 

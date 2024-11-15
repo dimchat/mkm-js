@@ -42,26 +42,38 @@
     var AsymmetricKey = ns.crypto.AsymmetricKey;
     var VerifyKey = ns.crypto.VerifyKey;
 
+    /** Asymmetric Cryptography Public Key
+     *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     *
+     *  key data format: {
+     *      algorithm : "RSA", // "ECC", ...
+     *      data      : "{BASE64_ENCODE}",
+     *      ...
+     *  }
+     */
     var PublicKey = Interface(null, [VerifyKey]);
 
     PublicKey.RSA = AsymmetricKey.RSA;
     PublicKey.ECC = AsymmetricKey.ECC;
 
-    /**
-     *  Key Factory
-     *  ~~~~~~~~~~~
-     */
-    var PublicKeyFactory = Interface(null, null);
-
-    PublicKeyFactory.prototype.parsePublicKey = function (key) {
-        throw new Error('NotImplemented');
-    };
-
-    PublicKey.Factory = PublicKeyFactory;
+    //
+    //  Factory methods
+    //
 
     var general_factory = function () {
         var man = ns.crypto.FactoryManager;
         return man.generalFactory;
+    };
+
+    /**
+     *  Parse map object to key
+     *
+     * @param {*} key - key info
+     * @return {PublicKey}
+     */
+    PublicKey.parse = function (key) {
+        var gf = general_factory();
+        return gf.parsePublicKey(key);
     };
 
     /**
@@ -80,17 +92,19 @@
     };
 
     /**
-     *  Parse map object to key
-     *
-     * @param {*} key - key info
-     * @return {PublicKey}
+     *  Public Key Factory
+     *  ~~~~~~~~~~~~~~~~~~
      */
-    PublicKey.parse = function (key) {
-        var gf = general_factory();
-        return gf.parsePublicKey(key);
+    var PublicKeyFactory = Interface(null, null);
+
+    PublicKeyFactory.prototype.parsePublicKey = function (key) {
+        throw new Error('NotImplemented');
     };
+
+    PublicKey.Factory = PublicKeyFactory;
 
     //-------- namespace --------
     ns.crypto.PublicKey = PublicKey;
+    ns.crypto.PublicKeyFactory = PublicKeyFactory;
 
 })(MONKEY);

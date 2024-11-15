@@ -47,24 +47,11 @@
     var Stringer = Interface(null, [IObject]);
 
     /**
-     *  Get inner string
-     *
-     * @return {String}
-     */
-    Stringer.prototype.toString = function () {
-        throw new Error('NotImplemented');
-    };
-
-    /**
      *  Get length of inner string
      *
      * @return {number}
      */
     Stringer.prototype.getLength = function () {
-        throw new Error('NotImplemented');
-    };
-
-    Stringer.prototype.isEmpty = function () {
         throw new Error('NotImplemented');
     };
 
@@ -125,7 +112,7 @@
 
     // Override
     ConstantString.prototype.isEmpty = function () {
-        return this.__string.length === 0
+        return this.__string.length === 0;
     };
 
     // Override

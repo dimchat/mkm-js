@@ -42,55 +42,28 @@
     var EncryptKey = ns.crypto.EncryptKey;
     var DecryptKey = ns.crypto.DecryptKey;
 
-    //
-    //  Symmetric Cryptography Key
-    //  ~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //
-    //  key data format: {
-    //      algorithm : "AES", // "DES", ...
-    //      data      : "{BASE64_ENCODE}",
-    //      ...
-    //  }
-    //
+    /** Symmetric Cryptography Key
+     *  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+     *  This class is used to encrypt or decrypt message data
+     *
+     *  key data format: {
+     *      algorithm : "AES", // "DES", ...
+     *      data      : "{BASE64_ENCODE}",
+     *      ...
+     *  }
+     */
     var SymmetricKey = Interface(null, [EncryptKey, DecryptKey]);
 
     SymmetricKey.AES = 'AES'; //-- "AES/CBC/PKCS7Padding"
     SymmetricKey.DES = 'DES';
 
-    /**
-     *  Key Factory
-     *  ~~~~~~~~~~~
-     */
-    var SymmetricKeyFactory = Interface(null, null);
-
-    SymmetricKeyFactory.prototype.generateSymmetricKey = function () {
-        throw new Error('NotImplemented');
-    };
-
-    SymmetricKeyFactory.prototype.parseSymmetricKey = function (key) {
-        throw new Error('NotImplemented');
-    };
-
-    SymmetricKey.Factory = SymmetricKeyFactory;
+    //
+    //  Factory methods
+    //
 
     var general_factory = function () {
         var man = ns.crypto.FactoryManager;
         return man.generalFactory;
-    };
-
-    /**
-     *  Register symmetric key factory with algorithm
-     *
-     * @param {String} algorithm
-     * @param {SymmetricKeyFactory} factory
-     */
-    SymmetricKey.setFactory = function (algorithm, factory) {
-        var gf = general_factory();
-        gf.setSymmetricKeyFactory(algorithm, factory);
-    };
-    SymmetricKey.getFactory = function (algorithm) {
-        var gf = general_factory();
-        return gf.getSymmetricKeyFactory(algorithm);
     };
 
     /**
@@ -115,7 +88,39 @@
         return gf.parseSymmetricKey(key);
     };
 
+    /**
+     *  Register symmetric key factory with algorithm
+     *
+     * @param {String} algorithm
+     * @param {SymmetricKeyFactory} factory
+     */
+    SymmetricKey.setFactory = function (algorithm, factory) {
+        var gf = general_factory();
+        gf.setSymmetricKeyFactory(algorithm, factory);
+    };
+    SymmetricKey.getFactory = function (algorithm) {
+        var gf = general_factory();
+        return gf.getSymmetricKeyFactory(algorithm);
+    };
+
+    /**
+     *  Symmetric Key Factory
+     *  ~~~~~~~~~~~~~~~~~~~~~
+     */
+    var SymmetricKeyFactory = Interface(null, null);
+
+    SymmetricKeyFactory.prototype.generateSymmetricKey = function () {
+        throw new Error('NotImplemented');
+    };
+
+    SymmetricKeyFactory.prototype.parseSymmetricKey = function (key) {
+        throw new Error('NotImplemented');
+    };
+
+    SymmetricKey.Factory = SymmetricKeyFactory;
+
     //-------- namespace --------
     ns.crypto.SymmetricKey = SymmetricKey;
+    ns.crypto.SymmetricKeyFactory = SymmetricKeyFactory;
 
 })(MONKEY);

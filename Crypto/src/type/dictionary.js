@@ -32,6 +32,8 @@
 
 //! require 'class.js'
 //! require 'object.js'
+//! require 'converter.js'
+//! require 'copier.js'
 
 (function (ns) {
     'use strict';
@@ -40,6 +42,7 @@
     var Class = ns.type.Class;
     var IObject = ns.type.Object;
     var BaseObject = ns.type.BaseObject;
+    var Converter = ns.type.Converter;
 
     var arrays_equals = function (a1, a2) {
         return ns.type.Arrays.equals(a1, a2);
@@ -91,6 +94,15 @@
     };
 
     /**
+     *  Get length of inner map
+     *
+     * @return {number}
+     */
+    Mapper.prototype.getLength = function () {
+        throw new Error('NotImplemented');
+    };
+
+    /**
      *  Get value for key
      *
      * @param {string} key
@@ -124,9 +136,10 @@
      *  Get string value for key
      *
      * @param {string} key
+     * @param {string} defaultValue
      * @return {string}
      */
-    Mapper.prototype.getString = function (key) {
+    Mapper.prototype.getString = function (key, defaultValue) {
         throw new Error('NotImplemented');
     };
 
@@ -134,19 +147,32 @@
      *  Get boolean value for key
      *
      * @param {string} key
+     * @param {boolean} defaultValue
      * @return {boolean}
      */
-    Mapper.prototype.getBoolean = function (key) {
+    Mapper.prototype.getBoolean = function (key, defaultValue) {
         throw new Error('NotImplemented');
     };
 
     /**
-     *  Get number value for key
+     *  Get int number value for key
      *
      * @param {string} key
+     * @param {number} defaultValue
      * @return {number}
      */
-    Mapper.prototype.getNumber = function (key) {
+    Mapper.prototype.getInt = function (key, defaultValue) {
+        throw new Error('NotImplemented');
+    };
+
+    /**
+     *  Get float number value for key
+     *
+     * @param {string} key
+     * @param {number} defaultValue
+     * @return {number}
+     */
+    Mapper.prototype.getFloat = function (key, defaultValue) {
         throw new Error('NotImplemented');
     };
 
@@ -154,9 +180,10 @@
      *  Get date time for key
      *
      * @param {string} key
+     * @param {Date} defaultValue
      * @return {Date}
      */
-    Mapper.prototype.getTime = function (key) {
+    Mapper.prototype.getDateTime = function (key, defaultValue) {
         throw new Error('NotImplemented');
     };
 
@@ -166,7 +193,7 @@
      * @param {string} key
      * @param {Date} time
      */
-    Mapper.prototype.setTime = function (key, time) {
+    Mapper.prototype.setDateTime = function (key, time) {
         throw new Error('NotImplemented');
     };
 
@@ -217,6 +244,18 @@
         } else {
             return arrays_equals(this.__dictionary, other);
         }
+    };
+
+    // Override
+    Dictionary.prototype.getLength = function() {
+        var keys = Object.keys(this.__dictionary);
+        return keys.length;
+    };
+
+    // Override
+    Dictionary.prototype.isEmpty = function () {
+        var keys = Object.keys(this.__dictionary);
+        return keys.length === 0;
     };
 
     // Override
@@ -273,54 +312,64 @@
     };
 
     // Override
-    Dictionary.prototype.getString = function (key) {
-        return this.__dictionary[key];
-    };
-
-    // Override
-    Dictionary.prototype.getBoolean = function (key) {
+    Dictionary.prototype.getString = function (key, defaultValue) {
         var value = this.__dictionary[key];
-        return value === null ? 0 : value.valueOf();
+        return Converter.getString(value, defaultValue);
     };
 
     // Override
-    Dictionary.prototype.getNumber = function (key) {
+    Dictionary.prototype.getBoolean = function (key, defaultValue) {
         var value = this.__dictionary[key];
-        return value === null ? 0 : value.valueOf();
+        return Converter.getBoolean(value, defaultValue);
     };
 
     // Override
-    Dictionary.prototype.getTime = function (key) {
-        var seconds = this.getNumber(key);
-        if (seconds <= 0) {
-            return null;
-        }
-        var millis = seconds * 1000;
-        return new Date(millis);
+    Dictionary.prototype.getInt = function (key, defaultValue) {
+        var value = this.__dictionary[key];
+        return Converter.getInt(value, defaultValue);
     };
 
     // Override
-    Dictionary.prototype.setTime = function (key, time) {
-        if (time instanceof Date) {
+    Dictionary.prototype.getFloat = function (key, defaultValue) {
+        var value = this.__dictionary[key];
+        return Converter.getFloat(value, defaultValue);
+    };
+
+    // Override
+    Dictionary.prototype.getDateTime = function (key, defaultValue) {
+        var value = this.__dictionary[key];
+        return Converter.getDateTime(value, defaultValue);
+    };
+
+    // Override
+    Dictionary.prototype.setDateTime = function (key, time) {
+        if (!time) {
+            this.removeValue(key);
+        } else if (time instanceof Date) {
             time = time.getTime() / 1000.0;
+            this.__dictionary[key] = time;
+        } else {
+            time = Converter.getFloat(time, 0);
+            this.__dictionary[key] = time;
         }
-        this.setValue(key, time);
     };
 
     // Override
     Dictionary.prototype.setString = function (key, string) {
-        if (string/* instanceof Stringer*/) {
-            string = string.toString();
+        if (!string) {
+            this.removeValue(key);
+        } else {
+            this.__dictionary[key] = string.toString();
         }
-        this.setValue(key, string)
     };
 
     // Override
     Dictionary.prototype.setMap = function (key, map) {
-        if (map/* instanceof Mapper*/) {
-            map = map.toMap();
+        if (!map) {
+            this.removeValue(key);
+        } else {
+            this.__dictionary[key] = map.toMap();
         }
-        this.setValue(key, map)
     };
 
     //-------- namespace --------

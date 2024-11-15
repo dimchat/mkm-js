@@ -84,6 +84,10 @@
         throw new Error('NotImplemented');
     };
 
+    IObject.prototype.isEmpty = function () {
+        throw new Error('NotImplemented');
+    };
+
     /**
      *  Check whether objects equal
      *
