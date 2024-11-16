@@ -42,12 +42,10 @@
     var Class     = ns.type.Class;
     var Stringer  = ns.type.Stringer;
     var Wrapper   = ns.type.Wrapper;
-
-    var UTF8 = ns.format.UTF8;
+    var Converter = ns.type.Converter;
 
     var Address  = ns.protocol.Address;
     var ID       = ns.protocol.ID;
-    var MetaType = ns.protocol.MetaType;
     var Meta     = ns.protocol.Meta;
     var Document = ns.protocol.Document;
 
@@ -76,9 +74,9 @@
         } else if (Interface.conforms(address, Address)) {
             return address;
         }
-        address = Wrapper.fetchString(address);
+        var str = Wrapper.fetchString(address);
         var factory = this.getAddressFactory();
-        return factory.parseAddress(address);
+        return factory.parseAddress(str);
     };
 
     GeneralFactory.prototype.createAddress = function (address) {
@@ -95,48 +93,48 @@
     //  ID
     //
 
-    GeneralFactory.prototype.setIDFactory = function (factory) {
+    GeneralFactory.prototype.setIdentifierFactory = function (factory) {
         this.__idFactory = factory;
     };
-    GeneralFactory.prototype.getIDFactory = function () {
+    GeneralFactory.prototype.getIdentifierFactory = function () {
         return this.__idFactory;
     };
 
-    GeneralFactory.prototype.parseID = function (identifier) {
+    GeneralFactory.prototype.parseIdentifier = function (identifier) {
         if (!identifier) {
             return null;
         } else if (Interface.conforms(identifier, ID)) {
             return identifier;
         }
-        identifier = Wrapper.fetchString(identifier);
-        var factory = this.getIDFactory();
-        return factory.parseID(identifier);
+        var str = Wrapper.fetchString(identifier);
+        var factory = this.getIdentifierFactory();
+        return factory.parseIdentifier(str);
     };
-    GeneralFactory.prototype.createID = function (name, address, terminal) {
-        var factory = this.getIDFactory();
-        return factory.createID(name, address, terminal);
+    GeneralFactory.prototype.createIdentifier = function (name, address, terminal) {
+        var factory = this.getIdentifierFactory();
+        return factory.createIdentifier(name, address, terminal);
     }
-    GeneralFactory.prototype.generateID = function (meta, network, terminal) {
-        var factory = this.getIDFactory();
-        return factory.generateID(meta, network, terminal);
+    GeneralFactory.prototype.generateIdentifier = function (meta, network, terminal) {
+        var factory = this.getIdentifierFactory();
+        return factory.generateIdentifier(meta, network, terminal);
     };
 
-    GeneralFactory.prototype.convertIDList = function (list) {
+    GeneralFactory.prototype.convertIdentifiers = function (members) {
         var array = [];
         var id;
-        for (var i = 0; i < list.length; ++i) {
-            id = ID.parse(list[i]);
+        for (var i = 0; i < members.length; ++i) {
+            id = ID.parse(members[i]);
             if (id) {
                 array.push(id);
             }
         }
         return array;
     }
-    GeneralFactory.prototype.revertIDList = function (list) {
+    GeneralFactory.prototype.revertIdentifiers = function (members) {
         var array = [];
         var id;
-        for (var i = 0; i < list.length; ++i) {
-            id = list[i];
+        for (var i = 0; i < members.length; ++i) {
+            id = members[i];
             if (Interface.conforms(id, Stringer)) {
                 array.push(id.toString());
             } else if (typeof id === 'string') {
@@ -167,8 +165,9 @@
         return this.__metaFactories[version];
     };
 
-    GeneralFactory.prototype.getMetaType = function (meta) {
-        return meta['type'];
+    GeneralFactory.prototype.getMetaType = function (meta, defaultVersion) {
+        var version = meta['type'];
+        return Converter.getInt(version, defaultVersion)
     };
     GeneralFactory.prototype.createMeta = function (version, key, seed, fingerprint) {
         var factory = this.getMetaFactory(version);
@@ -184,62 +183,16 @@
         } else if (Interface.conforms(meta, Meta)) {
             return meta;
         }
-        meta = Wrapper.fetchMap(meta);
-        var type = this.getMetaType(meta);
+        var info = Wrapper.fetchMap(meta);
+        if (!info) {
+            return null;
+        }
+        var type = this.getMetaType(info, 0);
         var factory = this.getMetaFactory(type);
         if (!factory) {
             factory = this.getMetaFactory(0);  // unknown
         }
-        return factory.parseMeta(meta);
-    };
-    GeneralFactory.prototype.checkMeta = function (meta) {
-        var key = meta.getKey();
-        if (!key) {
-            // meta.key should not be empty
-            return false;
-        }
-        if (!MetaType.hasSeed(meta.getType())) {
-            // this meta has no seed, so no signature too
-            return true;
-        }
-        // check seed with signature
-        var seed = meta.getSeed();
-        var fingerprint = meta.getFingerprint();
-        if (!seed || !fingerprint) {
-            // seed and fingerprint should not be empty
-            return false;
-        }
-        // verify fingerprint
-        return key.verify(UTF8.encode(seed), fingerprint);
-    };
-    GeneralFactory.prototype.matchID = function (identifier, meta) {
-        // check ID.name
-        if (MetaType.hasSeed(meta.getType())) {
-            if (meta.getSeed() !== identifier.getName()) {
-                return false;
-            }
-        }
-        // check ID.address
-        var old = identifier.getAddress();
-        var gen = Address.generate(meta, old.getType());
-        return old.equals(gen);
-    };
-    GeneralFactory.prototype.matchKey = function (key, meta) {
-        // check whether the public key equals to meta.key
-        if (meta.getKey().equals(key)) {
-            return true;
-        }
-        // check with seed & signature
-        if (MetaType.hasSeed(meta.getType())) {
-            // check whether keys equal by verifying signature
-            var seed = meta.getSeed();
-            var fingerprint = meta.getFingerprint();
-            return key.every(UTF8.encode(seed), fingerprint);
-        } else {
-            // ID with BTC/ETH address has no username,
-            // so we can just compare the key.data to check matching
-            return false;
-        }
+        return factory.parseMeta(info);
     };
 
     //
@@ -253,8 +206,8 @@
         return this.__documentFactories[type];
     };
 
-    GeneralFactory.prototype.getDocumentType = function (doc) {
-        return doc['type'];
+    GeneralFactory.prototype.getDocumentType = function (doc, defaultType) {
+        return Converter.getString(doc['type'], defaultType)
     };
     GeneralFactory.prototype.createDocument = function (type, identifier, data, signature) {
         var factory = this.getDocumentFactory(type);
@@ -266,13 +219,16 @@
         } else if (Interface.conforms(doc, Document)) {
             return doc;
         }
-        doc = Wrapper.fetchMap(doc);
-        var type = this.getDocumentType(doc);
+        var info = Wrapper.fetchMap(doc);
+        if (!info) {
+            return null;
+        }
+        var type = this.getDocumentType(info, '*');
         var factory = this.getDocumentFactory(type);
         if (!factory) {
             factory = this.getDocumentFactory('*');  // unknown
         }
-        return factory.parseDocument(doc);
+        return factory.parseDocument(info);
     };
 
     var FactoryManager = {
@@ -280,7 +236,7 @@
     };
 
     //-------- namespace --------
-    ns.mkm.GeneralFactory = GeneralFactory;
-    ns.mkm.FactoryManager = FactoryManager;
+    ns.mkm.AccountGeneralFactory = GeneralFactory;
+    ns.mkm.AccountFactoryManager = FactoryManager;
 
 })(MingKeMing);

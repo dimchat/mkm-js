@@ -62,80 +62,43 @@
     Document.BULLETIN = 'bulletin';  // for group info
 
     /**
-     *  Get document type
+     *  Document type
      *
      * @return {String}
      */
-    Document.prototype.getType = function () {
-        throw new Error('NotImplemented');
-    };
+    Document.prototype.getType = function () {};
 
     /**
-     *  Get entity ID
+     *  Entity ID
      *
      * @returns {ID}
      */
-    Document.prototype.getIdentifier = function () {
-        throw new Error('NotImplemented');
-    };
+    Document.prototype.getIdentifier = function () {};
 
     //---- properties getter/setter
 
     /**
-     *  Get sign time
+     *  Signed time
      *
      * @return {Date}
      */
-    Document.prototype.getTime = function () {
-        throw new Error('NotImplemented');
-    };
+    Document.prototype.getTime = function () {};
 
     /**
-     *  Get entity name
+     *  Entity name
      *
-     * @return {String}
+     * @param {String} name
      */
-    Document.prototype.getName = function () {
-        throw new Error('NotImplemented');
-    };
-    Document.prototype.setName = function (name) {
-        throw new Error('NotImplemented');
-    };
+    Document.prototype.setName = function (name) {};
+    Document.prototype.getName = function () {};
 
-    /**
-     *  Document Factory
-     *  ~~~~~~~~~~~~~~~~
-     */
-    var DocumentFactory = Interface(null, null);
-
-    DocumentFactory.prototype.createDocument = function (identifier, data, signature) {
-        throw new Error('NotImplemented');
-    };
-
-    DocumentFactory.prototype.parseDocument = function (doc) {
-        throw new Error('NotImplemented');
-    };
-
-    Document.Factory = DocumentFactory;
+    //
+    //  Factory methods
+    //
 
     var general_factory = function () {
-        var man = ns.mkm.FactoryManager;
+        var man = ns.mkm.AccountFactoryManager;
         return man.generalFactory;
-    };
-
-    /**
-     *  Register document factory with type
-     *
-     * @param {String} type
-     * @param {DocumentFactory} factory
-     */
-    Document.setFactory = function (type, factory) {
-        var gf = general_factory();
-        gf.setDocumentFactory(type, factory);
-    };
-    Document.getFactory = function (type) {
-        var gf = general_factory();
-        return gf.getDocumentFactory(type);
     };
 
     /**
@@ -165,7 +128,50 @@
         return gf.parseDocument(doc);
     };
 
+    /**
+     *  Register document factory with type
+     *
+     * @param {String} type
+     * @param {DocumentFactory} factory
+     */
+    Document.setFactory = function (type, factory) {
+        var gf = general_factory();
+        gf.setDocumentFactory(type, factory);
+    };
+    Document.getFactory = function (type) {
+        var gf = general_factory();
+        return gf.getDocumentFactory(type);
+    };
+
+    /**
+     *  Document Factory
+     *  ~~~~~~~~~~~~~~~~
+     */
+    var DocumentFactory = Interface(null, null);
+
+    /**
+     *  Create document with data & signature loaded from local storage
+     *  Create a new empty document with entity ID only
+     *
+     * @param {ID} identifier               - entity ID
+     * @param {String} data                 - document data (JsON)
+     * @param {TransportableData} signature - document signature (Base64)
+     * @return {Document}
+     */
+    DocumentFactory.prototype.createDocument = function (identifier, data, signature) {};
+
+    /**
+     *  Parse map object to entity document
+     *
+     * @param {*} doc - info
+     * @return {Document}
+     */
+    DocumentFactory.prototype.parseDocument = function (doc) {};
+
+    Document.Factory = DocumentFactory;
+
     //-------- namespace --------
     ns.protocol.Document = Document;
+    // ns.protocol.DocumentFactory = DocumentFactory;
 
 })(MingKeMing);

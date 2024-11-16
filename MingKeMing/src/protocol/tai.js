@@ -53,42 +53,34 @@
      *
      * @returns {boolean}
      */
-    TAI.prototype.isValid = function () {
-        throw new Error('NotImplemented');
-    };
+    TAI.prototype.isValid = function () {};
 
     //-------- signature --------
 
     /**
      *  Verify 'data' and 'signature' with public key
      *
-     * @param {VerifyKey} publicKey
+     * @param {VerifyKey} pKey - public key
      * @returns {boolean}
      */
-    TAI.prototype.verify = function (publicKey) {
-        throw new Error('NotImplemented');
-    };
+    TAI.prototype.verify = function (pKey) {};
 
     /**
      *  Encode properties to 'data' and sign it to 'signature'
      *
-     * @param {SignKey} privateKey
+     * @param {SignKey} sKey - private key
      * @returns {Uint8Array}
      */
-    TAI.prototype.sign = function (privateKey) {
-        throw new Error('NotImplemented');
-    };
+    TAI.prototype.sign = function (sKey) {};
 
     //-------- properties --------
 
     /**
      *  Get all properties
      *
-     * @returns {{}} mapping(String => Object)
+     * @returns {*} mapping(String => Object)
      */
-    TAI.prototype.allProperties = function () {
-        throw new Error('NotImplemented');
-    };
+    TAI.prototype.allProperties = function () {};
 
     /**
      *  Get property data with key
@@ -96,9 +88,7 @@
      * @param {String} name - property name
      * @returns {Object}
      */
-    TAI.prototype.getProperty = function (name) {
-        throw new Error('NotImplemented');
-    };
+    TAI.prototype.getProperty = function (name) {};
 
     /**
      *  Update property with key and data
@@ -107,9 +97,7 @@
      * @param {String} name - property name
      * @param {Object} value - property value
      */
-    TAI.prototype.setProperty = function (name, value) {
-        throw new Error('NotImplemented');
-    };
+    TAI.prototype.setProperty = function (name, value) {};
 
     //-------- namespace --------
     ns.protocol.TAI = TAI;

@@ -62,44 +62,34 @@
      *
      * @returns {String}
      */
-    ID.prototype.getName = function () {
-        throw new Error('NotImplemented');
-    };
+    ID.prototype.getName = function () {};
     /**
      *  Get ID.address
      *
      * @returns {Address}
      */
-    ID.prototype.getAddress = function () {
-        throw new Error('NotImplemented');
-    };
+    ID.prototype.getAddress = function () {};
     /**
      *  Get ID.terminal
      *
      * @returns {String}
      */
-    ID.prototype.getTerminal = function () {
-        throw new Error('NotImplemented');
-    };
+    ID.prototype.getTerminal = function () {};
 
     /**
      *  Get ID.type
      *
      * @returns {uint} 0 ~ 255
      */
-    ID.prototype.getType = function () {
-        throw new Error('NotImplemented');
-    };
+    ID.prototype.getType = function () {};
 
-    ID.prototype.isBroadcast = function () {
-        throw new Error('NotImplemented');
-    };
-    ID.prototype.isUser = function () {
-        throw new Error('NotImplemented');
-    };
-    ID.prototype.isGroup = function () {
-        throw new Error('NotImplemented');
-    };
+    ID.prototype.isBroadcast = function () {};
+    ID.prototype.isUser      = function () {};
+    ID.prototype.isGroup     = function () {};
+
+    //
+    //  Conveniences
+    //
 
     /**
      *  Convert Strings to IDs
@@ -109,7 +99,7 @@
      */
     ID.convert = function (list) {
         var gf = general_factory();
-        return gf.convertIDList(list);
+        return gf.convertIdentifiers(list);
     };
 
     /**
@@ -120,46 +110,16 @@
      */
     ID.revert = function (list) {
         var gf = general_factory();
-        return gf.revertIDList(list);
+        return gf.revertIdentifiers(list);
     };
 
-    /**
-     *  ID Factory
-     *  ~~~~~~~~~~
-     */
-    var IDFactory = Interface(null, null);
-
-    IDFactory.prototype.generateID = function (meta, network, terminal) {
-        throw new Error('NotImplemented');
-    };
-
-    IDFactory.prototype.createID = function (name, address, terminal) {
-        throw new Error('NotImplemented');
-    };
-
-    IDFactory.prototype.parseID = function (identifier) {
-        throw new Error('NotImplemented');
-    };
-
-    ID.Factory = IDFactory;
+    //
+    //  Factory methods
+    //
 
     var general_factory = function () {
-        var man = ns.mkm.FactoryManager;
+        var man = ns.mkm.AccountFactoryManager;
         return man.generalFactory;
-    };
-
-    /**
-     *  Register ID factory
-     *
-     * @param {IDFactory} factory
-     */
-    ID.setFactory = function (factory) {
-        var gf = general_factory();
-        gf.setIDFactory(factory);
-    };
-    ID.getFactory = function () {
-        var gf = general_factory();
-        return gf.getIDFactory();
     };
 
     /**
@@ -172,7 +132,7 @@
      */
     ID.generate = function (meta, network, terminal) {
         var gf = general_factory();
-        return gf.generateID(meta, network, terminal);
+        return gf.generateIdentifier(meta, network, terminal);
     };
 
     /**
@@ -185,7 +145,7 @@
      */
     ID.create = function (name, address, terminal) {
         var gf = general_factory();
-        return gf.createID(name, address, terminal);
+        return gf.createIdentifier(name, address, terminal);
     };
 
     /**
@@ -196,10 +156,61 @@
      */
     ID.parse = function (identifier) {
         var gf = general_factory();
-        return gf.parseID(identifier);
+        return gf.parseIdentifier(identifier);
     };
+
+    /**
+     *  Register ID factory
+     *
+     * @param {IDFactory} factory
+     */
+    ID.setFactory = function (factory) {
+        var gf = general_factory();
+        gf.setIdentifierFactory(factory);
+    };
+    ID.getFactory = function () {
+        var gf = general_factory();
+        return gf.getIdentifierFactory();
+    };
+
+    /**
+     *  ID Factory
+     *  ~~~~~~~~~~
+     */
+    var IDFactory = Interface(null, null);
+
+    /**
+     *  Generate ID
+     *
+     * @param {Meta} meta       - meta info
+     * @param {uint} network    - ID.type
+     * @param {String} terminal - ID.terminal
+     * @return {ID}
+     */
+    IDFactory.prototype.generateIdentifier = function (meta, network, terminal) {};
+
+    /**
+     *  Create ID
+     *
+     * @param {String} name     - ID.name
+     * @param {Address} address - ID.address
+     * @param {String} terminal - ID.terminal
+     * @return {ID}
+     */
+    IDFactory.prototype.createIdentifier = function (name, address, terminal) {};
+
+    /**
+     *  Parse string object to ID
+     *
+     * @param {String} identifier - ID string
+     * @return {ID}
+     */
+    IDFactory.prototype.parseIdentifier = function (identifier) {};
+
+    ID.Factory = IDFactory;
 
     //-------- namespace --------
     ns.protocol.ID = ID;
+    // ns.protocol.IDFactory = IDFactory;
 
 })(MingKeMing);

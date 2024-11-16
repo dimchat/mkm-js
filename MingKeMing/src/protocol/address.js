@@ -58,58 +58,20 @@
      *
      * @returns {uint} 0 ~ 255
      */
-    Address.prototype.getType = function () {
-        throw new Error('NotImplemented');
-    };
+    Address.prototype.getType = function () {};
 
     // address types
-    Address.prototype.isBroadcast = function () {
-        throw new Error('NotImplemented');
-    };
-    Address.prototype.isUser = function () {
-        throw new Error('NotImplemented');
-    };
-    Address.prototype.isGroup = function () {
-        throw new Error('NotImplemented');
-    };
+    Address.prototype.isBroadcast = function () {};
+    Address.prototype.isUser      = function () {};
+    Address.prototype.isGroup     = function () {};
 
-    /**
-     *  Address Factory
-     *  ~~~~~~~~~~~~~~~
-     */
-    var AddressFactory = Interface(null, null);
-
-    AddressFactory.prototype.generateAddress = function (meta, network) {
-        throw new Error('NotImplemented');
-    };
-
-    AddressFactory.prototype.createAddress = function (address) {
-        throw new Error('NotImplemented');
-    };
-
-    AddressFactory.prototype.parseAddress = function (address) {
-        throw new Error('NotImplemented');
-    };
-
-    Address.Factory = AddressFactory;
+    //
+    //  Factory methods
+    //
 
     var general_factory = function () {
-        var man = ns.mkm.FactoryManager;
+        var man = ns.mkm.AccountFactoryManager;
         return man.generalFactory;
-    };
-
-    /**
-     *  Register address factory
-     *
-     * @param {AddressFactory} factory
-     */
-    Address.setFactory = function (factory) {
-        var gf = general_factory();
-        gf.setAddressFactory(factory);
-    };
-    Address.getFactory = function () {
-        var gf = general_factory();
-        return gf.getAddressFactory();
     };
 
     /**
@@ -146,7 +108,55 @@
         return gf.parseAddress(address);
     };
 
+    /**
+     *  Register address factory
+     *
+     * @param {AddressFactory} factory
+     */
+    Address.setFactory = function (factory) {
+        var gf = general_factory();
+        gf.setAddressFactory(factory);
+    };
+    Address.getFactory = function () {
+        var gf = general_factory();
+        return gf.getAddressFactory();
+    };
+
+    /**
+     *  Address Factory
+     *  ~~~~~~~~~~~~~~~
+     */
+    var AddressFactory = Interface(null, null);
+
+    /**
+     *  Generate address with meta & type
+     *
+     * @param {Meta} meta    - meta info
+     * @param {uint} network - address type
+     * @return {Address}
+     */
+    AddressFactory.prototype.generateAddress = function (meta, network) {};
+
+    /**
+     *  Create address from string
+     *
+     * @param {String} address - address string
+     * @return {Address}
+     */
+    AddressFactory.prototype.createAddress = function (address) {};
+
+    /**
+     *  Parse string object to address
+     *
+     * @param {String} address - address string
+     * @return {Address}
+     */
+    AddressFactory.prototype.parseAddress = function (address) {};
+
+    Address.Factory = AddressFactory;
+
     //-------- namespace --------
     ns.protocol.Address = Address;
+    // ns.protocol.AddressFactory = AddressFactory;
 
 })(MingKeMing);

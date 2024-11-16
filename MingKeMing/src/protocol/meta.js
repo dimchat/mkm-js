@@ -39,7 +39,6 @@
 
     var Interface = ns.type.Interface;
     var Mapper    = ns.type.Mapper;
-    var PublicKey = ns.crypto.PublicKey;
 
     var Address  = ns.protocol.Address;
     var MetaType = ns.protocol.MetaType;
@@ -70,38 +69,38 @@
      *      0x03 - username@btc_address
      *      0x04 - eth_address
      *      0x05 - username@eth_address
+     *
+     * @return {uint} 0 ~ 255
      */
-    Meta.prototype.getType = function () {
-        throw new Error('NotImplemented');
-    };
+    Meta.prototype.getType = function () {};
 
     /**
      *  Public key (used for signature)
      *
      *      RSA / ECC
+     *
+     * @return {VerifyKey}
      */
-    Meta.prototype.getKey = function () {
-        throw new Error('NotImplemented');
-    };
+    Meta.prototype.getPublicKey = function () {};
 
     /**
      *  Seed to generate fingerprint
      *
      *      Username / Group-X
+     *
+     * @return {String}
      */
-    Meta.prototype.getSeed = function () {
-        throw new Error('NotImplemented');
-    };
+    Meta.prototype.getSeed = function () {};
 
     /**
      *  Fingerprint to verify ID and public key
      *
      *      Build: fingerprint = sign(seed, privateKey)
      *      Check: verify(seed, fingerprint, publicKey)
+     *
+     * @return {Uint8Array}
      */
-    Meta.prototype.getFingerprint = function () {
-        throw new Error('NotImplemented');
-    };
+    Meta.prototype.getFingerprint = function () {};
 
     /**
      *  Generate Address with network(type)
@@ -109,84 +108,53 @@
      * @param {uint} network - ID.type
      * @return {Address}
      */
-    Meta.prototype.generateAddress = function (network) {
-        throw new Error('NotImplemented');
-    };
+    Meta.prototype.generateAddress = function (network) {};
+
+    //
+    //  Validation
+    //
 
     /**
      *  Check meta valid
      *  (must call this when received a new meta from network)
      *
-     * @param {Meta} meta
-     * @return true on valid
+     * @return false on fingerprint not matched
      */
-    Meta.check = function (meta) {
-        var gf = general_factory();
-        return gf.checkMeta(meta);
-    };
+    Meta.prototype.isValid = function () {};
 
     /**
-     *  Check whether meta match with ID/PK
+     *  Check whether meta matches with entity ID
+     *  (must call this when received a new meta from network)
      *
-     * @param {ID} identifier
-     * @param {Meta} meta
+     * @param {ID} identifier - entity ID
+     * @return true on matched
      */
-    Meta.matchID = function (identifier, meta) {
-        var gf = general_factory();
-        return gf.matchID(identifier, meta);
-    };
-    Meta.matchKey = function (key, meta) {
-        var gf = general_factory();
-        return gf.matchKey(key, meta);
-    };
+    Meta.prototype.matchIdentifier = function (identifier) {};
 
     /**
-     *  Meta Factory
-     *  ~~~~~~~~~~~~
+     *  Check whether meta matches with public key
+     *
+     * @param {VerifyKey} pKey - public key
+     * @return true on matched
      */
-    var MetaFactory = Interface(null, null);
+    Meta.prototype.matchPublicKey = function (pKey) {};
 
-    MetaFactory.prototype.createMeta = function (pKey, seed, fingerprint) {
-        throw new Error('NotImplemented');
-    };
-
-    MetaFactory.prototype.generateMeta = function (sKey, seed) {
-        throw new Error('NotImplemented');
-    };
-
-    MetaFactory.prototype.parseMeta = function (meta) {
-        throw new Error('NotImplemented');
-    };
-
-    Meta.Factory = MetaFactory;
+    //
+    //  Factory methods
+    //
 
     var general_factory = function () {
-        var man = ns.mkm.FactoryManager;
+        var man = ns.mkm.AccountFactoryManager;
         return man.generalFactory;
     };
 
     /**
-     *  Register meta factory with type
+     *  Create meta from stored info
      *
-     * @param {MetaType|uint} version
-     * @param {MetaFactory} factory
-     */
-    Meta.setFactory = function (version, factory) {
-        var gf = general_factory();
-        gf.setMetaFactory(version, factory);
-    };
-    Meta.getFactory = function (version) {
-        var gf = general_factory();
-        return gf.getMetaFactory(version);
-    };
-
-    /**
-     *  Create meta
-     *
-     * @param {MetaType|uint} version  - meta type
-     * @param {PublicKey} key          - public key
-     * @param {String} seed            - ID.name
-     * @param {Uint8Array} fingerprint - sKey.sign(seed)
+     * @param {MetaType|uint} version         - meta type
+     * @param {VerifyKey} key                 - public key
+     * @param {String} seed                   - ID.name
+     * @param {TransportableData} fingerprint - sKey.sign(seed)
      * @return {Meta}
      */
     Meta.create = function (version, key, seed, fingerprint) {
@@ -198,7 +166,7 @@
      *  Generate meta
      *
      * @param {MetaType|uint} version  - meta type
-     * @param {PrivateKey} sKey        - private key
+     * @param {SignKey} sKey           - private key
      * @param {String} seed            - ID.name
      * @return {Meta}
      */
@@ -218,7 +186,58 @@
         return gf.parseMeta(meta);
     };
 
+    /**
+     *  Register meta factory with type
+     *
+     * @param {MetaType|uint} version
+     * @param {MetaFactory} factory
+     */
+    Meta.setFactory = function (version, factory) {
+        var gf = general_factory();
+        gf.setMetaFactory(version, factory);
+    };
+    Meta.getFactory = function (version) {
+        var gf = general_factory();
+        return gf.getMetaFactory(version);
+    };
+
+    /**
+     *  Meta Factory
+     *  ~~~~~~~~~~~~
+     */
+    var MetaFactory = Interface(null, null);
+
+    /**
+     *  Create meta
+     *
+     * @param {VerifyKey} pKey                - public key
+     * @param {String} seed                   - ID.name
+     * @param {TransportableData} fingerprint - sKey.sign(seed)
+     * @return {Meta}
+     */
+    MetaFactory.prototype.createMeta = function (pKey, seed, fingerprint) {};
+
+    /**
+     *  Generate meta
+     *
+     * @param {SignKey} sKey - private key
+     * @param {String} seed  - ID.name
+     * @return {Meta}
+     */
+    MetaFactory.prototype.generateMeta = function (sKey, seed) {};
+
+    /**
+     *  Parse map object to meta
+     *
+     * @param {*} meta - meta info
+     * @return {Meta}
+     */
+    MetaFactory.prototype.parseMeta = function (meta) {};
+
+    Meta.Factory = MetaFactory;
+
     //-------- namespace --------
     ns.protocol.Meta = Meta;
+    // ns.protocol.MetaFactory = MetaFactory;
 
 })(MingKeMing);

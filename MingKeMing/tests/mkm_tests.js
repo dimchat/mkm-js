@@ -43,7 +43,7 @@ mkm_tests = [];
         var seed = 'moky';
         var meta = Meta.generate(MetaType.DEFAULT, SK, seed);
         log('generated meta: ', meta);
-        assert(meta.getKey() != null, 'failed to generate meta');
+        assert(meta.getPublicKey() != null, 'failed to generate meta');
 
         var address = meta.generateAddress(EntityType.USER);
         log('generated address: ', address);

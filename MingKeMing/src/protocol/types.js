@@ -30,37 +30,7 @@
 // =============================================================================
 //
 
-//! require <crypto.js>
-
-if (typeof MingKeMing !== 'object') {
-    MingKeMing = {};
-}
-
-(function (ns) {
-    "use strict";
-
-    //-------- namespaces --------
-    if (typeof ns.type !== 'object') {
-        ns.type = MONKEY.type;
-    }
-    if (typeof ns.format !== 'object') {
-        ns.format = MONKEY.format;
-    }
-    if (typeof ns.digest !== 'object') {
-        ns.digest = MONKEY.digest;
-    }
-    if (typeof ns.crypto !== 'object') {
-        ns.crypto = MONKEY.crypto;
-    }
-
-    if (typeof ns.protocol !== 'object') {
-        ns.protocol = {};
-    }
-    if (typeof ns.mkm !== 'object') {
-        ns.mkm = {};
-    }
-
-})(MingKeMing);
+//! require 'namespace.js'
 
 (function (ns) {
     'use strict';
