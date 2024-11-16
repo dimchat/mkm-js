@@ -45,7 +45,7 @@
 
     // searching exists elements for alias
     var get_alias = function (enumeration, value) {
-        var keys = Object.keys(enumeration)
+        var keys = Object.keys(enumeration);
         var e;
         for (var k in keys) {
             e = enumeration[k];
@@ -110,7 +110,7 @@
             }
         }
         Class(enumeration, Enum, null, null);
-        var keys = Object.keys(elements)
+        var keys = Object.keys(elements);
         var alias, value;
         for (var i = 0; i < keys.length; ++i) {
             alias = keys[i];

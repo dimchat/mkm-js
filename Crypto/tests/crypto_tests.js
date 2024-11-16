@@ -318,9 +318,10 @@ crypto_tests = [];
     var test_rsa = function () {
         var SK = PrivateKey.generate(AsymmetricKey.RSA);
         var PK = SK.getPublicKey();
+        var extra_params = {};
         // test encryption
-        var ciphertext = PK.encrypt(bytes);
-        var plaintext = SK.decrypt(ciphertext);
+        var ciphertext = PK.encrypt(bytes, extra_params);
+        var plaintext = SK.decrypt(ciphertext, extra_params);
         assert(Arrays.equals(plaintext, bytes) === true, 'RSA encryption error');
         // test signature
         var signature = SK.sign(bytes);
@@ -379,14 +380,14 @@ crypto_tests = [];
         //
         expect = 'PGsWtfUm3m236XHT1QK/lkiG8ZEtn9WpAIdMO9Q3z/qI0pzujSn60rCc/1AFHUAPn7J9S/kqNVXtQwhRTdfLHFL6jWn6N8Id1xAeUVxQGkJRDudRQxbxkbqCuj+T8LjEEA24wq2j6Ekrz0x3tt5QUaD6WeLdcVQPh2SF9DJY3ZY=';
 
-        var enc = PK.encrypt(bytes);
+        var enc = PK.encrypt(bytes, extra_params);
         log('RSA encrypt:(', str, '): ', Base64.encode(enc));
-        var dec = SK.decrypt(enc);
+        var dec = SK.decrypt(enc, extra_params);
         var result = new ConstantString(UTF8.decode(dec));
         log('RSA decrypt:', result);
         assert(str.toString() === result.toString(), 'RSA encrypt error');
 
-        dec = SK.decrypt(Base64.decode(expect));
+        dec = SK.decrypt(Base64.decode(expect), extra_params);
         result = new ConstantString(UTF8.decode(dec));
         log('RSA decrypt:', result);
         assert(str.toString() === result.toString(), 'RSA decrypt error');
@@ -412,9 +413,10 @@ crypto_tests = [];
 
     var test_aes = function () {
         var password = SymmetricKey.generate(SymmetricKey.AES);
+        var extra_params = {};
         // test encryption
-        var ciphertext = password.encrypt(bytes);
-        var plaintext = password.decrypt(ciphertext);
+        var ciphertext = password.encrypt(bytes, extra_params);
+        var plaintext = password.decrypt(ciphertext, extra_params);
         assert(Arrays.equals(plaintext, bytes) === true, 'AES encryption error');
 
         // test with key data
@@ -427,12 +429,12 @@ crypto_tests = [];
 
         var expect = '0xtbqZN6x2aWTZn0DpCoCA==';
 
-        var enc = pwd.encrypt(bytes);
+        var enc = pwd.encrypt(bytes, extra_params);
         log('AES encrypt(', str, '): ', Hex.encode(enc));
         log('AES encrypt(', str, '): ', Base64.encode(enc));
         assert(Base64.encode(enc) === expect, 'AES encrypt error');
 
-        var dec = pwd.decrypt(enc);
+        var dec = pwd.decrypt(enc, extra_params);
         var result = new ConstantString(UTF8.decode(dec));
         log('AES decrypt("' + expect + '"): "' + result + '"');
         assert(result.equals(str) === true, 'AES decrypt error');

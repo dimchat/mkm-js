@@ -35,7 +35,7 @@ if (typeof MONKEY !== 'object') {
 }
 
 (function (ns) {
-    "use strict";
+    'use strict';
 
     //-------- namespaces --------
     if (typeof ns.type !== 'object') {

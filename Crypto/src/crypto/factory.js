@@ -57,6 +57,10 @@
         return promise;
     };
 
+    /**
+     *  CryptographyKey Factory
+     *  ~~~~~~~~~~~~~~~~~~~~~~~
+     */
     var GeneralFactory = function () {
         this.__symmetricKeyFactories = {};  // name => SymmetricKey.Factory
         this.__publicKeyFactories    = {};  // name => PublicKey.Factory
@@ -88,9 +92,9 @@
     GeneralFactory.prototype.matchEncryptKey = function (pKey, sKey) {
         // check by encryption
         var data = get_promise();
-        var extra = {};
-        var ciphertext = pKey.encrypt(data, extra);
-        var plaintext = sKey.decrypt(ciphertext, extra);
+        var extra_params = {};
+        var ciphertext = pKey.encrypt(data, extra_params);
+        var plaintext = sKey.decrypt(ciphertext, extra_params);
         // check equals
         if (!plaintext || plaintext.length !== data.length) {
             return false;
@@ -199,12 +203,16 @@
         return factory.parsePublicKey(info);
     };
 
+    /**
+     *  CryptographyKey FactoryManager
+     *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     */
     var FactoryManager = {
         generalFactory: new GeneralFactory()
     };
 
     //-------- namespace --------
-    ns.crypto.GeneralFactory = GeneralFactory;
-    ns.crypto.FactoryManager = FactoryManager;
+    ns.crypto.CryptographyKeyGeneralFactory = GeneralFactory;
+    ns.crypto.CryptographyKeyFactoryManager = FactoryManager;
 
 })(MONKEY);

@@ -72,7 +72,7 @@
     //
 
     var general_factory = function () {
-        var man = ns.crypto.FactoryManager;
+        var man = ns.crypto.CryptographyKeyFactoryManager;
         return man.generalFactory;
     };
 

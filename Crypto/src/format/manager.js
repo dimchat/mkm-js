@@ -127,34 +127,35 @@
 
     /**
      *  Format GeneralFactory
+     *  ~~~~~~~~~~~~~~~~~~~~~
      */
-    var FormatGeneralFactory = function () {
+    var GeneralFactory = function () {
         this.__tedFactories = {};  // name => TransportableData.Factory
         this.__pnfFactory = null;
     };
-    Class(FormatGeneralFactory, null, null, null);
+    Class(GeneralFactory, null, null, null);
 
     ///
     ///   TED - Transportable Encoded Data
     ///
 
-    FormatGeneralFactory.prototype.getDataAlgorithm = function (ted, defaultValue) {
+    GeneralFactory.prototype.getDataAlgorithm = function (ted, defaultValue) {
         return Converter.getString(ted['algorithm'], defaultValue);
     };
 
-    FormatGeneralFactory.prototype.setTransportableDataFactory = function (algorithm, factory) {
+    GeneralFactory.prototype.setTransportableDataFactory = function (algorithm, factory) {
         this.__tedFactories[algorithm] = factory;
     };
-    FormatGeneralFactory.prototype.getTransportableDataFactory = function (algorithm) {
+    GeneralFactory.prototype.getTransportableDataFactory = function (algorithm) {
         return this.__tedFactories[algorithm];
     };
 
-    FormatGeneralFactory.prototype.createTransportableData = function (algorithm, data) {
+    GeneralFactory.prototype.createTransportableData = function (algorithm, data) {
         var factory = this.getTransportableDataFactory(algorithm);
         return factory.createTransportableData(data);
     };
 
-    FormatGeneralFactory.prototype.parseTransportableData = function (ted) {
+    GeneralFactory.prototype.parseTransportableData = function (ted) {
         if (!ted) {
             return null;
         } else if (Interface.conforms(ted, TransportableData)) {
@@ -177,19 +178,19 @@
     ///   PNF - Portable Network File
     ///
 
-    FormatGeneralFactory.prototype.setPortableNetworkFileFactory = function (factory) {
+    GeneralFactory.prototype.setPortableNetworkFileFactory = function (factory) {
         this.__pnfFactory = factory;
     };
-    FormatGeneralFactory.prototype.getPortableNetworkFileFactory = function () {
+    GeneralFactory.prototype.getPortableNetworkFileFactory = function () {
         return this.__pnfFactory;
     };
 
-    FormatGeneralFactory.prototype.createPortableNetworkFile = function (ted, filename, url, password) {
+    GeneralFactory.prototype.createPortableNetworkFile = function (ted, filename, url, password) {
         var factory = this.getPortableNetworkFileFactory();
         return factory.createPortableNetworkFile(ted, filename, url, password);
     };
 
-    FormatGeneralFactory.prototype.parsePortableNetworkFile = function (pnf) {
+    GeneralFactory.prototype.parsePortableNetworkFile = function (pnf) {
         if (!pnf) {
             return null;
         } else if (Interface.conforms(pnf, PortableNetworkFile)) {
@@ -204,12 +205,16 @@
         return factory.parsePortableNetworkFile(pnf);
     };
 
-    var FormatFactoryManager = {
-        generalFactory: new FormatGeneralFactory()
+    /**
+     *  Format FactoryManager
+     *  ~~~~~~~~~~~~~~~~~~~~~
+     */
+    var FactoryManager = {
+        generalFactory: new GeneralFactory()
     };
 
     //-------- namespace --------
-    ns.format.FormatGeneralFactory = FormatGeneralFactory;
-    ns.format.FormatFactoryManager = FormatFactoryManager;
+    ns.format.FormatGeneralFactory = GeneralFactory;
+    ns.format.FormatFactoryManager = FactoryManager;
 
 })(MONKEY);
