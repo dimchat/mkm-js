@@ -97,14 +97,18 @@
      */
     var PublicKeyFactory = Interface(null, null);
 
-    PublicKeyFactory.prototype.parsePublicKey = function (key) {
-        throw new Error('NotImplemented');
-    };
+    /**
+     *  Parse map object to key
+     *
+     * @param {*} key - key info
+     * @return PublicKey
+     */
+    PublicKeyFactory.prototype.parsePublicKey = function (key) {};
 
     PublicKey.Factory = PublicKeyFactory;
 
     //-------- namespace --------
     ns.crypto.PublicKey = PublicKey;
-    ns.crypto.PublicKeyFactory = PublicKeyFactory;
+    // ns.crypto.PublicKeyFactory = PublicKeyFactory;
 
 })(MONKEY);

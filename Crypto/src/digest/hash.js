@@ -50,9 +50,7 @@
      * @param {Uint8Array} data - binary data
      * @return {Uint8Array} binary data
      */
-    DataDigester.prototype.digest = function (data) {
-        throw new Error('NotImplemented');
-    };
+    DataDigester.prototype.digest = function (data) {};
 
     //-------- namespace --------
     ns.digest.DataDigester = DataDigester;

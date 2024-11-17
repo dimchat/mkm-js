@@ -53,9 +53,7 @@
      * @param {Uint8Array} data
      * @return {String}
      */
-    DataCoder.prototype.encode = function (data) {
-        throw new Error('NotImplemented');
-    };
+    DataCoder.prototype.encode = function (data) {};
 
     /**
      *  Decode local string to binary data
@@ -63,9 +61,7 @@
      * @param {String} string
      * @return {Uint8Array}
      */
-    DataCoder.prototype.decode = function (string) {
-        throw new Error('NotImplemented');
-    };
+    DataCoder.prototype.decode = function (string) {};
 
     /**
      *  Object Coder
@@ -83,9 +79,7 @@
      * @param {{}|[]} object - Map or List
      * @return {String} serialized string
      */
-    ObjectCoder.prototype.encode = function (object) {
-        throw new Error('NotImplemented');
-    };
+    ObjectCoder.prototype.encode = function (object) {};
 
     /**
      *  Decode string to Map/List object
@@ -93,9 +87,7 @@
      * @param {String} string - serialized string
      * @return {{}|[]} Map or List
      */
-    ObjectCoder.prototype.decode = function (string) {
-        throw new Error('NotImplemented');
-    };
+    ObjectCoder.prototype.decode = function (string) {};
 
     /**
      *  String Coder
@@ -113,9 +105,7 @@
      * @param {String} string
      * @return {Uint8Array}
      */
-    StringCoder.prototype.encode = function (string) {
-        throw new Error('NotImplemented');
-    };
+    StringCoder.prototype.encode = function (string) {};
 
     /**
      *  Decode binary data to local string
@@ -123,9 +113,7 @@
      * @param {Uint8Array} data
      * @return {String}
      */
-    StringCoder.prototype.decode = function (data) {
-        throw new Error('NotImplemented');
-    };
+    StringCoder.prototype.decode = function (data) {};
 
     //-------- namespace --------
     ns.format.DataCoder = DataCoder;

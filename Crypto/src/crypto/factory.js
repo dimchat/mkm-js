@@ -41,12 +41,13 @@
     'use strict';
 
     var Interface = ns.type.Interface;
-    var Class = ns.type.Class;
-    var Wrapper = ns.type.Wrapper;
+    var Class     = ns.type.Class;
+    var Wrapper   = ns.type.Wrapper;
+    var Converter = ns.type.Converter;
 
     var SymmetricKey = ns.crypto.SymmetricKey;
-    var PrivateKey = ns.crypto.PrivateKey;
-    var PublicKey = ns.crypto.PublicKey;
+    var PrivateKey   = ns.crypto.PrivateKey;
+    var PublicKey    = ns.crypto.PublicKey;
 
     // sample data for checking keys
     var promise = 'Moky loves May Lee forever!';
@@ -110,11 +111,12 @@
     /**
      *  Get key algorithm
      *
-     * @param {{}} key
+     * @param {{}} key              - key info
+     * @param {string} defaultValue - default algorithm
      * @return {string}
      */
-    GeneralFactory.prototype.getAlgorithm = function (key) {
-        return key['algorithm'];
+    GeneralFactory.prototype.getAlgorithm = function (key, defaultValue) {
+        return Converter.getString(key['algorithm'], defaultValue);
     };
 
     //
@@ -139,7 +141,7 @@
             return key;
         }
         var info = Wrapper.fetchMap(key);
-        var algorithm = this.getAlgorithm(info);
+        var algorithm = this.getAlgorithm(info, '*');
         var factory = this.getSymmetricKeyFactory(algorithm);
         if (!factory) {
             factory = this.getSymmetricKeyFactory('*'); // unknown
@@ -169,7 +171,7 @@
             return key;
         }
         var info = Wrapper.fetchMap(key);
-        var algorithm = this.getAlgorithm(info);
+        var algorithm = this.getAlgorithm(info, '*');
         var factory = this.getPrivateKeyFactory(algorithm);
         if (!factory) {
             factory = this.getPrivateKeyFactory('*');  // unknown
@@ -195,7 +197,7 @@
             return key;
         }
         var info = Wrapper.fetchMap(key);
-        var algorithm = this.getAlgorithm(info);
+        var algorithm = this.getAlgorithm(info, '*');
         var factory = this.getPublicKeyFactory(algorithm);
         if (!factory) {
             factory = this.getPublicKeyFactory('*');  // unknown

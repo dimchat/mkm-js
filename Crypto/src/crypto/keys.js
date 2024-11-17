@@ -56,18 +56,14 @@
      *
      * @return {String} algorithm name
      */
-    CryptographyKey.prototype.getAlgorithm = function () {
-        throw new Error('NotImplemented');
-    };
+    CryptographyKey.prototype.getAlgorithm = function () {};
 
     /**
      *  Get key data
      *
      * @return {Uint8Array}
      */
-    CryptographyKey.prototype.getData = function () {
-        throw new Error('NotImplemented');
-    };
+    CryptographyKey.prototype.getData = function () {};
 
     var EncryptKey = Interface(null, [CryptographyKey]);
 
@@ -77,11 +73,9 @@
      *
      * @param {Uint8Array} plaintext - plain data
      * @param {*} extra              - store extra variables ('IV' for 'AES')
-     * @return {Uint8Array}
+     * @return {Uint8Array} ciphertext
      */
-    EncryptKey.prototype.encrypt = function (plaintext, extra) {
-        throw new Error('NotImplemented');
-    };
+    EncryptKey.prototype.encrypt = function (plaintext, extra) {};
 
     var DecryptKey = Interface(null, [CryptographyKey]);
 
@@ -91,11 +85,9 @@
      *
      * @param {Uint8Array} ciphertext - encrypted data
      * @param {*} params              - extra params ('IV' for 'AES')
-     * @return {Uint8Array}
+     * @return {Uint8Array} plaintext
      */
-    DecryptKey.prototype.decrypt = function (ciphertext, params) {
-        throw new Error('NotImplemented');
-    };
+    DecryptKey.prototype.decrypt = function (ciphertext, params) {};
 
     /**
      *  OK = decrypt(encrypt(data, SK), PK) == data
@@ -103,9 +95,7 @@
      * @param {EncryptKey} pKey - encrypt key
      * @return {boolean} true on signature matched
      */
-    DecryptKey.prototype.matchEncryptKey = function (pKey) {
-        throw new Error('NotImplemented');
-    };
+    DecryptKey.prototype.matchEncryptKey = function (pKey) {};
 
     //-------- namespace --------
     ns.crypto.CryptographyKey = CryptographyKey;
@@ -143,9 +133,7 @@
      * @param {Uint8Array} data
      * @return {Uint8Array}
      */
-    SignKey.prototype.sign = function (data) {
-        throw new Error('NotImplemented');
-    };
+    SignKey.prototype.sign = function (data) {};
 
     var VerifyKey = Interface(null, [AsymmetricKey]);
 
@@ -156,9 +144,7 @@
      * @param {Uint8Array} signature
      * @return {boolean}
      */
-    VerifyKey.prototype.verify = function (data, signature) {
-        throw new Error('NotImplemented');
-    };
+    VerifyKey.prototype.verify = function (data, signature) {};
 
     /**
      *  OK = verify(data, sign(data, SK), PK)
@@ -166,9 +152,7 @@
      * @param {SignKey} sKey - private key
      * @return {boolean} true on signature matched
      */
-    VerifyKey.prototype.matchSignKey = function (sKey) {
-        throw new Error('NotImplemented');
-    };
+    VerifyKey.prototype.matchSignKey = function (sKey) {};
 
     //-------- namespace --------
     ns.crypto.AsymmetricKey = AsymmetricKey;

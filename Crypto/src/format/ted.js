@@ -64,18 +64,14 @@
      *
      * @return 'base64'
      */
-    TransportableData.prototype.getAlgorithm = function () {
-        throw new Error('NotImplemented');
-    };
+    TransportableData.prototype.getAlgorithm = function () {};
 
     /**
      *  Get original data
      *
      * @return plaintext
      */
-    TransportableData.prototype.getData = function () {
-        throw new Error('NotImplemented');
-    };
+    TransportableData.prototype.getData = function () {};
 
     /**
      *  Get encoded string
@@ -85,18 +81,14 @@
      *                  "data:image/png;base64,{BASE64_ENCODE}", or
      *                  "{...}"
      */
-    TransportableData.prototype.toString = function () {
-        throw new Error('NotImplemented');
-    };
+    TransportableData.prototype.toString = function () {};
 
     /**
      *  toJson()
      *
      * @return {String|{}}
      */
-    TransportableData.prototype.toObject = function () {
-        throw new Error('NotImplemented');
-    };
+    TransportableData.prototype.toObject = function () {};
 
     //
     //  Conveniences
@@ -157,9 +149,7 @@
      * @param {Uint8Array} data - original data
      * @return {TransportableData} TED object
      */
-    TransportableDataFactory.prototype.createTransportableData = function (data) {
-        throw new Error('NotImplemented');
-    };
+    TransportableDataFactory.prototype.createTransportableData = function (data) {};
 
     /**
      *  Parse map object to TED
@@ -167,14 +157,12 @@
      * @param {*} ted - TED info
      * @return {TransportableData} TED object
      */
-    TransportableDataFactory.prototype.parseTransportableData = function (ted) {
-        throw new Error('NotImplemented');
-    };
+    TransportableDataFactory.prototype.parseTransportableData = function (ted) {};
 
     TransportableData.Factory = TransportableDataFactory;
 
     //-------- namespace --------
     ns.format.TransportableData = TransportableData;
-    ns.format.TransportableDataFactory = TransportableDataFactory;
+    // ns.format.TransportableDataFactory = TransportableDataFactory;
 
 })(MONKEY);

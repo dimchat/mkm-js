@@ -31,6 +31,7 @@
 //
 
 //! require 'type/class.js'
+//! require 'type/object.js'
 //! require 'type/mapper.js'
 //! require 'type/stringer.js'
 //! require 'type/converter.js'
@@ -43,6 +44,7 @@
 
     var Interface = ns.type.Interface;
     var Class = ns.type.Class;
+    var IObject = ns.type.Object;
     var Mapper = ns.type.Mapper;
     var Stringer = ns.type.Stringer;
     var Converter = ns.type.Converter
@@ -94,7 +96,7 @@
             return data.toMap();
         } else if (Interface.conforms(data, Stringer)) {
             text = data.toString();
-        } else if (data instanceof String) {
+        } else if (IObject.isString(data)) {
             text = data;
         } else {
             // Map

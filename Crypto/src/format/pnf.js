@@ -72,36 +72,24 @@
      *
      * @param {Uint8Array} fileData
      */
-    PortableNetworkFile.prototype.setData = function (fileData) {
-        throw new Error('NotImplemented');
-    };
-    PortableNetworkFile.prototype.getData = function () {
-        throw new Error('NotImplemented');
-    };
+    PortableNetworkFile.prototype.setData = function (fileData) {};
+    PortableNetworkFile.prototype.getData = function () {};
 
     /**
      *  Set file name
      *
      * @param {String} filename
      */
-    PortableNetworkFile.prototype.setFilename = function (filename) {
-        throw new Error('NotImplemented');
-    };
-    PortableNetworkFile.prototype.getFilename = function () {
-        throw new Error('NotImplemented');
-    };
+    PortableNetworkFile.prototype.setFilename = function (filename) {};
+    PortableNetworkFile.prototype.getFilename = function () {};
 
     /**
      *  Download URL
      *
      * @param {URL} url
      */
-    PortableNetworkFile.prototype.setURL = function (url) {
-        throw new Error('NotImplemented');
-    };
-    PortableNetworkFile.prototype.getURL = function () {
-        throw new Error('NotImplemented');
-    };
+    PortableNetworkFile.prototype.setURL = function (url) {};
+    PortableNetworkFile.prototype.getURL = function () {};
 
     /**
      *  Password for decrypting the downloaded data from CDN,
@@ -109,12 +97,8 @@
      *
      * @param {DecryptKey} key
      */
-    PortableNetworkFile.prototype.setPassword = function (key) {
-        throw new Error('NotImplemented');
-    };
-    PortableNetworkFile.prototype.getPassword = function () {
-        throw new Error('NotImplemented');
-    };
+    PortableNetworkFile.prototype.setPassword = function (key) {};
+    PortableNetworkFile.prototype.getPassword = function () {};
 
     /**
      *  Get encoded string
@@ -124,18 +108,14 @@
      *                  "data:image/png;base64,{BASE64_ENCODE}", or
      *                  "{...}"
      */
-    PortableNetworkFile.prototype.toString = function () {
-        throw new Error('NotImplemented');
-    };
+    PortableNetworkFile.prototype.toString = function () {};
 
     /**
      *  toJson()
      *
      * @return {String|{}}
      */
-    PortableNetworkFile.prototype.toObject = function () {
-        throw new Error('NotImplemented');
-    };
+    PortableNetworkFile.prototype.toObject = function () {};
 
     //
     //  Factory methods
@@ -187,9 +167,7 @@
      * @return {PortableNetworkFile} PNF object
      */
     PortableNetworkFileFactory.prototype.createPortableNetworkFile = function (ted, filename,
-                                                                               url, password) {
-        throw new Error('NotImplemented');
-    };
+                                                                               url, password) {};
 
     /**
      *  Parse map object to PNF
@@ -197,14 +175,12 @@
      * @param {*} pnf - PNF info
      * @return {PortableNetworkFile} PNF object
      */
-    PortableNetworkFileFactory.prototype.parsePortableNetworkFile = function (pnf) {
-        throw new Error('NotImplemented');
-    };
+    PortableNetworkFileFactory.prototype.parsePortableNetworkFile = function (pnf) {};
 
     PortableNetworkFile.Factory = PortableNetworkFileFactory;
 
     //-------- namespace --------
     ns.format.PortableNetworkFile = PortableNetworkFile;
-    ns.format.PortableNetworkFileFactory = PortableNetworkFileFactory;
+    // ns.format.PortableNetworkFileFactory = PortableNetworkFileFactory;
 
 })(MONKEY);

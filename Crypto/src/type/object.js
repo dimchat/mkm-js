@@ -46,6 +46,19 @@
         }
     };
 
+    var is_string = function (object) {
+        return typeof object === 'string';
+    };
+    var is_number = function (object) {
+        return typeof object === 'number';
+    };
+    var is_boolean = function (object) {
+        return typeof object === 'boolean';
+    };
+    var is_function = function (object) {
+        return typeof object === 'function';
+    };
+
     var is_base_type = function (object) {
         var t = typeof object;
         if (t === 'string' || t === 'number' || t === 'boolean' || t === 'function') {
@@ -76,17 +89,11 @@
     //
     var IObject = Interface(null, null);
 
-    IObject.prototype.toString = function () {
-        throw new Error('NotImplemented');
-    };
+    IObject.prototype.toString = function () {};
 
-    IObject.prototype.valueOf = function () {
-        throw new Error('NotImplemented');
-    };
+    IObject.prototype.valueOf = function () {};
 
-    IObject.prototype.isEmpty = function () {
-        throw new Error('NotImplemented');
-    };
+    IObject.prototype.isEmpty = function () {};
 
     /**
      *  Check whether objects equal
@@ -94,11 +101,15 @@
      * @param {Object} other - another object
      * @return {boolean}
      */
-    IObject.prototype.equals = function (other) {
-        throw new Error('NotImplemented');
-    };
+    IObject.prototype.equals = function (other) {};
 
     IObject.isNull = is_null;
+
+    IObject.isString = is_string;
+    IObject.isNumber = is_number;
+    IObject.isBoolean = is_boolean;
+    IObject.isFunction = is_function;
+
     IObject.isBaseType = is_base_type;
 
     //

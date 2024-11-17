@@ -70,9 +70,7 @@
      *
      * @return {{}} built-in map
      */
-    Mapper.prototype.toMap = function () {
-        throw new Error('NotImplemented');
-    };
+    Mapper.prototype.toMap = function () {};
 
     /**
      *  Clone inner map
@@ -80,27 +78,21 @@
      * @param {boolean} deepCopy
      * @return {{}} copied built-in map
      */
-    Mapper.prototype.copyMap = function (deepCopy) {
-        throw new Error('NotImplemented');
-    };
+    Mapper.prototype.copyMap = function (deepCopy) {};
 
     /**
      *  Get all keys in map
      *
      * @return {string[]}
      */
-    Mapper.prototype.allKeys = function() {
-        throw new Error('NotImplemented');
-    };
+    Mapper.prototype.allKeys = function() {};
 
     /**
      *  Get length of inner map
      *
      * @return {number}
      */
-    Mapper.prototype.getLength = function () {
-        throw new Error('NotImplemented');
-    };
+    Mapper.prototype.getLength = function () {};
 
     /**
      *  Get value for key
@@ -108,9 +100,7 @@
      * @param {string} key
      * @return {*}
      */
-    Mapper.prototype.getValue = function (key) {
-        throw new Error('NotImplemented');
-    };
+    Mapper.prototype.getValue = function (key) {};
 
     /**
      *  Set value for key
@@ -118,9 +108,7 @@
      * @param {string} key
      * @param {*} value
      */
-    Mapper.prototype.setValue = function (key, value) {
-        throw new Error('NotImplemented');
-    };
+    Mapper.prototype.setValue = function (key, value) {};
 
     /**
      *  Remove value for key
@@ -128,9 +116,7 @@
      * @param {string} key
      * @return {*} removed value
      */
-    Mapper.prototype.removeValue = function (key) {
-        throw new Error('NotImplemented');
-    };
+    Mapper.prototype.removeValue = function (key) {};
 
     /**
      *  Get string value for key
@@ -139,9 +125,7 @@
      * @param {string} defaultValue
      * @return {string}
      */
-    Mapper.prototype.getString = function (key, defaultValue) {
-        throw new Error('NotImplemented');
-    };
+    Mapper.prototype.getString = function (key, defaultValue) {};
 
     /**
      *  Get boolean value for key
@@ -150,9 +134,7 @@
      * @param {boolean} defaultValue
      * @return {boolean}
      */
-    Mapper.prototype.getBoolean = function (key, defaultValue) {
-        throw new Error('NotImplemented');
-    };
+    Mapper.prototype.getBoolean = function (key, defaultValue) {};
 
     /**
      *  Get int number value for key
@@ -161,9 +143,7 @@
      * @param {number} defaultValue
      * @return {number}
      */
-    Mapper.prototype.getInt = function (key, defaultValue) {
-        throw new Error('NotImplemented');
-    };
+    Mapper.prototype.getInt = function (key, defaultValue) {};
 
     /**
      *  Get float number value for key
@@ -172,9 +152,7 @@
      * @param {number} defaultValue
      * @return {number}
      */
-    Mapper.prototype.getFloat = function (key, defaultValue) {
-        throw new Error('NotImplemented');
-    };
+    Mapper.prototype.getFloat = function (key, defaultValue) {};
 
     /**
      *  Get date time for key
@@ -183,9 +161,7 @@
      * @param {Date} defaultValue
      * @return {Date}
      */
-    Mapper.prototype.getDateTime = function (key, defaultValue) {
-        throw new Error('NotImplemented');
-    };
+    Mapper.prototype.getDateTime = function (key, defaultValue) {};
 
     /**
      *  Set date time for key
@@ -193,9 +169,7 @@
      * @param {string} key
      * @param {Date} time
      */
-    Mapper.prototype.setDateTime = function (key, time) {
-        throw new Error('NotImplemented');
-    };
+    Mapper.prototype.setDateTime = function (key, time) {};
 
     /**
      *  Set string value for key
@@ -203,9 +177,7 @@
      * @param {string} key
      * @param {Stringer} stringer
      */
-    Mapper.prototype.setString = function (key, stringer) {
-        throw new Error('NotImplemented');
-    };
+    Mapper.prototype.setString = function (key, stringer) {};
 
     /**
      *  Set dictionary value for key
@@ -213,9 +185,7 @@
      * @param {string} key
      * @param {Mapper} mapper
      */
-    Mapper.prototype.setMap = function (key, mapper) {
-        throw new Error('NotImplemented');
-    };
+    Mapper.prototype.setMap = function (key, mapper) {};
 
     /**
      *  Create dictionary with values or JSON string

@@ -42,7 +42,7 @@
         if (IObject.isNull(value)) {
             // empty
             return defaultValue;
-        } else if (value instanceof String) {
+        } else if (IObject.isString(value)) {
             // exactly
             return value;
         } else {
@@ -68,13 +68,13 @@
         if (IObject.isNull(value)) {
             // empty
             return defaultValue;
-        } else if (value instanceof Number) {
+        } else if (IObject.isNumber(value)) {
             // exactly
             return value;
-        } else if (value instanceof Boolean) {
+        } else if (IObject.isBoolean(value)) {
             return value ? 1 : 0;
         } else {
-            var str = value instanceof String ? value : value.toString();
+            var str = IObject.isString(value) ? value : value.toString();
             return parseInt(str);
         }
     };
@@ -82,13 +82,13 @@
         if (IObject.isNull(value)) {
             // empty
             return defaultValue;
-        } else if (value instanceof Number) {
+        } else if (IObject.isNumber(value)) {
             // exactly
             return value;
-        } else if (value instanceof Boolean) {
+        } else if (IObject.isBoolean(value)) {
             return value ? 1.0 : 0.0;
         } else {
-            var str = value instanceof String ? value : value.toString();
+            var str = IObject.isString(value) ? value : value.toString();
             return parseFloat(str);
         }
     };
@@ -99,14 +99,14 @@
         if (IObject.isNull(value)) {
             // empty
             return defaultValue;
-        } else if (value instanceof Boolean) {
+        } else if (IObject.isBoolean(value)) {
             // exactly
             return value;
-        } else if (value instanceof Number) {
+        } else if (IObject.isNumber(value)) {
             return value > 0 || value < 0;
         }
         var text;
-        if (value instanceof String) {
+        if (IObject.isString(value)) {
             text = value;
         } else {
             text = value.toString();

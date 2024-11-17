@@ -51,9 +51,7 @@
      *
      * @return {number}
      */
-    Stringer.prototype.getLength = function () {
-        throw new Error('NotImplemented');
-    };
+    Stringer.prototype.getLength = function () {};
 
     /**
      *  Check whether strings equal
@@ -61,9 +59,7 @@
      * @param {String|Stringer} other - another string
      * @return {boolean}
      */
-    Stringer.prototype.equalsIgnoreCase = function (other) {
-        throw new Error('NotImplemented');
-    };
+    Stringer.prototype.equalsIgnoreCase = function (other) {};
 
     /**
      *  Create String

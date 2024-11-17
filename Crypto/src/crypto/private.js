@@ -63,9 +63,7 @@
      *
      * @return {PublicKey}
      */
-    PrivateKey.prototype.getPublicKey = function () {
-        throw new Error('NotImplemented');
-    };
+    PrivateKey.prototype.getPublicKey = function () {};
 
     //
     //  Factory methods
@@ -119,18 +117,26 @@
      */
     var PrivateKeyFactory = Interface(null, null);
 
-    PrivateKeyFactory.prototype.generatePrivateKey = function () {
-        throw new Error('NotImplemented');
-    };
+    /**
+     *  Generate key
+     *
+     * @return {PrivateKey}
+     */
+    PrivateKeyFactory.prototype.generatePrivateKey = function () {};
 
-    PrivateKeyFactory.prototype.parsePrivateKey = function (key) {
-        throw new Error('NotImplemented');
-    };
+
+    /**
+     *  Parse map object to key
+     *
+     * @param {*} key - key info
+     * @return {PrivateKey}
+     */
+    PrivateKeyFactory.prototype.parsePrivateKey = function (key) {};
 
     PrivateKey.Factory = PrivateKeyFactory;
 
     //-------- namespace --------
     ns.crypto.PrivateKey = PrivateKey;
-    ns.crypto.PrivateKeyFactory = PrivateKeyFactory;
+    // ns.crypto.PrivateKeyFactory = PrivateKeyFactory;
 
 })(MONKEY);

@@ -109,18 +109,25 @@
      */
     var SymmetricKeyFactory = Interface(null, null);
 
-    SymmetricKeyFactory.prototype.generateSymmetricKey = function () {
-        throw new Error('NotImplemented');
-    };
+    /**
+     *  Generate key
+     *
+     * @return {SymmetricKey}
+     */
+    SymmetricKeyFactory.prototype.generateSymmetricKey = function () {};
 
-    SymmetricKeyFactory.prototype.parseSymmetricKey = function (key) {
-        throw new Error('NotImplemented');
-    };
+    /**
+     *  Parse map object to key
+     *
+     * @param {*} key - key info
+     * @return {SymmetricKey}
+     */
+    SymmetricKeyFactory.prototype.parseSymmetricKey = function (key) {};
 
     SymmetricKey.Factory = SymmetricKeyFactory;
 
     //-------- namespace --------
     ns.crypto.SymmetricKey = SymmetricKey;
-    ns.crypto.SymmetricKeyFactory = SymmetricKeyFactory;
+    // ns.crypto.SymmetricKeyFactory = SymmetricKeyFactory;
 
 })(MONKEY);
