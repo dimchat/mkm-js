@@ -77,7 +77,7 @@
     /**
      *  Generate key with algorithm name
      *
-     * @param {String} algorithm - algorithm name ('RSA', 'ECC')
+     * @param {string} algorithm - algorithm name ('RSA', 'ECC')
      * @return {PrivateKey}
      */
     PrivateKey.generate = function (algorithm) {
@@ -99,7 +99,7 @@
     /**
      *  Register private key factory with algorithm
      *
-     * @param {String} algorithm
+     * @param {string} algorithm
      * @param {PrivateKeyFactory} factory
      */
     PrivateKey.setFactory = function (algorithm, factory) {

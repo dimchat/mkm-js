@@ -112,8 +112,8 @@
      *  Get key algorithm
      *
      * @param {{}} key              - key info
-     * @param {string} defaultValue - default algorithm
-     * @return {string}
+     * @param {String} defaultValue - default algorithm
+     * @return {String}
      */
     GeneralFactory.prototype.getAlgorithm = function (key, defaultValue) {
         return Converter.getString(key['algorithm'], defaultValue);

@@ -168,12 +168,12 @@
         if (!info) {
             return null;
         }
-        var algorithm = this.getDataAlgorithm(ted, '*');
+        var algorithm = this.getDataAlgorithm(info, '*');
         var factory = this.getTransportableDataFactory(algorithm);
         if (!factory) {
             factory = this.getTransportableDataFactory('*');
         }
-        return factory.parseTransportableData(ted);
+        return factory.parseTransportableData(info);
     };
 
     ///
@@ -204,7 +204,7 @@
             return null;
         }
         var factory = this.getPortableNetworkFileFactory();
-        return factory.parsePortableNetworkFile(pnf);
+        return factory.parsePortableNetworkFile(info);
     };
 
     /**

@@ -148,7 +148,7 @@
      *  all items after this position (includes) will be moved
      *
      * @param {[]} array
-     * @param {Number} index
+     * @param {number} index
      * @param {*} item
      * @return {boolean}
      */
@@ -181,7 +181,7 @@
      *  Update the position of array with item
      *
      * @param {[]} array
-     * @param {Number} index
+     * @param {number} index
      * @param {*} item
      * @return {boolean}
      */

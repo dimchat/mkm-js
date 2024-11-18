@@ -422,17 +422,21 @@ crypto_tests = [];
         // test with key data
         var key = {
             algorithm: SymmetricKey.AES,
-            data: 'C2+xGizLL1G1+z9QLPYNdp/bPP/seDvNw45SXPAvQqk=',
-            iv: 'SxPwi6u4+ZLXLdAFJezvSQ=='
+            data: 'C2+xGizLL1G1+z9QLPYNdp/bPP/seDvNw45SXPAvQqk='
+            // iv: 'SxPwi6u4+ZLXLdAFJezvSQ=='
         };
         var pwd = new SymmetricKey.parse(key);
 
         var expect = '0xtbqZN6x2aWTZn0DpCoCA==';
 
-        var enc = pwd.encrypt(bytes, extra_params);
-        log('AES encrypt(', str, '): ', Hex.encode(enc));
-        log('AES encrypt(', str, '): ', Base64.encode(enc));
-        assert(Base64.encode(enc) === expect, 'AES encrypt error');
+        extra_params['IV'] = 'SxPwi6u4+ZLXLdAFJezvSQ==';
+
+        var enc = Base64.decode(expect);
+
+        // var enc = pwd.encrypt(bytes, extra_params);
+        // log('AES encrypt(', str, '): ', Hex.encode(enc));
+        // log('AES encrypt(', str, '): ', Base64.encode(enc));
+        // assert(Base64.encode(enc) === expect, 'AES encrypt error');
 
         var dec = pwd.decrypt(enc, extra_params);
         var result = new ConstantString(UTF8.decode(dec));

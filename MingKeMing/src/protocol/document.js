@@ -37,9 +37,7 @@
 
     var Interface = ns.type.Interface;
     var Mapper    = ns.type.Mapper;
-
-    var TAI = ns.protocol.TAI;
-    var ID  = ns.protocol.ID;
+    var TAI       = ns.protocol.TAI;
 
     /**
      *  User/Group Profile
@@ -106,10 +104,10 @@
      *      1. Create a new empty document with entity ID
      *      2. Create document with data & signature loaded from local storage
      *
-     * @param {String} type      - document type
-     * @param {ID} identifier    - entity ID
-     * @param {String} data      - document data (JsON)
-     * @param {String} signature - document signature (Base64)
+     * @param {String} type                 - document type
+     * @param {ID} identifier               - entity ID
+     * @param {String} data                 - document data (JsON)
+     * @param {TransportableData} signature - document signature (Base64)
      * @return {Document}
      */
     Document.create = function (type, identifier, data, signature) {
@@ -131,7 +129,7 @@
     /**
      *  Register document factory with type
      *
-     * @param {String} type
+     * @param {string} type
      * @param {DocumentFactory} factory
      */
     Document.setFactory = function (type, factory) {

@@ -39,7 +39,7 @@
         /**
          *  Encode local string to binary data
          *
-         * @param {String} string
+         * @param {string} string
          * @return {Uint8Array}
          */
         encode: function (string) {

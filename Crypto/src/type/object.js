@@ -95,6 +95,8 @@
 
     IObject.prototype.isEmpty = function () {};
 
+    IObject.prototype.getClassName = function () {};
+
     /**
      *  Check whether objects equal
      *
@@ -123,6 +125,11 @@
     // Override
     BaseObject.prototype.equals = function (other) {
         return this === other;
+    };
+
+    // Override
+    BaseObject.prototype.getClassName = function () {
+        return Object.getPrototypeOf(this).constructor.name;
     };
 
     //-------- namespace --------

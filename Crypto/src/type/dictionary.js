@@ -122,8 +122,8 @@
      *  Get string value for key
      *
      * @param {string} key
-     * @param {string} defaultValue
-     * @return {string}
+     * @param {String} defaultValue
+     * @return {String}
      */
     Mapper.prototype.getString = function (key, defaultValue) {};
 
@@ -140,8 +140,8 @@
      *  Get int number value for key
      *
      * @param {string} key
-     * @param {number} defaultValue
-     * @return {number}
+     * @param {Number} defaultValue
+     * @return {Number}
      */
     Mapper.prototype.getInt = function (key, defaultValue) {};
 
@@ -149,8 +149,8 @@
      *  Get float number value for key
      *
      * @param {string} key
-     * @param {number} defaultValue
-     * @return {number}
+     * @param {Number} defaultValue
+     * @return {Number}
      */
     Mapper.prototype.getFloat = function (key, defaultValue) {};
 

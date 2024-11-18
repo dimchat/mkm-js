@@ -58,7 +58,7 @@
     /**
      *  Decode local string to binary data
      *
-     * @param {String} string
+     * @param {string} string
      * @return {Uint8Array}
      */
     DataCoder.prototype.decode = function (string) {};
@@ -84,7 +84,7 @@
     /**
      *  Decode string to Map/List object
      *
-     * @param {String} string - serialized string
+     * @param {string} string - serialized string
      * @return {{}|[]} Map or List
      */
     ObjectCoder.prototype.decode = function (string) {};
@@ -102,7 +102,7 @@
     /**
      *  Encode local string to binary data
      *
-     * @param {String} string
+     * @param {string} string
      * @return {Uint8Array}
      */
     StringCoder.prototype.encode = function (string) {};

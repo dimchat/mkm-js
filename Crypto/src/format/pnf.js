@@ -78,7 +78,7 @@
     /**
      *  Set file name
      *
-     * @param {String} filename
+     * @param {string} filename
      */
     PortableNetworkFile.prototype.setFilename = function (filename) {};
     PortableNetworkFile.prototype.getFilename = function () {};

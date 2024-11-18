@@ -49,7 +49,7 @@
         /**
          *  Decode Hex string to binary data
          *
-         * @param string
+         * @param {string} string
          * @return {Uint8Array}
          */
         decode: function (string) {

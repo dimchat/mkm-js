@@ -69,7 +69,7 @@
     /**
      *  Generate key with algorithm name
      *
-     * @param {String} algorithm - algorithm name ('AES')
+     * @param {string} algorithm - algorithm name ('AES')
      * @return {SymmetricKey}
      */
     SymmetricKey.generate = function (algorithm) {
@@ -91,7 +91,7 @@
     /**
      *  Register symmetric key factory with algorithm
      *
-     * @param {String} algorithm
+     * @param {string} algorithm
      * @param {SymmetricKeyFactory} factory
      */
     SymmetricKey.setFactory = function (algorithm, factory) {

@@ -85,7 +85,7 @@
     /**
      *  Get property data with key
      *
-     * @param {String} name - property name
+     * @param {string} name - property name
      * @returns {Object}
      */
     TAI.prototype.getProperty = function (name) {};
@@ -94,7 +94,7 @@
      *  Update property with key and data
      *  (this will reset 'data' and 'signature')
      *
-     * @param {String} name - property name
+     * @param {string} name - property name
      * @param {Object} value - property value
      */
     TAI.prototype.setProperty = function (name, value) {};

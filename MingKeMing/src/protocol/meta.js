@@ -40,10 +40,6 @@
     var Interface = ns.type.Interface;
     var Mapper    = ns.type.Mapper;
 
-    var Address  = ns.protocol.Address;
-    var MetaType = ns.protocol.MetaType;
-    var ID       = ns.protocol.ID;
-
     /**
      *  User/Group Meta data
      *  ~~~~~~~~~~~~~~~~~~~~

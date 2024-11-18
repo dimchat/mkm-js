@@ -37,7 +37,6 @@
 
     var Interface = ns.type.Interface;
     var Stringer  = ns.type.Stringer;
-    var Address   = ns.protocol.Address;
 
     /**
      *  ID for entity (User/Group)
@@ -202,7 +201,7 @@
     /**
      *  Parse string object to ID
      *
-     * @param {String} identifier - ID string
+     * @param {string} identifier - ID string
      * @return {ID}
      */
     IDFactory.prototype.parseIdentifier = function (identifier) {};

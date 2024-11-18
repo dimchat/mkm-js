@@ -89,7 +89,7 @@
     /**
      *  Create address with string
      *
-     * @param {String} address - address string
+     * @param {string} address - address string
      * @return {Address}
      */
     Address.create = function (address) {
@@ -140,7 +140,7 @@
     /**
      *  Create address from string
      *
-     * @param {String} address - address string
+     * @param {string} address - address string
      * @return {Address}
      */
     AddressFactory.prototype.createAddress = function (address) {};
@@ -148,7 +148,7 @@
     /**
      *  Parse string object to address
      *
-     * @param {String} address - address string
+     * @param {string} address - address string
      * @return {Address}
      */
     AddressFactory.prototype.parseAddress = function (address) {};

@@ -49,7 +49,7 @@
         /**
          *  Decode JsON string to Map/List object
          *
-         * @param {String} string - JsON string
+         * @param {string} string - JsON string
          * @return {{}|[]} Map or List
          */
         decode: function (string) {

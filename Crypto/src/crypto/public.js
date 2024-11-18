@@ -79,7 +79,7 @@
     /**
      *  Register public key factory with algorithm
      *
-     * @param {String} algorithm
+     * @param {string} algorithm
      * @param {PublicKeyFactory} factory
      */
     PublicKey.setFactory = function (algorithm, factory) {
