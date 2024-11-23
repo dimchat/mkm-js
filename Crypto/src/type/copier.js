@@ -61,7 +61,7 @@
             return object;
         } else if (Enum.isEnum(object)) {
             // get enum value
-            return object.valueOf();
+            return object.getValue();
         } else if (Interface.conforms(object, Stringer)) {
             // get inner string
             return object.toString();
@@ -115,7 +115,7 @@
             return object;
         } else if (Enum.isEnum(object)) {
             // get enum value
-            return object.valueOf();
+            return object.getValue();
         } else if (Interface.conforms(object, Stringer)) {
             // get inner string
             return object.toString();

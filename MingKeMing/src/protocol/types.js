@@ -68,7 +68,7 @@
      *
      *      (All above are just some advices to help choosing numbers :P)
      */
-    var EntityType = ns.type.Enum(null, {
+    var EntityType = ns.type.Enum('EntityType', {
 
         /**
          *  Main: 0, 1
@@ -121,8 +121,8 @@
      * @returns {boolean}
      */
     EntityType.isUser = function (network) {
-        var user = EntityType.USER.valueOf();
-        var group = EntityType.GROUP.valueOf();
+        var user = EntityType.USER.getValue();
+        var group = EntityType.GROUP.getValue();
         return (network & group) === user;
     };
 
@@ -133,7 +133,7 @@
      * @returns {boolean}
      */
     EntityType.isGroup = function (network) {
-        var group = EntityType.GROUP.valueOf();
+        var group = EntityType.GROUP.getValue();
         return (network & group) === group;
     };
 
@@ -144,7 +144,7 @@
      * @returns {boolean}
      */
     EntityType.isBroadcast = function (network) {
-        var any = EntityType.ANY.valueOf();
+        var any = EntityType.ANY.getValue();
         return (network & any) === any;
     };
 
@@ -180,7 +180,7 @@
      *      0000 0100 - this meta generate ETH address
      *      ...
      */
-    var MetaType = ns.type.Enum(null, {
+    var MetaType = ns.type.Enum('MetaType', {
 
         DEFAULT: (0x01),
         MKM:     (0x01),  // 0000 0001
@@ -198,7 +198,7 @@
      * @returns {boolean}
      */
     MetaType.hasSeed = function (version) {
-        var mkm = MetaType.MKM.valueOf();
+        var mkm = MetaType.MKM.getValue();
         return (version & mkm) === mkm;
     };
 

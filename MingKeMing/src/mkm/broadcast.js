@@ -37,6 +37,7 @@
     'use strict';
 
     var Class          = ns.type.Class;
+    var Enum           = ns.type.Enum;
     var ConstantString = ns.type.ConstantString;
 
     var EntityType = ns.protocol.EntityType;
@@ -47,10 +48,7 @@
     //
     var BroadcastAddress = function (string, network) {
         ConstantString.call(this, string);
-        if (network instanceof EntityType) {
-            network = network.valueOf();
-        }
-        this.__network = network;
+        this.__network = Enum.getInt(network);
     };
     Class(BroadcastAddress, ConstantString, [Address], null);
 
@@ -66,13 +64,13 @@
 
     // Override
     BroadcastAddress.prototype.isUser = function () {
-        var any = EntityType.ANY.valueOf();
+        var any = EntityType.ANY.getValue();
         return this.__network === any;
     };
 
     // Override
     BroadcastAddress.prototype.isGroup = function () {
-        var every = EntityType.EVERY.valueOf();
+        var every = EntityType.EVERY.getValue();
         return this.__network === every;
     };
 

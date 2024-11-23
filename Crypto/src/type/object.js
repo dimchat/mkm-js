@@ -128,6 +128,11 @@
     };
 
     // Override
+    BaseObject.prototype.isEmpty = function () {
+        return false;
+    };
+
+    // Override
     BaseObject.prototype.getClassName = function () {
         return Object.getPrototypeOf(this).constructor.name;
     };

@@ -40,6 +40,7 @@
 
     var Interface = ns.type.Interface;
     var Class     = ns.type.Class;
+    var Enum      = ns.type.Enum;
     var Stringer  = ns.type.Stringer;
     var Wrapper   = ns.type.Wrapper;
     var Converter = ns.type.Converter;
@@ -148,20 +149,12 @@
     //  Meta
     //
 
-    var EnumToUint = function (type) {
-        if (typeof type === 'number') {
-            return type;
-        } else {
-            return type.valueOf();
-        }
-    };
-
     GeneralFactory.prototype.setMetaFactory = function (version, factory) {
-        version = EnumToUint(version);
+        version = Enum.getInt(version);
         this.__metaFactories[version] = factory;
     };
     GeneralFactory.prototype.getMetaFactory = function (version) {
-        version = EnumToUint(version);
+        version = Enum.getInt(version);
         return this.__metaFactories[version];
     };
 
