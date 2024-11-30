@@ -44,10 +44,6 @@
     var BaseObject = ns.type.BaseObject;
     var Converter = ns.type.Converter;
 
-    var arrays_equals = function (a1, a2) {
-        return ns.type.Arrays.equals(a1, a2);
-    };
-
     var copy_map = function (map, deep) {
         if (deep) {
             return ns.type.Copier.deepCopyMap(map);
@@ -80,12 +76,7 @@
      */
     Mapper.prototype.copyMap = function (deepCopy) {};
 
-    /**
-     *  Get all keys in map
-     *
-     * @return {string[]}
-     */
-    Mapper.prototype.allKeys = function() {};
+    Mapper.prototype.isEmpty = function () {};
 
     /**
      *  Get length of inner map
@@ -93,6 +84,13 @@
      * @return {number}
      */
     Mapper.prototype.getLength = function () {};
+
+    /**
+     *  Get all keys in map
+     *
+     * @return {string[]}
+     */
+    Mapper.prototype.allKeys = function() {};
 
     /**
      *  Get value for key
@@ -205,27 +203,13 @@
 
     // Override
     Dictionary.prototype.equals = function (other) {
-        if (this === other) {
-            return true;
-        } else if (!other) {
-            return !this.__dictionary;
-        } else if (Interface.conforms(other, Mapper)) {
-            return arrays_equals(this.__dictionary, other.toMap());
-        } else {
-            return arrays_equals(this.__dictionary, other);
+        if (Interface.conforms(other, Mapper)) {
+            if (this === other) {
+                return true;
+            }
+            other = other.valueOf();
         }
-    };
-
-    // Override
-    Dictionary.prototype.getLength = function() {
-        var keys = Object.keys(this.__dictionary);
-        return keys.length;
-    };
-
-    // Override
-    Dictionary.prototype.isEmpty = function () {
-        var keys = Object.keys(this.__dictionary);
-        return keys.length === 0;
+        return ns.type.Arrays.equals(this.__dictionary, other);
     };
 
     // Override
@@ -248,6 +232,18 @@
     // Override
     Dictionary.prototype.copyMap = function (deepCopy) {
         return copy_map(this.__dictionary, deepCopy);
+    };
+
+    // Override
+    Dictionary.prototype.isEmpty = function () {
+        var keys = Object.keys(this.__dictionary);
+        return keys.length === 0;
+    };
+
+    // Override
+    Dictionary.prototype.getLength = function() {
+        var keys = Object.keys(this.__dictionary);
+        return keys.length;
     };
 
     // Override

@@ -46,10 +46,12 @@
     //
     var Stringer = Interface(null, [IObject]);
 
+    Stringer.prototype.isEmpty = function () {};
+
     /**
      *  Get length of inner string
      *
-     * @return {number}
+     * @return {int}
      */
     Stringer.prototype.getLength = function () {};
 
@@ -79,16 +81,13 @@
 
     // Override
     ConstantString.prototype.equals = function (other) {
-        if (this === other) {
-            return true;
-        } else if (!other) {
-            return !this.__string;
-        } else if (Interface.conforms(other, Stringer)) {
-            return this.__string === other.toString();
-        } else {
-            // assert(other instanceof String, 'other string error');
-            return this.__string === other;
+        if (Interface.conforms(other, Stringer)) {
+            if (this === other) {
+                return true;
+            }
+            other = other.valueOf();
         }
+        return this.__string === other;
     };
 
     // Override
@@ -101,14 +100,16 @@
         return this.__string;
     };
 
-    // Override
-    ConstantString.prototype.getLength = function() {
-        return this.__string.length;
-    };
+    //-------- Stringer
 
     // Override
     ConstantString.prototype.isEmpty = function () {
         return this.__string.length === 0;
+    };
+
+    // Override
+    ConstantString.prototype.getLength = function() {
+        return this.__string.length;
     };
 
     // Override

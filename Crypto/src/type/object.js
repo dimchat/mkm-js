@@ -89,21 +89,13 @@
     //
     var IObject = Interface(null, null);
 
-    IObject.prototype.toString = function () {};
-
-    IObject.prototype.valueOf = function () {};
-
-    IObject.prototype.isEmpty = function () {};
-
     IObject.prototype.getClassName = function () {};
 
-    /**
-     *  Check whether objects equal
-     *
-     * @param {Object} other - another object
-     * @return {boolean}
-     */
     IObject.prototype.equals = function (other) {};
+
+    IObject.prototype.valueOf = function () {};   // Object
+
+    IObject.prototype.toString = function () {};  // Object
 
     IObject.isNull = is_null;
 
@@ -123,18 +115,13 @@
     Class(BaseObject, Object, [IObject], null);
 
     // Override
-    BaseObject.prototype.equals = function (other) {
-        return this === other;
-    };
-
-    // Override
-    BaseObject.prototype.isEmpty = function () {
-        return false;
-    };
-
-    // Override
     BaseObject.prototype.getClassName = function () {
         return Object.getPrototypeOf(this).constructor.name;
+    };
+
+    // Override
+    BaseObject.prototype.equals = function (other) {
+        return this === other;
     };
 
     //-------- namespace --------

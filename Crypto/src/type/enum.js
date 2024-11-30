@@ -84,17 +84,13 @@
 
     // Override
     BaseEnum.prototype.equals = function (other) {
-        if (!other) {
-            return !this.__value;
-        // } else if (BaseObject.prototype.equals.call(this, other)) {
-        //     return true;
-        } else if (other instanceof BaseEnum) {
-            return this.__value === other.getValue();
-        // } else if (IObject.isNumber(other)) {
-        //     return this.__value === other;
-        } else {
-            return this.__value === other;
+        if (other instanceof BaseEnum) {
+            if (this === other) {
+                return true;
+            }
+            other = other.valueOf();
         }
+        return this.__value === other;
     };
 
     // Override

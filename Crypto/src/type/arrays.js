@@ -38,13 +38,15 @@
     var IObject = ns.type.Object;
 
     var is_array = function (obj) {
-        if (obj instanceof Array) {
+        return obj instanceof Array || is_number_array(obj);
+    };
+
+    var is_number_array = function (obj) {
+        if (obj instanceof Uint8ClampedArray) {
             return true;
         } else if (obj instanceof Uint8Array) {
             return true;
         } else if (obj instanceof Int8Array) {
-            return true;
-        } else if (obj instanceof Uint8ClampedArray) {
             return true;
         } else if (obj instanceof Uint16Array) {
             return true;
@@ -62,12 +64,31 @@
         return false;
     };
 
-    var arrays_equal = function (array1, array2) {
-        if (array1.length !== array2.length) {
+    var number_arrays_equal = function (array1, array2) {
+        var pos = array1.length;
+        if (pos !== array2.length) {
             return false;
         }
-        for (var i = 0; i < array1.length; ++i) {
-            if (!objects_equal(array1[i], array2[i])) {
+        while (pos > 0) {
+            pos -= 1;
+            if (array1[pos] !== array2[pos]) {
+                return false;
+            }
+        }
+        return true;
+    };
+
+    var arrays_equal = function (array1, array2) {
+        if (is_number_array(array1) || is_number_array(array2)) {
+            return number_arrays_equal(array1, array2);
+        }
+        var pos = array1.length;
+        if (pos !== array2.length) {
+            return false;
+        }
+        while (pos > 0) {
+            pos -= 1;
+            if (!objects_equal(array1[pos], array2[pos], false)) {
                 return false;
             }
         }
@@ -77,54 +98,68 @@
     var maps_equal = function (dict1, dict2) {
         var keys1 = Object.keys(dict1);
         var keys2 = Object.keys(dict2);
-        var len1 = keys1.length;
-        var len2 = keys2.length;
-        if (len1 !== len2) {
+        var pos = keys1.length;
+        if (pos !== keys2.length) {
             return false;
         }
-        var k;
-        for (var i = 0; i < len1; ++i) {
-            k = keys1[i];
+        var key;  // String
+        while (pos > 0) {
+            pos -= 1;
+            key = keys1[pos];
             // check key
-            if (keys2.indexOf(k) < 0) {
-                return false;
+            if (!key || key.length === 0) {
+                // should not happen
+                continue;
+                // throw new TypeError('map key error: ' + key);
             }
             // check value
-            if (!objects_equal(dict1[k], dict2[k])) {
+            //    if the key starts with '_', means it is a private field,
+            //    only check its value shallowly (to avoid infinite loops)
+            if (!objects_equal(dict1[key], dict2[key], key.charAt(0) === '_')) {
                 return false;
             }
         }
         return true;
     };
 
-    var objects_equal = function (obj1, obj2) {
-        // compare directly
-        if (obj1 === obj2) {
-            return true;   // same object
-        } else if (!obj1) {
-            return !obj2;  // object1 is undefined but object2 is not
+    var objects_equal = function (obj1, obj2, shallow) {
+        // 1. compare directly
+        if (!obj1) {
+            return !obj2;
         } else if (!obj2) {
-            return false;  // object2 is undefined but object1 is not
-        } else if (typeof obj1['equals'] === 'function') {
-            // compare via 'equals()'
+            return false;
+        } else if (obj1 === obj2) {
+            // same object
+            return true;
+        }
+        // 2. compare via 'equals()'
+        if (typeof obj1['equals'] === 'function') {
             return obj1.equals(obj2);
         } else if (typeof obj2['equals'] === 'function') {
-            // compare via 'equals()'
             return obj2.equals(obj1);
-        } else if (IObject.isBaseType(obj1)) {
-            // compare base types: String, Number, Boolean, Date, ...
-            return obj1 === obj2;
-        } else if (IObject.isBaseType(obj2)) {
-            return false;  // object2 is base type but object1 is not
-        } else if (is_array(obj1)) {
-            // compare arrays
+        }
+        // 3. compare for arrays
+        if (is_array(obj1)) {
             return is_array(obj2) && arrays_equal(obj1, obj2);
         } else if (is_array(obj2)) {
-            return false;  // object2 is an array but object1 is not
-        } else {
-            // compare as maps
-            return maps_equal(obj1, obj2);
+            // types not matched
+            return false;
         }
+        // 4. compare for base type
+        if (obj1 instanceof Date) {
+            return obj2 instanceof Date && obj1.getTime() === obj2.getTime();
+        } else if (obj2 instanceof Date) {
+            // types not matched
+            return false;
+        } else if (IObject.isBaseType(obj1)) {
+            // already compared: obj1 === obj2
+            return false;
+        } else if (IObject.isBaseType(obj2)) {
+            // already compared: obj1 === obj2
+            return false;
+        }
+        // 5. compare as maps, if needs deep comparison
+        return !shallow && maps_equal(obj1, obj2);
     };
 
     /**
@@ -202,10 +237,10 @@
      *
      * @param {[]} array
      * @param {*} item
-     * @return {boolean}
+     * @return {boolean} false on not found
      */
     var remove_item = function (array, item) {
-        var index = array.indexOf(item);
+        var index = find_item(array, item);
         if (index < 0/* || index >= array.length*/) {
             return false;
         } else if (index === 0) {
@@ -220,14 +255,35 @@
         return true;
     };
 
+    /**
+     *  Find item in the array
+     *
+     * @param {[]} array
+     * @param {*} item
+     * @return {int} first position of the item, -1 on not found
+     */
+    var find_item = function (array, item) {
+        for (var i = 0; i < array.length; ++i) {
+            if (objects_equal(array[i], item, false)) {
+                return i;
+            }
+        }
+        return -1;
+    };
+
     //-------- namespace --------
     ns.type.Arrays = {
-        insert: insert_item,
-        update: update_item,
-        remove: remove_item,
-        equals: objects_equal,
-        isArray: is_array,
-        copy: copy_items
+        insert : insert_item,
+        update : update_item,
+        remove : remove_item,
+        find   : find_item,
+
+        equals : function (array1, array2) {
+            // return arrays_equal(array1, array2);
+            return objects_equal(array1, array2, false);
+        },
+        copy   : copy_items,
+        isArray: is_array
     };
 
 })(MONKEY);
