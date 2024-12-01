@@ -114,6 +114,18 @@ if (typeof MONKEY !== 'object') {
             return object === null
         }
     };
+    var is_string = function (object) {
+        return typeof object === 'string'
+    };
+    var is_number = function (object) {
+        return typeof object === 'number'
+    };
+    var is_boolean = function (object) {
+        return typeof object === 'boolean'
+    };
+    var is_function = function (object) {
+        return typeof object === 'function'
+    };
     var is_base_type = function (object) {
         var t = typeof object;
         if (t === 'string' || t === 'number' || t === 'boolean' || t === 'function') {
@@ -128,24 +140,27 @@ if (typeof MONKEY !== 'object') {
         return object instanceof Error
     };
     var IObject = Interface(null, null);
-    IObject.prototype.toString = function () {
-        throw new Error('NotImplemented');
-    };
-    IObject.prototype.valueOf = function () {
-        throw new Error('NotImplemented');
-    };
-    IObject.prototype.isEmpty = function () {
-        throw new Error('NotImplemented');
+    IObject.prototype.getClassName = function () {
     };
     IObject.prototype.equals = function (other) {
-        throw new Error('NotImplemented');
+    };
+    IObject.prototype.valueOf = function () {
+    };
+    IObject.prototype.toString = function () {
     };
     IObject.isNull = is_null;
+    IObject.isString = is_string;
+    IObject.isNumber = is_number;
+    IObject.isBoolean = is_boolean;
+    IObject.isFunction = is_function;
     IObject.isBaseType = is_base_type;
     var BaseObject = function () {
         Object.call(this)
     };
     Class(BaseObject, Object, [IObject], null);
+    BaseObject.prototype.getClassName = function () {
+        return Object.getPrototypeOf(this).constructor.name
+    };
     BaseObject.prototype.equals = function (other) {
         return this === other
     };
@@ -158,7 +173,7 @@ if (typeof MONKEY !== 'object') {
     var getString = function (value, defaultValue) {
         if (IObject.isNull(value)) {
             return defaultValue
-        } else if (value instanceof String) {
+        } else if (IObject.isString(value)) {
             return value
         } else {
             return value.toString()
@@ -177,37 +192,37 @@ if (typeof MONKEY !== 'object') {
     var getInt = function (value, defaultValue) {
         if (IObject.isNull(value)) {
             return defaultValue
-        } else if (value instanceof Number) {
+        } else if (IObject.isNumber(value)) {
             return value
-        } else if (value instanceof Boolean) {
+        } else if (IObject.isBoolean(value)) {
             return value ? 1 : 0
         } else {
-            var str = value instanceof String ? value : value.toString();
+            var str = IObject.isString(value) ? value : value.toString();
             return parseInt(str)
         }
     };
     var getFloat = function (value, defaultValue) {
         if (IObject.isNull(value)) {
             return defaultValue
-        } else if (value instanceof Number) {
+        } else if (IObject.isNumber(value)) {
             return value
-        } else if (value instanceof Boolean) {
+        } else if (IObject.isBoolean(value)) {
             return value ? 1.0 : 0.0
         } else {
-            var str = value instanceof String ? value : value.toString();
+            var str = IObject.isString(value) ? value : value.toString();
             return parseFloat(str)
         }
     };
     var getBoolean = function (value, defaultValue) {
         if (IObject.isNull(value)) {
             return defaultValue
-        } else if (value instanceof Boolean) {
+        } else if (IObject.isBoolean(value)) {
             return value
-        } else if (value instanceof Number) {
+        } else if (IObject.isNumber(value)) {
             return value > 0 || value < 0
         }
         var text;
-        if (value instanceof String) {
+        if (IObject.isString(value)) {
             text = value
         } else {
             text = value.toString()
@@ -256,13 +271,14 @@ if (typeof MONKEY !== 'object') {
     'use strict';
     var IObject = ns.type.Object;
     var is_array = function (obj) {
-        if (obj instanceof Array) {
+        return obj instanceof Array || is_number_array(obj)
+    };
+    var is_number_array = function (obj) {
+        if (obj instanceof Uint8ClampedArray) {
             return true
         } else if (obj instanceof Uint8Array) {
             return true
         } else if (obj instanceof Int8Array) {
-            return true
-        } else if (obj instanceof Uint8ClampedArray) {
             return true
         } else if (obj instanceof Uint16Array) {
             return true
@@ -279,12 +295,30 @@ if (typeof MONKEY !== 'object') {
         }
         return false
     };
-    var arrays_equal = function (array1, array2) {
-        if (array1.length !== array2.length) {
+    var number_arrays_equal = function (array1, array2) {
+        var pos = array1.length;
+        if (pos !== array2.length) {
             return false
         }
-        for (var i = 0; i < array1.length; ++i) {
-            if (!objects_equal(array1[i], array2[i])) {
+        while (pos > 0) {
+            pos -= 1;
+            if (array1[pos] !== array2[pos]) {
+                return false
+            }
+        }
+        return true
+    };
+    var arrays_equal = function (array1, array2) {
+        if (is_number_array(array1) || is_number_array(array2)) {
+            return number_arrays_equal(array1, array2)
+        }
+        var pos = array1.length;
+        if (pos !== array2.length) {
+            return false
+        }
+        while (pos > 0) {
+            pos -= 1;
+            if (!objects_equal(array1[pos], array2[pos], false)) {
                 return false
             }
         }
@@ -293,45 +327,51 @@ if (typeof MONKEY !== 'object') {
     var maps_equal = function (dict1, dict2) {
         var keys1 = Object.keys(dict1);
         var keys2 = Object.keys(dict2);
-        var len1 = keys1.length;
-        var len2 = keys2.length;
-        if (len1 !== len2) {
+        var pos = keys1.length;
+        if (pos !== keys2.length) {
             return false
         }
-        var k;
-        for (var i = 0; i < len1; ++i) {
-            k = keys1[i];
-            if (keys2.indexOf(k) < 0) {
-                return false
+        var key;
+        while (pos > 0) {
+            pos -= 1;
+            key = keys1[pos];
+            if (!key || key.length === 0) {
+                continue
             }
-            if (!objects_equal(dict1[k], dict2[k])) {
+            if (!objects_equal(dict1[key], dict2[key], key.charAt(0) === '_')) {
                 return false
             }
         }
         return true
     };
-    var objects_equal = function (obj1, obj2) {
-        if (obj1 === obj2) {
-            return true
-        } else if (!obj1) {
+    var objects_equal = function (obj1, obj2, shallow) {
+        if (!obj1) {
             return !obj2
         } else if (!obj2) {
             return false
-        } else if (typeof obj1['equals'] === 'function') {
+        } else if (obj1 === obj2) {
+            return true
+        }
+        if (typeof obj1['equals'] === 'function') {
             return obj1.equals(obj2)
         } else if (typeof obj2['equals'] === 'function') {
             return obj2.equals(obj1)
-        } else if (IObject.isBaseType(obj1)) {
-            return obj1 === obj2
-        } else if (IObject.isBaseType(obj2)) {
-            return false
-        } else if (is_array(obj1)) {
+        }
+        if (is_array(obj1)) {
             return is_array(obj2) && arrays_equal(obj1, obj2)
         } else if (is_array(obj2)) {
             return false
-        } else {
-            return maps_equal(obj1, obj2)
         }
+        if (obj1 instanceof Date) {
+            return obj2 instanceof Date && obj1.getTime() === obj2.getTime()
+        } else if (obj2 instanceof Date) {
+            return false
+        } else if (IObject.isBaseType(obj1)) {
+            return false
+        } else if (IObject.isBaseType(obj2)) {
+            return false
+        }
+        return !shallow && maps_equal(obj1, obj2)
     };
     var copy_items = function (src, srcPos, dest, destPos, length) {
         if (srcPos !== 0 || length !== src.length) {
@@ -368,7 +408,7 @@ if (typeof MONKEY !== 'object') {
         return true
     };
     var remove_item = function (array, item) {
-        var index = array.indexOf(item);
+        var index = find_item(array, item);
         if (index < 0) {
             return false
         } else if (index === 0) {
@@ -380,34 +420,54 @@ if (typeof MONKEY !== 'object') {
         }
         return true
     };
+    var find_item = function (array, item) {
+        for (var i = 0; i < array.length; ++i) {
+            if (objects_equal(array[i], item, false)) {
+                return i
+            }
+        }
+        return -1
+    };
     ns.type.Arrays = {
         insert: insert_item,
         update: update_item,
         remove: remove_item,
-        equals: objects_equal,
-        isArray: is_array,
-        copy: copy_items
+        find: find_item,
+        equals: function (array1, array2) {
+            return objects_equal(array1, array2, false)
+        },
+        copy: copy_items,
+        isArray: is_array
     }
 })(MONKEY);
 (function (ns) {
     'use strict';
     var Class = ns.type.Class;
+    var IObject = ns.type.Object;
     var BaseObject = ns.type.BaseObject;
     var is_enum = function (obj) {
-        return obj instanceof Enum
+        return obj instanceof BaseEnum
+    };
+    var get_int = function (obj) {
+        if (obj instanceof BaseEnum) {
+            return obj.getValue()
+        } else if (IObject.isNumber(obj)) {
+            return obj
+        }
+        return obj.valueOf()
     };
     var get_alias = function (enumeration, value) {
         var keys = Object.keys(enumeration);
         var e;
         for (var k in keys) {
             e = enumeration[k];
-            if (e instanceof Enum && e.equals(value)) {
+            if (e instanceof BaseEnum && e.equals(value)) {
                 return e.__alias
             }
         }
         return null
     };
-    var Enum = function (value, alias) {
+    var BaseEnum = function (value, alias) {
         BaseObject.call(this);
         if (!alias) {
             alias = get_alias(this, value)
@@ -415,36 +475,59 @@ if (typeof MONKEY !== 'object') {
         this.__value = value;
         this.__alias = alias
     };
-    Class(Enum, BaseObject, null, null);
-    Enum.prototype.equals = function (other) {
-        if (!other) {
-            return !this.__value
-        } else if (other instanceof Enum) {
-            return this.__value === other.valueOf()
-        } else {
-            return this.__value === other
+    Class(BaseEnum, BaseObject, null, null);
+    BaseEnum.prototype.equals = function (other) {
+        if (other instanceof BaseEnum) {
+            if (this === other) {
+                return true
+            }
+            other = other.valueOf()
         }
+        return this.__value === other
     };
-    Enum.prototype.valueOf = function () {
+    BaseEnum.prototype.toString = function () {
+        return '<' + this.getName() + ': ' + this.getValue() + '>'
+    };
+    BaseEnum.prototype.valueOf = function () {
         return this.__value
     };
-    Enum.prototype.toString = function () {
-        return '<' + this.__alias.toString() + ': ' + this.__value.toString() + '>'
+    BaseEnum.prototype.getValue = function () {
+        return this.__value
+    };
+    BaseEnum.prototype.getName = function () {
+        return this.__alias
+    };
+    var enum_class = function (type) {
+        var Enum = function (value, alias) {
+            BaseEnum.call(this, value, alias)
+        };
+        Class(Enum, BaseEnum, null, {
+            toString: function () {
+                var clazz = Enum.__type;
+                if (!clazz) {
+                    clazz = this.getClassName()
+                }
+                return '<' + clazz + ' ' + this.getName() + ': ' + this.getValue() + '>'
+            }
+        });
+        Enum.__type = type;
+        return Enum
     };
     var enumify = function (enumeration, elements) {
-        if (!enumeration) {
-            enumeration = function (value, alias) {
-                Enum.call(this, value, alias)
-            }
+        if (IObject.isString(enumeration)) {
+            enumeration = enum_class(enumeration)
+        } else if (!enumeration) {
+            enumeration = enum_class(null)
+        } else {
+            Class(enumeration, BaseEnum, null, null)
         }
-        Class(enumeration, Enum, null, null);
         var keys = Object.keys(elements);
         var alias, value;
         for (var i = 0; i < keys.length; ++i) {
             alias = keys[i];
             value = elements[alias];
-            if (value instanceof Enum) {
-                value = value.valueOf()
+            if (value instanceof BaseEnum) {
+                value = value.getValue()
             } else if (typeof value !== 'number') {
                 throw new TypeError('Enum value must be a number!');
             }
@@ -453,6 +536,7 @@ if (typeof MONKEY !== 'object') {
         return enumeration
     };
     enumify.isEnum = is_enum;
+    enumify.getInt = get_int;
     ns.type.Enum = enumify
 })(MONKEY);
 (function (ns) {
@@ -461,12 +545,85 @@ if (typeof MONKEY !== 'object') {
     var Class = ns.type.Class;
     var IObject = ns.type.Object;
     var BaseObject = ns.type.BaseObject;
+    var Arrays = ns.type.Arrays;
+    var Set = Interface(null, [IObject]);
+    Set.prototype.isEmpty = function () {
+    };
+    Set.prototype.getLength = function () {
+    };
+    Set.prototype.contains = function (element) {
+    };
+    Set.prototype.add = function (element) {
+    };
+    Set.prototype.remove = function (element) {
+    };
+    Set.prototype.clear = function () {
+    };
+    Set.prototype.toArray = function () {
+    };
+    var HashSet = function () {
+        BaseObject.call(this);
+        this.__array = []
+    };
+    Class(HashSet, BaseObject, [Set], null);
+    HashSet.prototype.equals = function (other) {
+        if (Interface.conforms(other, Set)) {
+            if (this === other) {
+                return true
+            }
+            other = other.valueOf()
+        }
+        return Arrays.equals(this.__array, other)
+    };
+    HashSet.prototype.valueOf = function () {
+        return this.__array
+    };
+    HashSet.prototype.toString = function () {
+        return this.__array.toString()
+    };
+    HashSet.prototype.isEmpty = function () {
+        return this.__array.length === 0
+    };
+    HashSet.prototype.getLength = function () {
+        return this.__array.length
+    };
+    HashSet.prototype.contains = function (item) {
+        var pos = Arrays.find(this.__array, item);
+        return pos >= 0
+    };
+    HashSet.prototype.add = function (item) {
+        var pos = Arrays.find(this.__array, item);
+        if (pos < 0) {
+            this.__array.push(item);
+            return true
+        } else {
+            return false
+        }
+    };
+    HashSet.prototype.remove = function (item) {
+        return Arrays.remove(this.__array, item)
+    };
+    HashSet.prototype.clear = function () {
+        this.__array = []
+    };
+    HashSet.prototype.toArray = function () {
+        return this.__array.slice()
+    };
+    ns.type.Set = Set;
+    ns.type.HashSet = HashSet
+})(MONKEY);
+(function (ns) {
+    'use strict';
+    var Interface = ns.type.Interface;
+    var Class = ns.type.Class;
+    var IObject = ns.type.Object;
+    var BaseObject = ns.type.BaseObject;
     var Stringer = Interface(null, [IObject]);
+    Stringer.prototype.isEmpty = function () {
+    };
     Stringer.prototype.getLength = function () {
-        throw new Error('NotImplemented');
     };
     Stringer.prototype.equalsIgnoreCase = function (other) {
-        throw new Error('NotImplemented');
     };
     var ConstantString = function (str) {
         BaseObject.call(this);
@@ -479,15 +636,13 @@ if (typeof MONKEY !== 'object') {
     };
     Class(ConstantString, BaseObject, [Stringer], null);
     ConstantString.prototype.equals = function (other) {
-        if (this === other) {
-            return true
-        } else if (!other) {
-            return !this.__string
-        } else if (Interface.conforms(other, Stringer)) {
-            return this.__string === other.toString()
-        } else {
-            return this.__string === other
+        if (Interface.conforms(other, Stringer)) {
+            if (this === other) {
+                return true
+            }
+            other = other.valueOf()
         }
+        return this.__string === other
     };
     ConstantString.prototype.valueOf = function () {
         return this.__string
@@ -495,11 +650,11 @@ if (typeof MONKEY !== 'object') {
     ConstantString.prototype.toString = function () {
         return this.__string
     };
-    ConstantString.prototype.getLength = function () {
-        return this.__string.length
-    };
     ConstantString.prototype.isEmpty = function () {
         return this.__string.length === 0
+    };
+    ConstantString.prototype.getLength = function () {
+        return this.__string.length
     };
     ConstantString.prototype.equalsIgnoreCase = function (other) {
         if (this === other) {
@@ -530,9 +685,6 @@ if (typeof MONKEY !== 'object') {
     var IObject = ns.type.Object;
     var BaseObject = ns.type.BaseObject;
     var Converter = ns.type.Converter;
-    var arrays_equals = function (a1, a2) {
-        return ns.type.Arrays.equals(a1, a2)
-    };
     var copy_map = function (map, deep) {
         if (deep) {
             return ns.type.Copier.deepCopyMap(map)
@@ -545,49 +697,36 @@ if (typeof MONKEY !== 'object') {
     };
     var Mapper = Interface(null, [IObject]);
     Mapper.prototype.toMap = function () {
-        throw new Error('NotImplemented');
     };
     Mapper.prototype.copyMap = function (deepCopy) {
-        throw new Error('NotImplemented');
     };
-    Mapper.prototype.allKeys = function () {
-        throw new Error('NotImplemented');
+    Mapper.prototype.isEmpty = function () {
     };
     Mapper.prototype.getLength = function () {
-        throw new Error('NotImplemented');
+    };
+    Mapper.prototype.allKeys = function () {
     };
     Mapper.prototype.getValue = function (key) {
-        throw new Error('NotImplemented');
     };
     Mapper.prototype.setValue = function (key, value) {
-        throw new Error('NotImplemented');
     };
     Mapper.prototype.removeValue = function (key) {
-        throw new Error('NotImplemented');
     };
     Mapper.prototype.getString = function (key, defaultValue) {
-        throw new Error('NotImplemented');
     };
     Mapper.prototype.getBoolean = function (key, defaultValue) {
-        throw new Error('NotImplemented');
     };
     Mapper.prototype.getInt = function (key, defaultValue) {
-        throw new Error('NotImplemented');
     };
     Mapper.prototype.getFloat = function (key, defaultValue) {
-        throw new Error('NotImplemented');
     };
     Mapper.prototype.getDateTime = function (key, defaultValue) {
-        throw new Error('NotImplemented');
     };
     Mapper.prototype.setDateTime = function (key, time) {
-        throw new Error('NotImplemented');
     };
     Mapper.prototype.setString = function (key, stringer) {
-        throw new Error('NotImplemented');
     };
     Mapper.prototype.setMap = function (key, mapper) {
-        throw new Error('NotImplemented');
     };
     var Dictionary = function (dict) {
         BaseObject.call(this);
@@ -600,23 +739,13 @@ if (typeof MONKEY !== 'object') {
     };
     Class(Dictionary, BaseObject, [Mapper], null);
     Dictionary.prototype.equals = function (other) {
-        if (this === other) {
-            return true
-        } else if (!other) {
-            return !this.__dictionary
-        } else if (Interface.conforms(other, Mapper)) {
-            return arrays_equals(this.__dictionary, other.toMap())
-        } else {
-            return arrays_equals(this.__dictionary, other)
+        if (Interface.conforms(other, Mapper)) {
+            if (this === other) {
+                return true
+            }
+            other = other.valueOf()
         }
-    };
-    Dictionary.prototype.getLength = function () {
-        var keys = Object.keys(this.__dictionary);
-        return keys.length
-    };
-    Dictionary.prototype.isEmpty = function () {
-        var keys = Object.keys(this.__dictionary);
-        return keys.length === 0
+        return ns.type.Arrays.equals(this.__dictionary, other)
     };
     Dictionary.prototype.valueOf = function () {
         return this.__dictionary
@@ -629,6 +758,14 @@ if (typeof MONKEY !== 'object') {
     };
     Dictionary.prototype.copyMap = function (deepCopy) {
         return copy_map(this.__dictionary, deepCopy)
+    };
+    Dictionary.prototype.isEmpty = function () {
+        var keys = Object.keys(this.__dictionary);
+        return keys.length === 0
+    };
+    Dictionary.prototype.getLength = function () {
+        var keys = Object.keys(this.__dictionary);
+        return keys.length
     };
     Dictionary.prototype.allKeys = function () {
         return Object.keys(this.__dictionary)
@@ -729,7 +866,7 @@ if (typeof MONKEY !== 'object') {
         } else if (IObject.isBaseType(object)) {
             return object
         } else if (Enum.isEnum(object)) {
-            return object.valueOf()
+            return object.getValue()
         } else if (Interface.conforms(object, Stringer)) {
             return object.toString()
         } else if (Interface.conforms(object, Mapper)) {
@@ -783,7 +920,7 @@ if (typeof MONKEY !== 'object') {
         } else if (IObject.isBaseType(object)) {
             return object
         } else if (Enum.isEnum(object)) {
-            return object.valueOf()
+            return object.getValue()
         } else if (Interface.conforms(object, Stringer)) {
             return object.toString()
         } else if (Interface.conforms(object, Mapper)) {
@@ -821,7 +958,7 @@ if (typeof MONKEY !== 'object') {
         } else if (IObject.isBaseType(object)) {
             return object
         } else if (Enum.isEnum(object)) {
-            return object.valueOf()
+            return object.getValue()
         } else if (Interface.conforms(object, Stringer)) {
             return object.toString()
         } else if (Interface.conforms(object, Mapper)) {
@@ -867,7 +1004,6 @@ if (typeof MONKEY !== 'object') {
     var Interface = ns.type.Interface;
     var DataDigester = Interface(null, null);
     DataDigester.prototype.digest = function (data) {
-        throw new Error('NotImplemented');
     };
     ns.digest.DataDigester = DataDigester
 })(MONKEY);
@@ -946,24 +1082,18 @@ if (typeof MONKEY !== 'object') {
     var Interface = ns.type.Interface;
     var DataCoder = Interface(null, null);
     DataCoder.prototype.encode = function (data) {
-        throw new Error('NotImplemented');
     };
     DataCoder.prototype.decode = function (string) {
-        throw new Error('NotImplemented');
     };
     var ObjectCoder = Interface(null, null);
     ObjectCoder.prototype.encode = function (object) {
-        throw new Error('NotImplemented');
     };
     ObjectCoder.prototype.decode = function (string) {
-        throw new Error('NotImplemented');
     };
     var StringCoder = Interface(null, null);
     StringCoder.prototype.encode = function (string) {
-        throw new Error('NotImplemented');
     };
     StringCoder.prototype.decode = function (data) {
-        throw new Error('NotImplemented');
     };
     ns.format.DataCoder = DataCoder;
     ns.format.ObjectCoder = ObjectCoder;
@@ -1059,16 +1189,12 @@ if (typeof MONKEY !== 'object') {
     TransportableData.BASE58 = 'base58';
     TransportableData.HEX = 'hex';
     TransportableData.prototype.getAlgorithm = function () {
-        throw new Error('NotImplemented');
     };
     TransportableData.prototype.getData = function () {
-        throw new Error('NotImplemented');
     };
     TransportableData.prototype.toString = function () {
-        throw new Error('NotImplemented');
     };
     TransportableData.prototype.toObject = function () {
-        throw new Error('NotImplemented');
     };
     TransportableData.encode = function (data) {
         var ted = TransportableData.create(data);
@@ -1106,14 +1232,11 @@ if (typeof MONKEY !== 'object') {
     };
     var TransportableDataFactory = Interface(null, null);
     TransportableDataFactory.prototype.createTransportableData = function (data) {
-        throw new Error('NotImplemented');
     };
     TransportableDataFactory.prototype.parseTransportableData = function (ted) {
-        throw new Error('NotImplemented');
     };
     TransportableData.Factory = TransportableDataFactory;
-    ns.format.TransportableData = TransportableData;
-    ns.format.TransportableDataFactory = TransportableDataFactory
+    ns.format.TransportableData = TransportableData
 })(MONKEY);
 (function (ns) {
     'use strict';
@@ -1122,34 +1245,24 @@ if (typeof MONKEY !== 'object') {
     var TransportableData = ns.format.TransportableData;
     var PortableNetworkFile = Interface(null, [Mapper]);
     PortableNetworkFile.prototype.setData = function (fileData) {
-        throw new Error('NotImplemented');
     };
     PortableNetworkFile.prototype.getData = function () {
-        throw new Error('NotImplemented');
     };
     PortableNetworkFile.prototype.setFilename = function (filename) {
-        throw new Error('NotImplemented');
     };
     PortableNetworkFile.prototype.getFilename = function () {
-        throw new Error('NotImplemented');
     };
     PortableNetworkFile.prototype.setURL = function (url) {
-        throw new Error('NotImplemented');
     };
     PortableNetworkFile.prototype.getURL = function () {
-        throw new Error('NotImplemented');
     };
     PortableNetworkFile.prototype.setPassword = function (key) {
-        throw new Error('NotImplemented');
     };
     PortableNetworkFile.prototype.getPassword = function () {
-        throw new Error('NotImplemented');
     };
     PortableNetworkFile.prototype.toString = function () {
-        throw new Error('NotImplemented');
     };
     PortableNetworkFile.prototype.toObject = function () {
-        throw new Error('NotImplemented');
     };
     var general_factory = function () {
         var man = ns.format.FormatFactoryManager;
@@ -1180,19 +1293,17 @@ if (typeof MONKEY !== 'object') {
     };
     var PortableNetworkFileFactory = Interface(null, null);
     PortableNetworkFileFactory.prototype.createPortableNetworkFile = function (ted, filename, url, password) {
-        throw new Error('NotImplemented');
     };
     PortableNetworkFileFactory.prototype.parsePortableNetworkFile = function (pnf) {
-        throw new Error('NotImplemented');
     };
     PortableNetworkFile.Factory = PortableNetworkFileFactory;
-    ns.format.PortableNetworkFile = PortableNetworkFile;
-    ns.format.PortableNetworkFileFactory = PortableNetworkFileFactory
+    ns.format.PortableNetworkFile = PortableNetworkFile
 })(MONKEY);
 (function (ns) {
     'use strict';
     var Interface = ns.type.Interface;
     var Class = ns.type.Class;
+    var IObject = ns.type.Object;
     var Mapper = ns.type.Mapper;
     var Stringer = ns.type.Stringer;
     var Converter = ns.type.Converter
@@ -1229,7 +1340,7 @@ if (typeof MONKEY !== 'object') {
             return data.toMap()
         } else if (Interface.conforms(data, Stringer)) {
             text = data.toString()
-        } else if (data instanceof String) {
+        } else if (IObject.isString(data)) {
             text = data
         } else {
             return data
@@ -1284,12 +1395,12 @@ if (typeof MONKEY !== 'object') {
         if (!info) {
             return null
         }
-        var algorithm = this.getDataAlgorithm(ted, '*');
+        var algorithm = this.getDataAlgorithm(info, '*');
         var factory = this.getTransportableDataFactory(algorithm);
         if (!factory) {
             factory = this.getTransportableDataFactory('*')
         }
-        return factory.parseTransportableData(ted)
+        return factory.parseTransportableData(info)
     };
     GeneralFactory.prototype.setPortableNetworkFileFactory = function (factory) {
         this.__pnfFactory = factory
@@ -1312,7 +1423,7 @@ if (typeof MONKEY !== 'object') {
             return null
         }
         var factory = this.getPortableNetworkFileFactory();
-        return factory.parsePortableNetworkFile(pnf)
+        return factory.parsePortableNetworkFile(info)
     };
     var FactoryManager = {generalFactory: new GeneralFactory()};
     ns.format.FormatGeneralFactory = GeneralFactory;
@@ -1324,21 +1435,16 @@ if (typeof MONKEY !== 'object') {
     var Mapper = ns.type.Mapper;
     var CryptographyKey = Interface(null, [Mapper]);
     CryptographyKey.prototype.getAlgorithm = function () {
-        throw new Error('NotImplemented');
     };
     CryptographyKey.prototype.getData = function () {
-        throw new Error('NotImplemented');
     };
     var EncryptKey = Interface(null, [CryptographyKey]);
     EncryptKey.prototype.encrypt = function (plaintext, extra) {
-        throw new Error('NotImplemented');
     };
     var DecryptKey = Interface(null, [CryptographyKey]);
     DecryptKey.prototype.decrypt = function (ciphertext, params) {
-        throw new Error('NotImplemented');
     };
     DecryptKey.prototype.matchEncryptKey = function (pKey) {
-        throw new Error('NotImplemented');
     };
     ns.crypto.CryptographyKey = CryptographyKey;
     ns.crypto.EncryptKey = EncryptKey;
@@ -1353,14 +1459,11 @@ if (typeof MONKEY !== 'object') {
     AsymmetricKey.ECC = 'ECC';
     var SignKey = Interface(null, [AsymmetricKey]);
     SignKey.prototype.sign = function (data) {
-        throw new Error('NotImplemented');
     };
     var VerifyKey = Interface(null, [AsymmetricKey]);
     VerifyKey.prototype.verify = function (data, signature) {
-        throw new Error('NotImplemented');
     };
     VerifyKey.prototype.matchSignKey = function (sKey) {
-        throw new Error('NotImplemented');
     };
     ns.crypto.AsymmetricKey = AsymmetricKey;
     ns.crypto.SignKey = SignKey;
@@ -1396,14 +1499,11 @@ if (typeof MONKEY !== 'object') {
     };
     var SymmetricKeyFactory = Interface(null, null);
     SymmetricKeyFactory.prototype.generateSymmetricKey = function () {
-        throw new Error('NotImplemented');
     };
     SymmetricKeyFactory.prototype.parseSymmetricKey = function (key) {
-        throw new Error('NotImplemented');
     };
     SymmetricKey.Factory = SymmetricKeyFactory;
-    ns.crypto.SymmetricKey = SymmetricKey;
-    ns.crypto.SymmetricKeyFactory = SymmetricKeyFactory
+    ns.crypto.SymmetricKey = SymmetricKey
 })(MONKEY);
 (function (ns) {
     'use strict';
@@ -1431,11 +1531,9 @@ if (typeof MONKEY !== 'object') {
     };
     var PublicKeyFactory = Interface(null, null);
     PublicKeyFactory.prototype.parsePublicKey = function (key) {
-        throw new Error('NotImplemented');
     };
     PublicKey.Factory = PublicKeyFactory;
-    ns.crypto.PublicKey = PublicKey;
-    ns.crypto.PublicKeyFactory = PublicKeyFactory
+    ns.crypto.PublicKey = PublicKey
 })(MONKEY);
 (function (ns) {
     'use strict';
@@ -1446,7 +1544,6 @@ if (typeof MONKEY !== 'object') {
     PrivateKey.RSA = AsymmetricKey.RSA;
     PrivateKey.ECC = AsymmetricKey.ECC;
     PrivateKey.prototype.getPublicKey = function () {
-        throw new Error('NotImplemented');
     };
     var general_factory = function () {
         var man = ns.crypto.CryptographyKeyFactoryManager;
@@ -1470,20 +1567,18 @@ if (typeof MONKEY !== 'object') {
     };
     var PrivateKeyFactory = Interface(null, null);
     PrivateKeyFactory.prototype.generatePrivateKey = function () {
-        throw new Error('NotImplemented');
     };
     PrivateKeyFactory.prototype.parsePrivateKey = function (key) {
-        throw new Error('NotImplemented');
     };
     PrivateKey.Factory = PrivateKeyFactory;
-    ns.crypto.PrivateKey = PrivateKey;
-    ns.crypto.PrivateKeyFactory = PrivateKeyFactory
+    ns.crypto.PrivateKey = PrivateKey
 })(MONKEY);
 (function (ns) {
     'use strict';
     var Interface = ns.type.Interface;
     var Class = ns.type.Class;
     var Wrapper = ns.type.Wrapper;
+    var Converter = ns.type.Converter;
     var SymmetricKey = ns.crypto.SymmetricKey;
     var PrivateKey = ns.crypto.PrivateKey;
     var PublicKey = ns.crypto.PublicKey;
@@ -1520,8 +1615,8 @@ if (typeof MONKEY !== 'object') {
         }
         return true
     };
-    GeneralFactory.prototype.getAlgorithm = function (key) {
-        return key['algorithm']
+    GeneralFactory.prototype.getAlgorithm = function (key, defaultValue) {
+        return Converter.getString(key['algorithm'], defaultValue)
     };
     GeneralFactory.prototype.setSymmetricKeyFactory = function (algorithm, factory) {
         this.__symmetricKeyFactories[algorithm] = factory
@@ -1540,7 +1635,7 @@ if (typeof MONKEY !== 'object') {
             return key
         }
         var info = Wrapper.fetchMap(key);
-        var algorithm = this.getAlgorithm(info);
+        var algorithm = this.getAlgorithm(info, '*');
         var factory = this.getSymmetricKeyFactory(algorithm);
         if (!factory) {
             factory = this.getSymmetricKeyFactory('*')
@@ -1564,7 +1659,7 @@ if (typeof MONKEY !== 'object') {
             return key
         }
         var info = Wrapper.fetchMap(key);
-        var algorithm = this.getAlgorithm(info);
+        var algorithm = this.getAlgorithm(info, '*');
         var factory = this.getPrivateKeyFactory(algorithm);
         if (!factory) {
             factory = this.getPrivateKeyFactory('*')
@@ -1584,7 +1679,7 @@ if (typeof MONKEY !== 'object') {
             return key
         }
         var info = Wrapper.fetchMap(key);
-        var algorithm = this.getAlgorithm(info);
+        var algorithm = this.getAlgorithm(info, '*');
         var factory = this.getPublicKeyFactory(algorithm);
         if (!factory) {
             factory = this.getPublicKeyFactory('*')
