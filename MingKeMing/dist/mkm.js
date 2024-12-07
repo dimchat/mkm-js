@@ -61,35 +61,13 @@ if (typeof MingKeMing !== 'object') {
 })(MingKeMing);
 (function (ns) {
     'use strict';
-    var MetaType = ns.type.Enum('MetaType', {
-        DEFAULT: (0x01),
-        MKM: (0x01),
-        BTC: (0x02),
-        ExBTC: (0x03),
-        ETH: (0x04),
-        ExETH: (0x05)
-    });
-    MetaType.hasSeed = function (version) {
-        var mkm = MetaType.MKM.getValue();
-        return (version & mkm) === mkm
-    };
-    ns.protocol.MetaType = MetaType
-})(MingKeMing);
-(function (ns) {
-    'use strict';
     var Interface = ns.type.Interface;
     var Stringer = ns.type.Stringer;
     var Address = Interface(null, [Stringer]);
-    Address.ANYWHERE = null;
-    Address.EVERYWHERE = null;
     Address.prototype.getType = function () {
     };
-    Address.prototype.isBroadcast = function () {
-    };
-    Address.prototype.isUser = function () {
-    };
-    Address.prototype.isGroup = function () {
-    };
+    Address.ANYWHERE = null;
+    Address.EVERYWHERE = null;
     var general_factory = function () {
         var man = ns.mkm.AccountFactoryManager;
         return man.generalFactory
@@ -129,9 +107,6 @@ if (typeof MingKeMing !== 'object') {
     var Interface = ns.type.Interface;
     var Stringer = ns.type.Stringer;
     var ID = Interface(null, [Stringer]);
-    ID.ANYONE = null;
-    ID.EVERYONE = null;
-    ID.FOUNDER = null;
     ID.prototype.getName = function () {
     };
     ID.prototype.getAddress = function () {
@@ -146,6 +121,9 @@ if (typeof MingKeMing !== 'object') {
     };
     ID.prototype.isGroup = function () {
     };
+    ID.ANYONE = null;
+    ID.EVERYONE = null;
+    ID.FOUNDER = null;
     ID.convert = function (list) {
         var gf = general_factory();
         return gf.convertIdentifiers(list)
@@ -193,6 +171,9 @@ if (typeof MingKeMing !== 'object') {
     var Interface = ns.type.Interface;
     var Mapper = ns.type.Mapper;
     var Meta = Interface(null, [Mapper]);
+    Meta.MKM = 'mkm';
+    Meta.BTC = 'btc';
+    Meta.ETH = 'eth';
     Meta.prototype.getType = function () {
     };
     Meta.prototype.getPublicKey = function () {
@@ -213,25 +194,25 @@ if (typeof MingKeMing !== 'object') {
         var man = ns.mkm.AccountFactoryManager;
         return man.generalFactory
     };
-    Meta.create = function (version, key, seed, fingerprint) {
+    Meta.create = function (type, key, seed, fingerprint) {
         var gf = general_factory();
-        return gf.createMeta(version, key, seed, fingerprint)
+        return gf.createMeta(type, key, seed, fingerprint)
     };
-    Meta.generate = function (version, sKey, seed) {
+    Meta.generate = function (type, sKey, seed) {
         var gf = general_factory();
-        return gf.generateMeta(version, sKey, seed)
+        return gf.generateMeta(type, sKey, seed)
     };
     Meta.parse = function (meta) {
         var gf = general_factory();
         return gf.parseMeta(meta)
     };
-    Meta.setFactory = function (version, factory) {
+    Meta.setFactory = function (type, factory) {
         var gf = general_factory();
-        gf.setMetaFactory(version, factory)
+        gf.setMetaFactory(type, factory)
     };
-    Meta.getFactory = function (version) {
+    Meta.getFactory = function (type) {
         var gf = general_factory();
-        return gf.getMetaFactory(version)
+        return gf.getMetaFactory(type)
     };
     var MetaFactory = Interface(null, null);
     MetaFactory.prototype.createMeta = function (pKey, seed, fingerprint) {
@@ -323,17 +304,6 @@ if (typeof MingKeMing !== 'object') {
     BroadcastAddress.prototype.getType = function () {
         return this.__network
     };
-    BroadcastAddress.prototype.isBroadcast = function () {
-        return true
-    };
-    BroadcastAddress.prototype.isUser = function () {
-        var any = EntityType.ANY.getValue();
-        return this.__network === any
-    };
-    BroadcastAddress.prototype.isGroup = function () {
-        var every = EntityType.EVERY.getValue();
-        return this.__network === every
-    };
     Address.ANYWHERE = new BroadcastAddress('anywhere', EntityType.ANY);
     Address.EVERYWHERE = new BroadcastAddress('everywhere', EntityType.EVERY);
     ns.mkm.BroadcastAddress = BroadcastAddress
@@ -342,8 +312,9 @@ if (typeof MingKeMing !== 'object') {
     'use strict';
     var Class = ns.type.Class;
     var ConstantString = ns.type.ConstantString;
-    var ID = ns.protocol.ID;
+    var EntityType = ns.protocol.EntityType;
     var Address = ns.protocol.Address;
+    var ID = ns.protocol.ID;
     var Identifier = function (identifier, name, address, terminal) {
         ConstantString.call(this, identifier);
         this.__name = name;
@@ -361,27 +332,44 @@ if (typeof MingKeMing !== 'object') {
         return this.__terminal
     };
     Identifier.prototype.getType = function () {
-        return this.getAddress().getType()
+        return this.__address.getType()
     };
     Identifier.prototype.isBroadcast = function () {
-        return this.getAddress().isBroadcast()
+        var network = this.getType();
+        return EntityType.isBroadcast(network)
     };
     Identifier.prototype.isUser = function () {
-        return this.getAddress().isUser()
+        var network = this.getType();
+        return EntityType.isUser(network)
     };
     Identifier.prototype.isGroup = function () {
-        return this.getAddress().isGroup()
+        var network = this.getType();
+        return EntityType.isGroup(network)
     };
-    ID.ANYONE = new Identifier("anyone@anywhere", "anyone", Address.ANYWHERE, null);
-    ID.EVERYONE = new Identifier("everyone@everywhere", "everyone", Address.EVERYWHERE, null);
-    ID.FOUNDER = new Identifier("moky@anywhere", "moky", Address.ANYWHERE, null);
+    Identifier.create = function (name, address, terminal) {
+        var string = Identifier.concat(name, address, terminal);
+        return new Identifier(string, name, address, terminal)
+    };
+    Identifier.concat = function (name, address, terminal) {
+        var string = address.toString();
+        if (name && name.length > 0) {
+            string = name + '@' + string
+        }
+        if (terminal && terminal.length > 0) {
+            string = string + '/' + terminal
+        }
+        return string
+    };
+    ID.ANYONE = Identifier.create("anyone", Address.ANYWHERE, null);
+    ID.EVERYONE = Identifier.create("everyone", Address.EVERYWHERE, null);
+    ID.FOUNDER = Identifier.create("moky", Address.ANYWHERE, null);
     ns.mkm.Identifier = Identifier
 })(MingKeMing);
 (function (ns) {
     'use strict';
     var Interface = ns.type.Interface;
     var Class = ns.type.Class;
-    var Enum = ns.type.Enum;
+    var IObject = ns.type.Object;
     var Stringer = ns.type.Stringer;
     var Wrapper = ns.type.Wrapper;
     var Converter = ns.type.Converter;
@@ -462,30 +450,28 @@ if (typeof MingKeMing !== 'object') {
             id = members[i];
             if (Interface.conforms(id, Stringer)) {
                 array.push(id.toString())
-            } else if (typeof id === 'string') {
+            } else if (IObject.isString(id)) {
                 array.push(id)
             }
         }
         return array
     };
-    GeneralFactory.prototype.setMetaFactory = function (version, factory) {
-        version = Enum.getInt(version);
-        this.__metaFactories[version] = factory
+    GeneralFactory.prototype.setMetaFactory = function (type, factory) {
+        this.__metaFactories[type] = factory
     };
-    GeneralFactory.prototype.getMetaFactory = function (version) {
-        version = Enum.getInt(version);
-        return this.__metaFactories[version]
+    GeneralFactory.prototype.getMetaFactory = function (type) {
+        return this.__metaFactories[type]
     };
     GeneralFactory.prototype.getMetaType = function (meta, defaultVersion) {
-        var version = meta['type'];
-        return Converter.getInt(version, defaultVersion)
+        var type = meta['type'];
+        return Converter.getString(type, defaultVersion)
     };
-    GeneralFactory.prototype.createMeta = function (version, key, seed, fingerprint) {
-        var factory = this.getMetaFactory(version);
+    GeneralFactory.prototype.createMeta = function (type, key, seed, fingerprint) {
+        var factory = this.getMetaFactory(type);
         return factory.createMeta(key, seed, fingerprint)
     };
-    GeneralFactory.prototype.generateMeta = function (version, sKey, seed) {
-        var factory = this.getMetaFactory(version);
+    GeneralFactory.prototype.generateMeta = function (type, sKey, seed) {
+        var factory = this.getMetaFactory(type);
         return factory.generateMeta(sKey, seed)
     };
     GeneralFactory.prototype.parseMeta = function (meta) {
@@ -498,10 +484,10 @@ if (typeof MingKeMing !== 'object') {
         if (!info) {
             return null
         }
-        var type = this.getMetaType(info, 0);
+        var type = this.getMetaType(info, '*');
         var factory = this.getMetaFactory(type);
         if (!factory) {
-            factory = this.getMetaFactory(0)
+            factory = this.getMetaFactory('*')
         }
         return factory.parseMeta(info)
     };
@@ -512,7 +498,8 @@ if (typeof MingKeMing !== 'object') {
         return this.__documentFactories[type]
     };
     GeneralFactory.prototype.getDocumentType = function (doc, defaultType) {
-        return Converter.getString(doc['type'], defaultType)
+        var type = doc['type'];
+        return Converter.getString(type, defaultType)
     };
     GeneralFactory.prototype.createDocument = function (type, identifier, data, signature) {
         var factory = this.getDocumentFactory(type);

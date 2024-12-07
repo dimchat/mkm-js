@@ -50,12 +50,6 @@
      */
     var ID = Interface(null, [Stringer]);
 
-    //  ID for broadcast
-    ID.ANYONE = null;    // 'anyone@anywhere'
-    ID.EVERYONE = null;  // 'everyone@everywhere'
-    //  DIM Founder
-    ID.FOUNDER = null;   // 'moky@anywhere'
-
     /**
      *  Get ID.name
      *
@@ -85,6 +79,15 @@
     ID.prototype.isBroadcast = function () {};
     ID.prototype.isUser      = function () {};
     ID.prototype.isGroup     = function () {};
+
+    /**
+     *  ID for Broadcast
+     *  ~~~~~~~~~~~~~~~~
+     */
+    ID.ANYONE   = null;  // 'anyone@anywhere'
+    ID.EVERYONE = null;  // 'everyone@everywhere'
+    // DIM Founder
+    ID.FOUNDER  = null;  // 'moky@anywhere'
 
     //
     //  Conveniences

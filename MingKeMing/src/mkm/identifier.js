@@ -40,8 +40,9 @@
     var Class          = ns.type.Class;
     var ConstantString = ns.type.ConstantString;
 
-    var ID      = ns.protocol.ID;
-    var Address = ns.protocol.Address;
+    var EntityType = ns.protocol.EntityType;
+    var Address    = ns.protocol.Address;
+    var ID         = ns.protocol.ID;
 
     /**
      *  ID for entity (User/Group)
@@ -78,33 +79,63 @@
 
     // Override
     Identifier.prototype.getType = function () {
-        return this.getAddress().getType();
+        return this.__address.getType();
     };
 
     // Override
     Identifier.prototype.isBroadcast = function () {
-        return this.getAddress().isBroadcast();
+        var network = this.getType();
+        return EntityType.isBroadcast(network);
     };
 
     // Override
     Identifier.prototype.isUser = function () {
-        return this.getAddress().isUser();
+        var network = this.getType();
+        return EntityType.isUser(network);
     };
 
     // Override
     Identifier.prototype.isGroup = function () {
-        return this.getAddress().isGroup();
+        var network = this.getType();
+        return EntityType.isGroup(network);
+    };
+
+    //
+    //  Factory
+    //
+
+    Identifier.create = function (name, address, terminal) {
+        var string = Identifier.concat(name, address, terminal);
+        return new Identifier(string, name, address, terminal);
     };
 
     /**
-     *  ID for broadcast
+     *  Concat ID with components
+     *
+     * @param {String} name
+     * @param {Address} address
+     * @param {String} terminal
+     * @return {string}
      */
-    ID.ANYONE = new Identifier("anyone@anywhere", "anyone", Address.ANYWHERE, null);
-    ID.EVERYONE = new Identifier("everyone@everywhere", "everyone", Address.EVERYWHERE, null);
+    Identifier.concat = function (name, address, terminal) {
+        var string = address.toString();
+        if (name && name.length > 0) {
+            string = name + '@' + string;
+        }
+        if (terminal && terminal.length > 0) {
+            string = string + '/' + terminal;
+        }
+        return string;
+    };
+
     /**
-     *  DIM Founder
+     *  ID for Broadcast
+     *  ~~~~~~~~~~~~~~~~
      */
-    ID.FOUNDER = new Identifier("moky@anywhere", "moky", Address.ANYWHERE, null);
+    ID.ANYONE   = Identifier.create("anyone", Address.ANYWHERE, null);
+    ID.EVERYONE = Identifier.create("everyone", Address.EVERYWHERE, null);
+    // DIM Founder
+    ID.FOUNDER  = Identifier.create("moky", Address.ANYWHERE, null);
 
     //-------- namespace --------
     ns.mkm.Identifier = Identifier;

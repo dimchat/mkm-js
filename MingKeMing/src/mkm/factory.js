@@ -40,7 +40,7 @@
 
     var Interface = ns.type.Interface;
     var Class     = ns.type.Class;
-    var Enum      = ns.type.Enum;
+    var IObject   = ns.type.Object;
     var Stringer  = ns.type.Stringer;
     var Wrapper   = ns.type.Wrapper;
     var Converter = ns.type.Converter;
@@ -50,6 +50,10 @@
     var Meta     = ns.protocol.Meta;
     var Document = ns.protocol.Document;
 
+    /**
+     *  Account GeneralFactory
+     *  ~~~~~~~~~~~~~~~~~~~~~~
+     */
     var GeneralFactory = function () {
         this.__addressFactory = null;
         this.__idFactory = null;
@@ -138,7 +142,7 @@
             id = members[i];
             if (Interface.conforms(id, Stringer)) {
                 array.push(id.toString());
-            } else if (typeof id === 'string') {
+            } else if (IObject.isString(id)) {
                 array.push(id);
             }
         }
@@ -149,25 +153,38 @@
     //  Meta
     //
 
-    GeneralFactory.prototype.setMetaFactory = function (version, factory) {
-        version = Enum.getInt(version);
-        this.__metaFactories[version] = factory;
+    GeneralFactory.prototype.setMetaFactory = function (type, factory) {
+        this.__metaFactories[type] = factory;
     };
-    GeneralFactory.prototype.getMetaFactory = function (version) {
-        version = Enum.getInt(version);
-        return this.__metaFactories[version];
+    GeneralFactory.prototype.getMetaFactory = function (type) {
+        return this.__metaFactories[type];
     };
 
     GeneralFactory.prototype.getMetaType = function (meta, defaultVersion) {
-        var version = meta['type'];
-        return Converter.getInt(version, defaultVersion)
+        var type = meta['type'];
+        return Converter.getString(type, defaultVersion)
     };
-    GeneralFactory.prototype.createMeta = function (version, key, seed, fingerprint) {
-        var factory = this.getMetaFactory(version);
+
+    /*/
+    GeneralFactory.prototype.hashMetaSeed = function (meta) {
+        var type = this.getMetaType(meta, '');
+        return type === '1' || type === 'mkm';
+    };
+    GeneralFactory.prototype.getMetaSeed = function (meta) {
+        if (!this.hashMetaSeed(meta)) {
+            return null;
+        }
+        var seed = meta['seed'];
+        return Converter.getString(seed, '');
+    };
+    /*/
+
+    GeneralFactory.prototype.createMeta = function (type, key, seed, fingerprint) {
+        var factory = this.getMetaFactory(type);
         return factory.createMeta(key, seed, fingerprint);
     };
-    GeneralFactory.prototype.generateMeta = function (version, sKey, seed) {
-        var factory = this.getMetaFactory(version);
+    GeneralFactory.prototype.generateMeta = function (type, sKey, seed) {
+        var factory = this.getMetaFactory(type);
         return factory.generateMeta(sKey, seed);
     };
     GeneralFactory.prototype.parseMeta = function (meta) {
@@ -180,10 +197,10 @@
         if (!info) {
             return null;
         }
-        var type = this.getMetaType(info, 0);
+        var type = this.getMetaType(info, '*');
         var factory = this.getMetaFactory(type);
         if (!factory) {
-            factory = this.getMetaFactory(0);  // unknown
+            factory = this.getMetaFactory('*');  // unknown
         }
         return factory.parseMeta(info);
     };
@@ -200,7 +217,8 @@
     };
 
     GeneralFactory.prototype.getDocumentType = function (doc, defaultType) {
-        return Converter.getString(doc['type'], defaultType)
+        var type = doc['type'];
+        return Converter.getString(type, defaultType)
     };
     GeneralFactory.prototype.createDocument = function (type, identifier, data, signature) {
         var factory = this.getDocumentFactory(type);

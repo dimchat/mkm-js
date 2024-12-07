@@ -30,7 +30,7 @@
 // =============================================================================
 //
 
-//! require 'types.js'
+//! require 'entity.js'
 
 (function (ns) {
     'use strict';
@@ -49,10 +49,6 @@
      */
     var Address = Interface(null, [Stringer]);
 
-    // Address for broadcast
-    Address.ANYWHERE = null;    // 'anywhere'
-    Address.EVERYWHERE = null;  // 'everywhere'
-
     /**
      *  get address type
      *
@@ -60,10 +56,12 @@
      */
     Address.prototype.getType = function () {};
 
-    // address types
-    Address.prototype.isBroadcast = function () {};
-    Address.prototype.isUser      = function () {};
-    Address.prototype.isGroup     = function () {};
+    /**
+     *  Address for broadcast
+     *  ~~~~~~~~~~~~~~~~~~~~~
+     */
+    Address.ANYWHERE   = null;  // 'anywhere'
+    Address.EVERYWHERE = null;  // 'everywhere'
 
     //
     //  Factory methods

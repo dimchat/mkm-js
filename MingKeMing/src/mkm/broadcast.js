@@ -57,23 +57,6 @@
         return this.__network;
     };
 
-    // Override
-    BroadcastAddress.prototype.isBroadcast = function () {
-        return true;
-    };
-
-    // Override
-    BroadcastAddress.prototype.isUser = function () {
-        var any = EntityType.ANY.getValue();
-        return this.__network === any;
-    };
-
-    // Override
-    BroadcastAddress.prototype.isGroup = function () {
-        var every = EntityType.EVERY.getValue();
-        return this.__network === every;
-    };
-
     /**
      *  Address for broadcast
      */

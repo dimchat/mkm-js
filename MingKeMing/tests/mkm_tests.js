@@ -9,7 +9,7 @@ mkm_tests = [];
     'use strict';
 
     var EntityType = ns.protocol.EntityType;
-    var ID = ns.protocol.ID;
+    var ID         = ns.protocol.ID;
 
     var test_broadcast_id = function () {
         var anyone = ID.ANYONE;
@@ -31,17 +31,15 @@ mkm_tests = [];
     'use strict';
 
     var AsymmetricKey = ns.crypto.AsymmetricKey;
-    var PrivateKey = ns.crypto.PrivateKey;
+    var PrivateKey    = ns.crypto.PrivateKey;
 
     var EntityType = ns.protocol.EntityType;
-
-    var MetaType = ns.protocol.MetaType;
-    var Meta = ns.protocol.Meta;
+    var Meta       = ns.protocol.Meta;
 
     var test_meta = function () {
         var SK = PrivateKey.generate(AsymmetricKey.RSA);
         var seed = 'moky';
-        var meta = Meta.generate(MetaType.DEFAULT, SK, seed);
+        var meta = Meta.generate(Meta.MKM, SK, seed);
         log('generated meta: ', meta);
         assert(meta.getPublicKey() != null, 'failed to generate meta');
 

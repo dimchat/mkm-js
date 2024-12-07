@@ -46,10 +46,10 @@
      *  This class is used to generate entity ID
      *
      *      data format: {
-     *          version: 1,          // algorithm version
-     *          seed: "moKy",        // user/group name
-     *          key: "{public key}", // PK = secp256k1(SK);
-     *          fingerprint: "..."   // CT = sign(seed, SK);
+     *          type       : 1,              // algorithm version
+     *          key        : "{public key}", // PK = secp256k1(SK);
+     *          seed       : "moKy",         // user/group name
+     *          fingerprint: "..."           // CT = sign(seed, SK);
      *      }
      *
      *      algorithm:
@@ -57,16 +57,25 @@
      */
     var Meta = Interface(null, [Mapper]);
 
+    //
+    //  MetaType
+    //  ~~~~~~~~
+    //  Meta algorithm names
+    //
+    Meta.MKM = 'mkm'; // '1';
+    Meta.BTC = 'btc'; // '2';
+    Meta.ETH = 'eth'; // '4';
+    // ...
+
     /**
      *  Meta algorithm version
      *
-     *      0x01 - username@address
-     *      0x02 - btc_address
-     *      0x03 - username@btc_address
-     *      0x04 - eth_address
-     *      0x05 - username@eth_address
+     *      1 = mkm : username@address (default)
+     *      2 = btc : btc_address
+     *      4 = eth : eth_address
+     *      ...
      *
-     * @return {uint} 0 ~ 255
+     * @return {String}
      */
     Meta.prototype.getType = function () {};
 
@@ -114,7 +123,7 @@
      *  Check meta valid
      *  (must call this when received a new meta from network)
      *
-     * @return false on fingerprint not matched
+     * @return {boolean} false on fingerprint not matched
      */
     Meta.prototype.isValid = function () {};
 
@@ -123,7 +132,7 @@
      *  (must call this when received a new meta from network)
      *
      * @param {ID} identifier - entity ID
-     * @return true on matched
+     * @return {boolean} true on matched
      */
     Meta.prototype.matchIdentifier = function (identifier) {};
 
@@ -131,7 +140,7 @@
      *  Check whether meta matches with public key
      *
      * @param {VerifyKey} pKey - public key
-     * @return true on matched
+     * @return {boolean} true on matched
      */
     Meta.prototype.matchPublicKey = function (pKey) {};
 
@@ -147,28 +156,28 @@
     /**
      *  Create meta from stored info
      *
-     * @param {MetaType|uint} version         - meta type
+     * @param {String} type                   - meta algorithm version
      * @param {VerifyKey} key                 - public key
      * @param {String} seed                   - ID.name
      * @param {TransportableData} fingerprint - sKey.sign(seed)
      * @return {Meta}
      */
-    Meta.create = function (version, key, seed, fingerprint) {
+    Meta.create = function (type, key, seed, fingerprint) {
         var gf = general_factory();
-        return gf.createMeta(version, key, seed, fingerprint);
+        return gf.createMeta(type, key, seed, fingerprint);
     };
 
     /**
      *  Generate meta
      *
-     * @param {MetaType|uint} version  - meta type
-     * @param {SignKey} sKey           - private key
-     * @param {String} seed            - ID.name
+     * @param {String} type                   - meta algorithm version
+     * @param {SignKey} sKey                  - private key
+     * @param {String} seed                   - ID.name
      * @return {Meta}
      */
-    Meta.generate = function (version, sKey, seed) {
+    Meta.generate = function (type, sKey, seed) {
         var gf = general_factory();
-        return gf.generateMeta(version, sKey, seed);
+        return gf.generateMeta(type, sKey, seed);
     };
 
     /**
@@ -185,16 +194,16 @@
     /**
      *  Register meta factory with type
      *
-     * @param {MetaType|uint} version
+     * @param {string} type
      * @param {MetaFactory} factory
      */
-    Meta.setFactory = function (version, factory) {
+    Meta.setFactory = function (type, factory) {
         var gf = general_factory();
-        gf.setMetaFactory(version, factory);
+        gf.setMetaFactory(type, factory);
     };
-    Meta.getFactory = function (version) {
+    Meta.getFactory = function (type) {
         var gf = general_factory();
-        return gf.getMetaFactory(version);
+        return gf.getMetaFactory(type);
     };
 
     /**

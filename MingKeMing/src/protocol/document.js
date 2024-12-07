@@ -45,9 +45,10 @@
      *  This class is used to generate entity profile
      *
      *      data format: {
-     *          ID: "EntityID",   // entity ID
-     *          data: "{JSON}",   // data = json_encode(info)
-     *          signature: "..."  // signature = sign(data, SK);
+     *          ID        : "EntityID",        // entity ID
+     *          type      : "visa",            // "bulletin", ...
+     *          data      : "{JSON}",          // data = json_encode(info)
+     *          signature : "{BASE64_ENCODE}"  // signature = sign(data, SK);
      *      }
      */
     var Document = Interface(null, [TAI, Mapper]);
@@ -55,8 +56,8 @@
     //
     //  Document types
     //
-    Document.VISA = 'visa';          // for login/communication
-    Document.PROFILE = 'profile';    // for user info
+    Document.VISA     = 'visa';      // for login/communication
+    Document.PROFILE  = 'profile';   // for user info
     Document.BULLETIN = 'bulletin';  // for group info
 
     /**
