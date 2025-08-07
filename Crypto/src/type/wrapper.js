@@ -1,10 +1,5 @@
 ;
 // license: https://mit-license.org
-//
-//  MONKEY: Memory Object aNd KEYs
-//
-//                               Written in 2021 by Moky <albert.moky@gmail.com>
-//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -37,59 +32,33 @@
 //! require 'arrays.js'
 //! require 'dictionary.js'
 
-(function (ns) {
-    'use strict';
-
-    var Interface = ns.type.Interface;
-    var IObject = ns.type.Object;
-    var Enum = ns.type.Enum;
-    var Stringer = ns.type.Stringer;
-    var Arrays = ns.type.Arrays;
-    var Mapper = ns.type.Mapper;
+mk.type.Wrapper = {
 
     /**
-     *  Get inner String
-     *  ~~~~~~~~~~~~~~~~
      *  Remove first wrapper
-     *
-     * @param {Stringer|String} str
-     * @return {String}
      */
-    var fetch_string = function (str) {
+    fetchString: function (str) {
         if (Interface.conforms(str, Stringer)) {
             return str.toString();
         } else {
             // assert(str instanceof String, 'string error: ' + str);
             return str;
         }
-    };
+    },
 
-    /**
-     *  Get inner Map
-     *  ~~~~~~~~~~~~~
-     *  Remove first wrapper
-     *
-     * @param {*} dict
-     * @return {{}}
-     */
-    var fetch_map = function (dict) {
+    fetchMap: function (dict) {
         if (Interface.conforms(dict, Mapper)) {
             return dict.toMap();
         } else {
             // assert(dict instanceof {}, 'map error: ' + dict);
             return dict;
         }
-    };
+    },
 
     /**
-     *  Unwrap recursively
-     *  ~~~~~~~~~~~~~~~~~~
-     *  Remove all wrappers
-     *
-     * @param {*} object
-     * @return {*}
+     *  Remove all wrappers (recursively)
      */
-    var unwrap = function (object) {
+    unwrap: function (object) {
         if (IObject.isNull(object)) {
             // empty
             return null;
@@ -104,20 +73,20 @@
             return object.toString();
         } else if (Interface.conforms(object, Mapper)) {
             // unwrap inner map
-            return unwrap_map(object.toMap());
+            return this.unwrapMap(object.toMap());
         } else if (!Arrays.isArray(object)) {
             // unwrap as a map
-            return unwrap_map(object);
+            return this.unwrapMap(object);
         } else if (object instanceof Array) {
             // unwrap as a list
-            return unwrap_list(object);
+            return this.unwrapList(object);
         } else {
             // base array?
             return object;
         }
-    };
+    },
 
-    var unwrap_map = function (dict) {
+    unwrapMap: function (dict) {
         var result = {};
         var allKeys = Object.keys(dict);
         var key;
@@ -127,30 +96,18 @@
             // if (key instanceof Stringer) {
             //     key = key.toString();
             // }
-            result[key] = unwrap(dict[key]);
+            result[key] = this.unwrap(dict[key]);
         }
         return result;
-    };
+    },
 
-    var unwrap_list = function (array) {
+    unwrapList: function (array) {
         var result = [];
         var count = array.length;
         for (var i = 0; i < count; ++i) {
-            result[i] = unwrap(array[i]);
+            result[i] = this.unwrap(array[i]);
         }
         return result;
-    };
-
-    //-------- namespace --------
-    ns.type.Wrapper = {
-        // remove first wrapper
-        fetchString: fetch_string,
-        fetchMap: fetch_map,
-
-        // remove all wrappers
-        unwrap: unwrap,
-        unwrapMap: unwrap_map,
-        unwrapList: unwrap_list
-    };
-
-})(MONKEY);
+    }
+};
+var Wrapper = mk.type.Wrapper;

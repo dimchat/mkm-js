@@ -1,10 +1,5 @@
 ;
 // license: https://mit-license.org
-//
-//  MONKEY: Memory Object aNd KEYs
-//
-//                               Written in 2020 by Moky <albert.moky@gmail.com>
-//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -32,41 +27,36 @@
 
 //! require 'hash.js'
 
-(function (ns) {
-    'use strict';
+mk.digest.RIPEMD160 = {
 
-    var RipeMD160 = {
-        /**
-         *  Get digest of binary data
-         *
-         * @param {Uint8Array} data - binary data
-         * @return {Uint8Array} binary data
-         */
-        digest: function (data) {
-            return this.getDigester().digest(data);
-        },
+    /**
+     *  Get digest of binary data
+     *
+     * @param {Uint8Array} data - binary data
+     * @return {Uint8Array} binary data
+     */
+    digest: function (data) {
+        return ripemd160Digester.digest(data);
+    },
 
-        /**
-         *  Get RipeMD160 Digester
-         *
-         * @return {DataDigester}
-         */
-        getDigester: function () {
-            return ripemd160Digester;
-        },
+    /**
+     *  Get RipeMD160 Digester
+     *
+     * @return {DataDigester}
+     */
+    getDigester: function () {
+        return ripemd160Digester;
+    },
 
-        /**
-         *  Set RipeMD160 Digester
-         * @param {DataDigester} digester
-         */
-        setDigester: function (digester) {
-            ripemd160Digester = digester;
-        }
-    };
+    /**
+     *  Set RipeMD160 Digester
+     * @param {DataDigester} digester
+     */
+    setDigester: function (digester) {
+        ripemd160Digester = digester;
+    }
+};
+var RIPEMD160 = mk.digest.RIPEMD160;
 
-    var ripemd160Digester = null;
-
-    //-------- namespace --------
-    ns.digest.RIPEMD160 = RipeMD160;
-
-})(MONKEY);
+// Singleton
+var ripemd160Digester = null;

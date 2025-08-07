@@ -1,10 +1,5 @@
 ;
 // license: https://mit-license.org
-//
-//  MONKEY: Memory Object aNd KEYs
-//
-//                               Written in 2020 by Moky <albert.moky@gmail.com>
-//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -32,17 +27,12 @@
 
 //! require 'type/class.js'
 
-(function (ns) {
-    'use strict';
-
-    var Interface = ns.type.Interface;
-
-    /**
-     *  Data Digester
-     *  ~~~~~~~~~~~~~
-     *  MD5, SHA1, SHA256, Keccak256, RipeMD160, ...
-     */
-    var DataDigester = Interface(null, null);
+/**
+ *  Data Digester
+ *  ~~~~~~~~~~~~~
+ *  MD5, SHA1, SHA256, Keccak256, RipeMD160, ...
+ */
+mk.digest.DataDigester = Interface(null, null, {
 
     /**
      *  Get digest of binary data
@@ -50,9 +40,7 @@
      * @param {Uint8Array} data - binary data
      * @return {Uint8Array} binary data
      */
-    DataDigester.prototype.digest = function (data) {};
+    digest: function (data) {}
 
-    //-------- namespace --------
-    ns.digest.DataDigester = DataDigester;
-
-})(MONKEY);
+});
+var DataDigester = mk.digest.DataDigester;

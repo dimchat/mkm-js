@@ -1,10 +1,5 @@
 ;
 // license: https://mit-license.org
-//
-//  MONKEY: Memory Object aNd KEYs
-//
-//                               Written in 2020 by Moky <albert.moky@gmail.com>
-//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -32,41 +27,36 @@
 
 //! require 'hash.js'
 
-(function (ns) {
-    'use strict';
+mk.digest.KECCAK256 = {
 
-    var Keccak256 = {
-        /**
-         *  Get digest of binary data
-         *
-         * @param {Uint8Array} data - binary data
-         * @return {Uint8Array} binary data
-         */
-        digest: function (data) {
-            return this.getDigester().digest(data);
-        },
+    /**
+     *  Get digest of binary data
+     *
+     * @param {Uint8Array} data - binary data
+     * @return {Uint8Array} binary data
+     */
+    digest: function (data) {
+        return keccak256Digester.digest(data);
+    },
 
-        /**
-         *  Get Keccak256 Digester
-         *
-         * @return {DataDigester}
-         */
-        getDigester: function () {
-            return keccak256Digester;
-        },
+    /**
+     *  Get Keccak256 Digester
+     *
+     * @return {DataDigester}
+     */
+    getDigester: function () {
+        return keccak256Digester;
+    },
 
-        /**
-         *  Set Keccak256 Digester
-         * @param {DataDigester} digester
-         */
-        setDigester: function (digester) {
-            keccak256Digester = digester;
-        }
-    };
+    /**
+     *  Set Keccak256 Digester
+     * @param {DataDigester} digester
+     */
+    setDigester: function (digester) {
+        keccak256Digester = digester;
+    }
+};
+var KECCAK256 = mk.digest.KECCAK256;
 
-    var keccak256Digester = null;
-
-    //-------- namespace --------
-    ns.digest.KECCAK256 = Keccak256;
-
-})(MONKEY);
+// Singleton
+var keccak256Digester = null;

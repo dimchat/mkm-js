@@ -1,10 +1,5 @@
 ;
 // license: https://mit-license.org
-//
-//  MONKEY: Memory Object aNd KEYs
-//
-//                               Written in 2024 by Moky <albert.moky@gmail.com>
-//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -33,25 +28,31 @@
 //! require 'class.js'
 //! require 'object.js'
 
-(function (ns) {
-    'use strict';
+/**
+ *  Data Converter
+ */
+mk.type.DataConverter = Interface(null, null, {
+    getString: function (value, defaultValue) {},
 
-    var IObject = ns.type.Object;
+    // assume value can be a config string:
+    //     'true', 'false', 'yes', 'no', 'on', 'off', '1', '0', ...
+    getBoolean: function (value, defaultValue) {},
 
-    var getString = function (value, defaultValue) {
-        if (IObject.isNull(value)) {
-            // empty
-            return defaultValue;
-        } else if (IObject.isString(value)) {
-            // exactly
-            return value;
-        } else {
-            return value.toString();
-        }
-    };
+    getInt: function (value, defaultValue) {},
+    getFloat: function (value, defaultValue) {},
 
     // assume value can be a timestamp (seconds from 1970-01-01 00:00:00)
-    var getDateTime = function (value, defaultValue) {
+    getDateTime: function (value, defaultValue) {}
+});
+var DataConverter = mk.type.DataConverter;
+
+/**
+ *  Default Data Converter
+ */
+mk.type.BaseConverter = Class(null, null, [DataConverter], {
+
+    // Override
+    getDateTime: function (value, defaultValue) {
         if (IObject.isNull(value)) {
             // empty
             return defaultValue;
@@ -59,26 +60,13 @@
             // exactly
             return value;
         }
-        var seconds = getFloat(value, 0);
+        var seconds = this.getFloat(value, 0);
         var millis = seconds * 1000;
         return new Date(millis);
-    };
+    },
 
-    var getInt = function (value, defaultValue) {
-        if (IObject.isNull(value)) {
-            // empty
-            return defaultValue;
-        } else if (IObject.isNumber(value)) {
-            // exactly
-            return value;
-        } else if (IObject.isBoolean(value)) {
-            return value ? 1 : 0;
-        } else {
-            var str = IObject.isString(value) ? value : value.toString();
-            return parseInt(str);
-        }
-    };
-    var getFloat = function (value, defaultValue) {
+    // Override
+    getFloat: function (value, defaultValue) {
         if (IObject.isNull(value)) {
             // empty
             return defaultValue;
@@ -87,15 +75,28 @@
             return value;
         } else if (IObject.isBoolean(value)) {
             return value ? 1.0 : 0.0;
-        } else {
-            var str = IObject.isString(value) ? value : value.toString();
-            return parseFloat(str);
         }
-    };
+        var text = this.getStr(value);
+        return parseFloat(text);
+    },
 
-    // assume value can be a config string:
-    //     'true', 'false', 'yes', 'no', 'on', 'off', '1', '0', ...
-    var getBoolean = function (value, defaultValue) {
+    // Override
+    getInt: function (value, defaultValue) {
+        if (IObject.isNull(value)) {
+            // empty
+            return defaultValue;
+        } else if (IObject.isNumber(value)) {
+            // exactly
+            return value;
+        } else if (IObject.isBoolean(value)) {
+            return value ? 1 : 0;
+        }
+        var text = this.getStr(value);
+        return parseInt(text);
+    },
+
+    // Override
+    getBoolean: function (value, defaultValue) {
         if (IObject.isNull(value)) {
             // empty
             return defaultValue;
@@ -105,46 +106,79 @@
         } else if (IObject.isNumber(value)) {
             return value > 0 || value < 0;
         }
-        var text;
-        if (IObject.isString(value)) {
-            text = value;
-        } else {
-            text = value.toString();
-        }
+        var text = this.getStr(value);
         text = text.trim();
         var size = text.length;
         if (size === 0) {
             return false;
-        } else if (size > ns.type.Converter.kMaxBoolLen) {
-            return true;
+        } else if (size > Converter.MAX_BOOLEAN_LEN) {
+            throw new TypeError('Boolean value error: "' + value + '"');
         } else {
             text = text.toLowerCase();
         }
-        var state = kBoolStates[text];
-        return IObject.isNull(state) || state;
-    };
-    var kBoolStates = {
+        var state = Converter.BOOLEAN_STATES[text];
+        if (IObject.isNull(state)) {
+            throw new TypeError('Boolean value error: "' + value + '"');
+        }
+        return state;
+    },
+
+    // Override
+    getString: function (value, defaultValue) {
+        if (IObject.isNull(value)) {
+            // empty
+            return defaultValue;
+        } else if (IObject.isString(value)) {
+            // exactly
+            return value;
+        } else {
+            return value.toString();
+        }
+    },
+
+    // private
+    getStr: function (value) {
+        if (IObject.isString(value)) {
+            return  value;
+        } else {
+            return value.toString();
+        }
+    }
+});
+var BaseConverter = mk.type.BaseConverter;
+
+/**
+ *  Data Convert Interface
+ */
+mk.type.Converter = {
+
+    getString: function (value, defaultValue) {
+        return this.converter.getString(value, defaultValue);
+    },
+    getBoolean: function (value, defaultValue) {
+        return this.converter.getBoolean(value, defaultValue);
+    },
+
+    getInt: function (value, defaultValue) {
+        return this.converter.getInt(value, defaultValue);
+    },
+    getFloat: function (value, defaultValue) {
+        return this.converter.getFloat(value, defaultValue);
+    },
+
+    getDateTime: function (value, defaultValue) {
+        return this.converter.getDateTime(value, defaultValue);
+    },
+
+    converter: new BaseConverter(),
+
+    BOOLEAN_STATES: {
         '1': true, 'yes': true, 'true': true, 'on': true,
 
         '0': false, 'no': false, 'false': false, 'off': false,
-        '+0': false, '-0': false, '+0.0': false, '-0.0': false,
-        'none': false, 'null': false, 'undefined': false
-    };
-    var kMaxBoolLen = 'undefined'.length;
-
-    //-------- namespace --------
-    ns.type.Converter = {
-
-        getString: getString,
-
-        getDateTime: getDateTime,
-
-        getInt: getInt,
-        getFloat: getFloat,
-
-        getBoolean: getBoolean,
-        kBoolStates: kBoolStates,
-        kMaxBoolLen: kMaxBoolLen
-    };
-
-})(MONKEY);
+        //'+0': false, '-0': false, '0.0': false, '+0.0': false, '-0.0': false,
+        'null': false, 'none': false, 'undefined': false
+    },
+    MAX_BOOLEAN_LEN: 'undefined'.length
+};
+var Converter = mk.type.Converter;

@@ -1,10 +1,5 @@
 ;
 // license: https://mit-license.org
-//
-//  MONKEY: Memory Object aNd KEYs
-//
-//                               Written in 2020 by Moky <albert.moky@gmail.com>
-//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -33,27 +28,19 @@
 //! require 'class.js'
 //! require 'object.js'
 
-(function (ns) {
-    'use strict';
+/**
+ *  String Interface
+ */
+mk.type.Stringer = Interface(null, [IObject], {
 
-    var Interface = ns.type.Interface;
-    var Class = ns.type.Class;
-    var IObject = ns.type.Object;
-    var BaseObject = ns.type.BaseObject;
-
-    //
-    //  String Interface
-    //
-    var Stringer = Interface(null, [IObject]);
-
-    Stringer.prototype.isEmpty = function () {};
+    isEmpty: function () {},
 
     /**
      *  Get length of inner string
      *
      * @return {int}
      */
-    Stringer.prototype.getLength = function () {};
+    getLength: function () {},
 
     /**
      *  Check whether strings equal
@@ -61,26 +48,30 @@
      * @param {String|Stringer} other - another string
      * @return {boolean}
      */
-    Stringer.prototype.equalsIgnoreCase = function (other) {};
+    equalsIgnoreCase: function (other) {}
+});
+var Stringer = mk.type.Stringer;
 
-    /**
-     *  Create String
-     *
-     * @param {String|Stringer} str
-     */
-    var ConstantString = function (str) {
-        BaseObject.call(this);
-        if (!str) {
-            str = '';
-        } else if (Interface.conforms(str, Stringer)) {
-            str = str.toString();
-        }
-        this.__string = str;
-    };
-    Class(ConstantString, BaseObject, [Stringer], null);
+/**
+ *  Create String
+ *
+ * @param {String|Stringer} str
+ */
+mk.type.ConstantString = function (str) {
+    BaseObject.call(this);
+    if (!str) {
+        str = '';
+    } else if (Interface.conforms(str, Stringer)) {
+        str = str.toString();
+    }
+    this.__string = str;
+};
+var ConstantString = mk.type.ConstantString;
+
+Class(ConstantString, BaseObject, [Stringer], {
 
     // Override
-    ConstantString.prototype.equals = function (other) {
+    equals: function (other) {
         if (Interface.conforms(other, Stringer)) {
             if (this === other) {
                 return true;
@@ -88,32 +79,32 @@
             other = other.valueOf();
         }
         return this.__string === other;
-    };
+    },
 
     // Override
-    ConstantString.prototype.valueOf = function () {
+    valueOf: function () {
         return this.__string;
-    };
+    },
 
     // Override
-    ConstantString.prototype.toString = function () {
+    toString: function () {
         return this.__string;
-    };
+    },
 
     //-------- Stringer
 
     // Override
-    ConstantString.prototype.isEmpty = function () {
+    isEmpty: function () {
         return this.__string.length === 0;
-    };
+    },
 
     // Override
-    ConstantString.prototype.getLength = function() {
+    getLength: function() {
         return this.__string.length;
-    };
+    },
 
     // Override
-    ConstantString.prototype.equalsIgnoreCase = function (other) {
+    equalsIgnoreCase: function (other) {
         if (this === other) {
             return true;
         } else if (!other) {
@@ -124,19 +115,14 @@
             // assert(other instanceof String, 'other string error');
             return equalsIgnoreCase(this.__string, other);
         }
-    };
+    }
+});
 
-    var equalsIgnoreCase = function (str1, str2) {
-        if (str1.length !== str2.length) {
-            return false;
-        }
-        var low1 = str1.toLowerCase();
-        var low2 = str2.toLowerCase();
-        return low1 === low2;
-    };
-
-    //-------- namespace --------
-    ns.type.Stringer = Stringer;
-    ns.type.ConstantString = ConstantString;
-
-})(MONKEY);
+var equalsIgnoreCase = function (str1, str2) {
+    if (str1.length !== str2.length) {
+        return false;
+    }
+    var low1 = str1.toLowerCase();
+    var low2 = str2.toLowerCase();
+    return low1 === low2;
+};

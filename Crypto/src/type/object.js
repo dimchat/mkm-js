@@ -1,10 +1,5 @@
 ;
 // license: https://mit-license.org
-//
-//  MONKEY: Memory Object aNd KEYs
-//
-//                               Written in 2020 by Moky <albert.moky@gmail.com>
-//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -32,100 +27,87 @@
 
 //! require 'class.js'
 
-(function (ns) {
-    'use strict';
+/**
+ *  Object Interface
+ */
+mk.type.Object = Interface(null, null, {
+    getClassName: function () {
+        throw new Error('NotImplemented');
+    },
+    equals: function () {
+        throw new Error('NotImplemented');
+    },
+    valueOf: function () {
+        throw new Error('NotImplemented');
+    },
+    toString: function () {
+        throw new Error('NotImplemented');
+    }
+});
+var IObject = mk.type.Object;
 
-    var Interface = ns.type.Interface;
-    var Class = ns.type.Class;
+IObject.isNull = function (object) {
+    if (typeof object === 'undefined') {
+        return true;
+    } else {
+        return object === null;
+    }
+};
+IObject.isString = function (object) {
+    return typeof object === 'string';
+};
+IObject.isNumber = function (object) {
+    return typeof object === 'number';
+};
+IObject.isBoolean = function (object) {
+    return typeof object === 'boolean';
+};
+IObject.isFunction = function (object) {
+    return typeof object === 'function';
+};
 
-    var is_null = function (object) {
-        if (typeof object === 'undefined') {
-            return true;
-        } else {
-            return object === null;
-        }
-    };
+IObject.isBaseType = function (object) {
+    var t = typeof object;
+    if (t === 'string' || t === 'number' || t === 'boolean' || t === 'function') {
+        return true;
+    }
+    /*/
+    if (object instanceof String) {
+        return true;
+    }
+    if (object instanceof Number) {
+        return true;
+    }
+    if (object instanceof Boolean) {
+        return true;
+    }
+    /*/
+    if (object instanceof Date) {
+        return true;
+    }
+    if (object instanceof RegExp) {
+        return true;
+    }
+    return object instanceof Error;
+};
 
-    var is_string = function (object) {
-        return typeof object === 'string';
-    };
-    var is_number = function (object) {
-        return typeof object === 'number';
-    };
-    var is_boolean = function (object) {
-        return typeof object === 'boolean';
-    };
-    var is_function = function (object) {
-        return typeof object === 'function';
-    };
+/**
+ *  Base class for Object
+ */
+mk.type.BaseObject = function () {
+    Object.call(this);
+};
+var BaseObject = mk.type.BaseObject;
 
-    var is_base_type = function (object) {
-        var t = typeof object;
-        if (t === 'string' || t === 'number' || t === 'boolean' || t === 'function') {
-            return true;
-        }
-        /*/
-        if (object instanceof String) {
-            return true;
-        }
-        if (object instanceof Number) {
-            return true;
-        }
-        if (object instanceof Boolean) {
-            return true;
-        }
-        /*/
-        if (object instanceof Date) {
-            return true;
-        }
-        if (object instanceof RegExp) {
-            return true;
-        }
-        return object instanceof Error;
-    };
-
-    //
-    //  Object Interface
-    //
-    var IObject = Interface(null, null);
-
-    IObject.prototype.getClassName = function () {};
-
-    IObject.prototype.equals = function (other) {};
-
-    IObject.prototype.valueOf = function () {};   // Object
-
-    IObject.prototype.toString = function () {};  // Object
-
-    IObject.isNull = is_null;
-
-    IObject.isString = is_string;
-    IObject.isNumber = is_number;
-    IObject.isBoolean = is_boolean;
-    IObject.isFunction = is_function;
-
-    IObject.isBaseType = is_base_type;
-
-    //
-    //  Base class for Object
-    //
-    var BaseObject = function () {
-        Object.call(this);
-    };
-    Class(BaseObject, Object, [IObject], null);
+Class(BaseObject, null, [IObject], {
 
     // Override
-    BaseObject.prototype.getClassName = function () {
+    getClassName: function () {
         return Object.getPrototypeOf(this).constructor.name;
-    };
+    },
 
     // Override
-    BaseObject.prototype.equals = function (other) {
+    equals: function (other) {
         return this === other;
-    };
-
-    //-------- namespace --------
-    ns.type.Object = IObject;
-    ns.type.BaseObject = BaseObject;
-
-})(MONKEY);
+    }
+});

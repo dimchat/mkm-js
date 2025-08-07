@@ -1,10 +1,5 @@
 ;
 // license: https://mit-license.org
-//
-//  MONKEY: Memory Object aNd KEYs
-//
-//                               Written in 2020 by Moky <albert.moky@gmail.com>
-//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -32,41 +27,36 @@
 
 //! require 'hash.js'
 
-(function (ns) {
-    'use strict';
+mk.digest.SHA1 = {
 
-    var SHA1 = {
-        /**
-         *  Get digest of binary data
-         *
-         * @param {Uint8Array} data - binary data
-         * @return {Uint8Array} binary data
-         */
-        digest: function (data) {
-            return this.getDigester().digest(data);
-        },
+    /**
+     *  Get digest of binary data
+     *
+     * @param {Uint8Array} data - binary data
+     * @return {Uint8Array} binary data
+     */
+    digest: function (data) {
+        return sha1Digester.digest(data);
+    },
 
-        /**
-         *  Get SHA1 Digester
-         *
-         * @return {DataDigester}
-         */
-        getDigester: function () {
-            return sha1Digester;
-        },
+    /**
+     *  Get SHA1 Digester
+     *
+     * @return {DataDigester}
+     */
+    getDigester: function () {
+        return sha1Digester;
+    },
 
-        /**
-         *  Set SHA1 Digester
-         * @param {DataDigester} digester
-         */
-        setDigester: function (digester) {
-            sha1Digester = digester;
-        }
-    };
+    /**
+     *  Set SHA1 Digester
+     * @param {DataDigester} digester
+     */
+    setDigester: function (digester) {
+        sha1Digester = digester;
+    }
+};
+var SHA1 = mk.digest.SHA1;
 
-    var sha1Digester = null;
-
-    //-------- namespace --------
-    ns.digest.SHA1 = SHA1;
-
-})(MONKEY);
+// Singleton
+var sha1Digester = null;

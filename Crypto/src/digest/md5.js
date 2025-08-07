@@ -1,10 +1,5 @@
 ;
 // license: https://mit-license.org
-//
-//  MONKEY: Memory Object aNd KEYs
-//
-//                               Written in 2020 by Moky <albert.moky@gmail.com>
-//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -32,41 +27,36 @@
 
 //! require 'hash.js'
 
-(function (ns) {
-    'use strict';
+mk.digest.MD5 = {
 
-    var MD5 = {
-        /**
-         *  Get digest of binary data
-         *
-         * @param {Uint8Array} data - binary data
-         * @return {Uint8Array} binary data
-         */
-        digest: function (data) {
-            return this.getDigester().digest(data);
-        },
+    /**
+     *  Get digest of binary data
+     *
+     * @param {Uint8Array} data - binary data
+     * @return {Uint8Array} binary data
+     */
+    digest: function (data) {
+        return md5Digester.digest(data);
+    },
 
-        /**
-         *  Get MD5 Digester
-         *
-         * @return {DataDigester}
-         */
-        getDigester: function () {
-            return md5Digester;
-        },
+    /**
+     *  Get MD5 Digester
+     *
+     * @return {DataDigester}
+     */
+    getDigester: function () {
+        return md5Digester;
+    },
 
-        /**
-         *  Set MD5 Digester
-         * @param {DataDigester} digester
-         */
-        setDigester: function (digester) {
-            md5Digester = digester;
-        }
-    };
+    /**
+     *  Set MD5 Digester
+     * @param {DataDigester} digester
+     */
+    setDigester: function (digester) {
+        md5Digester = digester;
+    }
+};
+var MD5 = mk.digest.MD5;
 
-    var md5Digester = null;
-
-    //-------- namespace --------
-    ns.digest.MD5 = MD5;
-
-})(MONKEY);
+// Singleton
+var md5Digester = null;

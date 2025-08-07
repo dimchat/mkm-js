@@ -1,10 +1,5 @@
 ;
 // license: https://mit-license.org
-//
-//  MONKEY: Memory Object aNd KEYs
-//
-//                               Written in 2022 by Moky <albert.moky@gmail.com>
-//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -37,22 +32,12 @@
 //! require 'arrays.js'
 //! require 'dictionary.js'
 
-(function (ns) {
-    'use strict';
-
-    var Interface = ns.type.Interface;
-    var IObject = ns.type.Object;
-    var Enum = ns.type.Enum;
-    var Stringer = ns.type.Stringer;
-    var Arrays = ns.type.Arrays;
-    var Mapper = ns.type.Mapper;
+mk.type.Copier = {
 
     /**
      *  Shallow Copy
-     *
-     * @param {*} object
      */
-    var copy = function (object) {
+    copy: function (object) {
         if (IObject.isNull(object)) {
             // empty
             return null;
@@ -67,20 +52,20 @@
             return object.toString();
         } else if (Interface.conforms(object, Mapper)) {
             // copy inner map
-            return copy_map(object.toMap());
+            return this.copyMap(object.toMap());
         } else if (!Arrays.isArray(object)) {
             // unwrap as a map
-            return copy_map(object);
+            return this.copyMap(object);
         } else if (object instanceof Array) {
             // unwrap as a list
-            return copy_list(object);
+            return this.copyList(object);
         } else {
             // base array?
             return object;
         }
-    };
+    },
 
-    var copy_map = function (dict) {
+    copyMap: function (dict) {
         var clone = {};
         var allKeys = Object.keys(dict);
         var key;
@@ -90,23 +75,22 @@
             clone[key] = dict[key];
         }
         return clone;
-    };
+    },
 
-    var copy_list = function (array) {
+    copyList: function (array) {
         var clone = [];
         var count = array.length;
         for (var i = 0; i < count; ++i) {
             clone.push(array[i]);
         }
         return clone;
-    };
+    },
+
 
     /**
-     *  Shallow Copy
-     *
-     * @param {*} object
+     *  Deep Copy
      */
-    var deep_copy = function (object) {
+    deepCopy: function (object) {
         if (IObject.isNull(object)) {
             // empty
             return null;
@@ -121,51 +105,38 @@
             return object.toString();
         } else if (Interface.conforms(object, Mapper)) {
             // copy inner map
-            return deep_copy_map(object.toMap());
+            return this.deepCopyMap(object.toMap());
         } else if (!Arrays.isArray(object)) {
             // unwrap as a map
-            return deep_copy_map(object);
+            return this.deepCopyMap(object);
         } else if (object instanceof Array) {
             // unwrap as a list
-            return deep_copy_list(object);
+            return this.deepCopyList(object);
         } else {
             // base array?
             return object;
         }
-    };
+    },
 
-    var deep_copy_map = function (dict) {
+    deepCopyMap: function (dict) {
         var clone = {};
         var allKeys = Object.keys(dict);
         var key;
         var count = allKeys.length;
         for (var i = 0; i < count; ++i) {
             key = allKeys[i];
-            clone[key] = deep_copy(dict[key]);
+            clone[key] = this.deepCopy(dict[key]);
         }
         return clone;
-    };
+    },
 
-    var deep_copy_list = function (array) {
+    deepCopyList: function (array) {
         var clone = [];
         var count = array.length;
         for (var i = 0; i < count; ++i) {
-            clone.push(deep_copy(array[i]));
+            clone.push(this.deepCopy(array[i]));
         }
         return clone;
-    };
-
-    //-------- namespace --------
-    ns.type.Copier = {
-        // shallow copy
-        copy: copy,
-        copyMap: copy_map,
-        copyList: copy_list,
-
-        // deep copy
-        deepCopy: deep_copy,
-        deepCopyMap: deep_copy_map,
-        deepCopyList: deep_copy_list
-    };
-
-})(MONKEY);
+    }
+};
+var Copier = mk.type.Copier;
