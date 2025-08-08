@@ -12,8 +12,6 @@
     <script>
         !function (ns) {
             var sources = [
-                'src/namespace.js',
-
                 // system types
                 'src/type/class.js',
                 'src/type/object.js',
@@ -43,14 +41,18 @@
                 'src/format/json.js',
                 'src/format/ted.js',
                 'src/format/pnf.js',
-                'src/format/manager.js',
 
                 // cryptography
                 'src/crypto/keys.js',
                 'src/crypto/symmetric.js',
                 'src/crypto/public.js',
                 'src/crypto/private.js',
-                'src/crypto/factory.js',
+
+                // plugins
+                'src/plugins/crypto_helpers.js',
+                'src/plugins/crypto_plugins.js',
+                'src/plugins/format_helpers.js',
+                'src/plugins/format_plugins.js',
                 null
             ];
             var dist = 'dist/crypto.js';
@@ -68,6 +70,7 @@
             var base = window.location.href;
             base = base.substring(0, base.indexOf('tests/test.html'));
             var loader = new Loader(base);
+            loader.importJS('src/namespace.js');
 
             for (var i = 0; i < sources.length; ++i) {
                 loader.importJS(sources[i]);
@@ -96,7 +99,7 @@
     <p class="console">
         <script>
             !(function () {
-                var text = 'cat';
+                var text = 'cat src/ns_begin.closure';
                 var file;
                 for (var i = 0; i < sources.length; ++i) {
                     file = sources[i];
@@ -105,7 +108,7 @@
                     }
                     text += ' ' + file;
                 }
-                text += ' >> ' + dist;
+                text += ' src/ns_end.closure > ' + dist;
                 document.writeln(text);
             }());
         </script>

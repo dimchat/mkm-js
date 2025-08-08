@@ -1,4 +1,4 @@
-;
+'use strict';
 // license: https://mit-license.org
 // =============================================================================
 // The MIT License (MIT)
@@ -85,7 +85,7 @@ mk.format.JSONMap = {
     setCoder: function (coder) {
         jsonCoder = coder
     }
-}
+};
 var JSONMap = mk.format.JSONMap;
 
 
@@ -102,5 +102,5 @@ mk.format.JSONList = {
     setCoder: function (coder) {
         jsonCoder = coder
     }
-}
+};
 var JSONList = mk.format.JSONList;

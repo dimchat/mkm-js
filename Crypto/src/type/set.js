@@ -1,4 +1,4 @@
-;
+'use strict';
 // license: https://mit-license.org
 // =============================================================================
 // The MIT License (MIT)

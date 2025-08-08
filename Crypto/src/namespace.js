@@ -1,4 +1,4 @@
-;
+'use strict';
 // license: https://mit-license.org
 // =============================================================================
 // The MIT License (MIT)
@@ -25,9 +25,10 @@
 // =============================================================================
 //
 
-if (typeof mk !== 'object') {
-    mk = {};
+if (typeof MONKEY !== 'object') {
+    var MONKEY = {};
 }
+var mk = MONKEY;
 
 if (typeof mk.type !== 'object') {
     mk.type = {};
