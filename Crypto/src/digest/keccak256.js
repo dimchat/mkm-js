@@ -36,13 +36,13 @@ mk.digest.KECCAK256 = {
      * @return {Uint8Array} binary data
      */
     digest: function (data) {
-        return keccak256Digester.digest(data);
+        return this.getDigester().digest(data);
     },
 
     /**
      *  Get Keccak256 Digester
      *
-     * @return {DataDigester}
+     * @return {mk.digest.DataDigester}
      */
     getDigester: function () {
         return keccak256Digester;
@@ -50,7 +50,7 @@ mk.digest.KECCAK256 = {
 
     /**
      *  Set Keccak256 Digester
-     * @param {DataDigester} digester
+     * @param {mk.digest.DataDigester} digester
      */
     setDigester: function (digester) {
         keccak256Digester = digester;

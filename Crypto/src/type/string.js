@@ -31,7 +31,10 @@
 /**
  *  String Interface
  */
-mk.type.Stringer = Interface(null, [IObject], {
+mk.type.Stringer = Interface(null, [IObject]);
+var Stringer = mk.type.Stringer;
+
+Stringer.prototype = {
 
     isEmpty: function () {},
 
@@ -45,17 +48,17 @@ mk.type.Stringer = Interface(null, [IObject], {
     /**
      *  Check whether strings equal
      *
-     * @param {String|Stringer} other - another string
+     * @param {String|mk.type.Stringer} other - another string
      * @return {boolean}
      */
     equalsIgnoreCase: function (other) {}
-});
-var Stringer = mk.type.Stringer;
+
+};
 
 /**
  *  Create String
  *
- * @param {String|Stringer} str
+ * @param {String|mk.type.Stringer} str
  */
 mk.type.ConstantString = function (str) {
     BaseObject.call(this);

@@ -32,7 +32,10 @@
 /**
  *  Set Interface
  */
-mk.type.Set = Interface(null, [IObject], {
+mk.type.Set = Interface(null, [IObject]);
+var Set = mk.type.Set;
+
+Set.prototype = {
 
     isEmpty: function () {},
 
@@ -78,8 +81,7 @@ mk.type.Set = Interface(null, [IObject], {
      * @return {*[]} a copy of inner array
      */
     toArray: function () {}
-});
-var Set = mk.type.Set;
+};
 
 /**
  *  Create Hash Set

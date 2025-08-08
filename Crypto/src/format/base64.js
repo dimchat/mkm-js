@@ -36,7 +36,7 @@ mk.format.Base64 = {
      * @return {String}
      */
     encode: function (data) {
-        return base64Coder.encode(data);
+        return this.getCoder().encode(data);
     },
 
     /**
@@ -46,13 +46,13 @@ mk.format.Base64 = {
      * @return {Uint8Array}
      */
     decode: function (string) {
-        return base64Coder.decode(string);
+        return this.getCoder().decode(string);
     },
 
     /**
      *  Get Base64 Coder
      *
-     * @return {DataCoder}
+     * @return {mk.format.DataCoder}
      */
     getCoder: function () {
         return base64Coder;
@@ -61,7 +61,7 @@ mk.format.Base64 = {
     /**
      *  Set Base64 Coder
      *
-     * @param {DataCoder} coder
+     * @param {mk.format.DataCoder} coder
      */
     setCoder: function (coder) {
         base64Coder = coder

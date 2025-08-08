@@ -30,21 +30,20 @@
 /**
  *  Object Interface
  */
-mk.type.Object = Interface(null, null, {
-    getClassName: function () {
-        throw new Error('NotImplemented');
-    },
-    equals: function () {
-        throw new Error('NotImplemented');
-    },
-    valueOf: function () {
-        throw new Error('NotImplemented');
-    },
-    toString: function () {
-        throw new Error('NotImplemented');
-    }
-});
+mk.type.Object = Interface(null, null);
 var IObject = mk.type.Object;
+
+IObject.prototype = {
+
+    getClassName: function () {},
+
+    equals: function () {},
+
+    valueOf: function () {},
+
+    toString: function () {}
+
+};
 
 IObject.isNull = function (object) {
     if (typeof object === 'undefined') {

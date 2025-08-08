@@ -36,13 +36,13 @@ mk.digest.SHA256 = {
      * @return {Uint8Array} binary data
      */
     digest: function (data) {
-        return sha256Digester.digest(data);
+        return this.getDigester().digest(data);
     },
 
     /**
      *  Get SHA256 Digester
      *
-     * @return {DataDigester}
+     * @return {mk.digest.DataDigester}
      */
     getDigester: function () {
         return sha256Digester;
@@ -50,7 +50,7 @@ mk.digest.SHA256 = {
 
     /**
      *  Set SHA256 Digester
-     * @param {DataDigester} digester
+     * @param {mk.digest.DataDigester} digester
      */
     setDigester: function (digester) {
         sha256Digester = digester;

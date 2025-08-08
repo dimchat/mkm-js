@@ -31,7 +31,11 @@
 /**
  *  Data Converter
  */
-mk.type.DataConverter = Interface(null, null, {
+mk.type.DataConverter = Interface(null, null);
+var DataConverter = mk.type.DataConverter;
+
+DataConverter.prototype = {
+
     getString: function (value, defaultValue) {},
 
     // assume value can be a config string:
@@ -43,8 +47,7 @@ mk.type.DataConverter = Interface(null, null, {
 
     // assume value can be a timestamp (seconds from 1970-01-01 00:00:00)
     getDateTime: function (value, defaultValue) {}
-});
-var DataConverter = mk.type.DataConverter;
+};
 
 /**
  *  Default Data Converter

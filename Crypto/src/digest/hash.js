@@ -32,7 +32,10 @@
  *  ~~~~~~~~~~~~~
  *  MD5, SHA1, SHA256, Keccak256, RipeMD160, ...
  */
-mk.digest.DataDigester = Interface(null, null, {
+mk.digest.DataDigester = Interface(null, null);
+var DataDigester = mk.digest.DataDigester;
+
+DataDigester.prototype = {
 
     /**
      *  Get digest of binary data
@@ -42,5 +45,4 @@ mk.digest.DataDigester = Interface(null, null, {
      */
     digest: function (data) {}
 
-});
-var DataDigester = mk.digest.DataDigester;
+};

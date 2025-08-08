@@ -36,7 +36,10 @@
  *  1. encode binary data to string;
  *  2. decode string to binary data.
  */
-mk.format.DataCoder = Interface(null, null, {
+mk.format.DataCoder = Interface(null, null);
+var DataCoder = mk.format.DataCoder;
+
+DataCoder.prototype = {
 
     /**
      *  Encode binary data to local string
@@ -54,8 +57,7 @@ mk.format.DataCoder = Interface(null, null, {
      */
     decode: function (string) {}
 
-});
-var DataCoder = mk.format.DataCoder;
+};
 
 
 /**
@@ -66,7 +68,10 @@ var DataCoder = mk.format.DataCoder;
  *  1. encode object to string;
  *  2. decode string to object.
  */
-mk.format.ObjectCoder = Interface(null, null, {
+mk.format.ObjectCoder = Interface(null, null);
+var ObjectCoder = mk.format.ObjectCoder;
+
+ObjectCoder.prototype = {
 
     /**
      *  Encode Map/List object to string
@@ -84,8 +89,7 @@ mk.format.ObjectCoder = Interface(null, null, {
      */
     decode: function (string) {}
 
-});
-var ObjectCoder = mk.format.ObjectCoder;
+};
 
 
 /**
@@ -96,7 +100,10 @@ var ObjectCoder = mk.format.ObjectCoder;
  *  1. encode string to binary data;
  *  2. decode binary data to string.
  */
-mk.format.StringCoder = Interface(null, null, {
+mk.format.StringCoder = Interface(null, null);
+var StringCoder = mk.format.StringCoder;
+
+StringCoder.prototype = {
 
     /**
      *  Encode local string to binary data
@@ -114,5 +121,4 @@ mk.format.StringCoder = Interface(null, null, {
      */
     decode: function (data) {}
 
-});
-var StringCoder = mk.format.StringCoder;
+};

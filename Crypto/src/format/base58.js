@@ -36,7 +36,7 @@ mk.format.Base58 = {
      * @return {String}
      */
     encode: function (data) {
-        return base58Coder.encode(data);
+        return this.getCoder().encode(data);
     },
 
     /**
@@ -46,13 +46,13 @@ mk.format.Base58 = {
      * @return {Uint8Array}
      */
     decode: function (string) {
-        return base58Coder.decode(string);
+        return this.getCoder().decode(string);
     },
 
     /**
      *  Get Base58 Coder
      *
-     * @return {DataCoder}
+     * @return {mk.format.DataCoder}
      */
     getCoder: function () {
         return base58Coder;
@@ -61,7 +61,7 @@ mk.format.Base58 = {
     /**
      *  Set Base58 Coder
      *
-     * @param {DataCoder} coder
+     * @param {mk.format.DataCoder} coder
      */
     setCoder: function (coder) {
         base58Coder = coder

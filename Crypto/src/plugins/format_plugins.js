@@ -30,15 +30,17 @@
  *  Format GeneralFactory
  *  ~~~~~~~~~~~~~~~~~~~~~
  */
-mk.plugins.GeneralFormatHelper = Interface(null, null, {
+mk.plugins.GeneralFormatHelper = Interface(null, null);
+var GeneralFormatHelper = mk.plugins.GeneralFormatHelper;
+
+GeneralFormatHelper.prototype = {
 
     //
     //  Algorithm
     //
     getFormatAlgorithm: function (ted, defaultValue) {}
 
-});
-var GeneralFormatHelper = mk.plugins.GeneralFormatHelper;
+};
 
 
 /**

@@ -42,7 +42,10 @@
  *              ...
  *         }
  */
-mk.format.TransportableData = Interface(null, [Mapper], {
+mk.format.TransportableData = Interface(null, [Mapper]);
+var TransportableData = mk.format.TransportableData;
+
+TransportableData.prototype = {
 
     /**
      *  Get encode algorithm
@@ -75,8 +78,7 @@ mk.format.TransportableData = Interface(null, [Mapper], {
      */
     toObject: function () {}
 
-});
-var TransportableData = mk.format.TransportableData;
+};
 
 // TransportableData.DEFAULT = 'base64';
 // TransportableData.BASE64  = 'base64';
@@ -126,13 +128,16 @@ TransportableData.getFactory = function (algorithm) {
  *  TED Factory
  *  ~~~~~~~~~~~
  */
-TransportableData.Factory = Interface(null, null, {
+TransportableData.Factory = Interface(null, null);
+var TransportableDataFactory = TransportableData.Factory;
+
+TransportableDataFactory.prototype = {
 
     /**
      *  Create TED
      *
      * @param {Uint8Array} data - original data
-     * @return {TransportableData} TED object
+     * @return {mk.format.TransportableData} TED object
      */
     createTransportableData: function (data) {},
 
@@ -140,9 +145,8 @@ TransportableData.Factory = Interface(null, null, {
      *  Parse map object to TED
      *
      * @param {*} ted - TED info
-     * @return {TransportableData} TED object
+     * @return {mk.format.TransportableData} TED object
      */
     parseTransportableData: function (ted) {}
 
-});
-var TransportableDataFactory = TransportableData.Factory;
+};

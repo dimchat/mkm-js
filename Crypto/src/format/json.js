@@ -36,7 +36,7 @@ mk.format.JSON = {
      * @return {String} JsON string
      */
     encode: function (object) {
-        return jsonCoder.encode(object);
+        return this.getCoder().encode(object);
     },
 
     /**
@@ -46,13 +46,13 @@ mk.format.JSON = {
      * @return {{}|[]} Map or List
      */
     decode: function (string) {
-        return jsonCoder.decode(string);
+        return this.getCoder().decode(string);
     },
 
     /**
      *  Get JsON Coder
      *
-     * @return {ObjectCoder}
+     * @return {mk.format.ObjectCoder}
      */
     getCoder: function () {
         return jsonCoder;
@@ -61,7 +61,7 @@ mk.format.JSON = {
     /**
      *  Set JsON Coder
      *
-     * @param {ObjectCoder} coder
+     * @param {mk.format.ObjectCoder} coder
      */
     setCoder: function (coder) {
         jsonCoder = coder
@@ -74,10 +74,10 @@ var jsonCoder = null;
 
 mk.format.JSONMap = {
     encode: function (dictionary) {
-        return jsonCoder.encode(dictionary);
+        return this.getCoder().encode(dictionary);
     },
     decode: function (string) {
-        return jsonCoder.decode(string);
+        return this.getCoder().decode(string);
     },
     getCoder: function () {
         return jsonCoder;
@@ -91,10 +91,10 @@ var JSONMap = mk.format.JSONMap;
 
 mk.format.JSONList = {
     encode: function (array) {
-        return jsonCoder.encode(array);
+        return this.getCoder().encode(array);
     },
     decode: function (string) {
-        return jsonCoder.decode(string);
+        return this.getCoder().decode(string);
     },
     getCoder: function () {
         return jsonCoder;

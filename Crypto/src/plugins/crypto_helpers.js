@@ -30,18 +30,23 @@
 //! require 'crypto/symmetric.js'
 
 
-mk.plugins.PublicKeyHelper = Interface(null, null, {
+mk.plugins.PublicKeyHelper = Interface(null, null);
+var PublicKeyHelper = mk.plugins.PublicKeyHelper;
+
+PublicKeyHelper.prototype = {
 
     setPublicKeyFactory: function (algorithm, factory) {},
     getPublicKeyFactory: function (algorithm) {},
 
     parsePublicKey: function (key) {}
 
-});
-var PublicKeyHelper = mk.plugins.PublicKeyHelper;
+};
 
 
-mk.plugins.PrivateKeyHelper = Interface(null, null, {
+mk.plugins.PrivateKeyHelper = Interface(null, null);
+var PrivateKeyHelper = mk.plugins.PrivateKeyHelper;
+
+PrivateKeyHelper.prototype = {
 
     setPrivateKeyFactory: function (algorithm, factory) {},
     getPrivateKeyFactory: function (algorithm) {},
@@ -50,11 +55,13 @@ mk.plugins.PrivateKeyHelper = Interface(null, null, {
 
     parsePrivateKey: function (key) {}
 
-});
-var PrivateKeyHelper = mk.plugins.PrivateKeyHelper;
+};
 
 
-mk.plugins.SymmetricKeyHelper = Interface(null, null, {
+mk.plugins.SymmetricKeyHelper = Interface(null, null);
+var SymmetricKeyHelper = mk.plugins.SymmetricKeyHelper;
+
+SymmetricKeyHelper.prototype = {
 
     setSymmetricKeyFactory: function (algorithm, factory) {},
     getSymmetricKeyFactory: function (algorithm) {},
@@ -63,8 +70,7 @@ mk.plugins.SymmetricKeyHelper = Interface(null, null, {
 
     parseSymmetricKey: function (key) {}
 
-});
-var SymmetricKeyHelper = mk.plugins.SymmetricKeyHelper;
+};
 
 
 /**

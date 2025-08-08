@@ -30,7 +30,10 @@
 //! require 'format/pnf.js'
 
 
-mk.plugins.TransportableDataHelper = Interface(null, null, {
+mk.plugins.TransportableDataHelper = Interface(null, null);
+var TransportableDataHelper = mk.plugins.TransportableDataHelper;
+
+TransportableDataHelper.prototype = {
 
     setTransportableDataFactory: function (algorithm, factory) {},
     getTransportableDataFactory: function (algorithm) {},
@@ -39,11 +42,13 @@ mk.plugins.TransportableDataHelper = Interface(null, null, {
 
     parseTransportableData: function (ted) {}
 
-});
-var TransportableDataHelper = mk.plugins.TransportableDataHelper;
+};
 
 
-mk.plugins.PortableNetworkFileHelper = Interface(null, null, {
+mk.plugins.PortableNetworkFileHelper = Interface(null, null);
+var PortableNetworkFileHelper = mk.plugins.PortableNetworkFileHelper;
+
+PortableNetworkFileHelper.prototype = {
 
     setPortableNetworkFileFactory: function (factory) {},
     getPortableNetworkFileFactory: function () {},
@@ -52,8 +57,7 @@ mk.plugins.PortableNetworkFileHelper = Interface(null, null, {
 
     parsePortableNetworkFile: function (pnf) {}
 
-});
-var PortableNetworkFileHelper = mk.plugins.PortableNetworkFileHelper;
+};
 
 
 /**

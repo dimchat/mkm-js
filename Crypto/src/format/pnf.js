@@ -52,7 +52,10 @@
  *              }
  *         }
  */
-mk.format.PortableNetworkFile = Interface(null, [Mapper], {
+mk.format.PortableNetworkFile = Interface(null, [Mapper]);
+var PortableNetworkFile = mk.format.PortableNetworkFile;
+
+PortableNetworkFile.prototype = {
 
     /**
      *  When file data is too big, don't set it in this dictionary,
@@ -83,7 +86,7 @@ mk.format.PortableNetworkFile = Interface(null, [Mapper], {
      *  Password for decrypting the downloaded data from CDN,
      *  default is a plain key, which just return the same data when decrypting.
      *
-     * @param {DecryptKey} key
+     * @param {mk.crypto.DecryptKey} key
      */
     setPassword: function (key) {},
     getPassword: function () {},
@@ -105,8 +108,7 @@ mk.format.PortableNetworkFile = Interface(null, [Mapper], {
      */
     toObject: function () {}
 
-});
-var PortableNetworkFile = mk.format.PortableNetworkFile;
+};
 
 //
 //  Factory methods
@@ -141,7 +143,10 @@ PortableNetworkFile.getFactory = function () {
  *  PNF Factory
  *  ~~~~~~~~~~~
  */
-PortableNetworkFile.Factory = Interface(null, null, {
+PortableNetworkFile.Factory = Interface(null, null);
+var PortableNetworkFileFactory = PortableNetworkFile.Factory;
+
+PortableNetworkFileFactory.prototype = {
 
     /**
      *  Create PNF
@@ -150,7 +155,7 @@ PortableNetworkFile.Factory = Interface(null, null, {
      * @param {String} filename       - file name
      * @param {URL} url               - download URL
      * @param {DecryptKey} password   - decrypt key for downloaded data
-     * @return {PortableNetworkFile} PNF object
+     * @return {mk.format.PortableNetworkFile} PNF object
      */
     createPortableNetworkFile: function (ted, filename, url, password) {},
 
@@ -158,9 +163,8 @@ PortableNetworkFile.Factory = Interface(null, null, {
      *  Parse map object to PNF
      *
      * @param {*} pnf - PNF info
-     * @return {PortableNetworkFile} PNF object
+     * @return {mk.format.PortableNetworkFile} PNF object
      */
     parsePortableNetworkFile: function (pnf) {}
 
-});
-var PortableNetworkFileFactory = PortableNetworkFile.Factory;
+};

@@ -36,7 +36,7 @@ mk.format.Hex = {
      * @return {String}
      */
     encode: function (data) {
-        return hexCoder.encode(data);
+        return this.getCoder().encode(data);
     },
 
     /**
@@ -46,13 +46,13 @@ mk.format.Hex = {
      * @return {Uint8Array}
      */
     decode: function (string) {
-        return hexCoder.decode(string);
+        return this.getCoder().decode(string);
     },
 
     /**
      *  Get Hex Coder
      *
-     * @return {DataCoder}
+     * @return {mk.format.DataCoder}
      */
     getCoder: function () {
         return hexCoder;
@@ -61,7 +61,7 @@ mk.format.Hex = {
     /**
      *  Set Hex Coder
      *
-     * @param {DataCoder} coder
+     * @param {mk.format.DataCoder} coder
      */
     setCoder: function (coder) {
         hexCoder = coder

@@ -36,13 +36,13 @@ mk.digest.MD5 = {
      * @return {Uint8Array} binary data
      */
     digest: function (data) {
-        return md5Digester.digest(data);
+        return this.getDigester().digest(data);
     },
 
     /**
      *  Get MD5 Digester
      *
-     * @return {DataDigester}
+     * @return {mk.digest.DataDigester}
      */
     getDigester: function () {
         return md5Digester;
@@ -50,7 +50,7 @@ mk.digest.MD5 = {
 
     /**
      *  Set MD5 Digester
-     * @param {DataDigester} digester
+     * @param {mk.digest.DataDigester} digester
      */
     setDigester: function (digester) {
         md5Digester = digester;

@@ -40,7 +40,10 @@
  *      ...
  *  }
  */
-mk.crypto.CryptographyKey = Interface(null, [Mapper], {
+mk.crypto.CryptographyKey = Interface(null, [Mapper]);
+var CryptographyKey = mk.crypto.CryptographyKey;
+
+CryptographyKey.prototype = {
 
     /**
      *  Get key algorithm name
@@ -56,10 +59,12 @@ mk.crypto.CryptographyKey = Interface(null, [Mapper], {
      */
     getData: function () {}
 
-});
-var CryptographyKey = mk.crypto.CryptographyKey;
+};
 
-mk.crypto.EncryptKey = Interface(null, [CryptographyKey], {
+mk.crypto.EncryptKey = Interface(null, [CryptographyKey]);
+var EncryptKey = mk.crypto.EncryptKey;
+
+EncryptKey.prototype = {
 
     /**
      *  1. Symmetric Key:
@@ -68,15 +73,17 @@ mk.crypto.EncryptKey = Interface(null, [CryptographyKey], {
      *     ciphertext = encrypt(plaintext, PK)
      *
      * @param {Uint8Array} plaintext - plain data
-     * @param {*} extra              - store extra variables ('IV' for 'AES')
+     * @param {{}} extra             - store extra variables ('IV' for 'AES')
      * @return {Uint8Array} ciphertext
      */
     encrypt: function (plaintext, extra) {}
 
-});
-var EncryptKey = mk.crypto.EncryptKey;
+};
 
-mk.crypto.DecryptKey = Interface(null, [CryptographyKey], {
+mk.crypto.DecryptKey = Interface(null, [CryptographyKey]);
+var DecryptKey = mk.crypto.DecryptKey;
+
+DecryptKey.prototype = {
 
     /**
      *  1. Symmetric Key:
@@ -85,7 +92,7 @@ mk.crypto.DecryptKey = Interface(null, [CryptographyKey], {
      *     plaintext = decrypt(ciphertext, SK);
      *
      * @param {Uint8Array} ciphertext - encrypted data
-     * @param {*} params              - extra params ('IV' for 'AES')
+     * @param {{}} params             - extra params ('IV' for 'AES')
      * @return {Uint8Array} plaintext
      */
     decrypt: function (ciphertext, params) {},
@@ -93,13 +100,12 @@ mk.crypto.DecryptKey = Interface(null, [CryptographyKey], {
     /**
      *  OK = decrypt(encrypt(data, SK), PK) == data
      *
-     * @param {EncryptKey} pKey - encrypt key
+     * @param {mk.crypto.EncryptKey} pKey - encrypt key
      * @return {boolean} true on signature matched
      */
     matchEncryptKey: function (pKey) {}
 
-});
-var DecryptKey = mk.crypto.DecryptKey;
+};
 
 
 /**
@@ -112,13 +118,16 @@ var DecryptKey = mk.crypto.DecryptKey;
  *      ...
  *  }
  */
-mk.crypto.AsymmetricKey = Interface(null, [CryptographyKey], null);
+mk.crypto.AsymmetricKey = Interface(null, [CryptographyKey]);
 var AsymmetricKey = mk.crypto.AsymmetricKey;
 
 // AsymmetricKey.RSA = 'RSA'; //-- "RSA/ECB/PKCS1Padding", "SHA256withRSA"
 // AsymmetricKey.ECC = 'ECC';
 
-mk.crypto.SignKey = Interface(null, [AsymmetricKey], {
+mk.crypto.SignKey = Interface(null, [AsymmetricKey]);
+var SignKey = mk.crypto.SignKey;
+
+SignKey.prototype = {
 
     /**
      *  signature = sign(data, SK);
@@ -128,10 +137,12 @@ mk.crypto.SignKey = Interface(null, [AsymmetricKey], {
      */
     sign: function (data) {}
 
-});
-var SignKey = mk.crypto.SignKey;
+};
 
-mk.crypto.VerifyKey = Interface(null, [AsymmetricKey], {
+mk.crypto.VerifyKey = Interface(null, [AsymmetricKey]);
+var VerifyKey = mk.crypto.VerifyKey;
+
+VerifyKey.prototype = {
 
     /**
      *  OK = verify(data, signature, PK)
@@ -150,5 +161,4 @@ mk.crypto.VerifyKey = Interface(null, [AsymmetricKey], {
      */
     matchSignKey: function (sKey) {}
 
-});
-var VerifyKey = mk.crypto.VerifyKey;
+};

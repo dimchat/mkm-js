@@ -33,7 +33,10 @@
 /**
  *  Map Interface
  */
-mk.type.Mapper = Interface(null, [IObject], {
+mk.type.Mapper = Interface(null, [IObject]);
+var Mapper = mk.type.Mapper;
+
+Mapper.prototype = {
 
     /**
      *  Get inner map
@@ -147,7 +150,7 @@ mk.type.Mapper = Interface(null, [IObject], {
      *  Set string value for key
      *
      * @param {string} key
-     * @param {Stringer} stringer
+     * @param {mk.type.Stringer} stringer
      */
     setString: function (key, stringer) {},
 
@@ -155,17 +158,16 @@ mk.type.Mapper = Interface(null, [IObject], {
      *  Set dictionary value for key
      *
      * @param {string} key
-     * @param {Mapper} mapper
+     * @param {mk.type.Mapper} mapper
      */
     setMap: function (key, mapper) {}
 
-});
-var Mapper = mk.type.Mapper;
+};
 
 /**
  *  Create dictionary with values or JSON string
  *
- * @param {Mapper|*} dict
+ * @param {mk.type.Mapper|{}} dict
  */
 mk.type.Dictionary = function (dict) {
     BaseObject.call(this);

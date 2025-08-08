@@ -30,8 +30,8 @@
 /**
  *  Create a child class inherits from parent class and interfaces
  *
- * @param {Class} child  - sub class
- * @param {Class} parent - super class
+ * @param {Class|Function} child  - sub class
+ * @param {Class|Function} parent - super class
  * @param {Interface[]} interfaces
  * @param {{}} methods   - functions
  * @return {Class} sub class
@@ -65,7 +65,7 @@ var Class = mk.type.Class;
 /**
  *  Extends methods for child class/interface
  *
- * @param {Class|Interface} clazz - sub class/interface
+ * @param {Class|Function} clazz - sub class/interface
  * @param {{}} methods            - functions
  */
 var override_methods = function (clazz, methods) {
@@ -83,22 +83,17 @@ var override_methods = function (clazz, methods) {
 /**
  *  Create an interface inherits from other interfaces
  *
- * @param {Interface} child     - sub interface
+ * @param {Interface|Function} child     - sub interface
  * @param {Interface[]} parents - super interfaces
- * @param {{}} methods          - functions
  * @return {Interface} sub interface
  */
-mk.type.Interface = function (child, parents, methods) {
+mk.type.Interface = function (child, parents) {
     if (!child) {
         child = function () {};
     }
     // set super interfaces
     if (parents) {
         child._mk_super_interfaces = parents;
-    }
-    // extend functions
-    if (methods) {
-        override_methods(child, methods);
     }
     return child;
 };

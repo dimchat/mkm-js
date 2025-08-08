@@ -36,7 +36,7 @@ mk.format.UTF8 = {
      * @return {Uint8Array}
      */
     encode: function (string) {
-        return utf8Coder.encode(string);
+        return this.getCoder().encode(string);
     },
 
     /**
@@ -46,13 +46,13 @@ mk.format.UTF8 = {
      * @return {String}
      */
     decode: function (data) {
-        return utf8Coder.decode(data);
+        return this.getCoder().decode(data);
     },
 
     /**
      *  Get UTF8 Coder
      *
-     * @return {StringCoder}
+     * @return {mk.format.StringCoder}
      */
     getCoder: function () {
         return utf8Coder;
@@ -61,7 +61,7 @@ mk.format.UTF8 = {
     /**
      *  Set UTF8 Coder
      *
-     * @param {StringCoder} coder
+     * @param {mk.format.StringCoder} coder
      */
     setCoder: function (coder) {
         utf8Coder = coder

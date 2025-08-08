@@ -30,15 +30,17 @@
  *  CryptographyKey GeneralFactory
  *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
-mk.plugins.GeneralCryptoHelper = Interface(null, null, {
+mk.plugins.GeneralCryptoHelper = Interface(null, null);
+var GeneralCryptoHelper = mk.plugins.GeneralCryptoHelper;
+
+GeneralCryptoHelper.prototype = {
 
     //
     //  Algorithm
     //
     getKeyAlgorithm: function (key, defaultValue) {}
 
-});
-var GeneralCryptoHelper = mk.plugins.GeneralCryptoHelper;
+};
 
 /**
  *  Sample data for checking keys
@@ -59,8 +61,8 @@ var sample_data = function () {
 /**
  *  Compare asymmetric keys
  *
- * @param {SignKey} sKey
- * @param {VerifyKey} pKey
+ * @param {mk.crypto.SignKey} sKey
+ * @param {mk.crypto.VerifyKey} pKey
  * @return true on signature matched
  */
 GeneralCryptoHelper.matchAsymmetricKeys = function (sKey, pKey) {
@@ -73,8 +75,8 @@ GeneralCryptoHelper.matchAsymmetricKeys = function (sKey, pKey) {
 /**
  *  Compare symmetric keys
  *
- * @param {EncryptKey} encKey
- * @param {DecryptKey} decKey
+ * @param {mk.crypto.EncryptKey} encKey
+ * @param {mk.crypto.DecryptKey} decKey
  */
 GeneralCryptoHelper.matchSymmetricKeys = function (encKey, decKey) {
     var promise = sample_data();

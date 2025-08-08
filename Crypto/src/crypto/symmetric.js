@@ -39,7 +39,7 @@
  *      ...
  *  }
  */
-mk.crypto.SymmetricKey = Interface(null, [EncryptKey, DecryptKey], null);
+mk.crypto.SymmetricKey = Interface(null, [EncryptKey, DecryptKey]);
 var SymmetricKey = mk.crypto.SymmetricKey;
 
 // SymmetricKey.AES = 'AES'; //-- "AES/CBC/PKCS7Padding"
@@ -53,7 +53,7 @@ var SymmetricKey = mk.crypto.SymmetricKey;
  *  Generate key with algorithm name
  *
  * @param {string} algorithm - algorithm name ('AES')
- * @return {SymmetricKey}
+ * @return {mk.crypto.SymmetricKey}
  */
 SymmetricKey.generate = function (algorithm) {
     var helper = CryptoExtensions.getSymmetricHelper();
@@ -64,7 +64,7 @@ SymmetricKey.generate = function (algorithm) {
  *  Parse map object to key
  *
  * @param {*} key - key info
- * @return {SymmetricKey}
+ * @return {mk.crypto.SymmetricKey}
  */
 SymmetricKey.parse = function (key) {
     var helper = CryptoExtensions.getSymmetricHelper();
@@ -75,7 +75,7 @@ SymmetricKey.parse = function (key) {
  *  Register symmetric key factory with algorithm
  *
  * @param {string} algorithm
- * @param {SymmetricKeyFactory} factory
+ * @param {mk.crypto.SymmetricKey.Factory} factory
  */
 SymmetricKey.setFactory = function (algorithm, factory) {
     var helper = CryptoExtensions.getSymmetricHelper();
@@ -90,12 +90,15 @@ SymmetricKey.getFactory = function (algorithm) {
  *  Symmetric Key Factory
  *  ~~~~~~~~~~~~~~~~~~~~~
  */
-SymmetricKey.Factory = Interface(null, null, {
+SymmetricKey.Factory = Interface(null, null);
+var SymmetricKeyFactory = SymmetricKey.Factory;
+
+SymmetricKeyFactory.prototype = {
 
     /**
      *  Generate key
      *
-     * @return {SymmetricKey}
+     * @return {mk.crypto.SymmetricKey}
      */
     generateSymmetricKey: function () {},
 
@@ -103,9 +106,8 @@ SymmetricKey.Factory = Interface(null, null, {
      *  Parse map object to key
      *
      * @param {*} key - key info
-     * @return {SymmetricKey}
+     * @return {mk.crypto.SymmetricKey}
      */
     parseSymmetricKey: function (key) {}
 
-});
-var SymmetricKeyFactory = SymmetricKey.Factory;
+};

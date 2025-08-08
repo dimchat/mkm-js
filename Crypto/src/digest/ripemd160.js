@@ -36,13 +36,13 @@ mk.digest.RIPEMD160 = {
      * @return {Uint8Array} binary data
      */
     digest: function (data) {
-        return ripemd160Digester.digest(data);
+        return this.getDigester().digest(data);
     },
 
     /**
      *  Get RipeMD160 Digester
      *
-     * @return {DataDigester}
+     * @return {mk.digest.DataDigester}
      */
     getDigester: function () {
         return ripemd160Digester;
@@ -50,7 +50,7 @@ mk.digest.RIPEMD160 = {
 
     /**
      *  Set RipeMD160 Digester
-     * @param {DataDigester} digester
+     * @param {mk.digest.DataDigester} digester
      */
     setDigester: function (digester) {
         ripemd160Digester = digester;

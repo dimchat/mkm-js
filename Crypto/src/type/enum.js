@@ -112,8 +112,8 @@ var enum_class = function (type) {
 /**
  *  Define Enum with elements names & values
  *
- * @param {String|Function|*} enumeration - enum name/constructor
- * @param {{}} elements                   - enum elements
+ * @param {String|Class} enumeration - enum name/constructor
+ * @param {{}} elements              - enum elements
  * @return {Class} enum class
  */
 mk.type.Enum = function(enumeration, elements) {
