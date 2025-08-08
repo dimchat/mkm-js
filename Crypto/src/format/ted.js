@@ -1,10 +1,5 @@
 ;
 // license: https://mit-license.org
-//
-//  MONKEY: Memory Object aNd KEYs
-//
-//                               Written in 2024 by Moky <albert.moky@gmail.com>
-//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -33,45 +28,35 @@
 //! require 'type/class.js'
 //! require 'type/mapper.js'
 
-(function (ns) {
-    'use strict';
 
-    var Interface = ns.type.Interface;
-    var Mapper = ns.type.Mapper;
-
-    /** Transportable Data
-     *  ~~~~~~~~~~~~~~~~~~
-     *  TED - Transportable Encoded Data
-     *
-     *      0. "{BASE64_ENCODE}"
-     *      1. "base64,{BASE64_ENCODE}"
-     *      2. "data:image/png;base64,{BASE64_ENCODE}"
-     *      3. {
-     *              algorithm : "base64",
-     *              data      : "...",      // base64_encode(data)
-     *              ...
-     *         }
-     */
-    var TransportableData = Interface(null, [Mapper]);
-
-    TransportableData.DEFAULT = 'base64';
-    TransportableData.BASE64  = 'base64';
-    TransportableData.BASE58  = 'base58';
-    TransportableData.HEX     = 'hex';
+/** Transportable Data
+ *  ~~~~~~~~~~~~~~~~~~
+ *  TED - Transportable Encoded Data
+ *
+ *      0. "{BASE64_ENCODE}"
+ *      1. "base64,{BASE64_ENCODE}"
+ *      2. "data:image/png;base64,{BASE64_ENCODE}"
+ *      3. {
+ *              algorithm : "base64",
+ *              data      : "...",      // base64_encode(data)
+ *              ...
+ *         }
+ */
+mk.format.TransportableData = Interface(null, [Mapper], {
 
     /**
      *  Get encode algorithm
      *
      * @return 'base64'
      */
-    TransportableData.prototype.getAlgorithm = function () {};
+    getAlgorithm: function () {},
 
     /**
      *  Get original data
      *
      * @return plaintext
      */
-    TransportableData.prototype.getData = function () {};
+    getData: function () {},
 
     /**
      *  Get encoded string
@@ -81,67 +66,67 @@
      *                  "data:image/png;base64,{BASE64_ENCODE}", or
      *                  "{...}"
      */
-    TransportableData.prototype.toString = function () {};
+    toString: function () {},
 
     /**
      *  toJson()
      *
      * @return {String|{}}
      */
-    TransportableData.prototype.toObject = function () {};
+    toObject: function () {}
 
-    //
-    //  Conveniences
-    //
+});
+var TransportableData = mk.format.TransportableData;
 
-    TransportableData.encode = function (data) {
-        var ted = TransportableData.create(data);
-        return ted.toObject();
-    };
-    TransportableData.decode = function (encoded) {
-        var ted = TransportableData.parse(encoded);
-        if (!ted) {
-            return null;
-        }
-        return ted.getData();
-    };
+// TransportableData.DEFAULT = 'base64';
+// TransportableData.BASE64  = 'base64';
+// TransportableData.BASE58  = 'base58';
+// TransportableData.HEX     = 'hex';
 
-    //
-    //  Factory methods
-    //
+//
+//  Conveniences
+//
 
-    var general_factory = function () {
-        var man = ns.format.FormatFactoryManager;
-        return man.generalFactory;
-    };
+TransportableData.encode = function (data) {
+    var ted = TransportableData.create(data);
+    return ted.toObject();
+};
+TransportableData.decode = function (encoded) {
+    var ted = TransportableData.parse(encoded);
+    if (!ted) {
+        return null;
+    }
+    return ted.getData();
+};
 
-    TransportableData.create = function (data, algorithm) {
-        if (!algorithm) {
-            algorithm = TransportableData.DEFAULT;
-        }
-        var gf = general_factory();
-        return gf.createTransportableData(algorithm, data);
-    };
+//
+//  Factory methods
+//
 
-    TransportableData.parse = function (ted) {
-        var gf = general_factory();
-        return gf.parseTransportableData(ted);
-    };
+TransportableData.create = function (data, algorithm) {
+    var helper = FormatExtensions.getTEDHelper();
+    return helper.createTransportableData(algorithm, data);
+};
 
-    TransportableData.setFactory = function (algorithm, factory) {
-        var gf = general_factory();
-        return gf.setTransportableDataFactory(algorithm, factory);
-    };
-    TransportableData.getFactory = function (algorithm) {
-        var gf = general_factory();
-        return gf.getTransportableDataFactory(algorithm);
-    };
+TransportableData.parse = function (ted) {
+    var helper = FormatExtensions.getTEDHelper();
+    return helper.parseTransportableData(ted);
+};
 
-    /**
-     *  TED Factory
-     *  ~~~~~~~~~~~
-     */
-    var TransportableDataFactory = Interface(null, null);
+TransportableData.setFactory = function (algorithm, factory) {
+    var helper = FormatExtensions.getTEDHelper();
+    return helper.setTransportableDataFactory(algorithm, factory);
+};
+TransportableData.getFactory = function (algorithm) {
+    var helper = FormatExtensions.getTEDHelper();
+    return helper.getTransportableDataFactory(algorithm);
+};
+
+/**
+ *  TED Factory
+ *  ~~~~~~~~~~~
+ */
+TransportableData.Factory = Interface(null, null, {
 
     /**
      *  Create TED
@@ -149,7 +134,7 @@
      * @param {Uint8Array} data - original data
      * @return {TransportableData} TED object
      */
-    TransportableDataFactory.prototype.createTransportableData = function (data) {};
+    createTransportableData: function (data) {},
 
     /**
      *  Parse map object to TED
@@ -157,12 +142,7 @@
      * @param {*} ted - TED info
      * @return {TransportableData} TED object
      */
-    TransportableDataFactory.prototype.parseTransportableData = function (ted) {};
+    parseTransportableData: function (ted) {}
 
-    TransportableData.Factory = TransportableDataFactory;
-
-    //-------- namespace --------
-    ns.format.TransportableData = TransportableData;
-    // ns.format.TransportableDataFactory = TransportableDataFactory;
-
-})(MONKEY);
+});
+var TransportableDataFactory = TransportableData.Factory;

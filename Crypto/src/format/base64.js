@@ -1,10 +1,5 @@
 ;
 // license: https://mit-license.org
-//
-//  MONKEY: Memory Object aNd KEYs
-//
-//                               Written in 2020 by Moky <albert.moky@gmail.com>
-//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -32,52 +27,46 @@
 
 //! require 'coder.js'
 
-(function (ns) {
-    'use strict';
 
-    var Base64 = {
-        /**
-         *  Encode binary data to Base64 string
-         *
-         * @param {Uint8Array} data
-         * @return {String}
-         */
-        encode: function (data) {
-            return this.getCoder().encode(data);
-        },
+mk.format.Base64 = {
+    /**
+     *  Encode binary data to Base64 string
+     *
+     * @param {Uint8Array} data
+     * @return {String}
+     */
+    encode: function (data) {
+        return base64Coder.encode(data);
+    },
 
-        /**
-         *  Decode Base64 string to binary data
-         *
-         * @param string
-         * @return {Uint8Array}
-         */
-        decode: function (string) {
-            return this.getCoder().decode(string);
-        },
+    /**
+     *  Decode Base64 string to binary data
+     *
+     * @param string
+     * @return {Uint8Array}
+     */
+    decode: function (string) {
+        return base64Coder.decode(string);
+    },
 
-        /**
-         *  Get Base64 Coder
-         *
-         * @return {DataCoder}
-         */
-        getCoder: function () {
-            return base64Coder;
-        },
+    /**
+     *  Get Base64 Coder
+     *
+     * @return {DataCoder}
+     */
+    getCoder: function () {
+        return base64Coder;
+    },
 
-        /**
-         *  Set Base64 Coder
-         *
-         * @param {DataCoder} coder
-         */
-        setCoder: function (coder) {
-            base64Coder = coder
-        }
-    };
+    /**
+     *  Set Base64 Coder
+     *
+     * @param {DataCoder} coder
+     */
+    setCoder: function (coder) {
+        base64Coder = coder
+    }
+};
+var Base64 = mk.format.Base64;
 
-    var base64Coder = null;
-
-    //-------- namespace --------
-    ns.format.Base64 = Base64;
-
-})(MONKEY);
+var base64Coder = null;

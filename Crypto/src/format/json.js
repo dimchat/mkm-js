@@ -1,10 +1,5 @@
 ;
 // license: https://mit-license.org
-//
-//  MONKEY: Memory Object aNd KEYs
-//
-//                               Written in 2020 by Moky <albert.moky@gmail.com>
-//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -32,52 +27,80 @@
 
 //! require 'coder.js'
 
-(function (ns) {
-    'use strict';
 
-    var JsON = {
-        /**
-         *  Encode Map/List object to JsON string
-         *
-         * @param {{}|[]} object - Map or List
-         * @return {String} JsON string
-         */
-        encode: function (object) {
-            return this.getCoder().encode(object);
-        },
+mk.format.JSON = {
+    /**
+     *  Encode Map/List object to JsON string
+     *
+     * @param {{}|[]} object - Map or List
+     * @return {String} JsON string
+     */
+    encode: function (object) {
+        return jsonCoder.encode(object);
+    },
 
-        /**
-         *  Decode JsON string to Map/List object
-         *
-         * @param {string} string - JsON string
-         * @return {{}|[]} Map or List
-         */
-        decode: function (string) {
-            return this.getCoder().decode(string);
-        },
+    /**
+     *  Decode JsON string to Map/List object
+     *
+     * @param {string} string - JsON string
+     * @return {{}|[]} Map or List
+     */
+    decode: function (string) {
+        return jsonCoder.decode(string);
+    },
 
-        /**
-         *  Get JsON Coder
-         *
-         * @return {ObjectCoder}
-         */
-        getCoder: function () {
-            return jsonCoder;
-        },
+    /**
+     *  Get JsON Coder
+     *
+     * @return {ObjectCoder}
+     */
+    getCoder: function () {
+        return jsonCoder;
+    },
 
-        /**
-         *  Set JsON Coder
-         *
-         * @param {ObjectCoder} coder
-         */
-        setCoder: function (coder) {
-            jsonCoder = coder
-        }
-    };
+    /**
+     *  Set JsON Coder
+     *
+     * @param {ObjectCoder} coder
+     */
+    setCoder: function (coder) {
+        jsonCoder = coder
+    }
+};
+// var JSON = mk.format.JSON;
 
-    var jsonCoder = null;
+var jsonCoder = null;
 
-    //-------- namespace --------//
-    ns.format.JSON = JsON;
 
-})(MONKEY);
+mk.format.JSONMap = {
+    encode: function (dictionary) {
+        return jsonCoder.encode(dictionary);
+    },
+    decode: function (string) {
+        return jsonCoder.decode(string);
+    },
+    getCoder: function () {
+        return jsonCoder;
+    },
+    setCoder: function (coder) {
+        jsonCoder = coder
+    }
+}
+var JSONMap = mk.format.JSONMap;
+
+
+mk.format.JSONList = {
+    encode: function (array) {
+        return jsonCoder.encode(array);
+    },
+    decode: function (string) {
+        return jsonCoder.decode(string);
+    },
+    getCoder: function () {
+        return jsonCoder;
+    },
+    setCoder: function (coder) {
+        jsonCoder = coder
+    }
+}
+var JSONList = mk.format.JSONList;

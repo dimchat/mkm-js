@@ -1,10 +1,5 @@
 ;
 // license: https://mit-license.org
-//
-//  MONKEY: Memory Object aNd KEYs
-//
-//                               Written in 2020 by Moky <albert.moky@gmail.com>
-//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -34,68 +29,58 @@
 
 //! require 'keys.js'
 
-(function (ns) {
-    'use strict';
+/** Asymmetric Cryptography Public Key
+ *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ *  key data format: {
+ *      algorithm : "RSA", // "ECC", ...
+ *      data      : "{BASE64_ENCODE}",
+ *      ...
+ *  }
+ */
+mk.crypto.PublicKey = Interface(null, [VerifyKey], {
 
-    var Interface = ns.type.Interface;
+});
+var PublicKey = mk.crypto.PublicKey;
 
-    var AsymmetricKey = ns.crypto.AsymmetricKey;
-    var VerifyKey = ns.crypto.VerifyKey;
+// PublicKey.RSA = AsymmetricKey.RSA;
+// PublicKey.ECC = AsymmetricKey.ECC;
 
-    /** Asymmetric Cryptography Public Key
-     *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     *
-     *  key data format: {
-     *      algorithm : "RSA", // "ECC", ...
-     *      data      : "{BASE64_ENCODE}",
-     *      ...
-     *  }
-     */
-    var PublicKey = Interface(null, [VerifyKey]);
+//
+//  Factory methods
+//
 
-    PublicKey.RSA = AsymmetricKey.RSA;
-    PublicKey.ECC = AsymmetricKey.ECC;
+/**
+ *  Parse map object to key
+ *
+ * @param {*} key - key info
+ * @return {PublicKey}
+ */
+PublicKey.parse = function (key) {
+    var helper = CryptoExtensions.getPublicHelper();
+    return helper.parsePublicKey(key);
+};
 
-    //
-    //  Factory methods
-    //
+/**
+ *  Register public key factory with algorithm
+ *
+ * @param {string} algorithm
+ * @param {PublicKeyFactory} factory
+ */
+PublicKey.setFactory = function (algorithm, factory) {
+    var helper = CryptoExtensions.getPublicHelper();
+    helper.setPublicKeyFactory(algorithm, factory);
+};
+PublicKey.getFactory = function (algorithm) {
+    var helper = CryptoExtensions.getPublicHelper();
+    return helper.getPublicKeyFactory(algorithm);
+};
 
-    var general_factory = function () {
-        var man = ns.crypto.CryptographyKeyFactoryManager;
-        return man.generalFactory;
-    };
-
-    /**
-     *  Parse map object to key
-     *
-     * @param {*} key - key info
-     * @return {PublicKey}
-     */
-    PublicKey.parse = function (key) {
-        var gf = general_factory();
-        return gf.parsePublicKey(key);
-    };
-
-    /**
-     *  Register public key factory with algorithm
-     *
-     * @param {string} algorithm
-     * @param {PublicKeyFactory} factory
-     */
-    PublicKey.setFactory = function (algorithm, factory) {
-        var gf = general_factory();
-        gf.setPublicKeyFactory(algorithm, factory);
-    };
-    PublicKey.getFactory = function (algorithm) {
-        var gf = general_factory();
-        return gf.getPublicKeyFactory(algorithm);
-    };
-
-    /**
-     *  Public Key Factory
-     *  ~~~~~~~~~~~~~~~~~~
-     */
-    var PublicKeyFactory = Interface(null, null);
+/**
+ *  Public Key Factory
+ *  ~~~~~~~~~~~~~~~~~~
+ */
+PublicKey.Factory = Interface(null, null, {
 
     /**
      *  Parse map object to key
@@ -103,12 +88,7 @@
      * @param {*} key - key info
      * @return PublicKey
      */
-    PublicKeyFactory.prototype.parsePublicKey = function (key) {};
+    parsePublicKey: function (key) {}
 
-    PublicKey.Factory = PublicKeyFactory;
-
-    //-------- namespace --------
-    ns.crypto.PublicKey = PublicKey;
-    // ns.crypto.PublicKeyFactory = PublicKeyFactory;
-
-})(MONKEY);
+});
+var PublicKeyFactory = PublicKey.Factory;

@@ -1,10 +1,5 @@
 ;
 // license: https://mit-license.org
-//
-//  MONKEY: Memory Object aNd KEYs
-//
-//                               Written in 2020 by Moky <albert.moky@gmail.com>
-//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -32,52 +27,46 @@
 
 //! require 'coder.js'
 
-(function (ns) {
-    'use strict';
 
-    var Base58 = {
-        /**
-         *  Encode binary data to Base58 string
-         *
-         * @param {Uint8Array} data
-         * @return {String}
-         */
-        encode: function (data) {
-            return this.getCoder().encode(data);
-        },
+mk.format.Base58 = {
+    /**
+     *  Encode binary data to Base58 string
+     *
+     * @param {Uint8Array} data
+     * @return {String}
+     */
+    encode: function (data) {
+        return base58Coder.encode(data);
+    },
 
-        /**
-         *  Decode Base58 string to binary data
-         *
-         * @param string
-         * @return {Uint8Array}
-         */
-        decode: function (string) {
-            return this.getCoder().decode(string);
-        },
+    /**
+     *  Decode Base58 string to binary data
+     *
+     * @param string
+     * @return {Uint8Array}
+     */
+    decode: function (string) {
+        return base58Coder.decode(string);
+    },
 
-        /**
-         *  Get Base58 Coder
-         *
-         * @return {DataCoder}
-         */
-        getCoder: function () {
-            return base58Coder;
-        },
+    /**
+     *  Get Base58 Coder
+     *
+     * @return {DataCoder}
+     */
+    getCoder: function () {
+        return base58Coder;
+    },
 
-        /**
-         *  Set Base58 Coder
-         *
-         * @param {DataCoder} coder
-         */
-        setCoder: function (coder) {
-            base58Coder = coder
-        }
-    };
+    /**
+     *  Set Base58 Coder
+     *
+     * @param {DataCoder} coder
+     */
+    setCoder: function (coder) {
+        base58Coder = coder
+    }
+};
+var Base58 = mk.format.Base58;
 
-    var base58Coder = null;
-
-    //-------- namespace --------
-    ns.format.Base58 = Base58;
-
-})(MONKEY);
+var base58Coder = null;

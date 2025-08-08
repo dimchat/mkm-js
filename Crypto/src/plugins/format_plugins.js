@@ -3,7 +3,7 @@
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2020 Albert Moky
+// Copyright (c) 2025 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,22 +25,59 @@
 // =============================================================================
 //
 
-if (typeof mk !== 'object') {
-    mk = {};
-}
 
-if (typeof mk.type !== 'object') {
-    mk.type = {};
-}
-if (typeof mk.format !== 'object') {
-    mk.format = {};
-}
-if (typeof mk.digest !== 'object') {
-    mk.digest = {};
-}
-if (typeof mk.crypto !== 'object') {
-    mk.crypto = {};
-}
-if (typeof mk.plugins !== 'object') {
-    mk.plugins = {};
-}
+/**
+ *  Format GeneralFactory
+ *  ~~~~~~~~~~~~~~~~~~~~~
+ */
+mk.plugins.GeneralFormatHelper = Interface(null, null, {
+
+    //
+    //  Algorithm
+    //
+    getFormatAlgorithm: function (ted, defaultValue) {}
+
+});
+var GeneralFormatHelper = mk.plugins.GeneralFormatHelper;
+
+
+/**
+ *  Format FactoryManager
+ *  ~~~~~~~~~~~~~~~~~~~~~
+ */
+mk.plugins.SharedFormatExtensions = {
+
+    //
+    //  TED
+    //
+    setTEDHelper: function (helper) {
+        FormatExtensions.setTEDHelper(helper);
+    },
+    getTEDHelper: function () {
+        return FormatExtensions.getTEDHelper();
+    },
+
+    //
+    //  PNF
+    //
+    setPNFHelper: function (helper) {
+        FormatExtensions.setPNFHelper(helper);
+    },
+    getPNFHelper: function () {
+        return FormatExtensions.getPNFHelper();
+    },
+
+    //
+    //  General Helper
+    //
+    setHelper: function (helper) {
+        formatHelper = helper;
+    },
+    getHelper: function () {
+        return formatHelper;
+    }
+
+};
+var SharedFormatExtensions = mk.plugins.SharedFormatExtensions;
+
+var formatHelper = null;

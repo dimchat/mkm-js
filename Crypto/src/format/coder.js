@@ -1,10 +1,5 @@
 ;
 // license: https://mit-license.org
-//
-//  MONKEY: Memory Object aNd KEYs
-//
-//                               Written in 2020 by Moky <albert.moky@gmail.com>
-//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -32,20 +27,16 @@
 
 //! require 'type/class.js'
 
-(function (ns) {
-    'use strict';
 
-    var Interface = ns.type.Interface;
-
-    /**
-     *  Data Coder
-     *  ~~~~~~~~~~
-     *  Hex, Base58, Base64, ...
-     *
-     *  1. encode binary data to string;
-     *  2. decode string to binary data.
-     */
-    var DataCoder = Interface(null, null);
+/**
+ *  Data Coder
+ *  ~~~~~~~~~~
+ *  Hex, Base58, Base64, ...
+ *
+ *  1. encode binary data to string;
+ *  2. decode string to binary data.
+ */
+mk.format.DataCoder = Interface(null, null, {
 
     /**
      *  Encode binary data to local string
@@ -53,7 +44,7 @@
      * @param {Uint8Array} data
      * @return {String}
      */
-    DataCoder.prototype.encode = function (data) {};
+    encode: function (data) {},
 
     /**
      *  Decode local string to binary data
@@ -61,17 +52,21 @@
      * @param {string} string
      * @return {Uint8Array}
      */
-    DataCoder.prototype.decode = function (string) {};
+    decode: function (string) {}
 
-    /**
-     *  Object Coder
-     *  ~~~~~~~~~~~~
-     *  JsON, XML, ...
-     *
-     *  1. encode object to string;
-     *  2. decode string to object.
-     */
-    var ObjectCoder = Interface(null, null);
+});
+var DataCoder = mk.format.DataCoder;
+
+
+/**
+ *  Object Coder
+ *  ~~~~~~~~~~~~
+ *  JsON, XML, ...
+ *
+ *  1. encode object to string;
+ *  2. decode string to object.
+ */
+mk.format.ObjectCoder = Interface(null, null, {
 
     /**
      *  Encode Map/List object to string
@@ -79,7 +74,7 @@
      * @param {{}|[]} object - Map or List
      * @return {String} serialized string
      */
-    ObjectCoder.prototype.encode = function (object) {};
+    encode: function (object) {},
 
     /**
      *  Decode string to Map/List object
@@ -87,17 +82,21 @@
      * @param {string} string - serialized string
      * @return {{}|[]} Map or List
      */
-    ObjectCoder.prototype.decode = function (string) {};
+    decode: function (string) {}
 
-    /**
-     *  String Coder
-     *  ~~~~~~~~~~~~
-     *  UTF-8, UTF-16, GBK, GB2312, ...
-     *
-     *  1. encode string to binary data;
-     *  2. decode binary data to string.
-     */
-    var StringCoder = Interface(null, null);
+});
+var ObjectCoder = mk.format.ObjectCoder;
+
+
+/**
+ *  String Coder
+ *  ~~~~~~~~~~~~
+ *  UTF-8, UTF-16, GBK, GB2312, ...
+ *
+ *  1. encode string to binary data;
+ *  2. decode binary data to string.
+ */
+mk.format.StringCoder = Interface(null, null, {
 
     /**
      *  Encode local string to binary data
@@ -105,7 +104,7 @@
      * @param {string} string
      * @return {Uint8Array}
      */
-    StringCoder.prototype.encode = function (string) {};
+    encode: function (string) {},
 
     /**
      *  Decode binary data to local string
@@ -113,11 +112,7 @@
      * @param {Uint8Array} data
      * @return {String}
      */
-    StringCoder.prototype.decode = function (data) {};
+    decode: function (data) {}
 
-    //-------- namespace --------
-    ns.format.DataCoder = DataCoder;
-    ns.format.ObjectCoder = ObjectCoder;
-    ns.format.StringCoder = StringCoder;
-
-})(MONKEY);
+});
+var StringCoder = mk.format.StringCoder;

@@ -1,10 +1,5 @@
 ;
 // license: https://mit-license.org
-//
-//  MONKEY: Memory Object aNd KEYs
-//
-//                               Written in 2020 by Moky <albert.moky@gmail.com>
-//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -33,61 +28,67 @@
 //! require 'type/class.js'
 //! require 'type/dictionary.js'
 
-(function (ns) {
-    'use strict';
 
-    var Interface = ns.type.Interface;
-    var Mapper = ns.type.Mapper;
-
-    //
-    //  Cryptography Key
-    //  ~~~~~~~~~~~~~~~~
-    //
-    //  key data format: {
-    //      algorithm : "RSA", // ECC, AES, ...
-    //      data      : "{BASE64_ENCODE}",
-    //      ...
-    //  }
-    //
-    var CryptographyKey = Interface(null, [Mapper]);
+/**
+ *  Cryptography Key
+ *  ~~~~~~~~~~~~~~~~
+ *  Cryptography key with designated algorithm
+ *
+ *  key data format: {
+ *      algorithm : "RSA", // ECC, AES, ...
+ *      data      : "{BASE64_ENCODE}",
+ *      ...
+ *  }
+ */
+mk.crypto.CryptographyKey = Interface(null, [Mapper], {
 
     /**
      *  Get key algorithm name
      *
      * @return {String} algorithm name
      */
-    CryptographyKey.prototype.getAlgorithm = function () {};
+    getAlgorithm: function () {},
 
     /**
      *  Get key data
      *
      * @return {Uint8Array}
      */
-    CryptographyKey.prototype.getData = function () {};
+    getData: function () {}
 
-    var EncryptKey = Interface(null, [CryptographyKey]);
+});
+var CryptographyKey = mk.crypto.CryptographyKey;
+
+mk.crypto.EncryptKey = Interface(null, [CryptographyKey], {
 
     /**
-     *  ciphertext = encrypt(plaintext, PW)
-     *  ciphertext = encrypt(plaintext, PK)
+     *  1. Symmetric Key:
+     *     ciphertext = encrypt(plaintext, PW)
+     *  2. Asymmetric Public Key:
+     *     ciphertext = encrypt(plaintext, PK)
      *
      * @param {Uint8Array} plaintext - plain data
      * @param {*} extra              - store extra variables ('IV' for 'AES')
      * @return {Uint8Array} ciphertext
      */
-    EncryptKey.prototype.encrypt = function (plaintext, extra) {};
+    encrypt: function (plaintext, extra) {}
 
-    var DecryptKey = Interface(null, [CryptographyKey]);
+});
+var EncryptKey = mk.crypto.EncryptKey;
+
+mk.crypto.DecryptKey = Interface(null, [CryptographyKey], {
 
     /**
-     *  plaintext = decrypt(ciphertext, PW);
-     *  plaintext = decrypt(ciphertext, SK);
+     *  1. Symmetric Key:
+     *     plaintext = decrypt(ciphertext, PW);
+     *  2. Asymmetric Private Key:
+     *     plaintext = decrypt(ciphertext, SK);
      *
      * @param {Uint8Array} ciphertext - encrypted data
      * @param {*} params              - extra params ('IV' for 'AES')
      * @return {Uint8Array} plaintext
      */
-    DecryptKey.prototype.decrypt = function (ciphertext, params) {};
+    decrypt: function (ciphertext, params) {},
 
     /**
      *  OK = decrypt(encrypt(data, SK), PK) == data
@@ -95,37 +96,29 @@
      * @param {EncryptKey} pKey - encrypt key
      * @return {boolean} true on signature matched
      */
-    DecryptKey.prototype.matchEncryptKey = function (pKey) {};
+    matchEncryptKey: function (pKey) {}
 
-    //-------- namespace --------
-    ns.crypto.CryptographyKey = CryptographyKey;
-    ns.crypto.EncryptKey = EncryptKey;
-    ns.crypto.DecryptKey = DecryptKey;
+});
+var DecryptKey = mk.crypto.DecryptKey;
 
-})(MONKEY);
 
-(function (ns) {
-    'use strict';
+/**
+ *  Asymmetric Cryptography Key
+ *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ *  key data format: {
+ *      algorithm : "RSA", // "ECC", ...
+ *      data      : "{BASE64_ENCODE}",
+ *      ...
+ *  }
+ */
+mk.crypto.AsymmetricKey = Interface(null, [CryptographyKey], null);
+var AsymmetricKey = mk.crypto.AsymmetricKey;
 
-    var Interface = ns.type.Interface;
-    var CryptographyKey = ns.crypto.CryptographyKey;
+// AsymmetricKey.RSA = 'RSA'; //-- "RSA/ECB/PKCS1Padding", "SHA256withRSA"
+// AsymmetricKey.ECC = 'ECC';
 
-    //
-    //  Asymmetric Cryptography Key
-    //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    //
-    //  key data format: {
-    //      algorithm : "RSA", // "ECC", ...
-    //      data      : "{BASE64_ENCODE}",
-    //      ...
-    //  }
-    //
-    var AsymmetricKey = Interface(null, [CryptographyKey]);
-
-    AsymmetricKey.RSA = 'RSA'; //-- "RSA/ECB/PKCS1Padding", "SHA256withRSA"
-    AsymmetricKey.ECC = 'ECC';
-
-    var SignKey = Interface(null, [AsymmetricKey]);
+mk.crypto.SignKey = Interface(null, [AsymmetricKey], {
 
     /**
      *  signature = sign(data, SK);
@@ -133,9 +126,12 @@
      * @param {Uint8Array} data
      * @return {Uint8Array}
      */
-    SignKey.prototype.sign = function (data) {};
+    sign: function (data) {}
 
-    var VerifyKey = Interface(null, [AsymmetricKey]);
+});
+var SignKey = mk.crypto.SignKey;
+
+mk.crypto.VerifyKey = Interface(null, [AsymmetricKey], {
 
     /**
      *  OK = verify(data, signature, PK)
@@ -144,7 +140,7 @@
      * @param {Uint8Array} signature
      * @return {boolean}
      */
-    VerifyKey.prototype.verify = function (data, signature) {};
+    verify: function (data, signature) {},
 
     /**
      *  OK = verify(data, sign(data, SK), PK)
@@ -152,11 +148,7 @@
      * @param {SignKey} sKey - private key
      * @return {boolean} true on signature matched
      */
-    VerifyKey.prototype.matchSignKey = function (sKey) {};
+    matchSignKey: function (sKey) {}
 
-    //-------- namespace --------
-    ns.crypto.AsymmetricKey = AsymmetricKey;
-    ns.crypto.SignKey = SignKey;
-    ns.crypto.VerifyKey = VerifyKey;
-
-})(MONKEY);
+});
+var VerifyKey = mk.crypto.VerifyKey;

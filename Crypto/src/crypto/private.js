@@ -1,10 +1,5 @@
 ;
 // license: https://mit-license.org
-//
-//  MONKEY: Memory Object aNd KEYs
-//
-//                               Written in 2020 by Moky <albert.moky@gmail.com>
-//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -34,95 +29,85 @@
 
 //! require 'keys.js'
 
-(function (ns) {
-    'use strict';
-
-    var Interface = ns.type.Interface;
-
-    var AsymmetricKey = ns.crypto.AsymmetricKey;
-    var SignKey = ns.crypto.SignKey;
-
-
-    /** Asymmetric Cryptography Private Key
-     *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     *  This class is used to decrypt symmetric key or sign message data
-     *
-     *  key data format: {
-     *      algorithm : "RSA", // "ECC", ...
-     *      data      : "{BASE64_ENCODE}",
-     *      ...
-     *  }
-     */
-    var PrivateKey = Interface(null, [SignKey]);
-
-    PrivateKey.RSA = AsymmetricKey.RSA;
-    PrivateKey.ECC = AsymmetricKey.ECC;
+/** Asymmetric Cryptography Private Key
+ *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *  This class is used to decrypt symmetric key or sign message data
+ *
+ *  key data format: {
+ *      algorithm : "RSA", // "ECC", ...
+ *      data      : "{BASE64_ENCODE}",
+ *      ...
+ *  }
+ */
+mk.crypto.PrivateKey = Interface(null, [SignKey], {
 
     /**
      *  Create public key from this private key
      *
      * @return {PublicKey}
      */
-    PrivateKey.prototype.getPublicKey = function () {};
+    getPublicKey: function () {}
 
-    //
-    //  Factory methods
-    //
+});
+var PrivateKey = mk.crypto.PrivateKey;
 
-    var general_factory = function () {
-        var man = ns.crypto.CryptographyKeyFactoryManager;
-        return man.generalFactory;
-    };
+// PrivateKey.RSA = AsymmetricKey.RSA;
+// PrivateKey.ECC = AsymmetricKey.ECC;
 
-    /**
-     *  Generate key with algorithm name
-     *
-     * @param {string} algorithm - algorithm name ('RSA', 'ECC')
-     * @return {PrivateKey}
-     */
-    PrivateKey.generate = function (algorithm) {
-        var gf = general_factory();
-        return gf.generatePrivateKey(algorithm);
-    };
+//
+//  Factory methods
+//
 
-    /**
-     *  Parse map object to key
-     *
-     * @param {*} key - key info
-     * @return {PrivateKey}
-     */
-    PrivateKey.parse = function (key) {
-        var gf = general_factory();
-        return gf.parsePrivateKey(key);
-    };
+/**
+ *  Generate key with algorithm name
+ *
+ * @param {string} algorithm - algorithm name ('RSA', 'ECC')
+ * @return {PrivateKey}
+ */
+PrivateKey.generate = function (algorithm) {
+    var helper = CryptoExtensions.getPrivateHelper();
+    return helper.generatePrivateKey(algorithm);
+};
 
-    /**
-     *  Register private key factory with algorithm
-     *
-     * @param {string} algorithm
-     * @param {PrivateKeyFactory} factory
-     */
-    PrivateKey.setFactory = function (algorithm, factory) {
-        var gf = general_factory();
-        gf.setPrivateKeyFactory(algorithm, factory);
-    };
-    PrivateKey.getFactory = function (algorithm) {
-        var gf = general_factory();
-        return gf.getPrivateKeyFactory(algorithm);
-    };
+/**
+ *  Parse map object to key
+ *
+ * @param {*} key - key info
+ * @return {PrivateKey}
+ */
+PrivateKey.parse = function (key) {
+    var helper = CryptoExtensions.getPrivateHelper();
+    return helper.parsePrivateKey(key);
+};
 
-    /**
-     *  Private Key Factory
-     *  ~~~~~~~~~~~~~~~~~~~
-     */
-    var PrivateKeyFactory = Interface(null, null);
+/**
+ *  Register private key factory with algorithm
+ *
+ * @param {string} algorithm
+ * @param {PrivateKeyFactory} factory
+ */
+PrivateKey.setFactory = function (algorithm, factory) {
+    var helper = CryptoExtensions.getPrivateHelper();
+    helper.setPrivateKeyFactory(algorithm, factory);
+};
+PrivateKey.getFactory = function (algorithm) {
+    var helper = CryptoExtensions.getPrivateHelper();
+    return helper.getPrivateKeyFactory(algorithm);
+};
+
+
+/**
+ *  Private Key Factory
+ *  ~~~~~~~~~~~~~~~~~~~
+ */
+PrivateKey.Factory = Interface(null, null, {
 
     /**
      *  Generate key
      *
      * @return {PrivateKey}
      */
-    PrivateKeyFactory.prototype.generatePrivateKey = function () {};
+    generatePrivateKey: function () {},
 
 
     /**
@@ -131,12 +116,7 @@
      * @param {*} key - key info
      * @return {PrivateKey}
      */
-    PrivateKeyFactory.prototype.parsePrivateKey = function (key) {};
+    parsePrivateKey: function (key) {}
 
-    PrivateKey.Factory = PrivateKeyFactory;
-
-    //-------- namespace --------
-    ns.crypto.PrivateKey = PrivateKey;
-    // ns.crypto.PrivateKeyFactory = PrivateKeyFactory;
-
-})(MONKEY);
+});
+var PrivateKeyFactory = PrivateKey.Factory;

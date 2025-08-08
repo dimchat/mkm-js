@@ -1,10 +1,5 @@
 ;
 // license: https://mit-license.org
-//
-//  MONKEY: Memory Object aNd KEYs
-//
-//                               Written in 2024 by Moky <albert.moky@gmail.com>
-//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -35,36 +30,29 @@
 
 //! require 'ted.js'
 
-(function (ns) {
-    'use strict';
 
-    var Interface = ns.type.Interface;
-    var Mapper = ns.type.Mapper;
-
-    var TransportableData = ns.format.TransportableData;
-
-    /** Transportable File
-     *  ~~~~~~~~~~~~~~~~~~
-     *  PNF - Portable Network File
-     *
-     *      0. "{URL}"
-     *      1. "base64,{BASE64_ENCODE}"
-     *      2. "data:image/png;base64,{BASE64_ENCODE}"
-     *      3. {
-     *              data     : "...",        // base64_encode(fileContent)
-     *              filename : "avatar.png",
-     *
-     *              URL      : "http://...", // download from CDN
-     *              // before fileContent uploaded to a public CDN,
-     *              // it can be encrypted by a symmetric key
-     *              key      : {             // symmetric key to decrypt file content
-     *                  algorithm : "AES",   // "DES", ...
-     *                  data      : "{BASE64_ENCODE}",
-     *                  ...
-     *              }
-     *         }
-     */
-    var PortableNetworkFile = Interface(null, [Mapper]);
+/** Transportable File
+ *  ~~~~~~~~~~~~~~~~~~
+ *  PNF - Portable Network File
+ *
+ *      0. "{URL}"
+ *      1. "base64,{BASE64_ENCODE}"
+ *      2. "data:image/png;base64,{BASE64_ENCODE}"
+ *      3. {
+ *              data     : "...",        // base64_encode(fileContent)
+ *              filename : "avatar.png",
+ *
+ *              URL      : "http://...", // download from CDN
+ *              // before fileContent uploaded to a public CDN,
+ *              // it can be encrypted by a symmetric key
+ *              key      : {             // symmetric key to decrypt file content
+ *                  algorithm : "AES",   // "DES", ...
+ *                  data      : "{BASE64_ENCODE}",
+ *                  ...
+ *              }
+ *         }
+ */
+mk.format.PortableNetworkFile = Interface(null, [Mapper], {
 
     /**
      *  When file data is too big, don't set it in this dictionary,
@@ -72,24 +60,24 @@
      *
      * @param {Uint8Array} fileData
      */
-    PortableNetworkFile.prototype.setData = function (fileData) {};
-    PortableNetworkFile.prototype.getData = function () {};
+    setData: function (fileData) {},
+    getData: function () {},
 
     /**
      *  Set file name
      *
      * @param {string} filename
      */
-    PortableNetworkFile.prototype.setFilename = function (filename) {};
-    PortableNetworkFile.prototype.getFilename = function () {};
+    setFilename: function (filename) {},
+    getFilename: function () {},
 
     /**
      *  Download URL
      *
      * @param {URL} url
      */
-    PortableNetworkFile.prototype.setURL = function (url) {};
-    PortableNetworkFile.prototype.getURL = function () {};
+    setURL: function (url) {},
+    getURL: function () {},
 
     /**
      *  Password for decrypting the downloaded data from CDN,
@@ -97,8 +85,8 @@
      *
      * @param {DecryptKey} key
      */
-    PortableNetworkFile.prototype.setPassword = function (key) {};
-    PortableNetworkFile.prototype.getPassword = function () {};
+    setPassword: function (key) {},
+    getPassword: function () {},
 
     /**
      *  Get encoded string
@@ -108,54 +96,52 @@
      *                  "data:image/png;base64,{BASE64_ENCODE}", or
      *                  "{...}"
      */
-    PortableNetworkFile.prototype.toString = function () {};
+    toString: function () {},
 
     /**
      *  toJson()
      *
-     * @return {String|{}}
+     * @return {String|{}} String, or Map
      */
-    PortableNetworkFile.prototype.toObject = function () {};
+    toObject: function () {}
 
-    //
-    //  Factory methods
-    //
+});
+var PortableNetworkFile = mk.format.PortableNetworkFile;
 
-    var general_factory = function () {
-        var man = ns.format.FormatFactoryManager;
-        return man.generalFactory;
-    };
+//
+//  Factory methods
+//
 
-    PortableNetworkFile.createFromURL = function (url, password) {
-        return PortableNetworkFile.create(null, null, url, password);
-    };
-    PortableNetworkFile.createFromData = function (data, filename) {
-        var ted = TransportableData.create(data);
-        return PortableNetworkFile.create(ted, filename, null, null);
-    };
-    PortableNetworkFile.create = function (ted, filename, url, password) {
-        var gf = general_factory();
-        return gf.createPortableNetworkFile(ted, filename, url, password);
-    };
-    PortableNetworkFile.parse = function (pnf) {
-        var gf = general_factory();
-        return gf.parsePortableNetworkFile(pnf);
-    };
+PortableNetworkFile.createFromURL = function (url, password) {
+    return PortableNetworkFile.create(null, null, url, password);
+};
+PortableNetworkFile.createFromData = function (ted, filename) {
+    return PortableNetworkFile.create(ted, filename, null, null);
+};
+PortableNetworkFile.create = function (ted, filename, url, password) {
+    var helper = FormatExtensions.getPNFHelper();
+    return helper.createPortableNetworkFile(ted, filename, url, password);
+};
+PortableNetworkFile.parse = function (pnf) {
+    var helper = FormatExtensions.getPNFHelper();
+    return helper.parsePortableNetworkFile(pnf);
+};
 
-    PortableNetworkFile.setFactory = function (factory) {
-        var gf = general_factory();
-        return gf.setPortableNetworkFileFactory(factory);
-    };
-    PortableNetworkFile.getFactory = function () {
-        var gf = general_factory();
-        return gf.getPortableNetworkFileFactory();
-    };
+PortableNetworkFile.setFactory = function (factory) {
+    var helper = FormatExtensions.getPNFHelper();
+    return helper.setPortableNetworkFileFactory(factory);
+};
+PortableNetworkFile.getFactory = function () {
+    var helper = FormatExtensions.getPNFHelper();
+    return helper.getPortableNetworkFileFactory();
+};
 
-    /**
-     *  PNF Factory
-     *  ~~~~~~~~~~~
-     */
-    var PortableNetworkFileFactory = Interface(null, null);
+
+/**
+ *  PNF Factory
+ *  ~~~~~~~~~~~
+ */
+PortableNetworkFile.Factory = Interface(null, null, {
 
     /**
      *  Create PNF
@@ -166,8 +152,7 @@
      * @param {DecryptKey} password   - decrypt key for downloaded data
      * @return {PortableNetworkFile} PNF object
      */
-    PortableNetworkFileFactory.prototype.createPortableNetworkFile = function (ted, filename,
-                                                                               url, password) {};
+    createPortableNetworkFile: function (ted, filename, url, password) {},
 
     /**
      *  Parse map object to PNF
@@ -175,12 +160,7 @@
      * @param {*} pnf - PNF info
      * @return {PortableNetworkFile} PNF object
      */
-    PortableNetworkFileFactory.prototype.parsePortableNetworkFile = function (pnf) {};
+    parsePortableNetworkFile: function (pnf) {}
 
-    PortableNetworkFile.Factory = PortableNetworkFileFactory;
-
-    //-------- namespace --------
-    ns.format.PortableNetworkFile = PortableNetworkFile;
-    // ns.format.PortableNetworkFileFactory = PortableNetworkFileFactory;
-
-})(MONKEY);
+});
+var PortableNetworkFileFactory = PortableNetworkFile.Factory;

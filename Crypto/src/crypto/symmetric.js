@@ -1,10 +1,5 @@
 ;
 // license: https://mit-license.org
-//
-//  MONKEY: Memory Object aNd KEYs
-//
-//                               Written in 2020 by Moky <albert.moky@gmail.com>
-//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -34,87 +29,75 @@
 
 //! require 'keys.js'
 
-(function (ns) {
-    'use strict';
+/** Symmetric Cryptography Key
+ *  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *  This class is used to encrypt or decrypt message data
+ *
+ *  key data format: {
+ *      algorithm : "AES", // "DES", ...
+ *      data      : "{BASE64_ENCODE}",
+ *      ...
+ *  }
+ */
+mk.crypto.SymmetricKey = Interface(null, [EncryptKey, DecryptKey], null);
+var SymmetricKey = mk.crypto.SymmetricKey;
 
-    var Interface = ns.type.Interface;
+// SymmetricKey.AES = 'AES'; //-- "AES/CBC/PKCS7Padding"
+// SymmetricKey.DES = 'DES';
 
-    var EncryptKey = ns.crypto.EncryptKey;
-    var DecryptKey = ns.crypto.DecryptKey;
+//
+//  Factory methods
+//
 
-    /** Symmetric Cryptography Key
-     *  ~~~~~~~~~~~~~~~~~~~~~~~~~~
-     *  This class is used to encrypt or decrypt message data
-     *
-     *  key data format: {
-     *      algorithm : "AES", // "DES", ...
-     *      data      : "{BASE64_ENCODE}",
-     *      ...
-     *  }
-     */
-    var SymmetricKey = Interface(null, [EncryptKey, DecryptKey]);
+/**
+ *  Generate key with algorithm name
+ *
+ * @param {string} algorithm - algorithm name ('AES')
+ * @return {SymmetricKey}
+ */
+SymmetricKey.generate = function (algorithm) {
+    var helper = CryptoExtensions.getSymmetricHelper();
+    return helper.generateSymmetricKey(algorithm);
+};
 
-    SymmetricKey.AES = 'AES'; //-- "AES/CBC/PKCS7Padding"
-    SymmetricKey.DES = 'DES';
+/**
+ *  Parse map object to key
+ *
+ * @param {*} key - key info
+ * @return {SymmetricKey}
+ */
+SymmetricKey.parse = function (key) {
+    var helper = CryptoExtensions.getSymmetricHelper();
+    return helper.parseSymmetricKey(key);
+};
 
-    //
-    //  Factory methods
-    //
+/**
+ *  Register symmetric key factory with algorithm
+ *
+ * @param {string} algorithm
+ * @param {SymmetricKeyFactory} factory
+ */
+SymmetricKey.setFactory = function (algorithm, factory) {
+    var helper = CryptoExtensions.getSymmetricHelper();
+    helper.setSymmetricKeyFactory(algorithm, factory);
+};
+SymmetricKey.getFactory = function (algorithm) {
+    var helper = CryptoExtensions.getSymmetricHelper();
+    return helper.getSymmetricKeyFactory(algorithm);
+};
 
-    var general_factory = function () {
-        var man = ns.crypto.CryptographyKeyFactoryManager;
-        return man.generalFactory;
-    };
-
-    /**
-     *  Generate key with algorithm name
-     *
-     * @param {string} algorithm - algorithm name ('AES')
-     * @return {SymmetricKey}
-     */
-    SymmetricKey.generate = function (algorithm) {
-        var gf = general_factory();
-        return gf.generateSymmetricKey(algorithm);
-    };
-
-    /**
-     *  Parse map object to key
-     *
-     * @param {*} key - key info
-     * @return {SymmetricKey}
-     */
-    SymmetricKey.parse = function (key) {
-        var gf = general_factory();
-        return gf.parseSymmetricKey(key);
-    };
-
-    /**
-     *  Register symmetric key factory with algorithm
-     *
-     * @param {string} algorithm
-     * @param {SymmetricKeyFactory} factory
-     */
-    SymmetricKey.setFactory = function (algorithm, factory) {
-        var gf = general_factory();
-        gf.setSymmetricKeyFactory(algorithm, factory);
-    };
-    SymmetricKey.getFactory = function (algorithm) {
-        var gf = general_factory();
-        return gf.getSymmetricKeyFactory(algorithm);
-    };
-
-    /**
-     *  Symmetric Key Factory
-     *  ~~~~~~~~~~~~~~~~~~~~~
-     */
-    var SymmetricKeyFactory = Interface(null, null);
+/**
+ *  Symmetric Key Factory
+ *  ~~~~~~~~~~~~~~~~~~~~~
+ */
+SymmetricKey.Factory = Interface(null, null, {
 
     /**
      *  Generate key
      *
      * @return {SymmetricKey}
      */
-    SymmetricKeyFactory.prototype.generateSymmetricKey = function () {};
+    generateSymmetricKey: function () {},
 
     /**
      *  Parse map object to key
@@ -122,12 +105,7 @@
      * @param {*} key - key info
      * @return {SymmetricKey}
      */
-    SymmetricKeyFactory.prototype.parseSymmetricKey = function (key) {};
+    parseSymmetricKey: function (key) {}
 
-    SymmetricKey.Factory = SymmetricKeyFactory;
-
-    //-------- namespace --------
-    ns.crypto.SymmetricKey = SymmetricKey;
-    // ns.crypto.SymmetricKeyFactory = SymmetricKeyFactory;
-
-})(MONKEY);
+});
+var SymmetricKeyFactory = SymmetricKey.Factory;

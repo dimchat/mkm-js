@@ -1,10 +1,5 @@
 ;
 // license: https://mit-license.org
-//
-//  MONKEY: Memory Object aNd KEYs
-//
-//                               Written in 2020 by Moky <albert.moky@gmail.com>
-//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -32,52 +27,46 @@
 
 //! require 'coder.js'
 
-(function (ns) {
-    'use strict';
 
-    var Hex = {
-        /**
-         *  Encode binary data to Hex string
-         *
-         * @param {Uint8Array} data
-         * @return {String}
-         */
-        encode: function (data) {
-            return this.getCoder().encode(data);
-        },
+mk.format.Hex = {
+    /**
+     *  Encode binary data to Hex string
+     *
+     * @param {Uint8Array} data
+     * @return {String}
+     */
+    encode: function (data) {
+        return hexCoder.encode(data);
+    },
 
-        /**
-         *  Decode Hex string to binary data
-         *
-         * @param {string} string
-         * @return {Uint8Array}
-         */
-        decode: function (string) {
-            return this.getCoder().decode(string);
-        },
+    /**
+     *  Decode Hex string to binary data
+     *
+     * @param {string} string
+     * @return {Uint8Array}
+     */
+    decode: function (string) {
+        return hexCoder.decode(string);
+    },
 
-        /**
-         *  Get Hex Coder
-         *
-         * @return {DataCoder}
-         */
-        getCoder: function () {
-            return hexCoder;
-        },
+    /**
+     *  Get Hex Coder
+     *
+     * @return {DataCoder}
+     */
+    getCoder: function () {
+        return hexCoder;
+    },
 
-        /**
-         *  Set Hex Coder
-         *
-         * @param {DataCoder} coder
-         */
-        setCoder: function (coder) {
-            hexCoder = coder
-        }
-    };
+    /**
+     *  Set Hex Coder
+     *
+     * @param {DataCoder} coder
+     */
+    setCoder: function (coder) {
+        hexCoder = coder
+    }
+};
+var Hex = mk.format.Hex;
 
-    var hexCoder = null;
-
-    //-------- namespace --------
-    ns.format.Hex = Hex;
-
-})(MONKEY);
+var hexCoder = null;

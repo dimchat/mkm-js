@@ -1,10 +1,5 @@
 ;
 // license: https://mit-license.org
-//
-//  MONKEY: Memory Object aNd KEYs
-//
-//                               Written in 2020 by Moky <albert.moky@gmail.com>
-//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -32,52 +27,46 @@
 
 //! require 'coder.js'
 
-(function (ns) {
-    'use strict';
 
-    var UTF8 = {
-        /**
-         *  Encode local string to binary data
-         *
-         * @param {string} string
-         * @return {Uint8Array}
-         */
-        encode: function (string) {
-            return this.getCoder().encode(string);
-        },
+mk.format.UTF8 = {
+    /**
+     *  Encode local string to binary data
+     *
+     * @param {string} string
+     * @return {Uint8Array}
+     */
+    encode: function (string) {
+        return utf8Coder.encode(string);
+    },
 
-        /**
-         *  Decode binary data to local string
-         *
-         * @param {Uint8Array} data
-         * @return {String}
-         */
-        decode: function (data) {
-            return this.getCoder().decode(data);
-        },
+    /**
+     *  Decode binary data to local string
+     *
+     * @param {Uint8Array} data
+     * @return {String}
+     */
+    decode: function (data) {
+        return utf8Coder.decode(data);
+    },
 
-        /**
-         *  Get UTF8 Coder
-         *
-         * @return {StringCoder}
-         */
-        getCoder: function () {
-            return utf8Coder;
-        },
+    /**
+     *  Get UTF8 Coder
+     *
+     * @return {StringCoder}
+     */
+    getCoder: function () {
+        return utf8Coder;
+    },
 
-        /**
-         *  Set UTF8 Coder
-         *
-         * @param {StringCoder} coder
-         */
-        setCoder: function (coder) {
-            utf8Coder = coder
-        }
-    };
+    /**
+     *  Set UTF8 Coder
+     *
+     * @param {StringCoder} coder
+     */
+    setCoder: function (coder) {
+        utf8Coder = coder
+    }
+};
+var UTF8 = mk.format.UTF8;
 
-    var utf8Coder = null;
-
-    //-------- namespace --------
-    ns.format.UTF8 = UTF8;
-
-})(MONKEY);
+var utf8Coder = null;
