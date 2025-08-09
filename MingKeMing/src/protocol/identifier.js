@@ -1,4 +1,4 @@
-;
+'use strict';
 // license: https://mit-license.org
 //
 //  Ming-Ke-Ming : Decentralized User Identity Authentication
@@ -32,11 +32,6 @@
 
 //! require 'address.js'
 
-(function (ns) {
-    'use strict';
-
-    var Interface = ns.type.Interface;
-    var Stringer  = ns.type.Stringer;
 
     /**
      *  ID for entity (User/Group)
@@ -48,7 +43,8 @@
      *          address  - a string to identify an entity
      *          terminal - entity login resource(device), OPTIONAL
      */
-    var ID = Interface(null, [Stringer]);
+    mkm.protocol.ID = Interface(null, [Stringer]);
+    var ID = mkm.protocol.ID;
 
     /**
      *  Get ID.name
@@ -96,33 +92,44 @@
     /**
      *  Convert Strings to IDs
      *
-     * @param {String[]} list
+     * @param {String[]} array
      * @returns {ID[]}
      */
-    ID.convert = function (list) {
-        var gf = general_factory();
-        return gf.convertIdentifiers(list);
+    ID.convert = function (array) {
+        var members = [];
+        var did;
+        for (var i = 0; i < array.length; ++i) {
+            did = ID.parse(array[i]);
+            if (did) {
+                members.push(did);
+            }
+        }
+        return members;
     };
 
     /**
      *  Convert IDs to Strings
      *
-     * @param {ID[]} list
+     * @param {ID[]} identifiers - ID list
      * @return {String[]}
      */
-    ID.revert = function (list) {
-        var gf = general_factory();
-        return gf.revertIdentifiers(list);
+    ID.revert = function (identifiers) {
+        var array = [];
+        var did;
+        for (var i = 0; i < identifiers.length; ++i) {
+            did = identifiers[i];
+            if (Interface.conforms(did, Stringer)) {
+                array.push(did.toString());
+            } else if (IObject.isString(did)) {
+                array.push(did);
+            }
+        }
+        return array;
     };
 
     //
     //  Factory methods
     //
-
-    var general_factory = function () {
-        var man = ns.mkm.AccountFactoryManager;
-        return man.generalFactory;
-    };
 
     /**
      *  Generate ID
@@ -133,8 +140,8 @@
      * @return {ID}
      */
     ID.generate = function (meta, network, terminal) {
-        var gf = general_factory();
-        return gf.generateIdentifier(meta, network, terminal);
+        var helper = AccountExtensions.getIdentifierHelper();
+        return helper.generateIdentifier(meta, network, terminal);
     };
 
     /**
@@ -146,8 +153,8 @@
      * @return {ID}
      */
     ID.create = function (name, address, terminal) {
-        var gf = general_factory();
-        return gf.createIdentifier(name, address, terminal);
+        var helper = AccountExtensions.getIdentifierHelper();
+        return helper.createIdentifier(name, address, terminal);
     };
 
     /**
@@ -157,8 +164,8 @@
      * @return {ID}
      */
     ID.parse = function (identifier) {
-        var gf = general_factory();
-        return gf.parseIdentifier(identifier);
+        var helper = AccountExtensions.getIdentifierHelper();
+        return helper.parseIdentifier(identifier);
     };
 
     /**
@@ -167,19 +174,20 @@
      * @param {IDFactory} factory
      */
     ID.setFactory = function (factory) {
-        var gf = general_factory();
-        gf.setIdentifierFactory(factory);
+        var helper = AccountExtensions.getIdentifierHelper();
+        helper.setIdentifierFactory(factory);
     };
     ID.getFactory = function () {
-        var gf = general_factory();
-        return gf.getIdentifierFactory();
+        var helper = AccountExtensions.getIdentifierHelper();
+        return helper.getIdentifierFactory();
     };
 
     /**
      *  ID Factory
      *  ~~~~~~~~~~
      */
-    var IDFactory = Interface(null, null);
+    ID.Factory = Interface(null, null);
+    var IDFactory = ID.Factory;
 
     /**
      *  Generate ID
@@ -208,11 +216,3 @@
      * @return {ID}
      */
     IDFactory.prototype.parseIdentifier = function (identifier) {};
-
-    ID.Factory = IDFactory;
-
-    //-------- namespace --------
-    ns.protocol.ID = ID;
-    // ns.protocol.IDFactory = IDFactory;
-
-})(MingKeMing);

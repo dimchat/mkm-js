@@ -27,26 +27,25 @@ mkm_tests = [];
 
 })(MingKeMing);
 
-!(function (ns) {
+!(function (ns, mk) {
     'use strict';
 
-    var AsymmetricKey = ns.crypto.AsymmetricKey;
-    var PrivateKey    = ns.crypto.PrivateKey;
+    var PrivateKey    = mk.crypto.PrivateKey;
 
     var EntityType = ns.protocol.EntityType;
     var Meta       = ns.protocol.Meta;
 
     var test_meta = function () {
-        var SK = PrivateKey.generate(AsymmetricKey.RSA);
+        var SK = PrivateKey.generate('RSA');
         var seed = 'moky';
-        var meta = Meta.generate(Meta.MKM, SK, seed);
+        var meta = Meta.generate('1', SK, seed);
         log('generated meta: ', meta);
         assert(meta.getPublicKey() != null, 'failed to generate meta');
 
-        var address = meta.generateAddress(EntityType.USER);
+        var address = Address.generate(meta, EntityType.USER.getValue());
         log('generated address: ', address);
         assert(address.getType() === 0, 'failed to generate ID')
     };
     mkm_tests.push(test_meta);
 
-})(MingKeMing);
+})(MingKeMing, MONKEY);

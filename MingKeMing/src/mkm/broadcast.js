@@ -1,4 +1,4 @@
-;
+'use strict';
 // license: https://mit-license.org
 //
 //  Ming-Ke-Ming : Decentralized User Identity Authentication
@@ -33,37 +33,28 @@
 //! require 'protocol/types.js'
 //! require 'protocol/address.js'
 
-(function (ns) {
-    'use strict';
 
-    var Class          = ns.type.Class;
-    var Enum           = ns.type.Enum;
-    var ConstantString = ns.type.ConstantString;
+/**
+ *  Address for broadcast
+ */
+mkm.mkm.BroadcastAddress = function (string, network) {
+    ConstantString.call(this, string);
+    this.__network = Enum.getInt(network);
+};
+var BroadcastAddress = mkm.mkm.BroadcastAddress;
 
-    var EntityType = ns.protocol.EntityType;
-    var Address    = ns.protocol.Address;
-
-    //
-    //  Address for broadcast
-    //
-    var BroadcastAddress = function (string, network) {
-        ConstantString.call(this, string);
-        this.__network = Enum.getInt(network);
-    };
-    Class(BroadcastAddress, ConstantString, [Address], null);
+Class(BroadcastAddress, ConstantString, [Address], {
 
     // Override
-    BroadcastAddress.prototype.getType = function () {
+    getType: function () {
         return this.__network;
-    };
+    }
 
-    /**
-     *  Address for broadcast
-     */
-    Address.ANYWHERE = new BroadcastAddress('anywhere', EntityType.ANY);
-    Address.EVERYWHERE = new BroadcastAddress('everywhere', EntityType.EVERY);
+});
 
-    //-------- namespace --------
-    ns.mkm.BroadcastAddress = BroadcastAddress;
 
-})(MingKeMing);
+/**
+ *  Address for broadcast
+ */
+Address.ANYWHERE = new BroadcastAddress('anywhere', EntityType.ANY);
+Address.EVERYWHERE = new BroadcastAddress('everywhere', EntityType.EVERY);

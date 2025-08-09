@@ -1,4 +1,4 @@
-;
+'use strict';
 // license: https://mit-license.org
 //
 //  Ming-Ke-Ming : Decentralized User Identity Authentication
@@ -34,71 +34,67 @@
 
 //! require 'broadcast.js'
 
-(function (ns) {
-    'use strict';
 
-    var Class          = ns.type.Class;
-    var ConstantString = ns.type.ConstantString;
+/**
+ *  ID for entity (User/Group)
+ *
+ *      data format: "name@address[/terminal]"
+ *
+ *      fields:
+ *          name     - entity name, the seed of fingerprint to build address
+ *          address  - a string to identify an entity
+ *          terminal - entity login resource(device), OPTIONAL
+ */
+mkm.mkm.Identifier = function (identifier, name, address, terminal) {
+    ConstantString.call(this, identifier);
+    this.__name = name;
+    this.__address = address;
+    this.__terminal = terminal;
+};
+var Identifier = mkm.mkm.Identifier;
 
-    var EntityType = ns.protocol.EntityType;
-    var Address    = ns.protocol.Address;
-    var ID         = ns.protocol.ID;
-
-    /**
-     *  ID for entity (User/Group)
-     *
-     *      data format: "name@address[/terminal]"
-     *
-     *      fields:
-     *          name     - entity name, the seed of fingerprint to build address
-     *          address  - a string to identify an entity
-     *          terminal - entity login resource(device), OPTIONAL
-     */
-    var Identifier = function (identifier, name, address, terminal) {
-        ConstantString.call(this, identifier);
-        this.__name = name;
-        this.__address = address;
-        this.__terminal = terminal;
-    };
-    Class(Identifier, ConstantString, [ID], null);
-
+Class(Identifier, ConstantString, [ID], {
+    
     // Override
-    Identifier.prototype.getName = function () {
+    getName: function () {
         return this.__name;
-    };
+    },
 
     // Override
-    Identifier.prototype.getAddress = function () {
+    getAddress: function () {
         return this.__address;
-    };
+    },
 
     // Override
-    Identifier.prototype.getTerminal = function () {
+    getTerminal: function () {
         return this.__terminal;
-    };
+    },
 
     // Override
-    Identifier.prototype.getType = function () {
-        return this.__address.getType();
-    };
+    getType: function () {
+        var address = this.__address;
+        return address.getType();
+    },
 
     // Override
-    Identifier.prototype.isBroadcast = function () {
+    isBroadcast: function () {
         var network = this.getType();
         return EntityType.isBroadcast(network);
-    };
+    },
 
     // Override
-    Identifier.prototype.isUser = function () {
+    isUser: function () {
         var network = this.getType();
         return EntityType.isUser(network);
-    };
+    },
 
     // Override
-    Identifier.prototype.isGroup = function () {
+    isGroup: function () {
         var network = this.getType();
         return EntityType.isGroup(network);
-    };
+    }
+
+});
 
     //
     //  Factory
@@ -136,8 +132,3 @@
     ID.EVERYONE = Identifier.create("everyone", Address.EVERYWHERE, null);
     // DIM Founder
     ID.FOUNDER  = Identifier.create("moky", Address.ANYWHERE, null);
-
-    //-------- namespace --------
-    ns.mkm.Identifier = Identifier;
-
-})(MingKeMing);

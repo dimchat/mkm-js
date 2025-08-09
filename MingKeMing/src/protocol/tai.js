@@ -1,4 +1,4 @@
-;
+'use strict';
 // license: https://mit-license.org
 //
 //  Ming-Ke-Ming : Decentralized User Identity Authentication
@@ -33,10 +33,6 @@
 //! require 'namespace.js'
 //! require 'identifier.js'
 
-(function (ns) {
-    'use strict';
-
-    var Interface = ns.type.Interface;
 
     /**
      *  The Additional Information
@@ -46,7 +42,8 @@
      *      'TAI' is the variable part,
      *          which could contain a public key for asymmetric encryption.
      */
-    var TAI = Interface(null, null);
+    mkm.protocol.TAI = Interface(null, null);
+    var TAI = mkm.protocol.TAI;
 
     /**
      *  Check if signature matched
@@ -98,8 +95,3 @@
      * @param {Object} value - property value
      */
     TAI.prototype.setProperty = function (name, value) {};
-
-    //-------- namespace --------
-    ns.protocol.TAI = TAI;
-
-})(MingKeMing);

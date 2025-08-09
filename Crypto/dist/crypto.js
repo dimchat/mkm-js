@@ -10,7 +10,6 @@ if (typeof MONKEY !== 'object') {
     MONKEY = {}
 }
 (function (mk) {
-    'use strict';
     if (typeof mk.type !== 'object') {
         mk.type = {}
     }

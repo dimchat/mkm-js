@@ -1,4 +1,4 @@
-;
+'use strict';
 // license: https://mit-license.org
 //
 //  Ming-Ke-Ming : Decentralized User Identity Authentication
@@ -31,9 +31,6 @@
 //
 
 //! require 'namespace.js'
-
-(function (ns) {
-    'use strict';
 
     /**
      *  @enum EntityType
@@ -68,7 +65,7 @@
      *
      *      (All above are just some advices to help choosing numbers :P)
      */
-    var EntityType = ns.type.Enum('EntityType', {
+    mkm.protocol.EntityType = Enum('EntityType', {
 
         /**
          *  Main: 0, 1
@@ -109,10 +106,7 @@
         ANY:            (0x80), // 1000 0000 (anyone@anywhere)
         EVERY:          (0x81)  // 1000 0001 (everyone@everywhere)
     });
-
-    // NetworkType.prototype.toByte = function () {
-    //     return String.fromCharCode(this.value);
-    // };
+    var EntityType = mkm.protocol.EntityType;
 
     /**
      *  Indicates whether this is a user type
@@ -147,8 +141,3 @@
         var any = EntityType.ANY.getValue();
         return (network & any) === any;
     };
-
-    //-------- namespace --------
-    ns.protocol.EntityType = EntityType;
-
-})(MingKeMing);

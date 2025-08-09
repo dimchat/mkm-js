@@ -1,0 +1,28 @@
+/**
+ * MingKeMing - User Module (v2.0.0)
+ *
+ * @author    moKy <albert.moky at gmail.com>
+ * @date      Aug. 10, 2025
+ * @copyright (c) 2020-2025 Albert Moky
+ * @license   {@link https://mit-license.org | MIT License}
+ */;
+
+if (typeof MingKeMing !== 'object') {
+    MingKeMing = {};
+}
+
+(function (mkm, mk) {
+
+    if (typeof mkm.protocol !== 'object') {
+        mkm.protocol = {};
+    }
+    if (typeof mkm.mkm !== 'object') {
+        mkm.mkm = {};
+    }
+    if (typeof mkm.plugins !== 'object') {
+        mkm.plugins = {};
+    }
+
+    // ...
+
+// })(MingKeMing, MONKEY);

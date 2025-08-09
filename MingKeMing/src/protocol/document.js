@@ -1,4 +1,4 @@
-;
+'use strict';
 // license: https://mit-license.org
 //
 //  Ming-Ke-Ming : Decentralized User Identity Authentication
@@ -32,12 +32,6 @@
 
 //! require 'tai.js'
 
-(function (ns) {
-    'use strict';
-
-    var Interface = ns.type.Interface;
-    var Mapper    = ns.type.Mapper;
-    var TAI       = ns.protocol.TAI;
 
     /**
      *  User/Group Profile
@@ -51,21 +45,8 @@
      *          signature : "{BASE64_ENCODE}"  // signature = sign(data, SK);
      *      }
      */
-    var Document = Interface(null, [TAI, Mapper]);
-
-    //
-    //  Document types
-    //
-    Document.VISA     = 'visa';      // for login/communication
-    Document.PROFILE  = 'profile';   // for user info
-    Document.BULLETIN = 'bulletin';  // for group info
-
-    /**
-     *  Document type
-     *
-     * @return {String}
-     */
-    Document.prototype.getType = function () {};
+    mkm.protocol.Document = Interface(null, [TAI, Mapper]);
+    var Document = mkm.protocol.Document;
 
     /**
      *  Entity ID
@@ -92,13 +73,48 @@
     Document.prototype.getName = function () {};
 
     //
-    //  Factory methods
+    //  Conveniences
     //
 
-    var general_factory = function () {
-        var man = ns.mkm.AccountFactoryManager;
-        return man.generalFactory;
+    /**
+     *  Convert Maps to Documents
+     *
+     * @param {*[]} array
+     * @return {Document[]}
+     */
+    Document.convert = function (array) {
+        var documents = [];
+        var doc;
+        for (var i = 0; i < array.length; ++i) {
+            doc = Document.parse(array[i]);
+            if (doc) {
+                documents.push(doc);
+            }
+        }
+        return documents;
     };
+
+    /**
+     *  Convert Documents to Maps
+     * @param documents
+     */
+    Document.revert = function (documents) {
+        var array = [];
+        var doc;
+        for (var i = 0; i < documents.length; ++i) {
+            doc = documents[i];
+            if (Interface.conforms(doc, Mapper)) {
+                array.push(doc.toMap());
+            } else {
+                array.push(doc);
+            }
+        }
+        return array;
+    };
+
+    //
+    //  Factory methods
+    //
 
     /**
      *  Create document
@@ -112,8 +128,8 @@
      * @return {Document}
      */
     Document.create = function (type, identifier, data, signature) {
-        var gf = general_factory();
-        return gf.createDocument(type, identifier, data, signature);
+        var helper = AccountExtensions.getDocumentHelper();
+        return helper.createDocument(type, identifier, data, signature);
     };
 
     /**
@@ -123,8 +139,8 @@
      * @return {Document}
      */
     Document.parse = function (doc) {
-        var gf = general_factory();
-        return gf.parseDocument(doc);
+        var helper = AccountExtensions.getDocumentHelper();
+        return helper.parseDocument(doc);
     };
 
     /**
@@ -134,19 +150,20 @@
      * @param {DocumentFactory} factory
      */
     Document.setFactory = function (type, factory) {
-        var gf = general_factory();
-        gf.setDocumentFactory(type, factory);
+        var helper = AccountExtensions.getDocumentHelper();
+        helper.setDocumentFactory(type, factory);
     };
     Document.getFactory = function (type) {
-        var gf = general_factory();
-        return gf.getDocumentFactory(type);
+        var helper = AccountExtensions.getDocumentHelper();
+        return helper.getDocumentFactory(type);
     };
 
     /**
      *  Document Factory
      *  ~~~~~~~~~~~~~~~~
      */
-    var DocumentFactory = Interface(null, null);
+    Document.Factory = Interface(null, null);
+    var DocumentFactory = Document.Factory;
 
     /**
      *  Create document with data & signature loaded from local storage
@@ -166,11 +183,3 @@
      * @return {Document}
      */
     DocumentFactory.prototype.parseDocument = function (doc) {};
-
-    Document.Factory = DocumentFactory;
-
-    //-------- namespace --------
-    ns.protocol.Document = Document;
-    // ns.protocol.DocumentFactory = DocumentFactory;
-
-})(MingKeMing);

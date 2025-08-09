@@ -1,4 +1,4 @@
-;
+'use strict';
 // license: https://mit-license.org
 //
 //  Ming-Ke-Ming : Decentralized User Identity Authentication
@@ -34,11 +34,6 @@
 //! require 'address.js'
 //! require 'identifier.js'
 
-(function (ns) {
-    'use strict';
-
-    var Interface = ns.type.Interface;
-    var Mapper    = ns.type.Mapper;
 
     /**
      *  User/Group Meta data
@@ -55,17 +50,8 @@
      *      algorithm:
      *          fingerprint = sign(seed, SK);
      */
-    var Meta = Interface(null, [Mapper]);
-
-    //
-    //  MetaType
-    //  ~~~~~~~~
-    //  Meta algorithm names
-    //
-    Meta.MKM = 'mkm'; // '1';
-    Meta.BTC = 'btc'; // '2';
-    Meta.ETH = 'eth'; // '4';
-    // ...
+    mkm.protocol.Meta = Interface(null, [Mapper]);
+    var Meta = mkm.protocol.Meta;
 
     /**
      *  Meta algorithm version
@@ -75,7 +61,7 @@
      *      4 = eth : eth_address
      *      ...
      *
-     * @return {String}
+     * @return {string}
      */
     Meta.prototype.getType = function () {};
 
@@ -107,14 +93,6 @@
      */
     Meta.prototype.getFingerprint = function () {};
 
-    /**
-     *  Generate Address with network(type)
-     *
-     * @param {uint} network - ID.type
-     * @return {Address}
-     */
-    Meta.prototype.generateAddress = function (network) {};
-
     //
     //  Validation
     //
@@ -128,30 +106,16 @@
     Meta.prototype.isValid = function () {};
 
     /**
-     *  Check whether meta matches with entity ID
-     *  (must call this when received a new meta from network)
+     *  Generate Address with network(type)
      *
-     * @param {ID} identifier - entity ID
-     * @return {boolean} true on matched
+     * @param {uint} network - ID.type
+     * @return {Address}
      */
-    Meta.prototype.matchIdentifier = function (identifier) {};
-
-    /**
-     *  Check whether meta matches with public key
-     *
-     * @param {VerifyKey} pKey - public key
-     * @return {boolean} true on matched
-     */
-    Meta.prototype.matchPublicKey = function (pKey) {};
+    Meta.prototype.generateAddress = function (network) {};
 
     //
     //  Factory methods
     //
-
-    var general_factory = function () {
-        var man = ns.mkm.AccountFactoryManager;
-        return man.generalFactory;
-    };
 
     /**
      *  Create meta from stored info
@@ -163,8 +127,8 @@
      * @return {Meta}
      */
     Meta.create = function (type, key, seed, fingerprint) {
-        var gf = general_factory();
-        return gf.createMeta(type, key, seed, fingerprint);
+        var helper = AccountExtensions.getMetaHelper();
+        return helper.createMeta(type, key, seed, fingerprint);
     };
 
     /**
@@ -176,8 +140,8 @@
      * @return {Meta}
      */
     Meta.generate = function (type, sKey, seed) {
-        var gf = general_factory();
-        return gf.generateMeta(type, sKey, seed);
+        var helper = AccountExtensions.getMetaHelper();
+        return helper.generateMeta(type, sKey, seed);
     };
 
     /**
@@ -187,8 +151,8 @@
      * @return {Meta}
      */
     Meta.parse = function (meta) {
-        var gf = general_factory();
-        return gf.parseMeta(meta);
+        var helper = AccountExtensions.getMetaHelper();
+        return helper.parseMeta(meta);
     };
 
     /**
@@ -198,19 +162,20 @@
      * @param {MetaFactory} factory
      */
     Meta.setFactory = function (type, factory) {
-        var gf = general_factory();
-        gf.setMetaFactory(type, factory);
+        var helper = AccountExtensions.getMetaHelper();
+        helper.setMetaFactory(type, factory);
     };
     Meta.getFactory = function (type) {
-        var gf = general_factory();
-        return gf.getMetaFactory(type);
+        var helper = AccountExtensions.getMetaHelper();
+        return helper.getMetaFactory(type);
     };
 
     /**
      *  Meta Factory
      *  ~~~~~~~~~~~~
      */
-    var MetaFactory = Interface(null, null);
+    Meta.Factory = Interface(null, null);
+    var MetaFactory = Meta.Factory;
 
     /**
      *  Create meta
@@ -238,11 +203,3 @@
      * @return {Meta}
      */
     MetaFactory.prototype.parseMeta = function (meta) {};
-
-    Meta.Factory = MetaFactory;
-
-    //-------- namespace --------
-    ns.protocol.Meta = Meta;
-    // ns.protocol.MetaFactory = MetaFactory;
-
-})(MingKeMing);

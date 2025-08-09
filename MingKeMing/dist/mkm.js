@@ -1,38 +1,34 @@
 /**
- * MingKeMing - User Module (v1.0.0)
+ * MingKeMing - User Module (v2.0.0)
  *
  * @author    moKy <albert.moky at gmail.com>
- * @date      Nov. 16, 2024
- * @copyright (c) 2024 Albert Moky
+ * @date      Aug. 10, 2025
+ * @copyright (c) 2020-2025 Albert Moky
  * @license   {@link https://mit-license.org | MIT License}
  */;
 if (typeof MingKeMing !== 'object') {
     MingKeMing = {}
 }
-(function (ns) {
+(function (mkm, mk) {
+    if (typeof mkm.protocol !== 'object') {
+        mkm.protocol = {}
+    }
+    if (typeof mkm.mkm !== 'object') {
+        mkm.mkm = {}
+    }
+    if (typeof mkm.plugins !== 'object') {
+        mkm.plugins = {}
+    }
     'use strict';
-    if (typeof ns.type !== 'object') {
-        ns.type = MONKEY.type
-    }
-    if (typeof ns.format !== 'object') {
-        ns.format = MONKEY.format
-    }
-    if (typeof ns.digest !== 'object') {
-        ns.digest = MONKEY.digest
-    }
-    if (typeof ns.crypto !== 'object') {
-        ns.crypto = MONKEY.crypto
-    }
-    if (typeof ns.protocol !== 'object') {
-        ns.protocol = {}
-    }
-    if (typeof ns.mkm !== 'object') {
-        ns.mkm = {}
-    }
-})(MingKeMing);
-(function (ns) {
+    var Interface = mk.type.Interface;
+    var Class = mk.type.Class;
+    var IObject = mk.type.Object;
+    var Stringer = mk.type.Stringer;
+    var Mapper = mk.type.Mapper;
+    var Enum = mk.type.Enum;
+    var ConstantString = mk.type.ConstantString;
     'use strict';
-    var EntityType = ns.type.Enum('EntityType', {
+    mkm.protocol.EntityType = Enum('EntityType', {
         USER: (0x00),
         GROUP: (0x01),
         STATION: (0x02),
@@ -44,6 +40,7 @@ if (typeof MingKeMing !== 'object') {
         ANY: (0x80),
         EVERY: (0x81)
     });
+    var EntityType = mkm.protocol.EntityType;
     EntityType.isUser = function (network) {
         var user = EntityType.USER.getValue();
         var group = EntityType.GROUP.getValue();
@@ -57,56 +54,38 @@ if (typeof MingKeMing !== 'object') {
         var any = EntityType.ANY.getValue();
         return (network & any) === any
     };
-    ns.protocol.EntityType = EntityType
-})(MingKeMing);
-(function (ns) {
     'use strict';
-    var Interface = ns.type.Interface;
-    var Stringer = ns.type.Stringer;
-    var Address = Interface(null, [Stringer]);
+    mkm.protocol.Address = Interface(null, [Stringer]);
+    var Address = mkm.protocol.Address;
     Address.prototype.getType = function () {
     };
     Address.ANYWHERE = null;
     Address.EVERYWHERE = null;
-    var general_factory = function () {
-        var man = ns.mkm.AccountFactoryManager;
-        return man.generalFactory
-    };
     Address.generate = function (meta, network) {
-        var gf = general_factory();
-        return gf.generateAddress(meta, network)
-    };
-    Address.create = function (address) {
-        var gf = general_factory();
-        return gf.createAddress(address)
+        var helper = AccountExtensions.getAddressHelper();
+        return helper.generateAddress(meta, network)
     };
     Address.parse = function (address) {
-        var gf = general_factory();
-        return gf.parseAddress(address)
+        var helper = AccountExtensions.getAddressHelper();
+        return helper.parseAddress(address)
     };
     Address.setFactory = function (factory) {
-        var gf = general_factory();
-        gf.setAddressFactory(factory)
+        var helper = AccountExtensions.getAddressHelper();
+        helper.setAddressFactory(factory)
     };
     Address.getFactory = function () {
-        var gf = general_factory();
-        return gf.getAddressFactory()
+        var helper = AccountExtensions.getAddressHelper();
+        return helper.getAddressFactory()
     };
-    var AddressFactory = Interface(null, null);
+    Address.Factory = Interface(null, null);
+    var AddressFactory = Address.Factory;
     AddressFactory.prototype.generateAddress = function (meta, network) {
-    };
-    AddressFactory.prototype.createAddress = function (address) {
     };
     AddressFactory.prototype.parseAddress = function (address) {
     };
-    Address.Factory = AddressFactory;
-    ns.protocol.Address = Address
-})(MingKeMing);
-(function (ns) {
     'use strict';
-    var Interface = ns.type.Interface;
-    var Stringer = ns.type.Stringer;
-    var ID = Interface(null, [Stringer]);
+    mkm.protocol.ID = Interface(null, [Stringer]);
+    var ID = mkm.protocol.ID;
     ID.prototype.getName = function () {
     };
     ID.prototype.getAddress = function () {
@@ -124,56 +103,61 @@ if (typeof MingKeMing !== 'object') {
     ID.ANYONE = null;
     ID.EVERYONE = null;
     ID.FOUNDER = null;
-    ID.convert = function (list) {
-        var gf = general_factory();
-        return gf.convertIdentifiers(list)
+    ID.convert = function (array) {
+        var members = [];
+        var did;
+        for (var i = 0; i < array.length; ++i) {
+            did = ID.parse(array[i]);
+            if (did) {
+                members.push(did)
+            }
+        }
+        return members
     };
-    ID.revert = function (list) {
-        var gf = general_factory();
-        return gf.revertIdentifiers(list)
-    };
-    var general_factory = function () {
-        var man = ns.mkm.AccountFactoryManager;
-        return man.generalFactory
+    ID.revert = function (identifiers) {
+        var array = [];
+        var did;
+        for (var i = 0; i < identifiers.length; ++i) {
+            did = identifiers[i];
+            if (Interface.conforms(did, Stringer)) {
+                array.push(did.toString())
+            } else if (IObject.isString(did)) {
+                array.push(did)
+            }
+        }
+        return array
     };
     ID.generate = function (meta, network, terminal) {
-        var gf = general_factory();
-        return gf.generateIdentifier(meta, network, terminal)
+        var helper = AccountExtensions.getIdentifierHelper();
+        return helper.generateIdentifier(meta, network, terminal)
     };
     ID.create = function (name, address, terminal) {
-        var gf = general_factory();
-        return gf.createIdentifier(name, address, terminal)
+        var helper = AccountExtensions.getIdentifierHelper();
+        return helper.createIdentifier(name, address, terminal)
     };
     ID.parse = function (identifier) {
-        var gf = general_factory();
-        return gf.parseIdentifier(identifier)
+        var helper = AccountExtensions.getIdentifierHelper();
+        return helper.parseIdentifier(identifier)
     };
     ID.setFactory = function (factory) {
-        var gf = general_factory();
-        gf.setIdentifierFactory(factory)
+        var helper = AccountExtensions.getIdentifierHelper();
+        helper.setIdentifierFactory(factory)
     };
     ID.getFactory = function () {
-        var gf = general_factory();
-        return gf.getIdentifierFactory()
+        var helper = AccountExtensions.getIdentifierHelper();
+        return helper.getIdentifierFactory()
     };
-    var IDFactory = Interface(null, null);
+    ID.Factory = Interface(null, null);
+    var IDFactory = ID.Factory;
     IDFactory.prototype.generateIdentifier = function (meta, network, terminal) {
     };
     IDFactory.prototype.createIdentifier = function (name, address, terminal) {
     };
     IDFactory.prototype.parseIdentifier = function (identifier) {
     };
-    ID.Factory = IDFactory;
-    ns.protocol.ID = ID
-})(MingKeMing);
-(function (ns) {
     'use strict';
-    var Interface = ns.type.Interface;
-    var Mapper = ns.type.Mapper;
-    var Meta = Interface(null, [Mapper]);
-    Meta.MKM = 'mkm';
-    Meta.BTC = 'btc';
-    Meta.ETH = 'eth';
+    mkm.protocol.Meta = Interface(null, [Mapper]);
+    var Meta = mkm.protocol.Meta;
     Meta.prototype.getType = function () {
     };
     Meta.prototype.getPublicKey = function () {
@@ -182,52 +166,41 @@ if (typeof MingKeMing !== 'object') {
     };
     Meta.prototype.getFingerprint = function () {
     };
-    Meta.prototype.generateAddress = function (network) {
-    };
     Meta.prototype.isValid = function () {
     };
-    Meta.prototype.matchIdentifier = function (identifier) {
-    };
-    Meta.prototype.matchPublicKey = function (pKey) {
-    };
-    var general_factory = function () {
-        var man = ns.mkm.AccountFactoryManager;
-        return man.generalFactory
+    Meta.prototype.generateAddress = function (network) {
     };
     Meta.create = function (type, key, seed, fingerprint) {
-        var gf = general_factory();
-        return gf.createMeta(type, key, seed, fingerprint)
+        var helper = AccountExtensions.getMetaHelper();
+        return helper.createMeta(type, key, seed, fingerprint)
     };
     Meta.generate = function (type, sKey, seed) {
-        var gf = general_factory();
-        return gf.generateMeta(type, sKey, seed)
+        var helper = AccountExtensions.getMetaHelper();
+        return helper.generateMeta(type, sKey, seed)
     };
     Meta.parse = function (meta) {
-        var gf = general_factory();
-        return gf.parseMeta(meta)
+        var helper = AccountExtensions.getMetaHelper();
+        return helper.parseMeta(meta)
     };
     Meta.setFactory = function (type, factory) {
-        var gf = general_factory();
-        gf.setMetaFactory(type, factory)
+        var helper = AccountExtensions.getMetaHelper();
+        helper.setMetaFactory(type, factory)
     };
     Meta.getFactory = function (type) {
-        var gf = general_factory();
-        return gf.getMetaFactory(type)
+        var helper = AccountExtensions.getMetaHelper();
+        return helper.getMetaFactory(type)
     };
-    var MetaFactory = Interface(null, null);
+    Meta.Factory = Interface(null, null);
+    var MetaFactory = Meta.Factory;
     MetaFactory.prototype.createMeta = function (pKey, seed, fingerprint) {
     };
     MetaFactory.prototype.generateMeta = function (sKey, seed) {
     };
     MetaFactory.prototype.parseMeta = function (meta) {
     };
-    Meta.Factory = MetaFactory;
-    ns.protocol.Meta = Meta
-})(MingKeMing);
-(function (ns) {
     'use strict';
-    var Interface = ns.type.Interface;
-    var TAI = Interface(null, null);
+    mkm.protocol.TAI = Interface(null, null);
+    var TAI = mkm.protocol.TAI;
     TAI.prototype.isValid = function () {
     };
     TAI.prototype.verify = function (pKey) {
@@ -240,19 +213,9 @@ if (typeof MingKeMing !== 'object') {
     };
     TAI.prototype.setProperty = function (name, value) {
     };
-    ns.protocol.TAI = TAI
-})(MingKeMing);
-(function (ns) {
     'use strict';
-    var Interface = ns.type.Interface;
-    var Mapper = ns.type.Mapper;
-    var TAI = ns.protocol.TAI;
-    var Document = Interface(null, [TAI, Mapper]);
-    Document.VISA = 'visa';
-    Document.PROFILE = 'profile';
-    Document.BULLETIN = 'bulletin';
-    Document.prototype.getType = function () {
-    };
+    mkm.protocol.Document = Interface(null, [TAI, Mapper]);
+    var Document = mkm.protocol.Document;
     Document.prototype.getIdentifier = function () {
     };
     Document.prototype.getTime = function () {
@@ -261,91 +224,94 @@ if (typeof MingKeMing !== 'object') {
     };
     Document.prototype.getName = function () {
     };
-    var general_factory = function () {
-        var man = ns.mkm.AccountFactoryManager;
-        return man.generalFactory
+    Document.convert = function (array) {
+        var documents = [];
+        var doc;
+        for (var i = 0; i < array.length; ++i) {
+            doc = Document.parse(array[i]);
+            if (doc) {
+                documents.push(doc)
+            }
+        }
+        return documents
+    };
+    Document.revert = function (documents) {
+        var array = [];
+        var doc;
+        for (var i = 0; i < documents.length; ++i) {
+            doc = documents[i];
+            if (Interface.conforms(doc, Mapper)) {
+                array.push(doc.toMap())
+            } else {
+                array.push(doc)
+            }
+        }
+        return array
     };
     Document.create = function (type, identifier, data, signature) {
-        var gf = general_factory();
-        return gf.createDocument(type, identifier, data, signature)
+        var helper = AccountExtensions.getDocumentHelper();
+        return helper.createDocument(type, identifier, data, signature)
     };
     Document.parse = function (doc) {
-        var gf = general_factory();
-        return gf.parseDocument(doc)
+        var helper = AccountExtensions.getDocumentHelper();
+        return helper.parseDocument(doc)
     };
     Document.setFactory = function (type, factory) {
-        var gf = general_factory();
-        gf.setDocumentFactory(type, factory)
+        var helper = AccountExtensions.getDocumentHelper();
+        helper.setDocumentFactory(type, factory)
     };
     Document.getFactory = function (type) {
-        var gf = general_factory();
-        return gf.getDocumentFactory(type)
+        var helper = AccountExtensions.getDocumentHelper();
+        return helper.getDocumentFactory(type)
     };
-    var DocumentFactory = Interface(null, null);
+    Document.Factory = Interface(null, null);
+    var DocumentFactory = Document.Factory;
     DocumentFactory.prototype.createDocument = function (identifier, data, signature) {
     };
     DocumentFactory.prototype.parseDocument = function (doc) {
     };
-    Document.Factory = DocumentFactory;
-    ns.protocol.Document = Document
-})(MingKeMing);
-(function (ns) {
     'use strict';
-    var Class = ns.type.Class;
-    var Enum = ns.type.Enum;
-    var ConstantString = ns.type.ConstantString;
-    var EntityType = ns.protocol.EntityType;
-    var Address = ns.protocol.Address;
-    var BroadcastAddress = function (string, network) {
+    mkm.mkm.BroadcastAddress = function (string, network) {
         ConstantString.call(this, string);
         this.__network = Enum.getInt(network)
     };
-    Class(BroadcastAddress, ConstantString, [Address], null);
-    BroadcastAddress.prototype.getType = function () {
-        return this.__network
-    };
+    var BroadcastAddress = mkm.mkm.BroadcastAddress;
+    Class(BroadcastAddress, ConstantString, [Address], {
+        getType: function () {
+            return this.__network
+        }
+    });
     Address.ANYWHERE = new BroadcastAddress('anywhere', EntityType.ANY);
     Address.EVERYWHERE = new BroadcastAddress('everywhere', EntityType.EVERY);
-    ns.mkm.BroadcastAddress = BroadcastAddress
-})(MingKeMing);
-(function (ns) {
     'use strict';
-    var Class = ns.type.Class;
-    var ConstantString = ns.type.ConstantString;
-    var EntityType = ns.protocol.EntityType;
-    var Address = ns.protocol.Address;
-    var ID = ns.protocol.ID;
-    var Identifier = function (identifier, name, address, terminal) {
+    mkm.mkm.Identifier = function (identifier, name, address, terminal) {
         ConstantString.call(this, identifier);
         this.__name = name;
         this.__address = address;
         this.__terminal = terminal
     };
-    Class(Identifier, ConstantString, [ID], null);
-    Identifier.prototype.getName = function () {
-        return this.__name
-    };
-    Identifier.prototype.getAddress = function () {
-        return this.__address
-    };
-    Identifier.prototype.getTerminal = function () {
-        return this.__terminal
-    };
-    Identifier.prototype.getType = function () {
-        return this.__address.getType()
-    };
-    Identifier.prototype.isBroadcast = function () {
-        var network = this.getType();
-        return EntityType.isBroadcast(network)
-    };
-    Identifier.prototype.isUser = function () {
-        var network = this.getType();
-        return EntityType.isUser(network)
-    };
-    Identifier.prototype.isGroup = function () {
-        var network = this.getType();
-        return EntityType.isGroup(network)
-    };
+    var Identifier = mkm.mkm.Identifier;
+    Class(Identifier, ConstantString, [ID], {
+        getName: function () {
+            return this.__name
+        }, getAddress: function () {
+            return this.__address
+        }, getTerminal: function () {
+            return this.__terminal
+        }, getType: function () {
+            var address = this.__address;
+            return address.getType()
+        }, isBroadcast: function () {
+            var network = this.getType();
+            return EntityType.isBroadcast(network)
+        }, isUser: function () {
+            var network = this.getType();
+            return EntityType.isUser(network)
+        }, isGroup: function () {
+            var network = this.getType();
+            return EntityType.isGroup(network)
+        }
+    });
     Identifier.create = function (name, address, terminal) {
         var string = Identifier.concat(name, address, terminal);
         return new Identifier(string, name, address, terminal)
@@ -363,166 +329,100 @@ if (typeof MingKeMing !== 'object') {
     ID.ANYONE = Identifier.create("anyone", Address.ANYWHERE, null);
     ID.EVERYONE = Identifier.create("everyone", Address.EVERYWHERE, null);
     ID.FOUNDER = Identifier.create("moky", Address.ANYWHERE, null);
-    ns.mkm.Identifier = Identifier
-})(MingKeMing);
-(function (ns) {
     'use strict';
-    var Interface = ns.type.Interface;
-    var Class = ns.type.Class;
-    var IObject = ns.type.Object;
-    var Stringer = ns.type.Stringer;
-    var Wrapper = ns.type.Wrapper;
-    var Converter = ns.type.Converter;
-    var Address = ns.protocol.Address;
-    var ID = ns.protocol.ID;
-    var Meta = ns.protocol.Meta;
-    var Document = ns.protocol.Document;
-    var GeneralFactory = function () {
-        this.__addressFactory = null;
-        this.__idFactory = null;
-        this.__metaFactories = {};
-        this.__documentFactories = {}
-    };
-    Class(GeneralFactory, null, null, null);
-    GeneralFactory.prototype.setAddressFactory = function (factory) {
-        this.__addressFactory = factory
-    };
-    GeneralFactory.prototype.getAddressFactory = function () {
-        return this.__addressFactory
-    };
-    GeneralFactory.prototype.parseAddress = function (address) {
-        if (!address) {
-            return null
-        } else if (Interface.conforms(address, Address)) {
-            return address
+    mkm.plugins.AddressHelper = Interface(null, null);
+    var AddressHelper = mkm.plugins.AddressHelper;
+    AddressHelper.prototype = {
+        setAddressFactory: function (factory) {
+        }, getAddressFactory: function () {
+        }, parseAddress: function (address) {
+        }, generateAddress: function (meta, network) {
         }
-        var str = Wrapper.fetchString(address);
-        var factory = this.getAddressFactory();
-        return factory.parseAddress(str)
     };
-    GeneralFactory.prototype.createAddress = function (address) {
-        var factory = this.getAddressFactory();
-        return factory.createAddress(address)
-    };
-    GeneralFactory.prototype.generateAddress = function (meta, network) {
-        var factory = this.getAddressFactory();
-        return factory.generateAddress(meta, network)
-    };
-    GeneralFactory.prototype.setIdentifierFactory = function (factory) {
-        this.__idFactory = factory
-    };
-    GeneralFactory.prototype.getIdentifierFactory = function () {
-        return this.__idFactory
-    };
-    GeneralFactory.prototype.parseIdentifier = function (identifier) {
-        if (!identifier) {
-            return null
-        } else if (Interface.conforms(identifier, ID)) {
-            return identifier
+    mkm.plugins.IdentifierHelper = Interface(null, null);
+    var IdentifierHelper = mkm.plugins.IdentifierHelper;
+    IdentifierHelper.prototype = {
+        setIdentifierFactory: function (factory) {
+        }, getIdentifierFactory: function () {
+        }, parseIdentifier: function (identifier) {
+        }, createIdentifier: function (name, address, terminal) {
+        }, generateIdentifier: function (meta, network, terminal) {
         }
-        var str = Wrapper.fetchString(identifier);
-        var factory = this.getIdentifierFactory();
-        return factory.parseIdentifier(str)
     };
-    GeneralFactory.prototype.createIdentifier = function (name, address, terminal) {
-        var factory = this.getIdentifierFactory();
-        return factory.createIdentifier(name, address, terminal)
-    }
-    GeneralFactory.prototype.generateIdentifier = function (meta, network, terminal) {
-        var factory = this.getIdentifierFactory();
-        return factory.generateIdentifier(meta, network, terminal)
-    };
-    GeneralFactory.prototype.convertIdentifiers = function (members) {
-        var array = [];
-        var id;
-        for (var i = 0; i < members.length; ++i) {
-            id = ID.parse(members[i]);
-            if (id) {
-                array.push(id)
-            }
+    mkm.plugins.MetaHelper = Interface(null, null);
+    var MetaHelper = mkm.plugins.MetaHelper;
+    MetaHelper.prototype = {
+        setMetaFactory: function (type, factory) {
+        }, getMetaFactory: function (type) {
+        }, createMeta: function (type, key, seed, fingerprint) {
+        }, generateMeta: function (type, sKey, seed) {
+        }, parseMeta: function (meta) {
         }
-        return array
-    }
-    GeneralFactory.prototype.revertIdentifiers = function (members) {
-        var array = [];
-        var id;
-        for (var i = 0; i < members.length; ++i) {
-            id = members[i];
-            if (Interface.conforms(id, Stringer)) {
-                array.push(id.toString())
-            } else if (IObject.isString(id)) {
-                array.push(id)
-            }
+    };
+    mkm.plugins.DocumentHelper = Interface(null, null);
+    var DocumentHelper = mkm.plugins.DocumentHelper;
+    DocumentHelper.prototype = {
+        setDocumentFactory: function (type, factory) {
+        }, getDocumentFactory: function (type) {
+        }, createDocument: function (type, identifier, data, signature) {
+        }, parseDocument: function (doc) {
         }
-        return array
     };
-    GeneralFactory.prototype.setMetaFactory = function (type, factory) {
-        this.__metaFactories[type] = factory
-    };
-    GeneralFactory.prototype.getMetaFactory = function (type) {
-        return this.__metaFactories[type]
-    };
-    GeneralFactory.prototype.getMetaType = function (meta, defaultVersion) {
-        var type = meta['type'];
-        return Converter.getString(type, defaultVersion)
-    };
-    GeneralFactory.prototype.createMeta = function (type, key, seed, fingerprint) {
-        var factory = this.getMetaFactory(type);
-        return factory.createMeta(key, seed, fingerprint)
-    };
-    GeneralFactory.prototype.generateMeta = function (type, sKey, seed) {
-        var factory = this.getMetaFactory(type);
-        return factory.generateMeta(sKey, seed)
-    };
-    GeneralFactory.prototype.parseMeta = function (meta) {
-        if (!meta) {
-            return null
-        } else if (Interface.conforms(meta, Meta)) {
-            return meta
+    mkm.plugins.AccountExtensions = {
+        setAddressHelper: function (helper) {
+            addressHelper = helper
+        }, getAddressHelper: function () {
+            return addressHelper
+        }, setIdentifierHelper: function (helper) {
+            idHelper = helper
+        }, getIdentifierHelper: function () {
+            return idHelper
+        }, setMetaHelper: function (helper) {
+            metaHelper = helper
+        }, getMetaHelper: function () {
+            return metaHelper
+        }, setDocumentHelper: function (helper) {
+            docHelper = helper
+        }, getDocumentHelper: function () {
+            return docHelper
         }
-        var info = Wrapper.fetchMap(meta);
-        if (!info) {
-            return null
+    };
+    var AccountExtensions = mkm.plugins.AccountExtensions;
+    var addressHelper = null;
+    var idHelper = null;
+    var metaHelper = null;
+    var docHelper = null;
+    'use strict';
+    mkm.plugins.GeneralAccountHelper = Interface(null, null);
+    var GeneralAccountHelper = mkm.plugins.GeneralAccountHelper;
+    GeneralAccountHelper.prototype = {
+        getMetaType: function (meta, defaultValue) {
+        }, getDocumentType: function (doc, defaultValue) {
         }
-        var type = this.getMetaType(info, '*');
-        var factory = this.getMetaFactory(type);
-        if (!factory) {
-            factory = this.getMetaFactory('*')
+    };
+    mkm.plugins.SharedAccountExtensions = {
+        setAddressHelper: function (helper) {
+            AccountExtensions.setAddressHelper(helper)
+        }, getAddressHelper: function () {
+            return AccountExtensions.getAddressHelper()
+        }, setIdentifierHelper: function (helper) {
+            AccountExtensions.setIdentifierHelper(helper)
+        }, getIdentifierHelper: function () {
+            return AccountExtensions.getIdentifierHelper()
+        }, setMetaHelper: function (helper) {
+            AccountExtensions.setMetaHelper(helper)
+        }, getMetaHelper: function () {
+            return AccountExtensions.getMetaHelper()
+        }, setDocumentHelper: function (helper) {
+            AccountExtensions.setDocumentHelper(helper)
+        }, getDocumentHelper: function () {
+            return AccountExtensions.getDocumentHelper()
+        }, setHelper: function (helper) {
+            accountHelper = helper
+        }, getHelper: function () {
+            return accountHelper
         }
-        return factory.parseMeta(info)
     };
-    GeneralFactory.prototype.setDocumentFactory = function (type, factory) {
-        this.__documentFactories[type] = factory
-    };
-    GeneralFactory.prototype.getDocumentFactory = function (type) {
-        return this.__documentFactories[type]
-    };
-    GeneralFactory.prototype.getDocumentType = function (doc, defaultType) {
-        var type = doc['type'];
-        return Converter.getString(type, defaultType)
-    };
-    GeneralFactory.prototype.createDocument = function (type, identifier, data, signature) {
-        var factory = this.getDocumentFactory(type);
-        return factory.createDocument(identifier, data, signature)
-    };
-    GeneralFactory.prototype.parseDocument = function (doc) {
-        if (!doc) {
-            return null
-        } else if (Interface.conforms(doc, Document)) {
-            return doc
-        }
-        var info = Wrapper.fetchMap(doc);
-        if (!info) {
-            return null
-        }
-        var type = this.getDocumentType(info, '*');
-        var factory = this.getDocumentFactory(type);
-        if (!factory) {
-            factory = this.getDocumentFactory('*')
-        }
-        return factory.parseDocument(info)
-    };
-    var FactoryManager = {generalFactory: new GeneralFactory()};
-    ns.mkm.AccountGeneralFactory = GeneralFactory;
-    ns.mkm.AccountFactoryManager = FactoryManager
-})(MingKeMing);
+    var SharedAccountExtensions = mkm.plugins.SharedAccountExtensions;
+    var accountHelper = null
+})(MingKeMing, MONKEY);

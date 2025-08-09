@@ -3,12 +3,12 @@
 //
 //  Ming-Ke-Ming : Decentralized User Identity Authentication
 //
-//                               Written in 2020 by Moky <albert.moky@gmail.com>
+//                               Written in 2025 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2020 Albert Moky
+// Copyright (c) 2025 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,22 +30,12 @@
 // =============================================================================
 //
 
-//! require <crypto.js>
+var Interface = mk.type.Interface;
+var Class = mk.type.Class;
 
-var mk = MONKEY;
+var IObject = mk.type.Object;
+var Stringer = mk.type.Stringer;
+var Mapper = mk.type.Mapper;
 
-if (typeof MingKeMing !== 'object') {
-    var MingKeMing = {};
-}
-var mkm = MingKeMing;
-
-//-------- namespaces --------
-if (typeof mkm.protocol !== 'object') {
-    mkm.protocol = {};
-}
-if (typeof mkm.mkm !== 'object') {
-    mkm.mkm = {};
-}
-if (typeof mkm.plugins !== 'object') {
-    mkm.plugins = {};
-}
+var Enum = mk.type.Enum;
+var ConstantString = mk.type.ConstantString;

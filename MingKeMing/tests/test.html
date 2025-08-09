@@ -15,8 +15,9 @@
     <script>
         !function (ns) {
             var sources = [
-                'src/namespace.js',
+                'src/requires.js',
 
+                // protocol
                 'src/protocol/entity.js',
                 'src/protocol/address.js',
                 'src/protocol/identifier.js',
@@ -24,15 +25,26 @@
                 'src/protocol/tai.js',
                 'src/protocol/document.js',
 
+                // implementations
                 'src/mkm/broadcast.js',
                 'src/mkm/identifier.js',
-                'src/mkm/factory.js',
+
+                // plugins
+                'src/plugins/account_helpers.js',
+                'src/plugins/account_plugins.js',
                 null
             ];
             var dist = 'dist/mkm.js';
 
             var tests = [
+                '../../Crypto/tests/format/utf8.js',
+                '../../Crypto/tests/format/json.js',
+                '../../Crypto/tests/format/hex.js',
+                '../../Crypto/tests/format/base58.js',
+                '../../Crypto/tests/format/base64.js',
                 '../../Crypto/tests/crypto_tests.js',
+                '../../Crypto/tests/crypto_tests.js',
+
                 'tests/mkm_tests.js',
                 null
             ];
@@ -40,6 +52,7 @@
             var base = window.location.href;
             base = base.substring(0, base.indexOf('tests/test.html'));
             var loader = new Loader(base);
+            loader.importJS('src/namespace.js');
 
             for (var i = 0; i < sources.length; ++i) {
                 loader.importJS(sources[i]);
@@ -77,7 +90,7 @@
     <p class="console">
         <script>
             !(function () {
-                var text = 'cat';
+                var text = 'cat src/ns_begin.closure';
                 var file;
                 for (var i = 0; i < sources.length; ++i) {
                     file = sources[i];
@@ -86,7 +99,7 @@
                     }
                     text += ' ' + file;
                 }
-                text += ' >> ' + dist;
+                text += ' src/ns_end.closure > ' + dist;
                 document.writeln(text);
             }());
         </script>

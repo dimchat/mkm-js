@@ -1,4 +1,4 @@
-;
+'use strict';
 // license: https://mit-license.org
 //
 //  Ming-Ke-Ming : Decentralized User Identity Authentication
@@ -32,11 +32,6 @@
 
 //! require 'entity.js'
 
-(function (ns) {
-    'use strict';
-
-    var Interface = ns.type.Interface;
-    var Stringer  = ns.type.Stringer;
 
     /**
      *  Address for MKM ID
@@ -47,7 +42,8 @@
      *          network - address type
      *          number  - search number
      */
-    var Address = Interface(null, [Stringer]);
+    mkm.protocol.Address = Interface(null, [Stringer]);
+    var Address = mkm.protocol.Address;
 
     /**
      *  get address type
@@ -67,11 +63,6 @@
     //  Factory methods
     //
 
-    var general_factory = function () {
-        var man = ns.mkm.AccountFactoryManager;
-        return man.generalFactory;
-    };
-
     /**
      *  Generate address with meta & network
      *
@@ -80,19 +71,8 @@
      * @return {Address}
      */
     Address.generate = function (meta, network) {
-        var gf = general_factory();
-        return gf.generateAddress(meta, network);
-    };
-
-    /**
-     *  Create address with string
-     *
-     * @param {string} address - address string
-     * @return {Address}
-     */
-    Address.create = function (address) {
-        var gf = general_factory();
-        return gf.createAddress(address);
+        var helper = AccountExtensions.getAddressHelper();
+        return helper.generateAddress(meta, network);
     };
 
     /**
@@ -102,8 +82,8 @@
      * @return {Address}
      */
     Address.parse = function (address) {
-        var gf = general_factory();
-        return gf.parseAddress(address);
+        var helper = AccountExtensions.getAddressHelper();
+        return helper.parseAddress(address);
     };
 
     /**
@@ -112,19 +92,20 @@
      * @param {AddressFactory} factory
      */
     Address.setFactory = function (factory) {
-        var gf = general_factory();
-        gf.setAddressFactory(factory);
+        var helper = AccountExtensions.getAddressHelper();
+        helper.setAddressFactory(factory);
     };
     Address.getFactory = function () {
-        var gf = general_factory();
-        return gf.getAddressFactory();
+        var helper = AccountExtensions.getAddressHelper();
+        return helper.getAddressFactory();
     };
 
     /**
      *  Address Factory
      *  ~~~~~~~~~~~~~~~
      */
-    var AddressFactory = Interface(null, null);
+    Address.Factory = Interface(null, null);
+    var AddressFactory = Address.Factory;
 
     /**
      *  Generate address with meta & type
@@ -136,25 +117,9 @@
     AddressFactory.prototype.generateAddress = function (meta, network) {};
 
     /**
-     *  Create address from string
-     *
-     * @param {string} address - address string
-     * @return {Address}
-     */
-    AddressFactory.prototype.createAddress = function (address) {};
-
-    /**
      *  Parse string object to address
      *
      * @param {string} address - address string
      * @return {Address}
      */
     AddressFactory.prototype.parseAddress = function (address) {};
-
-    Address.Factory = AddressFactory;
-
-    //-------- namespace --------
-    ns.protocol.Address = Address;
-    // ns.protocol.AddressFactory = AddressFactory;
-
-})(MingKeMing);

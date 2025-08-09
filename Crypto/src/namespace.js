@@ -30,6 +30,7 @@ if (typeof MONKEY !== 'object') {
 }
 var mk = MONKEY;
 
+//-------- namespaces --------
 if (typeof mk.type !== 'object') {
     mk.type = {};
 }
