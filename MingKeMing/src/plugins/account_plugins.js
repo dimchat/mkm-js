@@ -32,8 +32,8 @@
 
 
 /**
- *  CryptographyKey GeneralFactory
- *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *  Account GeneralFactory
+ *  ~~~~~~~~~~~~~~~~~~~~~~
  */
 mkm.plugins.GeneralAccountHelper = Interface(null, null);
 var GeneralAccountHelper = mkm.plugins.GeneralAccountHelper;

@@ -9,52 +9,14 @@
     <script src="../libs/loader.js"></script>
     <script src="../libs/runner.js"></script>
     <script src="../libs/utils.js"></script>
+
+    <script src="../src/sources.js"></script>
     <script>
         !function (ns) {
             var sources = [
-                // system types
-                'src/type/class.js',
-                'src/type/object.js',
-                'src/type/converter.js',
-                'src/type/arrays.js',
-                'src/type/enum.js',
-                'src/type/set.js',
-                'src/type/string.js',
-                'src/type/dictionary.js',
-                'src/type/wrapper.js',
-                'src/type/copier.js',
+                'src/requires.js'
+            ].concat(crypto_sources);
 
-                // data digest
-                'src/digest/hash.js',
-                'src/digest/md5.js',
-                'src/digest/sha1.js',
-                'src/digest/sha256.js',
-                'src/digest/ripemd160.js',
-                'src/digest/keccak256.js',
-
-                // data format
-                'src/format/coder.js',
-                'src/format/hex.js',
-                'src/format/base58.js',
-                'src/format/base64.js',
-                'src/format/utf8.js',
-                'src/format/json.js',
-                'src/format/ted.js',
-                'src/format/pnf.js',
-
-                // cryptography
-                'src/crypto/keys.js',
-                'src/crypto/symmetric.js',
-                'src/crypto/public.js',
-                'src/crypto/private.js',
-
-                // plugins
-                'src/plugins/crypto_helpers.js',
-                'src/plugins/crypto_plugins.js',
-                'src/plugins/format_helpers.js',
-                'src/plugins/format_plugins.js',
-                null
-            ];
             var dist = 'dist/crypto.js';
 
             var tests = [
@@ -99,16 +61,19 @@
     <p class="console">
         <script>
             !(function () {
-                var text = 'cat src/ns_begin.closure';
-                var file;
+                var targets = [
+                    'src/ns_begin.closure'
+                ];
                 for (var i = 0; i < sources.length; ++i) {
-                    file = sources[i];
-                    if (!file) {
-                        continue;
+                    var file = sources[i];
+                    if (file) {
+                        targets.push(file);
                     }
-                    text += ' ' + file;
                 }
-                text += ' src/ns_end.closure > ' + dist;
+                targets.push('src/ns_end.closure');
+
+                var text = targets.join(' ');
+                text = 'cat ' + text + ' > ' + dist;
                 document.writeln(text);
             }());
         </script>

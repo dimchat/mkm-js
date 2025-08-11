@@ -96,7 +96,8 @@
 
     /**
      *  Convert Documents to Maps
-     * @param documents
+     * @param {Document[]} documents
+     * @return {*[]}
      */
     Document.revert = function (documents) {
         var array = [];

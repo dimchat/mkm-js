@@ -13,16 +13,6 @@ if (typeof MingKeMing !== 'object') {
 
 (function (mkm, mk) {
 
-    if (typeof mkm.protocol !== 'object') {
-        mkm.protocol = {};
-    }
-    if (typeof mkm.mkm !== 'object') {
-        mkm.mkm = {};
-    }
-    if (typeof mkm.plugins !== 'object') {
-        mkm.plugins = {};
-    }
-
     // ...
 
 // })(MingKeMing, MONKEY);

@@ -12,28 +12,12 @@
 
     <script src="../../Crypto/dist/crypto.js"></script>
 
+    <script src="../src/sources.js"></script>
     <script>
         !function (ns) {
             var sources = [
-                'src/requires.js',
-
-                // protocol
-                'src/protocol/entity.js',
-                'src/protocol/address.js',
-                'src/protocol/identifier.js',
-                'src/protocol/meta.js',
-                'src/protocol/tai.js',
-                'src/protocol/document.js',
-
-                // implementations
-                'src/mkm/broadcast.js',
-                'src/mkm/identifier.js',
-
-                // plugins
-                'src/plugins/account_helpers.js',
-                'src/plugins/account_plugins.js',
-                null
-            ];
+                'src/requires.js'
+            ].concat(mkm_sources);
             var dist = 'dist/mkm.js';
 
             var tests = [
@@ -42,7 +26,6 @@
                 '../../Crypto/tests/format/hex.js',
                 '../../Crypto/tests/format/base58.js',
                 '../../Crypto/tests/format/base64.js',
-                '../../Crypto/tests/crypto_tests.js',
                 '../../Crypto/tests/crypto_tests.js',
 
                 'tests/mkm_tests.js',
@@ -90,16 +73,19 @@
     <p class="console">
         <script>
             !(function () {
-                var text = 'cat src/ns_begin.closure';
-                var file;
+                var targets = [
+                    'src/ns_begin.closure'
+                ];
                 for (var i = 0; i < sources.length; ++i) {
-                    file = sources[i];
-                    if (!file) {
-                        continue;
+                    var file = sources[i];
+                    if (file) {
+                        targets.push(file);
                     }
-                    text += ' ' + file;
                 }
-                text += ' src/ns_end.closure > ' + dist;
+                targets.push('src/ns_end.closure');
+
+                var text = targets.join(' ');
+                text = 'cat ' + text + ' > ' + dist;
                 document.writeln(text);
             }());
         </script>
