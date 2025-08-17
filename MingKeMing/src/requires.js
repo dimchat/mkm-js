@@ -7,8 +7,8 @@ if (typeof mkm.protocol !== 'object') {
 if (typeof mkm.mkm !== 'object') {
     mkm.mkm = {};
 }
-if (typeof mkm.plugins !== 'object') {
-    mkm.plugins = {};
+if (typeof mkm.ext !== 'object') {
+    mkm.ext = {};
 }
 
 //-------- requires --------

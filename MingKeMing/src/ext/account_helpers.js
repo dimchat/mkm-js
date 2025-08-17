@@ -36,8 +36,8 @@
 //! require 'protocol/document.js'
 
 
-mkm.plugins.AddressHelper = Interface(null, null);
-var AddressHelper = mkm.plugins.AddressHelper;
+mkm.ext.AddressHelper = Interface(null, null);
+var AddressHelper = mkm.ext.AddressHelper;
 
 AddressHelper.prototype = {
 
@@ -51,8 +51,8 @@ AddressHelper.prototype = {
 };
 
 
-mkm.plugins.IdentifierHelper = Interface(null, null);
-var IdentifierHelper = mkm.plugins.IdentifierHelper;
+mkm.ext.IdentifierHelper = Interface(null, null);
+var IdentifierHelper = mkm.ext.IdentifierHelper;
 
 IdentifierHelper.prototype = {
 
@@ -68,8 +68,8 @@ IdentifierHelper.prototype = {
 };
 
 
-mkm.plugins.MetaHelper = Interface(null, null);
-var MetaHelper = mkm.plugins.MetaHelper;
+mkm.ext.MetaHelper = Interface(null, null);
+var MetaHelper = mkm.ext.MetaHelper;
 
 MetaHelper.prototype = {
 
@@ -100,8 +100,8 @@ MetaHelper.prototype = {
 };
 
 
-mkm.plugins.DocumentHelper = Interface(null, null);
-var DocumentHelper = mkm.plugins.DocumentHelper;
+mkm.ext.DocumentHelper = Interface(null, null);
+var DocumentHelper = mkm.ext.DocumentHelper;
 
 DocumentHelper.prototype = {
 
@@ -127,7 +127,7 @@ DocumentHelper.prototype = {
  *  Account FactoryManager
  *  ~~~~~~~~~~~~~~~~~~~~~~
  */
-mkm.plugins.AccountExtensions = {
+mkm.ext.AccountExtensions = {
 
     /**
      *  Init address helper
@@ -178,7 +178,7 @@ mkm.plugins.AccountExtensions = {
     }
 
 };
-var AccountExtensions = mkm.plugins.AccountExtensions;
+var AccountExtensions = mkm.ext.AccountExtensions;
 
 var addressHelper = null;
 var idHelper = null;

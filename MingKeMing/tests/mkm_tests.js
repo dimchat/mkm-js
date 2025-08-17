@@ -30,7 +30,7 @@ mkm_tests = [];
 !(function (ns, mk) {
     'use strict';
 
-    var PrivateKey    = mk.crypto.PrivateKey;
+    var PrivateKey    = mk.protocol.PrivateKey;
 
     var EntityType = ns.protocol.EntityType;
     var Meta       = ns.protocol.Meta;

@@ -2,7 +2,7 @@
  * MingKeMing - User Module (v2.0.0)
  *
  * @author    moKy <albert.moky at gmail.com>
- * @date      Aug. 10, 2025
+ * @date      Aug. 17, 2025
  * @copyright (c) 2020-2025 Albert Moky
  * @license   {@link https://mit-license.org | MIT License}
  */;
@@ -10,16 +10,16 @@ if (typeof MingKeMing !== 'object') {
     MingKeMing = {}
 }
 (function (mkm, mk) {
+    'use strict';
     if (typeof mkm.protocol !== 'object') {
         mkm.protocol = {}
     }
     if (typeof mkm.mkm !== 'object') {
         mkm.mkm = {}
     }
-    if (typeof mkm.plugins !== 'object') {
-        mkm.plugins = {}
+    if (typeof mkm.ext !== 'object') {
+        mkm.ext = {}
     }
-    'use strict';
     var Interface = mk.type.Interface;
     var Class = mk.type.Class;
     var IObject = mk.type.Object;
@@ -330,8 +330,8 @@ if (typeof MingKeMing !== 'object') {
     ID.EVERYONE = Identifier.create("everyone", Address.EVERYWHERE, null);
     ID.FOUNDER = Identifier.create("moky", Address.ANYWHERE, null);
     'use strict';
-    mkm.plugins.AddressHelper = Interface(null, null);
-    var AddressHelper = mkm.plugins.AddressHelper;
+    mkm.ext.AddressHelper = Interface(null, null);
+    var AddressHelper = mkm.ext.AddressHelper;
     AddressHelper.prototype = {
         setAddressFactory: function (factory) {
         }, getAddressFactory: function () {
@@ -339,8 +339,8 @@ if (typeof MingKeMing !== 'object') {
         }, generateAddress: function (meta, network) {
         }
     };
-    mkm.plugins.IdentifierHelper = Interface(null, null);
-    var IdentifierHelper = mkm.plugins.IdentifierHelper;
+    mkm.ext.IdentifierHelper = Interface(null, null);
+    var IdentifierHelper = mkm.ext.IdentifierHelper;
     IdentifierHelper.prototype = {
         setIdentifierFactory: function (factory) {
         }, getIdentifierFactory: function () {
@@ -349,8 +349,8 @@ if (typeof MingKeMing !== 'object') {
         }, generateIdentifier: function (meta, network, terminal) {
         }
     };
-    mkm.plugins.MetaHelper = Interface(null, null);
-    var MetaHelper = mkm.plugins.MetaHelper;
+    mkm.ext.MetaHelper = Interface(null, null);
+    var MetaHelper = mkm.ext.MetaHelper;
     MetaHelper.prototype = {
         setMetaFactory: function (type, factory) {
         }, getMetaFactory: function (type) {
@@ -359,8 +359,8 @@ if (typeof MingKeMing !== 'object') {
         }, parseMeta: function (meta) {
         }
     };
-    mkm.plugins.DocumentHelper = Interface(null, null);
-    var DocumentHelper = mkm.plugins.DocumentHelper;
+    mkm.ext.DocumentHelper = Interface(null, null);
+    var DocumentHelper = mkm.ext.DocumentHelper;
     DocumentHelper.prototype = {
         setDocumentFactory: function (type, factory) {
         }, getDocumentFactory: function (type) {
@@ -368,7 +368,7 @@ if (typeof MingKeMing !== 'object') {
         }, parseDocument: function (doc) {
         }
     };
-    mkm.plugins.AccountExtensions = {
+    mkm.ext.AccountExtensions = {
         setAddressHelper: function (helper) {
             addressHelper = helper
         }, getAddressHelper: function () {
@@ -387,20 +387,20 @@ if (typeof MingKeMing !== 'object') {
             return docHelper
         }
     };
-    var AccountExtensions = mkm.plugins.AccountExtensions;
+    var AccountExtensions = mkm.ext.AccountExtensions;
     var addressHelper = null;
     var idHelper = null;
     var metaHelper = null;
     var docHelper = null;
     'use strict';
-    mkm.plugins.GeneralAccountHelper = Interface(null, null);
-    var GeneralAccountHelper = mkm.plugins.GeneralAccountHelper;
+    mkm.ext.GeneralAccountHelper = Interface(null, null);
+    var GeneralAccountHelper = mkm.ext.GeneralAccountHelper;
     GeneralAccountHelper.prototype = {
         getMetaType: function (meta, defaultValue) {
         }, getDocumentType: function (doc, defaultValue) {
         }
     };
-    mkm.plugins.SharedAccountExtensions = {
+    mkm.ext.SharedAccountExtensions = {
         setAddressHelper: function (helper) {
             AccountExtensions.setAddressHelper(helper)
         }, getAddressHelper: function () {
@@ -418,11 +418,11 @@ if (typeof MingKeMing !== 'object') {
         }, getDocumentHelper: function () {
             return AccountExtensions.getDocumentHelper()
         }, setHelper: function (helper) {
-            accountHelper = helper
+            generalAccountHelper = helper
         }, getHelper: function () {
-            return accountHelper
+            return generalAccountHelper
         }
     };
-    var SharedAccountExtensions = mkm.plugins.SharedAccountExtensions;
-    var accountHelper = null
+    var SharedAccountExtensions = mkm.ext.SharedAccountExtensions;
+    var generalAccountHelper = null
 })(MingKeMing, MONKEY);

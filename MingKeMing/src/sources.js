@@ -13,8 +13,8 @@ var mkm_sources = [
     'src/mkm/broadcast.js',
     'src/mkm/identifier.js',
 
-    // plugins
-    'src/plugins/account_helpers.js',
-    'src/plugins/account_plugins.js',
+    // extensions
+    'src/ext/account_helpers.js',
+    'src/ext/account_plugins.js',
     null
 ];

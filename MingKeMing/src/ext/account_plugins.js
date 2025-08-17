@@ -35,8 +35,8 @@
  *  Account GeneralFactory
  *  ~~~~~~~~~~~~~~~~~~~~~~
  */
-mkm.plugins.GeneralAccountHelper = Interface(null, null);
-var GeneralAccountHelper = mkm.plugins.GeneralAccountHelper;
+mkm.ext.GeneralAccountHelper = Interface(null, null);
+var GeneralAccountHelper = mkm.ext.GeneralAccountHelper;
 
 GeneralAccountHelper.prototype = {
 
@@ -44,8 +44,18 @@ GeneralAccountHelper.prototype = {
     //  Algorithm Version
     //
 
+    /**
+     *  Get meta type
+     *
+     * @return {String}
+     */
     getMetaType: function (meta, defaultValue) {},
 
+    /**
+     *  Get document type
+     *
+     * @return {String}
+     */
     getDocumentType: function (doc, defaultValue) {}
 
 };
@@ -55,7 +65,7 @@ GeneralAccountHelper.prototype = {
  *  Account FactoryManager
  *  ~~~~~~~~~~~~~~~~~~~~~~
  */
-mkm.plugins.SharedAccountExtensions = {
+mkm.ext.SharedAccountExtensions = {
 
     //
     //  Address
@@ -101,13 +111,13 @@ mkm.plugins.SharedAccountExtensions = {
     //  General Helper
     //
     setHelper: function (helper) {
-        accountHelper = helper;
+        generalAccountHelper = helper;
     },
     getHelper: function () {
-        return accountHelper;
+        return generalAccountHelper;
     }
 
 };
-var SharedAccountExtensions = mkm.plugins.SharedAccountExtensions;
+var SharedAccountExtensions = mkm.ext.SharedAccountExtensions;
 
-var accountHelper = null;
+var generalAccountHelper = null;
