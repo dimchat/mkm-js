@@ -28,19 +28,20 @@ var crypto_sources = [
     'src/format/base64.js',
     'src/format/utf8.js',
     'src/format/json.js',
-    'src/format/ted.js',
-    'src/format/pnf.js',
 
+    // protocol
+    'src/protocol/ted.js',
+    'src/protocol/pnf.js',
     // cryptography
-    'src/crypto/keys.js',
-    'src/crypto/symmetric.js',
-    'src/crypto/public.js',
-    'src/crypto/private.js',
+    'src/protocol/keys.js',
+    'src/protocol/symmetric.js',
+    'src/protocol/public.js',
+    'src/protocol/private.js',
 
-    // plugins
-    'src/plugins/crypto_helpers.js',
-    'src/plugins/crypto_plugins.js',
-    'src/plugins/format_helpers.js',
-    'src/plugins/format_plugins.js',
+    // extensions
+    'src/ext/crypto_helpers.js',
+    'src/ext/crypto_plugins.js',
+    'src/ext/format_helpers.js',
+    'src/ext/format_plugins.js',
     null
 ];

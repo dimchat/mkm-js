@@ -30,14 +30,20 @@
  *  Format GeneralFactory
  *  ~~~~~~~~~~~~~~~~~~~~~
  */
-mk.plugins.GeneralFormatHelper = Interface(null, null);
-var GeneralFormatHelper = mk.plugins.GeneralFormatHelper;
+mk.ext.GeneralFormatHelper = Interface(null, null);
+var GeneralFormatHelper = mk.ext.GeneralFormatHelper;
 
 GeneralFormatHelper.prototype = {
 
     //
     //  Algorithm
     //
+
+    /**
+     *  Get TED algorithm
+     *
+     * @return {String}
+     */
     getFormatAlgorithm: function (ted, defaultValue) {}
 
 };
@@ -47,7 +53,7 @@ GeneralFormatHelper.prototype = {
  *  Format FactoryManager
  *  ~~~~~~~~~~~~~~~~~~~~~
  */
-mk.plugins.SharedFormatExtensions = {
+mk.ext.SharedFormatExtensions = {
 
     //
     //  TED
@@ -73,13 +79,13 @@ mk.plugins.SharedFormatExtensions = {
     //  General Helper
     //
     setHelper: function (helper) {
-        formatHelper = helper;
+        generalFormatHelper = helper;
     },
     getHelper: function () {
-        return formatHelper;
+        return generalFormatHelper;
     }
 
 };
-var SharedFormatExtensions = mk.plugins.SharedFormatExtensions;
+var SharedFormatExtensions = mk.ext.SharedFormatExtensions;
 
-var formatHelper = null;
+var generalFormatHelper = null;

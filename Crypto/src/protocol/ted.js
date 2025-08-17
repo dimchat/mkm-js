@@ -42,8 +42,8 @@
  *              ...
  *         }
  */
-mk.format.TransportableData = Interface(null, [Mapper]);
-var TransportableData = mk.format.TransportableData;
+mk.protocol.TransportableData = Interface(null, [Mapper]);
+var TransportableData = mk.protocol.TransportableData;
 
 TransportableData.prototype = {
 
@@ -107,7 +107,7 @@ TransportableData.decode = function (encoded) {
 
 TransportableData.create = function (data, algorithm) {
     var helper = FormatExtensions.getTEDHelper();
-    return helper.createTransportableData(algorithm, data);
+    return helper.createTransportableData(data, algorithm);
 };
 
 TransportableData.parse = function (ted) {
@@ -137,7 +137,7 @@ TransportableDataFactory.prototype = {
      *  Create TED
      *
      * @param {Uint8Array} data - original data
-     * @return {mk.format.TransportableData} TED object
+     * @return {mk.protocol.TransportableData} TED object
      */
     createTransportableData: function (data) {},
 
@@ -145,7 +145,7 @@ TransportableDataFactory.prototype = {
      *  Parse map object to TED
      *
      * @param {*} ted - TED info
-     * @return {mk.format.TransportableData} TED object
+     * @return {mk.protocol.TransportableData} TED object
      */
     parseTransportableData: function (ted) {}
 

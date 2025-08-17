@@ -2,7 +2,7 @@
  * Cryptography JavaScript Library (v2.0.0)
  *
  * @author    moKy <albert.moky at gmail.com>
- * @date      Aug. 9, 2025
+ * @date      Aug. 17, 2025
  * @copyright (c) 2020-2025 Albert Moky
  * @license   {@link https://mit-license.org | MIT License}
  */;
@@ -10,6 +10,7 @@ if (typeof MONKEY !== 'object') {
     MONKEY = {}
 }
 (function (mk) {
+    'use strict';
     if (typeof mk.type !== 'object') {
         mk.type = {}
     }
@@ -19,11 +20,11 @@ if (typeof MONKEY !== 'object') {
     if (typeof mk.digest !== 'object') {
         mk.digest = {}
     }
-    if (typeof mk.crypto !== 'object') {
-        mk.crypto = {}
+    if (typeof mk.protocol !== 'object') {
+        mk.protocol = {}
     }
-    if (typeof mk.plugins !== 'object') {
-        mk.plugins = {}
+    if (typeof mk.ext !== 'object') {
+        mk.ext = {}
     }
     'use strict';
     mk.type.Class = function (child, parent, interfaces, methods) {
@@ -164,7 +165,11 @@ if (typeof MONKEY !== 'object') {
         }, getDateTime: function (value, defaultValue) {
         }
     };
-    mk.type.BaseConverter = Class(null, null, [DataConverter], {
+    mk.type.BaseConverter = function () {
+        BaseObject.call(this)
+    };
+    var BaseConverter = mk.type.BaseConverter;
+    Class(BaseConverter, BaseObject, [DataConverter], {
         getDateTime: function (value, defaultValue) {
             if (IObject.isNull(value)) {
                 return defaultValue
@@ -233,7 +238,6 @@ if (typeof MONKEY !== 'object') {
             }
         }
     });
-    var BaseConverter = mk.type.BaseConverter;
     mk.type.Converter = {
         getString: function (value, defaultValue) {
             return this.converter.getString(value, defaultValue)
@@ -938,7 +942,7 @@ if (typeof MONKEY !== 'object') {
     var RIPEMD160 = mk.digest.RIPEMD160;
     var ripemd160Digester = null;
     'use strict';
-    mk.digest.KECCAK256 = {
+    mk.digest.Keccak256 = {
         digest: function (data) {
             return this.getDigester().digest(data)
         }, getDigester: function () {
@@ -947,7 +951,7 @@ if (typeof MONKEY !== 'object') {
             keccak256Digester = digester
         }
     };
-    var KECCAK256 = mk.digest.KECCAK256;
+    var Keccak256 = mk.digest.Keccak256;
     var keccak256Digester = null;
     'use strict';
     mk.format.DataCoder = Interface(null, null);
@@ -1065,8 +1069,8 @@ if (typeof MONKEY !== 'object') {
     };
     var JSONList = mk.format.JSONList;
     'use strict';
-    mk.format.TransportableData = Interface(null, [Mapper]);
-    var TransportableData = mk.format.TransportableData;
+    mk.protocol.TransportableData = Interface(null, [Mapper]);
+    var TransportableData = mk.protocol.TransportableData;
     TransportableData.prototype = {
         getAlgorithm: function () {
         }, getData: function () {
@@ -1087,7 +1091,7 @@ if (typeof MONKEY !== 'object') {
     };
     TransportableData.create = function (data, algorithm) {
         var helper = FormatExtensions.getTEDHelper();
-        return helper.createTransportableData(algorithm, data)
+        return helper.createTransportableData(data, algorithm)
     };
     TransportableData.parse = function (ted) {
         var helper = FormatExtensions.getTEDHelper();
@@ -1109,8 +1113,8 @@ if (typeof MONKEY !== 'object') {
         }
     };
     'use strict';
-    mk.format.PortableNetworkFile = Interface(null, [Mapper]);
-    var PortableNetworkFile = mk.format.PortableNetworkFile;
+    mk.protocol.PortableNetworkFile = Interface(null, [Mapper]);
+    var PortableNetworkFile = mk.protocol.PortableNetworkFile;
     PortableNetworkFile.prototype = {
         setData: function (fileData) {
         }, getData: function () {
@@ -1154,44 +1158,44 @@ if (typeof MONKEY !== 'object') {
         }
     };
     'use strict';
-    mk.crypto.CryptographyKey = Interface(null, [Mapper]);
-    var CryptographyKey = mk.crypto.CryptographyKey;
+    mk.protocol.CryptographyKey = Interface(null, [Mapper]);
+    var CryptographyKey = mk.protocol.CryptographyKey;
     CryptographyKey.prototype = {
         getAlgorithm: function () {
         }, getData: function () {
         }
     };
-    mk.crypto.EncryptKey = Interface(null, [CryptographyKey]);
-    var EncryptKey = mk.crypto.EncryptKey;
+    mk.protocol.EncryptKey = Interface(null, [CryptographyKey]);
+    var EncryptKey = mk.protocol.EncryptKey;
     EncryptKey.prototype = {
         encrypt: function (plaintext, extra) {
         }
     };
-    mk.crypto.DecryptKey = Interface(null, [CryptographyKey]);
-    var DecryptKey = mk.crypto.DecryptKey;
+    mk.protocol.DecryptKey = Interface(null, [CryptographyKey]);
+    var DecryptKey = mk.protocol.DecryptKey;
     DecryptKey.prototype = {
         decrypt: function (ciphertext, params) {
         }, matchEncryptKey: function (pKey) {
         }
     };
-    mk.crypto.AsymmetricKey = Interface(null, [CryptographyKey]);
-    var AsymmetricKey = mk.crypto.AsymmetricKey;
-    mk.crypto.SignKey = Interface(null, [AsymmetricKey]);
-    var SignKey = mk.crypto.SignKey;
+    mk.protocol.AsymmetricKey = Interface(null, [CryptographyKey]);
+    var AsymmetricKey = mk.protocol.AsymmetricKey;
+    mk.protocol.SignKey = Interface(null, [AsymmetricKey]);
+    var SignKey = mk.protocol.SignKey;
     SignKey.prototype = {
         sign: function (data) {
         }
     };
-    mk.crypto.VerifyKey = Interface(null, [AsymmetricKey]);
-    var VerifyKey = mk.crypto.VerifyKey;
+    mk.protocol.VerifyKey = Interface(null, [AsymmetricKey]);
+    var VerifyKey = mk.protocol.VerifyKey;
     VerifyKey.prototype = {
         verify: function (data, signature) {
         }, matchSignKey: function (sKey) {
         }
     };
     'use strict';
-    mk.crypto.SymmetricKey = Interface(null, [EncryptKey, DecryptKey]);
-    var SymmetricKey = mk.crypto.SymmetricKey;
+    mk.protocol.SymmetricKey = Interface(null, [EncryptKey, DecryptKey]);
+    var SymmetricKey = mk.protocol.SymmetricKey;
     SymmetricKey.generate = function (algorithm) {
         var helper = CryptoExtensions.getSymmetricHelper();
         return helper.generateSymmetricKey(algorithm)
@@ -1216,8 +1220,8 @@ if (typeof MONKEY !== 'object') {
         }
     };
     'use strict';
-    mk.crypto.PublicKey = Interface(null, [VerifyKey]);
-    var PublicKey = mk.crypto.PublicKey;
+    mk.protocol.PublicKey = Interface(null, [VerifyKey]);
+    var PublicKey = mk.protocol.PublicKey;
     PublicKey.parse = function (key) {
         var helper = CryptoExtensions.getPublicHelper();
         return helper.parsePublicKey(key)
@@ -1237,8 +1241,8 @@ if (typeof MONKEY !== 'object') {
         }
     };
     'use strict';
-    mk.crypto.PrivateKey = Interface(null, [SignKey]);
-    var PrivateKey = mk.crypto.PrivateKey;
+    mk.protocol.PrivateKey = Interface(null, [SignKey]);
+    var PrivateKey = mk.protocol.PrivateKey;
     PrivateKey.prototype = {
         getPublicKey: function () {
         }
@@ -1267,16 +1271,16 @@ if (typeof MONKEY !== 'object') {
         }
     };
     'use strict';
-    mk.plugins.PublicKeyHelper = Interface(null, null);
-    var PublicKeyHelper = mk.plugins.PublicKeyHelper;
+    mk.ext.PublicKeyHelper = Interface(null, null);
+    var PublicKeyHelper = mk.ext.PublicKeyHelper;
     PublicKeyHelper.prototype = {
         setPublicKeyFactory: function (algorithm, factory) {
         }, getPublicKeyFactory: function (algorithm) {
         }, parsePublicKey: function (key) {
         }
     };
-    mk.plugins.PrivateKeyHelper = Interface(null, null);
-    var PrivateKeyHelper = mk.plugins.PrivateKeyHelper;
+    mk.ext.PrivateKeyHelper = Interface(null, null);
+    var PrivateKeyHelper = mk.ext.PrivateKeyHelper;
     PrivateKeyHelper.prototype = {
         setPrivateKeyFactory: function (algorithm, factory) {
         }, getPrivateKeyFactory: function (algorithm) {
@@ -1284,8 +1288,8 @@ if (typeof MONKEY !== 'object') {
         }, parsePrivateKey: function (key) {
         }
     };
-    mk.plugins.SymmetricKeyHelper = Interface(null, null);
-    var SymmetricKeyHelper = mk.plugins.SymmetricKeyHelper;
+    mk.ext.SymmetricKeyHelper = Interface(null, null);
+    var SymmetricKeyHelper = mk.ext.SymmetricKeyHelper;
     SymmetricKeyHelper.prototype = {
         setSymmetricKeyFactory: function (algorithm, factory) {
         }, getSymmetricKeyFactory: function (algorithm) {
@@ -1293,7 +1297,7 @@ if (typeof MONKEY !== 'object') {
         }, parseSymmetricKey: function (key) {
         }
     };
-    mk.plugins.CryptoExtensions = {
+    mk.ext.CryptoExtensions = {
         setPublicHelper: function (helper) {
             publicHelper = helper
         }, getPublicHelper: function () {
@@ -1308,13 +1312,13 @@ if (typeof MONKEY !== 'object') {
             return symmetricHelper
         }
     };
-    var CryptoExtensions = mk.plugins.CryptoExtensions;
+    var CryptoExtensions = mk.ext.CryptoExtensions;
     var publicHelper = null;
     var privateHelper = null;
     var symmetricHelper = null;
     'use strict';
-    mk.plugins.GeneralCryptoHelper = Interface(null, null);
-    var GeneralCryptoHelper = mk.plugins.GeneralCryptoHelper;
+    mk.ext.GeneralCryptoHelper = Interface(null, null);
+    var GeneralCryptoHelper = mk.ext.GeneralCryptoHelper;
     GeneralCryptoHelper.prototype = {
         getKeyAlgorithm: function (key, defaultValue) {
         }
@@ -1342,7 +1346,7 @@ if (typeof MONKEY !== 'object') {
         var plaintext = decKey.decrypt(ciphertext, params);
         return plaintext && Arrays.equals(plaintext, promise)
     };
-    mk.plugins.SharedCryptoExtensions = {
+    mk.ext.SharedCryptoExtensions = {
         setPublicHelper: function (helper) {
             CryptoExtensions.setPublicHelper(helper)
         }, getPublicHelper: function () {
@@ -1356,16 +1360,16 @@ if (typeof MONKEY !== 'object') {
         }, getSymmetricHelper: function () {
             return CryptoExtensions.getSymmetricHelper()
         }, setHelper: function (helper) {
-            cryptoHelper = helper
+            generalCryptoHelper = helper
         }, getHelper: function () {
-            return cryptoHelper
+            return generalCryptoHelper
         }
     };
-    var SharedCryptoExtensions = mk.plugins.SharedCryptoExtensions;
-    var cryptoHelper = null;
+    var SharedCryptoExtensions = mk.ext.SharedCryptoExtensions;
+    var generalCryptoHelper = null;
     'use strict';
-    mk.plugins.TransportableDataHelper = Interface(null, null);
-    var TransportableDataHelper = mk.plugins.TransportableDataHelper;
+    mk.ext.TransportableDataHelper = Interface(null, null);
+    var TransportableDataHelper = mk.ext.TransportableDataHelper;
     TransportableDataHelper.prototype = {
         setTransportableDataFactory: function (algorithm, factory) {
         }, getTransportableDataFactory: function (algorithm) {
@@ -1373,8 +1377,8 @@ if (typeof MONKEY !== 'object') {
         }, parseTransportableData: function (ted) {
         }
     };
-    mk.plugins.PortableNetworkFileHelper = Interface(null, null);
-    var PortableNetworkFileHelper = mk.plugins.PortableNetworkFileHelper;
+    mk.ext.PortableNetworkFileHelper = Interface(null, null);
+    var PortableNetworkFileHelper = mk.ext.PortableNetworkFileHelper;
     PortableNetworkFileHelper.prototype = {
         setPortableNetworkFileFactory: function (factory) {
         }, getPortableNetworkFileFactory: function () {
@@ -1382,7 +1386,7 @@ if (typeof MONKEY !== 'object') {
         }, parsePortableNetworkFile: function (pnf) {
         }
     };
-    mk.plugins.FormatExtensions = {
+    mk.ext.FormatExtensions = {
         setTEDHelper: function (helper) {
             tedHelper = helper
         }, getTEDHelper: function () {
@@ -1393,17 +1397,17 @@ if (typeof MONKEY !== 'object') {
             return pnfHelper
         }
     };
-    var FormatExtensions = mk.plugins.FormatExtensions;
+    var FormatExtensions = mk.ext.FormatExtensions;
     var tedHelper = null;
     var pnfHelper = null;
     'use strict';
-    mk.plugins.GeneralFormatHelper = Interface(null, null);
-    var GeneralFormatHelper = mk.plugins.GeneralFormatHelper;
+    mk.ext.GeneralFormatHelper = Interface(null, null);
+    var GeneralFormatHelper = mk.ext.GeneralFormatHelper;
     GeneralFormatHelper.prototype = {
         getFormatAlgorithm: function (ted, defaultValue) {
         }
     };
-    mk.plugins.SharedFormatExtensions = {
+    mk.ext.SharedFormatExtensions = {
         setTEDHelper: function (helper) {
             FormatExtensions.setTEDHelper(helper)
         }, getTEDHelper: function () {
@@ -1413,11 +1417,11 @@ if (typeof MONKEY !== 'object') {
         }, getPNFHelper: function () {
             return FormatExtensions.getPNFHelper()
         }, setHelper: function (helper) {
-            formatHelper = helper
+            generalFormatHelper = helper
         }, getHelper: function () {
-            return formatHelper
+            return generalFormatHelper
         }
     };
-    var SharedFormatExtensions = mk.plugins.SharedFormatExtensions;
-    var formatHelper = null
+    var SharedFormatExtensions = mk.ext.SharedFormatExtensions;
+    var generalFormatHelper = null
 })(MONKEY);

@@ -25,13 +25,13 @@
 // =============================================================================
 //
 
-//! require 'crypto/keys.js'
+//! require 'protocol/keys.js'
 //! require 'format/ted.js'
 //! require 'format/pnf.js'
 
 
-mk.plugins.TransportableDataHelper = Interface(null, null);
-var TransportableDataHelper = mk.plugins.TransportableDataHelper;
+mk.ext.TransportableDataHelper = Interface(null, null);
+var TransportableDataHelper = mk.ext.TransportableDataHelper;
 
 TransportableDataHelper.prototype = {
 
@@ -45,8 +45,8 @@ TransportableDataHelper.prototype = {
 };
 
 
-mk.plugins.PortableNetworkFileHelper = Interface(null, null);
-var PortableNetworkFileHelper = mk.plugins.PortableNetworkFileHelper;
+mk.ext.PortableNetworkFileHelper = Interface(null, null);
+var PortableNetworkFileHelper = mk.ext.PortableNetworkFileHelper;
 
 PortableNetworkFileHelper.prototype = {
 
@@ -64,7 +64,7 @@ PortableNetworkFileHelper.prototype = {
  *  Format FactoryManager
  *  ~~~~~~~~~~~~~~~~~~~~~
  */
-mk.plugins.FormatExtensions = {
+mk.ext.FormatExtensions = {
 
     /**
      *  Init TED helper
@@ -91,7 +91,7 @@ mk.plugins.FormatExtensions = {
     }
 
 };
-var FormatExtensions = mk.plugins.FormatExtensions;
+var FormatExtensions = mk.ext.FormatExtensions;
 
 var tedHelper = null;
 var pnfHelper = null;

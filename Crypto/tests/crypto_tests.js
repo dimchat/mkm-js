@@ -308,9 +308,9 @@ crypto_tests = [];
     var Arrays = ns.type.Arrays;
     var ConstantString = ns.type.ConstantString;
 
-    var AsymmetricKey = ns.crypto.AsymmetricKey;
-    var PrivateKey = ns.crypto.PrivateKey;
-    var PublicKey = ns.crypto.PublicKey;
+    var AsymmetricKey = ns.protocol.AsymmetricKey;
+    var PrivateKey = ns.protocol.PrivateKey;
+    var PublicKey = ns.protocol.PublicKey;
 
     var str = new ConstantString('moky');
     var bytes = UTF8.encode(str.toString());
@@ -406,7 +406,7 @@ crypto_tests = [];
     var Arrays = ns.type.Arrays;
     var ConstantString = ns.type.ConstantString;
 
-    var SymmetricKey = ns.crypto.SymmetricKey;
+    var SymmetricKey = ns.protocol.SymmetricKey;
 
     var str = new ConstantString('moky');
     var bytes = UTF8.encode(str.toString());

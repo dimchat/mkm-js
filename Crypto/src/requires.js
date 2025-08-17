@@ -10,9 +10,10 @@ if (typeof mk.format !== 'object') {
 if (typeof mk.digest !== 'object') {
     mk.digest = {};
 }
-if (typeof mk.crypto !== 'object') {
-    mk.crypto = {};
+
+if (typeof mk.protocol !== 'object') {
+    mk.protocol = {};
 }
-if (typeof mk.plugins !== 'object') {
-    mk.plugins = {};
+if (typeof mk.ext !== 'object') {
+    mk.ext = {};
 }

@@ -27,7 +27,7 @@
 
 //! require 'hash.js'
 
-mk.digest.KECCAK256 = {
+mk.digest.Keccak256 = {
 
     /**
      *  Get digest of binary data
@@ -56,7 +56,7 @@ mk.digest.KECCAK256 = {
         keccak256Digester = digester;
     }
 };
-var KECCAK256 = mk.digest.KECCAK256;
+var Keccak256 = mk.digest.Keccak256;
 
 // Singleton
 var keccak256Digester = null;

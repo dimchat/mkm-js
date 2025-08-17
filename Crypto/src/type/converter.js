@@ -52,7 +52,12 @@ DataConverter.prototype = {
 /**
  *  Default Data Converter
  */
-mk.type.BaseConverter = Class(null, null, [DataConverter], {
+mk.type.BaseConverter = function () {
+    BaseObject.call(this);
+};
+var BaseConverter = mk.type.BaseConverter;
+
+Class(BaseConverter, BaseObject, [DataConverter], {
 
     // Override
     getDateTime: function (value, defaultValue) {
@@ -148,7 +153,6 @@ mk.type.BaseConverter = Class(null, null, [DataConverter], {
         }
     }
 });
-var BaseConverter = mk.type.BaseConverter;
 
 /**
  *  Data Convert Interface

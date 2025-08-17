@@ -40,8 +40,8 @@
  *      ...
  *  }
  */
-mk.crypto.CryptographyKey = Interface(null, [Mapper]);
-var CryptographyKey = mk.crypto.CryptographyKey;
+mk.protocol.CryptographyKey = Interface(null, [Mapper]);
+var CryptographyKey = mk.protocol.CryptographyKey;
 
 CryptographyKey.prototype = {
 
@@ -61,8 +61,8 @@ CryptographyKey.prototype = {
 
 };
 
-mk.crypto.EncryptKey = Interface(null, [CryptographyKey]);
-var EncryptKey = mk.crypto.EncryptKey;
+mk.protocol.EncryptKey = Interface(null, [CryptographyKey]);
+var EncryptKey = mk.protocol.EncryptKey;
 
 EncryptKey.prototype = {
 
@@ -80,8 +80,8 @@ EncryptKey.prototype = {
 
 };
 
-mk.crypto.DecryptKey = Interface(null, [CryptographyKey]);
-var DecryptKey = mk.crypto.DecryptKey;
+mk.protocol.DecryptKey = Interface(null, [CryptographyKey]);
+var DecryptKey = mk.protocol.DecryptKey;
 
 DecryptKey.prototype = {
 
@@ -100,7 +100,7 @@ DecryptKey.prototype = {
     /**
      *  OK = decrypt(encrypt(data, SK), PK) == data
      *
-     * @param {mk.crypto.EncryptKey} pKey - encrypt key
+     * @param {mk.protocol.EncryptKey} pKey - encrypt key
      * @return {boolean} true on signature matched
      */
     matchEncryptKey: function (pKey) {}
@@ -118,14 +118,14 @@ DecryptKey.prototype = {
  *      ...
  *  }
  */
-mk.crypto.AsymmetricKey = Interface(null, [CryptographyKey]);
-var AsymmetricKey = mk.crypto.AsymmetricKey;
+mk.protocol.AsymmetricKey = Interface(null, [CryptographyKey]);
+var AsymmetricKey = mk.protocol.AsymmetricKey;
 
 // AsymmetricKey.RSA = 'RSA'; //-- "RSA/ECB/PKCS1Padding", "SHA256withRSA"
 // AsymmetricKey.ECC = 'ECC';
 
-mk.crypto.SignKey = Interface(null, [AsymmetricKey]);
-var SignKey = mk.crypto.SignKey;
+mk.protocol.SignKey = Interface(null, [AsymmetricKey]);
+var SignKey = mk.protocol.SignKey;
 
 SignKey.prototype = {
 
@@ -139,8 +139,8 @@ SignKey.prototype = {
 
 };
 
-mk.crypto.VerifyKey = Interface(null, [AsymmetricKey]);
-var VerifyKey = mk.crypto.VerifyKey;
+mk.protocol.VerifyKey = Interface(null, [AsymmetricKey]);
+var VerifyKey = mk.protocol.VerifyKey;
 
 VerifyKey.prototype = {
 

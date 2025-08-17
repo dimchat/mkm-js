@@ -25,13 +25,13 @@
 // =============================================================================
 //
 
-//! require 'crypto/public.js'
-//! require 'crypto/private.js'
-//! require 'crypto/symmetric.js'
+//! require 'protocol/public.js'
+//! require 'protocol/private.js'
+//! require 'protocol/symmetric.js'
 
 
-mk.plugins.PublicKeyHelper = Interface(null, null);
-var PublicKeyHelper = mk.plugins.PublicKeyHelper;
+mk.ext.PublicKeyHelper = Interface(null, null);
+var PublicKeyHelper = mk.ext.PublicKeyHelper;
 
 PublicKeyHelper.prototype = {
 
@@ -43,8 +43,8 @@ PublicKeyHelper.prototype = {
 };
 
 
-mk.plugins.PrivateKeyHelper = Interface(null, null);
-var PrivateKeyHelper = mk.plugins.PrivateKeyHelper;
+mk.ext.PrivateKeyHelper = Interface(null, null);
+var PrivateKeyHelper = mk.ext.PrivateKeyHelper;
 
 PrivateKeyHelper.prototype = {
 
@@ -58,8 +58,8 @@ PrivateKeyHelper.prototype = {
 };
 
 
-mk.plugins.SymmetricKeyHelper = Interface(null, null);
-var SymmetricKeyHelper = mk.plugins.SymmetricKeyHelper;
+mk.ext.SymmetricKeyHelper = Interface(null, null);
+var SymmetricKeyHelper = mk.ext.SymmetricKeyHelper;
 
 SymmetricKeyHelper.prototype = {
 
@@ -77,7 +77,7 @@ SymmetricKeyHelper.prototype = {
  *  CryptographyKey FactoryManager
  *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
-mk.plugins.CryptoExtensions = {
+mk.ext.CryptoExtensions = {
 
     /**
      *  Init public key helper
@@ -116,7 +116,7 @@ mk.plugins.CryptoExtensions = {
     }
 
 };
-var CryptoExtensions = mk.plugins.CryptoExtensions;
+var CryptoExtensions = mk.ext.CryptoExtensions;
 
 var publicHelper = null;
 var privateHelper = null;

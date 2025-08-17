@@ -30,14 +30,20 @@
  *  CryptographyKey GeneralFactory
  *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
-mk.plugins.GeneralCryptoHelper = Interface(null, null);
-var GeneralCryptoHelper = mk.plugins.GeneralCryptoHelper;
+mk.ext.GeneralCryptoHelper = Interface(null, null);
+var GeneralCryptoHelper = mk.ext.GeneralCryptoHelper;
 
 GeneralCryptoHelper.prototype = {
 
     //
     //  Algorithm
     //
+
+    /**
+     *  Get crypto algorithm
+     *
+     * @return {String}
+     */
     getKeyAlgorithm: function (key, defaultValue) {}
 
 };
@@ -61,8 +67,8 @@ var sample_data = function () {
 /**
  *  Compare asymmetric keys
  *
- * @param {mk.crypto.SignKey} sKey
- * @param {mk.crypto.VerifyKey} pKey
+ * @param {mk.protocol.SignKey} sKey
+ * @param {mk.protocol.VerifyKey} pKey
  * @return true on signature matched
  */
 GeneralCryptoHelper.matchAsymmetricKeys = function (sKey, pKey) {
@@ -75,8 +81,8 @@ GeneralCryptoHelper.matchAsymmetricKeys = function (sKey, pKey) {
 /**
  *  Compare symmetric keys
  *
- * @param {mk.crypto.EncryptKey} encKey
- * @param {mk.crypto.DecryptKey} decKey
+ * @param {mk.protocol.EncryptKey} encKey
+ * @param {mk.protocol.DecryptKey} decKey
  */
 GeneralCryptoHelper.matchSymmetricKeys = function (encKey, decKey) {
     var promise = sample_data();
@@ -92,7 +98,7 @@ GeneralCryptoHelper.matchSymmetricKeys = function (encKey, decKey) {
  *  CryptographyKey FactoryManager
  *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
-mk.plugins.SharedCryptoExtensions = {
+mk.ext.SharedCryptoExtensions = {
 
     //
     //  Public Key
@@ -128,13 +134,13 @@ mk.plugins.SharedCryptoExtensions = {
     //  General Helper
     //
     setHelper: function (helper) {
-        cryptoHelper = helper;
+        generalCryptoHelper = helper;
     },
     getHelper: function () {
-        return cryptoHelper;
+        return generalCryptoHelper;
     }
 
 };
-var SharedCryptoExtensions = mk.plugins.SharedCryptoExtensions;
+var SharedCryptoExtensions = mk.ext.SharedCryptoExtensions;
 
-var cryptoHelper = null;
+var generalCryptoHelper = null;

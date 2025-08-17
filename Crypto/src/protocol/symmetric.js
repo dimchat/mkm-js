@@ -29,32 +29,21 @@
 
 //! require 'keys.js'
 
-/** Asymmetric Cryptography Private Key
- *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- *  This class is used to decrypt symmetric key or sign message data
+/** Symmetric Cryptography Key
+ *  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *  This class is used to encrypt or decrypt message data
  *
  *  key data format: {
- *      algorithm : "RSA", // "ECC", ...
+ *      algorithm : "AES", // "DES", ...
  *      data      : "{BASE64_ENCODE}",
  *      ...
  *  }
  */
-mk.crypto.PrivateKey = Interface(null, [SignKey]);
-var PrivateKey = mk.crypto.PrivateKey;
+mk.protocol.SymmetricKey = Interface(null, [EncryptKey, DecryptKey]);
+var SymmetricKey = mk.protocol.SymmetricKey;
 
-PrivateKey.prototype = {
-
-    /**
-     *  Create public key from this private key
-     *
-     * @return {mk.crypto.PublicKey}
-     */
-    getPublicKey: function () {}
-
-};
-
-// PrivateKey.RSA = AsymmetricKey.RSA;
-// PrivateKey.ECC = AsymmetricKey.ECC;
+// SymmetricKey.AES = 'AES'; //-- "AES/CBC/PKCS7Padding"
+// SymmetricKey.DES = 'DES';
 
 //
 //  Factory methods
@@ -63,64 +52,62 @@ PrivateKey.prototype = {
 /**
  *  Generate key with algorithm name
  *
- * @param {string} algorithm - algorithm name ('RSA', 'ECC')
- * @return {mk.crypto.PrivateKey}
+ * @param {string} algorithm - algorithm name ('AES')
+ * @return {mk.protocol.SymmetricKey}
  */
-PrivateKey.generate = function (algorithm) {
-    var helper = CryptoExtensions.getPrivateHelper();
-    return helper.generatePrivateKey(algorithm);
+SymmetricKey.generate = function (algorithm) {
+    var helper = CryptoExtensions.getSymmetricHelper();
+    return helper.generateSymmetricKey(algorithm);
 };
 
 /**
  *  Parse map object to key
  *
  * @param {*} key - key info
- * @return {mk.crypto.PrivateKey}
+ * @return {mk.protocol.SymmetricKey}
  */
-PrivateKey.parse = function (key) {
-    var helper = CryptoExtensions.getPrivateHelper();
-    return helper.parsePrivateKey(key);
+SymmetricKey.parse = function (key) {
+    var helper = CryptoExtensions.getSymmetricHelper();
+    return helper.parseSymmetricKey(key);
 };
 
 /**
- *  Register private key factory with algorithm
+ *  Register symmetric key factory with algorithm
  *
  * @param {string} algorithm
- * @param {mk.crypto.PrivateKey.Factory} factory
+ * @param {mk.protocol.SymmetricKey.Factory} factory
  */
-PrivateKey.setFactory = function (algorithm, factory) {
-    var helper = CryptoExtensions.getPrivateHelper();
-    helper.setPrivateKeyFactory(algorithm, factory);
+SymmetricKey.setFactory = function (algorithm, factory) {
+    var helper = CryptoExtensions.getSymmetricHelper();
+    helper.setSymmetricKeyFactory(algorithm, factory);
 };
-PrivateKey.getFactory = function (algorithm) {
-    var helper = CryptoExtensions.getPrivateHelper();
-    return helper.getPrivateKeyFactory(algorithm);
+SymmetricKey.getFactory = function (algorithm) {
+    var helper = CryptoExtensions.getSymmetricHelper();
+    return helper.getSymmetricKeyFactory(algorithm);
 };
-
 
 /**
- *  Private Key Factory
- *  ~~~~~~~~~~~~~~~~~~~
+ *  Symmetric Key Factory
+ *  ~~~~~~~~~~~~~~~~~~~~~
  */
-PrivateKey.Factory = Interface(null, null);
-var PrivateKeyFactory = PrivateKey.Factory;
+SymmetricKey.Factory = Interface(null, null);
+var SymmetricKeyFactory = SymmetricKey.Factory;
 
-PrivateKeyFactory.prototype = {
+SymmetricKeyFactory.prototype = {
 
     /**
      *  Generate key
      *
-     * @return {mk.crypto.PrivateKey}
+     * @return {mk.protocol.SymmetricKey}
      */
-    generatePrivateKey: function () {},
-
+    generateSymmetricKey: function () {},
 
     /**
      *  Parse map object to key
      *
      * @param {*} key - key info
-     * @return {mk.crypto.PrivateKey}
+     * @return {mk.protocol.SymmetricKey}
      */
-    parsePrivateKey: function (key) {}
+    parseSymmetricKey: function (key) {}
 
 };

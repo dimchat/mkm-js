@@ -52,8 +52,8 @@
  *              }
  *         }
  */
-mk.format.PortableNetworkFile = Interface(null, [Mapper]);
-var PortableNetworkFile = mk.format.PortableNetworkFile;
+mk.protocol.PortableNetworkFile = Interface(null, [Mapper]);
+var PortableNetworkFile = mk.protocol.PortableNetworkFile;
 
 PortableNetworkFile.prototype = {
 
@@ -86,7 +86,7 @@ PortableNetworkFile.prototype = {
      *  Password for decrypting the downloaded data from CDN,
      *  default is a plain key, which just return the same data when decrypting.
      *
-     * @param {mk.crypto.DecryptKey} key
+     * @param {mk.protocol.DecryptKey} key
      */
     setPassword: function (key) {},
     getPassword: function () {},
@@ -155,7 +155,7 @@ PortableNetworkFileFactory.prototype = {
      * @param {String} filename       - file name
      * @param {URL} url               - download URL
      * @param {DecryptKey} password   - decrypt key for downloaded data
-     * @return {mk.format.PortableNetworkFile} PNF object
+     * @return {mk.protocol.PortableNetworkFile} PNF object
      */
     createPortableNetworkFile: function (ted, filename, url, password) {},
 
@@ -163,7 +163,7 @@ PortableNetworkFileFactory.prototype = {
      *  Parse map object to PNF
      *
      * @param {*} pnf - PNF info
-     * @return {mk.format.PortableNetworkFile} PNF object
+     * @return {mk.protocol.PortableNetworkFile} PNF object
      */
     parsePortableNetworkFile: function (pnf) {}
 

@@ -38,8 +38,8 @@
  *      ...
  *  }
  */
-mk.crypto.PublicKey = Interface(null, [VerifyKey]);
-var PublicKey = mk.crypto.PublicKey;
+mk.protocol.PublicKey = Interface(null, [VerifyKey]);
+var PublicKey = mk.protocol.PublicKey;
 
 // PublicKey.RSA = AsymmetricKey.RSA;
 // PublicKey.ECC = AsymmetricKey.ECC;
@@ -52,7 +52,7 @@ var PublicKey = mk.crypto.PublicKey;
  *  Parse map object to key
  *
  * @param {*} key - key info
- * @return {mk.crypto.PublicKey}
+ * @return {mk.protocol.PublicKey}
  */
 PublicKey.parse = function (key) {
     var helper = CryptoExtensions.getPublicHelper();
@@ -63,7 +63,7 @@ PublicKey.parse = function (key) {
  *  Register public key factory with algorithm
  *
  * @param {string} algorithm
- * @param {mk.crypto.PublicKey.Factory} factory
+ * @param {mk.protocol.PublicKey.Factory} factory
  */
 PublicKey.setFactory = function (algorithm, factory) {
     var helper = CryptoExtensions.getPublicHelper();
@@ -87,7 +87,7 @@ PublicKeyFactory.prototype = {
      *  Parse map object to key
      *
      * @param {*} key - key info
-     * @return {mk.crypto.PublicKey}
+     * @return {mk.protocol.PublicKey}
      */
     parsePublicKey: function (key) {}
 
