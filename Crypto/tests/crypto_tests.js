@@ -1,9 +1,9 @@
-;
+'use strict';
 
 //
 //  Test Cases
 //
-crypto_tests = [];
+var crypto_tests = [];
 
 (function (ns) {
     'use strict';
@@ -308,6 +308,7 @@ crypto_tests = [];
     var Arrays = ns.type.Arrays;
     var ConstantString = ns.type.ConstantString;
 
+    var AsymmetricAlgorithms = ns.protocol.AsymmetricAlgorithms;
     var AsymmetricKey = ns.protocol.AsymmetricKey;
     var PrivateKey = ns.protocol.PrivateKey;
     var PublicKey = ns.protocol.PublicKey;
@@ -316,7 +317,7 @@ crypto_tests = [];
     var bytes = UTF8.encode(str.toString());
 
     var test_rsa = function () {
-        var SK = PrivateKey.generate(AsymmetricKey.RSA);
+        var SK = PrivateKey.generate(AsymmetricAlgorithms.RSA);
         var PK = SK.getPublicKey();
         var extra_params = {};
         // test encryption
@@ -329,7 +330,7 @@ crypto_tests = [];
 
         // test with key data
         var key = {
-            algorithm: AsymmetricKey.RSA,
+            algorithm: AsymmetricAlgorithms.RSA,
             data: "-----BEGIN PUBLIC KEY-----\n"
                 + "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDET7fvLupUBUc6ImwJejColybq\n"
                 + "rU+Y6PwiCKhblGbwVqbvapD2A1hjEu4EtL6mm3v7hcgsO3Df33/ShRua6GW9/JQV\n"
@@ -340,7 +341,7 @@ crypto_tests = [];
         PK = PublicKey.parse(key);
 
         key = {
-            algorithm: AsymmetricKey.RSA,
+            algorithm: AsymmetricAlgorithms.RSA,
             data: "-----BEGIN RSA PRIVATE KEY-----\n"
                 + "MIICXAIBAAKBgQDET7fvLupUBUc6ImwJejColybqrU+Y6PwiCKhblGbwVqbvapD2\n"
                 + "A1hjEu4EtL6mm3v7hcgsO3Df33/ShRua6GW9/JQVDLfdznLfuTg8w5Ug+dysJfbr\n"
@@ -406,13 +407,14 @@ crypto_tests = [];
     var Arrays = ns.type.Arrays;
     var ConstantString = ns.type.ConstantString;
 
+    var SymmetricAlgorithms  = ns.protocol.SymmetricAlgorithms;
     var SymmetricKey = ns.protocol.SymmetricKey;
 
     var str = new ConstantString('moky');
     var bytes = UTF8.encode(str.toString());
 
     var test_aes = function () {
-        var password = SymmetricKey.generate(SymmetricKey.AES);
+        var password = SymmetricKey.generate(SymmetricAlgorithms.AES);
         var extra_params = {};
         // test encryption
         var ciphertext = password.encrypt(bytes, extra_params);
@@ -421,7 +423,7 @@ crypto_tests = [];
 
         // test with key data
         var key = {
-            algorithm: SymmetricKey.AES,
+            algorithm: SymmetricAlgorithms.AES,
             data: 'C2+xGizLL1G1+z9QLPYNdp/bPP/seDvNw45SXPAvQqk='
             // iv: 'SxPwi6u4+ZLXLdAFJezvSQ=='
         };

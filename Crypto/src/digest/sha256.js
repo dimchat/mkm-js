@@ -42,7 +42,7 @@ mk.digest.SHA256 = {
     /**
      *  Get SHA256 Digester
      *
-     * @return {mk.digest.DataDigester}
+     * @return {mk.digest.MessageDigester}
      */
     getDigester: function () {
         return sha256Digester;
@@ -50,7 +50,7 @@ mk.digest.SHA256 = {
 
     /**
      *  Set SHA256 Digester
-     * @param {mk.digest.DataDigester} digester
+     * @param {mk.digest.MessageDigester} digester
      */
     setDigester: function (digester) {
         sha256Digester = digester;

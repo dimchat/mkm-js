@@ -40,18 +40,24 @@ mk.type.Wrapper = {
     fetchString: function (str) {
         if (Interface.conforms(str, Stringer)) {
             return str.toString();
-        } else {
+        } else if (typeof str === 'string') {
             // assert(str instanceof String, 'string error: ' + str);
             return str;
+        } else {
+            // error
+            return null;
         }
     },
 
     fetchMap: function (dict) {
         if (Interface.conforms(dict, Mapper)) {
             return dict.toMap();
-        } else {
+        } else if (typeof dict === 'object') {
             // assert(dict instanceof {}, 'map error: ' + dict);
             return dict;
+        } else {
+            // error
+            return null;
         }
     },
 

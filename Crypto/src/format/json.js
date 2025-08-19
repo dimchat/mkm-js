@@ -87,20 +87,3 @@ mk.format.JSONMap = {
     }
 };
 var JSONMap = mk.format.JSONMap;
-
-
-mk.format.JSONList = {
-    encode: function (array) {
-        return this.getCoder().encode(array);
-    },
-    decode: function (string) {
-        return this.getCoder().decode(string);
-    },
-    getCoder: function () {
-        return jsonCoder;
-    },
-    setCoder: function (coder) {
-        jsonCoder = coder
-    }
-};
-var JSONList = mk.format.JSONList;

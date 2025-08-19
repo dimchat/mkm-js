@@ -2,7 +2,7 @@
  * Cryptography JavaScript Library (v2.0.0)
  *
  * @author    moKy <albert.moky at gmail.com>
- * @date      Aug. 17, 2025
+ * @date      Aug. 20, 2025
  * @copyright (c) 2020-2025 Albert Moky
  * @license   {@link https://mit-license.org | MIT License}
  */;
@@ -10,7 +10,6 @@ if (typeof MONKEY !== 'object') {
     MONKEY = {}
 }
 (function (mk) {
-    'use strict';
     if (typeof mk.type !== 'object') {
         mk.type = {}
     }
@@ -26,7 +25,6 @@ if (typeof MONKEY !== 'object') {
     if (typeof mk.ext !== 'object') {
         mk.ext = {}
     }
-    'use strict';
     mk.type.Class = function (child, parent, interfaces, methods) {
         if (!child) {
             child = function () {
@@ -101,7 +99,6 @@ if (typeof MONKEY !== 'object') {
         }
         return false
     };
-    'use strict';
     mk.type.Object = Interface(null, null);
     var IObject = mk.type.Object;
     IObject.prototype = {
@@ -154,7 +151,6 @@ if (typeof MONKEY !== 'object') {
             return this === other
         }
     });
-    'use strict';
     mk.type.DataConverter = Interface(null, null);
     var DataConverter = mk.type.DataConverter;
     DataConverter.prototype = {
@@ -271,7 +267,6 @@ if (typeof MONKEY !== 'object') {
         MAX_BOOLEAN_LEN: 'undefined'.length
     };
     var Converter = mk.type.Converter;
-    'use strict';
     var is_array = function (obj) {
         return obj instanceof Array || is_number_array(obj)
     };
@@ -442,7 +437,6 @@ if (typeof MONKEY !== 'object') {
         isArray: is_array
     };
     var Arrays = mk.type.Arrays;
-    'use strict';
     var get_enum_alias = function (enumeration, value) {
         var keys = Object.keys(enumeration);
         var e;
@@ -532,7 +526,6 @@ if (typeof MONKEY !== 'object') {
         }
         return obj.valueOf()
     };
-    'use strict';
     mk.type.Set = Interface(null, [IObject]);
     var Set = mk.type.Set;
     Set.prototype = {
@@ -586,7 +579,6 @@ if (typeof MONKEY !== 'object') {
             return this.__array.slice()
         }
     });
-    'use strict';
     mk.type.Stringer = Interface(null, [IObject]);
     var Stringer = mk.type.Stringer;
     Stringer.prototype = {
@@ -642,7 +634,6 @@ if (typeof MONKEY !== 'object') {
         var low2 = str2.toLowerCase();
         return low1 === low2
     };
-    'use strict';
     mk.type.Mapper = Interface(null, [IObject]);
     var Mapper = mk.type.Mapper;
     Mapper.prototype = {
@@ -759,19 +750,22 @@ if (typeof MONKEY !== 'object') {
             }
         }
     });
-    'use strict';
     mk.type.Wrapper = {
         fetchString: function (str) {
             if (Interface.conforms(str, Stringer)) {
                 return str.toString()
-            } else {
+            } else if (typeof str === 'string') {
                 return str
+            } else {
+                return null
             }
         }, fetchMap: function (dict) {
             if (Interface.conforms(dict, Mapper)) {
                 return dict.toMap()
-            } else {
+            } else if (typeof dict === 'object') {
                 return dict
+            } else {
+                return null
             }
         }, unwrap: function (object) {
             if (IObject.isNull(object)) {
@@ -811,7 +805,6 @@ if (typeof MONKEY !== 'object') {
         }
     };
     var Wrapper = mk.type.Wrapper;
-    'use strict';
     mk.type.Copier = {
         copy: function (object) {
             if (IObject.isNull(object)) {
@@ -886,38 +879,12 @@ if (typeof MONKEY !== 'object') {
         }
     };
     var Copier = mk.type.Copier;
-    'use strict';
-    mk.digest.DataDigester = Interface(null, null);
-    var DataDigester = mk.digest.DataDigester;
-    DataDigester.prototype = {
+    mk.digest.MessageDigester = Interface(null, null);
+    var MessageDigester = mk.digest.MessageDigester;
+    MessageDigester.prototype = {
         digest: function (data) {
         }
     };
-    'use strict';
-    mk.digest.MD5 = {
-        digest: function (data) {
-            return this.getDigester().digest(data)
-        }, getDigester: function () {
-            return md5Digester
-        }, setDigester: function (digester) {
-            md5Digester = digester
-        }
-    };
-    var MD5 = mk.digest.MD5;
-    var md5Digester = null;
-    'use strict';
-    mk.digest.SHA1 = {
-        digest: function (data) {
-            return this.getDigester().digest(data)
-        }, getDigester: function () {
-            return sha1Digester
-        }, setDigester: function (digester) {
-            sha1Digester = digester
-        }
-    };
-    var SHA1 = mk.digest.SHA1;
-    var sha1Digester = null;
-    'use strict';
     mk.digest.SHA256 = {
         digest: function (data) {
             return this.getDigester().digest(data)
@@ -929,7 +896,6 @@ if (typeof MONKEY !== 'object') {
     };
     var SHA256 = mk.digest.SHA256;
     var sha256Digester = null;
-    'use strict';
     mk.digest.RIPEMD160 = {
         digest: function (data) {
             return this.getDigester().digest(data)
@@ -941,8 +907,7 @@ if (typeof MONKEY !== 'object') {
     };
     var RIPEMD160 = mk.digest.RIPEMD160;
     var ripemd160Digester = null;
-    'use strict';
-    mk.digest.Keccak256 = {
+    mk.digest.KECCAK256 = {
         digest: function (data) {
             return this.getDigester().digest(data)
         }, getDigester: function () {
@@ -951,9 +916,8 @@ if (typeof MONKEY !== 'object') {
             keccak256Digester = digester
         }
     };
-    var Keccak256 = mk.digest.Keccak256;
+    var KECCAK256 = mk.digest.KECCAK256;
     var keccak256Digester = null;
-    'use strict';
     mk.format.DataCoder = Interface(null, null);
     var DataCoder = mk.format.DataCoder;
     DataCoder.prototype = {
@@ -975,7 +939,6 @@ if (typeof MONKEY !== 'object') {
         }, decode: function (data) {
         }
     };
-    'use strict';
     mk.format.Hex = {
         encode: function (data) {
             return this.getCoder().encode(data)
@@ -989,7 +952,6 @@ if (typeof MONKEY !== 'object') {
     };
     var Hex = mk.format.Hex;
     var hexCoder = null;
-    'use strict';
     mk.format.Base58 = {
         encode: function (data) {
             return this.getCoder().encode(data)
@@ -1003,7 +965,6 @@ if (typeof MONKEY !== 'object') {
     };
     var Base58 = mk.format.Base58;
     var base58Coder = null;
-    'use strict';
     mk.format.Base64 = {
         encode: function (data) {
             return this.getCoder().encode(data)
@@ -1017,7 +978,6 @@ if (typeof MONKEY !== 'object') {
     };
     var Base64 = mk.format.Base64;
     var base64Coder = null;
-    'use strict';
     mk.format.UTF8 = {
         encode: function (string) {
             return this.getCoder().encode(string)
@@ -1031,7 +991,6 @@ if (typeof MONKEY !== 'object') {
     };
     var UTF8 = mk.format.UTF8;
     var utf8Coder = null;
-    'use strict';
     mk.format.JSON = {
         encode: function (object) {
             return this.getCoder().encode(object)
@@ -1056,19 +1015,6 @@ if (typeof MONKEY !== 'object') {
         }
     };
     var JSONMap = mk.format.JSONMap;
-    mk.format.JSONList = {
-        encode: function (array) {
-            return this.getCoder().encode(array)
-        }, decode: function (string) {
-            return this.getCoder().decode(string)
-        }, getCoder: function () {
-            return jsonCoder
-        }, setCoder: function (coder) {
-            jsonCoder = coder
-        }
-    };
-    var JSONList = mk.format.JSONList;
-    'use strict';
     mk.protocol.TransportableData = Interface(null, [Mapper]);
     var TransportableData = mk.protocol.TransportableData;
     TransportableData.prototype = {
@@ -1112,7 +1058,6 @@ if (typeof MONKEY !== 'object') {
         }, parseTransportableData: function (ted) {
         }
     };
-    'use strict';
     mk.protocol.PortableNetworkFile = Interface(null, [Mapper]);
     var PortableNetworkFile = mk.protocol.PortableNetworkFile;
     PortableNetworkFile.prototype = {
@@ -1157,7 +1102,6 @@ if (typeof MONKEY !== 'object') {
         }, parsePortableNetworkFile: function (pnf) {
         }
     };
-    'use strict';
     mk.protocol.CryptographyKey = Interface(null, [Mapper]);
     var CryptographyKey = mk.protocol.CryptographyKey;
     CryptographyKey.prototype = {
@@ -1193,7 +1137,6 @@ if (typeof MONKEY !== 'object') {
         }, matchSignKey: function (sKey) {
         }
     };
-    'use strict';
     mk.protocol.SymmetricKey = Interface(null, [EncryptKey, DecryptKey]);
     var SymmetricKey = mk.protocol.SymmetricKey;
     SymmetricKey.generate = function (algorithm) {
@@ -1219,7 +1162,6 @@ if (typeof MONKEY !== 'object') {
         }, parseSymmetricKey: function (key) {
         }
     };
-    'use strict';
     mk.protocol.PublicKey = Interface(null, [VerifyKey]);
     var PublicKey = mk.protocol.PublicKey;
     PublicKey.parse = function (key) {
@@ -1240,7 +1182,6 @@ if (typeof MONKEY !== 'object') {
         parsePublicKey: function (key) {
         }
     };
-    'use strict';
     mk.protocol.PrivateKey = Interface(null, [SignKey]);
     var PrivateKey = mk.protocol.PrivateKey;
     PrivateKey.prototype = {
@@ -1270,7 +1211,6 @@ if (typeof MONKEY !== 'object') {
         }, parsePrivateKey: function (key) {
         }
     };
-    'use strict';
     mk.ext.PublicKeyHelper = Interface(null, null);
     var PublicKeyHelper = mk.ext.PublicKeyHelper;
     PublicKeyHelper.prototype = {
@@ -1316,7 +1256,6 @@ if (typeof MONKEY !== 'object') {
     var publicHelper = null;
     var privateHelper = null;
     var symmetricHelper = null;
-    'use strict';
     mk.ext.GeneralCryptoHelper = Interface(null, null);
     var GeneralCryptoHelper = mk.ext.GeneralCryptoHelper;
     GeneralCryptoHelper.prototype = {
@@ -1367,7 +1306,6 @@ if (typeof MONKEY !== 'object') {
     };
     var SharedCryptoExtensions = mk.ext.SharedCryptoExtensions;
     var generalCryptoHelper = null;
-    'use strict';
     mk.ext.TransportableDataHelper = Interface(null, null);
     var TransportableDataHelper = mk.ext.TransportableDataHelper;
     TransportableDataHelper.prototype = {
@@ -1400,7 +1338,6 @@ if (typeof MONKEY !== 'object') {
     var FormatExtensions = mk.ext.FormatExtensions;
     var tedHelper = null;
     var pnfHelper = null;
-    'use strict';
     mk.ext.GeneralFormatHelper = Interface(null, null);
     var GeneralFormatHelper = mk.ext.GeneralFormatHelper;
     GeneralFormatHelper.prototype = {

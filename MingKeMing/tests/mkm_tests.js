@@ -1,12 +1,11 @@
-;
+'use strict';
 
 //
 //  Test Cases
 //
-mkm_tests = [];
+var mkm_tests = [];
 
 (function (ns) {
-    'use strict';
 
     var EntityType = ns.protocol.EntityType;
     var ID         = ns.protocol.ID;
@@ -28,7 +27,6 @@ mkm_tests = [];
 })(MingKeMing);
 
 !(function (ns, mk) {
-    'use strict';
 
     var PrivateKey    = mk.protocol.PrivateKey;
 

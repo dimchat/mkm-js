@@ -15,8 +15,6 @@ var crypto_sources = [
 
     // data digest
     'src/digest/hash.js',
-    'src/digest/md5.js',
-    'src/digest/sha1.js',
     'src/digest/sha256.js',
     'src/digest/ripemd160.js',
     'src/digest/keccak256.js',

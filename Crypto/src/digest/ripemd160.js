@@ -42,7 +42,7 @@ mk.digest.RIPEMD160 = {
     /**
      *  Get RipeMD160 Digester
      *
-     * @return {mk.digest.DataDigester}
+     * @return {mk.digest.MessageDigester}
      */
     getDigester: function () {
         return ripemd160Digester;
@@ -50,7 +50,7 @@ mk.digest.RIPEMD160 = {
 
     /**
      *  Set RipeMD160 Digester
-     * @param {mk.digest.DataDigester} digester
+     * @param {mk.digest.MessageDigester} digester
      */
     setDigester: function (digester) {
         ripemd160Digester = digester;

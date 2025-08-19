@@ -2,7 +2,7 @@
  * MingKeMing - User Module (v2.0.0)
  *
  * @author    moKy <albert.moky at gmail.com>
- * @date      Aug. 17, 2025
+ * @date      Aug. 20, 2025
  * @copyright (c) 2020-2025 Albert Moky
  * @license   {@link https://mit-license.org | MIT License}
  */;
@@ -10,7 +10,6 @@ if (typeof MingKeMing !== 'object') {
     MingKeMing = {}
 }
 (function (mkm, mk) {
-    'use strict';
     if (typeof mkm.protocol !== 'object') {
         mkm.protocol = {}
     }
@@ -27,7 +26,6 @@ if (typeof MingKeMing !== 'object') {
     var Mapper = mk.type.Mapper;
     var Enum = mk.type.Enum;
     var ConstantString = mk.type.ConstantString;
-    'use strict';
     mkm.protocol.EntityType = Enum('EntityType', {
         USER: (0x00),
         GROUP: (0x01),
@@ -54,7 +52,6 @@ if (typeof MingKeMing !== 'object') {
         var any = EntityType.ANY.getValue();
         return (network & any) === any
     };
-    'use strict';
     mkm.protocol.Address = Interface(null, [Stringer]);
     var Address = mkm.protocol.Address;
     Address.prototype.getType = function () {
@@ -83,7 +80,6 @@ if (typeof MingKeMing !== 'object') {
     };
     AddressFactory.prototype.parseAddress = function (address) {
     };
-    'use strict';
     mkm.protocol.ID = Interface(null, [Stringer]);
     var ID = mkm.protocol.ID;
     ID.prototype.getName = function () {
@@ -155,7 +151,6 @@ if (typeof MingKeMing !== 'object') {
     };
     IDFactory.prototype.parseIdentifier = function (identifier) {
     };
-    'use strict';
     mkm.protocol.Meta = Interface(null, [Mapper]);
     var Meta = mkm.protocol.Meta;
     Meta.prototype.getType = function () {
@@ -198,7 +193,6 @@ if (typeof MingKeMing !== 'object') {
     };
     MetaFactory.prototype.parseMeta = function (meta) {
     };
-    'use strict';
     mkm.protocol.TAI = Interface(null, null);
     var TAI = mkm.protocol.TAI;
     TAI.prototype.isValid = function () {
@@ -213,7 +207,6 @@ if (typeof MingKeMing !== 'object') {
     };
     TAI.prototype.setProperty = function (name, value) {
     };
-    'use strict';
     mkm.protocol.Document = Interface(null, [TAI, Mapper]);
     var Document = mkm.protocol.Document;
     Document.prototype.getIdentifier = function () {
@@ -270,7 +263,6 @@ if (typeof MingKeMing !== 'object') {
     };
     DocumentFactory.prototype.parseDocument = function (doc) {
     };
-    'use strict';
     mkm.mkm.BroadcastAddress = function (string, network) {
         ConstantString.call(this, string);
         this.__network = Enum.getInt(network)
@@ -283,7 +275,6 @@ if (typeof MingKeMing !== 'object') {
     });
     Address.ANYWHERE = new BroadcastAddress('anywhere', EntityType.ANY);
     Address.EVERYWHERE = new BroadcastAddress('everywhere', EntityType.EVERY);
-    'use strict';
     mkm.mkm.Identifier = function (identifier, name, address, terminal) {
         ConstantString.call(this, identifier);
         this.__name = name;
@@ -329,7 +320,6 @@ if (typeof MingKeMing !== 'object') {
     ID.ANYONE = Identifier.create("anyone", Address.ANYWHERE, null);
     ID.EVERYONE = Identifier.create("everyone", Address.EVERYWHERE, null);
     ID.FOUNDER = Identifier.create("moky", Address.ANYWHERE, null);
-    'use strict';
     mkm.ext.AddressHelper = Interface(null, null);
     var AddressHelper = mkm.ext.AddressHelper;
     AddressHelper.prototype = {
@@ -392,7 +382,6 @@ if (typeof MingKeMing !== 'object') {
     var idHelper = null;
     var metaHelper = null;
     var docHelper = null;
-    'use strict';
     mkm.ext.GeneralAccountHelper = Interface(null, null);
     var GeneralAccountHelper = mkm.ext.GeneralAccountHelper;
     GeneralAccountHelper.prototype = {

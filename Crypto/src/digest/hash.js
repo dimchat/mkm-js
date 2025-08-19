@@ -28,14 +28,14 @@
 //! require 'type/class.js'
 
 /**
- *  Data Digester
- *  ~~~~~~~~~~~~~
+ *  Message Digest
+ *  ~~~~~~~~~~~~~~
  *  MD5, SHA1, SHA256, Keccak256, RipeMD160, ...
  */
-mk.digest.DataDigester = Interface(null, null);
-var DataDigester = mk.digest.DataDigester;
+mk.digest.MessageDigester = Interface(null, null);
+var MessageDigester = mk.digest.MessageDigester;
 
-DataDigester.prototype = {
+MessageDigester.prototype = {
 
     /**
      *  Get digest of binary data
