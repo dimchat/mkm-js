@@ -9,6 +9,7 @@ var crypto_sources = [
     'src/type/enum.js',
     'src/type/set.js',
     'src/type/string.js',
+    'src/type/mapper.js',
     'src/type/dictionary.js',
     'src/type/wrapper.js',
     'src/type/copier.js',
