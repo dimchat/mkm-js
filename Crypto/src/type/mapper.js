@@ -224,3 +224,17 @@ Mapper.forEach = function (dict, handleKeyValue) {
     }
     return i;
 };
+
+Mapper.addAll = function (dict, fromDict) {
+    if (!dict) {
+        return -1;
+    } else if (Interface.conforms(dict, Mapper)) {
+        dict = dict.toMap();
+    } else if (typeof dict !== 'object') {
+        throw TypeError('not a map: ' + dict);
+    }
+    return Mapper.forEach(fromDict, function (key, value) {
+        dict[key] = value;
+        return false;
+    });
+};

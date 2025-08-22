@@ -48,12 +48,15 @@ if (typeof MONKEY !== 'object') {
     };
     var Class = mk.type.Class;
     var override_methods = function (clazz, methods) {
-        Mapper.forEach(methods, function (key, fn) {
+        var names = Object.keys(methods);
+        var key, fn;
+        for (var i = 0; i < names.length; ++i) {
+            key = names[i];
+            fn = methods[key];
             if (typeof fn === 'function') {
                 clazz.prototype[key] = fn
             }
-            return false
-        })
+        }
     };
     mk.type.Interface = function (child, parents) {
         if (!child) {
@@ -705,6 +708,19 @@ if (typeof MONKEY !== 'object') {
             }
         }
         return i
+    };
+    Mapper.addAll = function (dict, fromDict) {
+        if (!dict) {
+            return -1
+        } else if (Interface.conforms(dict, Mapper)) {
+            dict = dict.toMap()
+        } else if (typeof dict !== 'object') {
+            throw TypeError('not a map: ' + dict);
+        }
+        return Mapper.forEach(fromDict, function (key, value) {
+            dict[key] = value;
+            return false
+        })
     };
     mk.type.Dictionary = function (dict) {
         BaseObject.call(this);
