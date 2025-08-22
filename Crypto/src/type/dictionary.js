@@ -88,18 +88,21 @@ Class(Dictionary, BaseObject, [Mapper], {
 
     // Override
     isEmpty: function () {
+        // return Mapper.isEmpty(this.__dictionary);
         var keys = Object.keys(this.__dictionary);
         return keys.length === 0;
     },
 
     // Override
     getLength: function() {
+        // return Mapper.count(this.__dictionary);
         var keys = Object.keys(this.__dictionary);
         return keys.length;
     },
 
     // Override
     allKeys: function() {
+        // return Mapper.keys(this.__dictionary);
         return Object.keys(this.__dictionary);
     },
 

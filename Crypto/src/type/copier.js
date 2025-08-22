@@ -67,13 +67,10 @@ mk.type.Copier = {
 
     copyMap: function (dict) {
         var clone = {};
-        var allKeys = Object.keys(dict);
-        var key;
-        var count = allKeys.length;
-        for (var i = 0; i < count; ++i) {
-            key = allKeys[i];
-            clone[key] = dict[key];
-        }
+        Mapper.forEach(dict, function (key, value) {
+            clone[key] = value;
+            return false;
+        });
         return clone;
     },
 
@@ -120,13 +117,10 @@ mk.type.Copier = {
 
     deepCopyMap: function (dict) {
         var clone = {};
-        var allKeys = Object.keys(dict);
-        var key;
-        var count = allKeys.length;
-        for (var i = 0; i < count; ++i) {
-            key = allKeys[i];
-            clone[key] = this.deepCopy(dict[key]);
-        }
+        Mapper.forEach(dict, function (key, value) {
+            clone[key] = Copier.deepCopy(value);
+            return false;
+        });
         return clone;
     },
 

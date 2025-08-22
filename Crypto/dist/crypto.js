@@ -48,15 +48,12 @@ if (typeof MONKEY !== 'object') {
     };
     var Class = mk.type.Class;
     var override_methods = function (clazz, methods) {
-        var names = Object.keys(methods);
-        var key, fn;
-        for (var i = 0; i < names.length; ++i) {
-            key = names[i];
-            fn = methods[key];
+        Mapper.forEach(methods, function (key, fn) {
             if (typeof fn === 'function') {
                 clazz.prototype[key] = fn
             }
-        }
+            return false
+        })
     };
     mk.type.Interface = function (child, parents) {
         if (!child) {
@@ -438,15 +435,15 @@ if (typeof MONKEY !== 'object') {
     };
     var Arrays = mk.type.Arrays;
     var get_enum_alias = function (enumeration, value) {
-        var keys = Object.keys(enumeration);
-        var e;
-        for (var k in keys) {
-            e = enumeration[k];
+        var alias = null;
+        Mapper.forEach(enumeration, function (n, e) {
             if (e instanceof BaseEnum && e.equals(value)) {
-                return e.__alias
+                alias = e.__alias;
+                return true
             }
-        }
-        return null
+            return false
+        });
+        return alias
     };
     mk.type.BaseEnum = function (value, alias) {
         BaseObject.call(this);
@@ -500,18 +497,15 @@ if (typeof MONKEY !== 'object') {
         } else {
             Class(enumeration, BaseEnum, null, null)
         }
-        var keys = Object.keys(elements);
-        var alias, value;
-        for (var i = 0; i < keys.length; ++i) {
-            alias = keys[i];
-            value = elements[alias];
+        Mapper.forEach(elements, function (alias, value) {
             if (value instanceof BaseEnum) {
                 value = value.getValue()
             } else if (typeof value !== 'number') {
                 throw new TypeError('Enum value must be a number!');
             }
-            enumeration[alias] = new enumeration(value, alias)
-        }
+            enumeration[alias] = new enumeration(value, alias);
+            return false
+        });
         return enumeration
     };
     var Enum = mk.type.Enum;
@@ -655,6 +649,63 @@ if (typeof MONKEY !== 'object') {
         }, setMap: function (key, mapper) {
         }
     };
+    Mapper.count = function (dict) {
+        if (!dict) {
+            return 0
+        } else if (Interface.conforms(dict, Mapper)) {
+            dict = dict.toMap()
+        } else if (typeof dict !== 'object') {
+            throw TypeError('not a map: ' + dict);
+        }
+        return Object.keys(dict).length
+    };
+    Mapper.isEmpty = function (dict) {
+        return Mapper.count(dict) === 0
+    };
+    Mapper.keys = function (dict) {
+        if (!dict) {
+            return null
+        } else if (Interface.conforms(dict, Mapper)) {
+            dict = dict.toMap()
+        } else if (typeof dict !== 'object') {
+            throw TypeError('not a map: ' + dict);
+        }
+        return Object.keys(dict)
+    };
+    Mapper.removeKey = function (dict, key) {
+        if (!dict) {
+            return null
+        } else if (Interface.conforms(dict, Mapper)) {
+            dict = dict.toMap()
+        } else if (typeof dict !== 'object') {
+            throw TypeError('not a map: ' + dict);
+        }
+        var value = dict[key];
+        delete dict[key];
+        return value
+    };
+    Mapper.forEach = function (dict, handleKeyValue) {
+        if (!dict) {
+            return -1
+        } else if (Interface.conforms(dict, Mapper)) {
+            dict = dict.toMap()
+        } else if (typeof dict !== 'object') {
+            throw TypeError('not a map: ' + dict);
+        }
+        var keys = Object.keys(dict);
+        var cnt = keys.length;
+        var stop;
+        var i = 0, k, v;
+        for (; i < cnt; ++i) {
+            k = keys[i];
+            v = dict[k];
+            stop = handleKeyValue(k, v);
+            if (stop) {
+                break
+            }
+        }
+        return i
+    };
     mk.type.Dictionary = function (dict) {
         BaseObject.call(this);
         if (!dict) {
@@ -787,13 +838,10 @@ if (typeof MONKEY !== 'object') {
             }
         }, unwrapMap: function (dict) {
             var result = {};
-            var allKeys = Object.keys(dict);
-            var key;
-            var count = allKeys.length;
-            for (var i = 0; i < count; ++i) {
-                key = allKeys[i];
-                result[key] = this.unwrap(dict[key])
-            }
+            Mapper.forEach(dict, function (key, value) {
+                result[key] = Wrapper.unwrap(value);
+                return false
+            });
             return result
         }, unwrapList: function (array) {
             var result = [];
@@ -826,13 +874,10 @@ if (typeof MONKEY !== 'object') {
             }
         }, copyMap: function (dict) {
             var clone = {};
-            var allKeys = Object.keys(dict);
-            var key;
-            var count = allKeys.length;
-            for (var i = 0; i < count; ++i) {
-                key = allKeys[i];
-                clone[key] = dict[key]
-            }
+            Mapper.forEach(dict, function (key, value) {
+                clone[key] = value;
+                return false
+            });
             return clone
         }, copyList: function (array) {
             var clone = [];
@@ -861,13 +906,10 @@ if (typeof MONKEY !== 'object') {
             }
         }, deepCopyMap: function (dict) {
             var clone = {};
-            var allKeys = Object.keys(dict);
-            var key;
-            var count = allKeys.length;
-            for (var i = 0; i < count; ++i) {
-                key = allKeys[i];
-                clone[key] = this.deepCopy(dict[key])
-            }
+            Mapper.forEach(dict, function (key, value) {
+                clone[key] = Copier.deepCopy(value);
+                return false
+            });
             return clone
         }, deepCopyList: function (array) {
             var clone = [];

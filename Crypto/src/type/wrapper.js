@@ -94,16 +94,13 @@ mk.type.Wrapper = {
 
     unwrapMap: function (dict) {
         var result = {};
-        var allKeys = Object.keys(dict);
-        var key;
-        var count = allKeys.length;
-        for (var i = 0; i < count; ++i) {
-            key = allKeys[i];
+        Mapper.forEach(dict, function (key, value) {
             // if (key instanceof Stringer) {
             //     key = key.toString();
             // }
-            result[key] = this.unwrap(dict[key]);
-        }
+            result[key] = Wrapper.unwrap(value);
+            return false;
+        });
         return result;
     },
 

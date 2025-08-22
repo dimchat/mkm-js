@@ -161,3 +161,66 @@ Mapper.prototype = {
     setMap: function (key, mapper) {}
 
 };
+
+
+Mapper.count = function (dict) {
+    if (!dict) {
+        return 0;
+    } else if (Interface.conforms(dict, Mapper)) {
+        dict = dict.toMap();
+    } else if (typeof dict !== 'object') {
+        throw TypeError('not a map: ' + dict);
+    }
+    return Object.keys(dict).length;
+};
+
+Mapper.isEmpty = function (dict) {
+    return Mapper.count(dict) === 0;
+};
+
+Mapper.keys = function (dict) {
+    if (!dict) {
+        return null;
+    } else if (Interface.conforms(dict, Mapper)) {
+        dict = dict.toMap();
+    } else if (typeof dict !== 'object') {
+        throw TypeError('not a map: ' + dict);
+    }
+    return Object.keys(dict);
+};
+
+Mapper.removeKey = function (dict, key) {
+    if (!dict) {
+        return null;
+    } else if (Interface.conforms(dict, Mapper)) {
+        dict = dict.toMap();
+    } else if (typeof dict !== 'object') {
+        throw TypeError('not a map: ' + dict);
+    }
+    var value = dict[key];
+    delete dict[key];
+    return value;
+};
+
+Mapper.forEach = function (dict, handleKeyValue) {
+    if (!dict) {
+        return -1;
+    } else if (Interface.conforms(dict, Mapper)) {
+        dict = dict.toMap();
+    } else if (typeof dict !== 'object') {
+        throw TypeError('not a map: ' + dict);
+    }
+    var keys = Object.keys(dict);
+    var cnt = keys.length;
+    var stop;
+    var i = 0, k, v;
+    for (; i < cnt; ++i) {
+        k = keys[i];
+        v = dict[k];
+        stop = handleKeyValue(k, v);
+        if (stop) {
+            break;
+        }
+    }
+    return i;
+};

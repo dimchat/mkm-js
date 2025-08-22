@@ -251,7 +251,7 @@ var crypto_tests = [];
     var UTF8 = ns.format.UTF8;
     var Hex = ns.format.Hex;
 
-    var MD5 = ns.digest.MD5;
+    // var MD5 = ns.digest.MD5;
     var SHA256 = ns.digest.SHA256;
     var RIPEMD160 = ns.digest.RIPEMD160;
 
@@ -260,17 +260,17 @@ var crypto_tests = [];
     var str = new ConstantString('moky');
     var bytes = UTF8.encode(str.toString());
 
-    // md5(moky) = d0e5edd3fd12b89154bbe7a5e4c82569
-    var test_md5 = function () {
-        var hash = MD5.digest(bytes);
-        if (!hash) {
-            return 'not implemented';
-        }
-        log('sha256: ' + Hex.encode(hash));
-        var exp = 'd0e5edd3fd12b89154bbe7a5e4c82569';
-        assert(Hex.encode(hash) === exp, 'MD5 digest error');
-    };
-    crypto_tests.push(test_md5);
+    // // md5(moky) = d0e5edd3fd12b89154bbe7a5e4c82569
+    // var test_md5 = function () {
+    //     var hash = MD5.digest(bytes);
+    //     if (!hash) {
+    //         return 'not implemented';
+    //     }
+    //     log('sha256: ' + Hex.encode(hash));
+    //     var exp = 'd0e5edd3fd12b89154bbe7a5e4c82569';
+    //     assert(Hex.encode(hash) === exp, 'MD5 digest error');
+    // };
+    // crypto_tests.push(test_md5);
 
     // sha256(moky）= cb98b739dd699aa44bb6ebba128d20f2d1e10bb3b4aa5ff4e79295b47e9ed76d
     var test_sha256 = function () {

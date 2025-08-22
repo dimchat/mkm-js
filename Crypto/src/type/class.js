@@ -69,15 +69,12 @@ var Class = mk.type.Class;
  * @param {{}} methods            - functions
  */
 var override_methods = function (clazz, methods) {
-    var names = Object.keys(methods);
-    var key, fn;
-    for (var i = 0; i < names.length; ++i) {
-        key = names[i];
-        fn = methods[key];
+    Mapper.forEach(methods, function (key, fn) {
         if (typeof fn === 'function') {
             clazz.prototype[key] = fn;
         }
-    }
+        return false;
+    });
 };
 
 /**

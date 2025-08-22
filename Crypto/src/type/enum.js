@@ -32,15 +32,15 @@
  *  searching exists elements for alias
  */
 var get_enum_alias = function (enumeration, value) {
-    var keys = Object.keys(enumeration);
-    var e;
-    for (var k in keys) {
-        e = enumeration[k];
+    var alias = null;
+    Mapper.forEach(enumeration, function (n, e) {
         if (e instanceof BaseEnum && e.equals(value)) {
-            return e.__alias;
+            alias = e.__alias;
+            return true;
         }
-    }
-    return null;
+        return false;
+    });
+    return alias;
 };
 
 /**
@@ -128,18 +128,15 @@ mk.type.Enum = function(enumeration, elements) {
         Class(enumeration, BaseEnum, null, null);
     }
     // create enum elements
-    var keys = Object.keys(elements);
-    var alias, value;
-    for (var i = 0; i < keys.length; ++i) {
-        alias = keys[i];
-        value = elements[alias];
+    Mapper.forEach(elements, function (alias, value) {
         if (value instanceof BaseEnum) {
             value = value.getValue();
         } else if (typeof value !== 'number') {
             throw new TypeError('Enum value must be a number!');
         }
         enumeration[alias] = new enumeration(value, alias);
-    }
+        return false;
+    });
     return enumeration;
 };
 var Enum = mk.type.Enum;
