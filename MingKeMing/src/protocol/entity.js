@@ -65,47 +65,47 @@
      *
      *      (All above are just some advices to help choosing numbers :P)
      */
-    mkm.protocol.EntityType = Enum('EntityType', {
+    mkm.protocol.EntityType = {
 
         /**
          *  Main: 0, 1
          */
-        USER:           (0x00), // 0000 0000
-        GROUP:          (0x01), // 0000 0001 (User Group)
+        USER:             (0x00), // 0000 0000
+        GROUP:            (0x01), // 0000 0001 (User Group)
 
         /**
          *  Network: 2, 3
          */
-        STATION:        (0x02), // 0000 0010 (Server Node)
-        ISP:            (0x03), // 0000 0011 (Service Provider)
-        //STATION_GROUP:(0x03), // 0000 0011
+        STATION:          (0x02), // 0000 0010 (Server Node)
+        ISP:              (0x03), // 0000 0011 (Service Provider)
+        // STATION_GROUP: (0x03), // 0000 0011
 
         /**
          *  Bot: 4, 5
          */
-        BOT:            (0x04), // 0000 0100 (Business Node)
-        ICP:            (0x05), // 0000 0101 (Content Provider)
-        //BOT_GROUP:    (0x05), // 0000 0101
+        BOT:              (0x04), // 0000 0100 (Business Node)
+        ICP:              (0x05), // 0000 0101 (Content Provider)
+        //BOT_GROUP:      (0x05), // 0000 0101
 
         /**
          *  Management: 6, 7, 8
          */
-        SUPERVISOR:     (0x06), // 0000 0110 (Company President)
-        COMPANY:        (0x07), // 0000 0111 (Super Group for ISP/ICP)
-        //CA:           (0x08), // 0000 1000 (Certification Authority)
+        SUPERVISOR:       (0x06), // 0000 0110 (Company President)
+        COMPANY:          (0x07), // 0000 0111 (Super Group for ISP/ICP)
+        // CA:            (0x08), // 0000 1000 (Certification Authority)
 
         /*
          *  Customized: 64, 65
          */
-        //APP_USER:     (0x40), // 0100 0000 (Application Customized User)
-        //APP_GROUP:    (0x41), // 0100 0001 (Application Customized Group)
+        // APP_USER:      (0x40), // 0100 0000 (Application Customized User)
+        // APP_GROUP:     (0x41), // 0100 0001 (Application Customized Group)
 
         /**
          *  Broadcast: 128, 129
          */
-        ANY:            (0x80), // 1000 0000 (anyone@anywhere)
-        EVERY:          (0x81)  // 1000 0001 (everyone@everywhere)
-    });
+        ANY:              (0x80), // 1000 0000 (anyone@anywhere)
+        EVERY:            (0x81)  // 1000 0001 (everyone@everywhere)
+    };
     var EntityType = mkm.protocol.EntityType;
 
     /**
@@ -115,8 +115,8 @@
      * @returns {boolean}
      */
     EntityType.isUser = function (network) {
-        var user = EntityType.USER.getValue();
-        var group = EntityType.GROUP.getValue();
+        var user = 0x00;   // Enum.getInt(EntityType.USER, 0x00);
+        var group = 0x01;  // Enum.getInt(EntityType.GROUP, 0x01);
         return (network & group) === user;
     };
 
@@ -127,7 +127,7 @@
      * @returns {boolean}
      */
     EntityType.isGroup = function (network) {
-        var group = EntityType.GROUP.getValue();
+        var group = 0x01;  // Enum.getInt(EntityType.GROUP, 0x01);
         return (network & group) === group;
     };
 
@@ -138,6 +138,6 @@
      * @returns {boolean}
      */
     EntityType.isBroadcast = function (network) {
-        var any = EntityType.ANY.getValue();
+        var any = 0x80;  // Enum.getInt(EntityType.ANY, 0x80);
         return (network & any) === any;
     };

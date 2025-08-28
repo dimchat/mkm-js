@@ -512,17 +512,25 @@ if (typeof MONKEY !== 'object') {
         return enumeration
     };
     var Enum = mk.type.Enum;
-    Enum.isEnum = function (obj) {
-        return obj instanceof BaseEnum
+    Enum.prototype.getValue = function () {
     };
-    Enum.getInt = function (obj) {
-        if (obj instanceof BaseEnum) {
-            return obj.getValue()
-        } else if (IObject.isNumber(obj)) {
-            return obj
+    Enum.prototype.getName = function () {
+    };
+    Enum.isEnum = function (value) {
+        return value instanceof BaseEnum
+    };
+    Enum.getInt = function (value, defaultValue) {
+        if (value instanceof BaseEnum) {
+            return value.getValue()
         }
-        return obj.valueOf()
+        return Converter.getInt(value, defaultValue)
     };
+    Enum.getString = function (value, defaultValue) {
+        if (value instanceof BaseEnum) {
+            return value.getName()
+        }
+        return Converter.getString(value, defaultValue)
+    }
     mk.type.Set = Interface(null, [IObject]);
     var Set = mk.type.Set;
     Set.prototype = {

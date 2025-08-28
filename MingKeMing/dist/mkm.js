@@ -26,7 +26,7 @@ if (typeof MingKeMing !== 'object') {
     var Mapper = mk.type.Mapper;
     var Enum = mk.type.Enum;
     var ConstantString = mk.type.ConstantString;
-    mkm.protocol.EntityType = Enum('EntityType', {
+    mkm.protocol.EntityType = {
         USER: (0x00),
         GROUP: (0x01),
         STATION: (0x02),
@@ -37,19 +37,19 @@ if (typeof MingKeMing !== 'object') {
         COMPANY: (0x07),
         ANY: (0x80),
         EVERY: (0x81)
-    });
+    };
     var EntityType = mkm.protocol.EntityType;
     EntityType.isUser = function (network) {
-        var user = EntityType.USER.getValue();
-        var group = EntityType.GROUP.getValue();
+        var user = 0x00;
+        var group = 0x01;
         return (network & group) === user
     };
     EntityType.isGroup = function (network) {
-        var group = EntityType.GROUP.getValue();
+        var group = 0x01;
         return (network & group) === group
     };
     EntityType.isBroadcast = function (network) {
-        var any = EntityType.ANY.getValue();
+        var any = 0x80;
         return (network & any) === any
     };
     mkm.protocol.Address = Interface(null, [Stringer]);

@@ -13,7 +13,7 @@ var mkm_tests = [];
     var test_broadcast_id = function () {
         var anyone = ID.ANYONE;
         log('anyone: ' , anyone);
-        assert(EntityType.ANY.equals(anyone.getType()) === true, 'ID type error');
+        assert(EntityType.ANY === anyone.getType(), 'ID type error');
     };
     mkm_tests.push(test_broadcast_id);
 
@@ -40,7 +40,7 @@ var mkm_tests = [];
         log('generated meta: ', meta);
         assert(meta.getPublicKey() != null, 'failed to generate meta');
 
-        var address = Address.generate(meta, EntityType.USER.getValue());
+        var address = Address.generate(meta, EntityType.USER);
         log('generated address: ', address);
         assert(address.getType() === 0, 'failed to generate ID')
     };
