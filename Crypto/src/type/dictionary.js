@@ -47,7 +47,9 @@ mk.type.Dictionary = function (dict) {
 };
 var Dictionary = mk.type.Dictionary;
 
-Class(Dictionary, BaseObject, [Mapper], {
+Class(Dictionary, BaseObject, [Mapper]);
+
+Mixin(Dictionary, {
 
     // Override
     equals: function (other) {

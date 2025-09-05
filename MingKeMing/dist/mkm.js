@@ -268,11 +268,10 @@ if (typeof MingKeMing !== 'object') {
         this.__network = Enum.getInt(network)
     };
     var BroadcastAddress = mkm.mkm.BroadcastAddress;
-    Class(BroadcastAddress, ConstantString, [Address], {
-        getType: function () {
-            return this.__network
-        }
-    });
+    Class(BroadcastAddress, ConstantString, [Address]);
+    BroadcastAddress.prototype.getType = function () {
+        return this.__network
+    };
     Address.ANYWHERE = new BroadcastAddress('anywhere', EntityType.ANY);
     Address.EVERYWHERE = new BroadcastAddress('everywhere', EntityType.EVERY);
     mkm.mkm.Identifier = function (identifier, name, address, terminal) {
@@ -282,27 +281,32 @@ if (typeof MingKeMing !== 'object') {
         this.__terminal = terminal
     };
     var Identifier = mkm.mkm.Identifier;
-    Class(Identifier, ConstantString, [ID], {
-        getName: function () {
-            return this.__name
-        }, getAddress: function () {
-            return this.__address
-        }, getTerminal: function () {
-            return this.__terminal
-        }, getType: function () {
-            var address = this.__address;
-            return address.getType()
-        }, isBroadcast: function () {
-            var network = this.getType();
-            return EntityType.isBroadcast(network)
-        }, isUser: function () {
-            var network = this.getType();
-            return EntityType.isUser(network)
-        }, isGroup: function () {
-            var network = this.getType();
-            return EntityType.isGroup(network)
-        }
-    });
+    Class(Identifier, ConstantString, [ID]);
+    Identifier.prototype.getName = function () {
+        return this.__name
+    };
+    Identifier.prototype.getAddress = function () {
+        return this.__address
+    };
+    Identifier.prototype.getTerminal = function () {
+        return this.__terminal
+    };
+    Identifier.prototype.getType = function () {
+        var address = this.__address;
+        return address.getType()
+    };
+    Identifier.prototype.isBroadcast = function () {
+        var network = this.getType();
+        return EntityType.isBroadcast(network)
+    };
+    Identifier.prototype.isUser = function () {
+        var network = this.getType();
+        return EntityType.isUser(network)
+    };
+    Identifier.prototype.isGroup = function () {
+        var network = this.getType();
+        return EntityType.isGroup(network)
+    };
     Identifier.create = function (name, address, terminal) {
         var string = Identifier.concat(name, address, terminal);
         return new Identifier(string, name, address, terminal)

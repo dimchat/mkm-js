@@ -43,14 +43,12 @@ mkm.mkm.BroadcastAddress = function (string, network) {
 };
 var BroadcastAddress = mkm.mkm.BroadcastAddress;
 
-Class(BroadcastAddress, ConstantString, [Address], {
+Class(BroadcastAddress, ConstantString, [Address]);
 
-    // Override
-    getType: function () {
-        return this.__network;
-    }
-
-});
+// Override
+BroadcastAddress.prototype.getType = function () {
+    return this.__network;
+};
 
 
 /**

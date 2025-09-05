@@ -25,18 +25,17 @@
 // =============================================================================
 //
 
-//! require 'namespace.js'
+//! require 'requires.js'
 
 /**
  *  Create a child class inherits from parent class and interfaces
  *
- * @param {Class|Function} child  - sub class
- * @param {Class|Function} parent - super class
- * @param {Interface[]} interfaces
- * @param {{}} methods   - functions
+ * @param {Class|Function} child   - sub class
+ * @param {Class|Function} parent  - super class
+ * @param {Interface[]} interfaces - interfaces
  * @return {Class} sub class
  */
-mk.type.Class = function (child, parent, interfaces, methods) {
+mk.type.Class = function (child, parent, interfaces) {
     if (!child) {
         child = function () {
             Object.call(this);
@@ -54,10 +53,6 @@ mk.type.Class = function (child, parent, interfaces, methods) {
     if (interfaces) {
         child._mk_interfaces = interfaces;
     }
-    // extend functions
-    if (methods) {
-        override_methods(child, methods);
-    }
     return child;
 };
 var Class = mk.type.Class;
@@ -65,20 +60,26 @@ var Class = mk.type.Class;
 /**
  *  Extends methods for child class/interface
  *
- * @param {Class|Function} clazz - sub class/interface
- * @param {{}} methods            - functions
+ * @param {Class|Function} clazz    - sub class
+ * @param {Function|Object} methods - functions
  */
-var override_methods = function (clazz, methods) {
+mk.type.Mixin = function (clazz, methods) {
+    if (typeof methods === 'function') {
+        methods = methods.prototype;
+    }
+    // Mapper.forEach(methods, function (name, fn) {
+    //     clazz.prototype[name] = fn;
+    //     return false;
+    // });
     var names = Object.keys(methods);
-    var key, fn;
+    var key;
     for (var i = 0; i < names.length; ++i) {
         key = names[i];
-        fn = methods[key];
-        if (typeof fn === 'function') {
-            clazz.prototype[key] = fn;
-        }
+        clazz.prototype[key] = methods[key];
     }
+    return clazz;
 };
+var Mixin = mk.type.Mixin;
 
 /**
  *  Create an interface inherits from other interfaces

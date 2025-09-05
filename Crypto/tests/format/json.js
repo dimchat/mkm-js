@@ -1,10 +1,5 @@
-;
+'use strict';
 // license: https://mit-license.org
-//
-//  MONKEY: Memory Object aNd KEYs
-//
-//                               Written in 2020 by Moky <albert.moky@gmail.com>
-//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -35,7 +30,6 @@
 //! require 'json2.js' (https://github.com/douglascrockford/JSON-js)
 
 (function (ns) {
-    'use strict';
 
     var Class = ns.type.Class;
     var ObjectCoder = ns.format.ObjectCoder;
@@ -43,7 +37,7 @@
     var JsonCoder = function () {
         Object.call(this);
     };
-    Class(JsonCoder, Object, [ObjectCoder], null);
+    Class(JsonCoder, null, [ObjectCoder]);
     // Override
     JsonCoder.prototype.encode = function (object) {
         return JSON.stringify(object);

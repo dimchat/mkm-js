@@ -53,48 +53,46 @@ mkm.mkm.Identifier = function (identifier, name, address, terminal) {
 };
 var Identifier = mkm.mkm.Identifier;
 
-Class(Identifier, ConstantString, [ID], {
+Class(Identifier, ConstantString, [ID]);
     
     // Override
-    getName: function () {
+    Identifier.prototype.getName = function () {
         return this.__name;
-    },
+    };
 
     // Override
-    getAddress: function () {
+    Identifier.prototype.getAddress = function () {
         return this.__address;
-    },
+    };
 
     // Override
-    getTerminal: function () {
+    Identifier.prototype.getTerminal = function () {
         return this.__terminal;
-    },
+    };
 
     // Override
-    getType: function () {
+    Identifier.prototype.getType = function () {
         var address = this.__address;
         return address.getType();
-    },
+    };
 
     // Override
-    isBroadcast: function () {
+    Identifier.prototype.isBroadcast = function () {
         var network = this.getType();
         return EntityType.isBroadcast(network);
-    },
+    };
 
     // Override
-    isUser: function () {
+    Identifier.prototype.isUser = function () {
         var network = this.getType();
         return EntityType.isUser(network);
-    },
+    };
 
     // Override
-    isGroup: function () {
+    Identifier.prototype.isGroup = function () {
         var network = this.getType();
         return EntityType.isGroup(network);
-    }
-
-});
+    };
 
     //
     //  Factory

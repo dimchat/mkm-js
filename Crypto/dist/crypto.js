@@ -25,7 +25,7 @@ if (typeof MONKEY !== 'object') {
     if (typeof mk.ext !== 'object') {
         mk.ext = {}
     }
-    mk.type.Class = function (child, parent, interfaces, methods) {
+    mk.type.Class = function (child, parent, interfaces) {
         if (!child) {
             child = function () {
                 Object.call(this)
@@ -41,23 +41,22 @@ if (typeof MONKEY !== 'object') {
         if (interfaces) {
             child._mk_interfaces = interfaces
         }
-        if (methods) {
-            override_methods(child, methods)
-        }
         return child
     };
     var Class = mk.type.Class;
-    var override_methods = function (clazz, methods) {
+    mk.type.Mixin = function (clazz, methods) {
+        if (typeof methods === 'function') {
+            methods = methods.prototype
+        }
         var names = Object.keys(methods);
-        var key, fn;
+        var key;
         for (var i = 0; i < names.length; ++i) {
             key = names[i];
-            fn = methods[key];
-            if (typeof fn === 'function') {
-                clazz.prototype[key] = fn
-            }
+            clazz.prototype[key] = methods[key]
         }
+        return clazz
     };
+    var Mixin = mk.type.Mixin;
     mk.type.Interface = function (child, parents) {
         if (!child) {
             child = function () {
@@ -144,13 +143,104 @@ if (typeof MONKEY !== 'object') {
         Object.call(this)
     };
     var BaseObject = mk.type.BaseObject;
-    Class(BaseObject, null, [IObject], {
-        getClassName: function () {
-            return Object.getPrototypeOf(this).constructor.name
-        }, equals: function (other) {
-            return this === other
+    Class(BaseObject, null, [IObject]);
+    BaseObject.prototype.getClassName = function () {
+        return Object.getPrototypeOf(this).constructor.name
+    };
+    BaseObject.prototype.equals = function (other) {
+        return this === other
+    };
+    mk.type.Mapper = Interface(null, [IObject]);
+    var Mapper = mk.type.Mapper;
+    Mapper.prototype = {
+        toMap: function () {
+        }, copyMap: function (deepCopy) {
+        }, isEmpty: function () {
+        }, getLength: function () {
+        }, allKeys: function () {
+        }, getValue: function (key) {
+        }, setValue: function (key, value) {
+        }, removeValue: function (key) {
+        }, getString: function (key, defaultValue) {
+        }, getBoolean: function (key, defaultValue) {
+        }, getInt: function (key, defaultValue) {
+        }, getFloat: function (key, defaultValue) {
+        }, getDateTime: function (key, defaultValue) {
+        }, setDateTime: function (key, time) {
+        }, setString: function (key, stringer) {
+        }, setMap: function (key, mapper) {
         }
-    });
+    };
+    Mapper.count = function (dict) {
+        if (!dict) {
+            return 0
+        } else if (Interface.conforms(dict, Mapper)) {
+            dict = dict.toMap()
+        } else if (typeof dict !== 'object') {
+            throw TypeError('not a map: ' + dict);
+        }
+        return Object.keys(dict).length
+    };
+    Mapper.isEmpty = function (dict) {
+        return Mapper.count(dict) === 0
+    };
+    Mapper.keys = function (dict) {
+        if (!dict) {
+            return null
+        } else if (Interface.conforms(dict, Mapper)) {
+            dict = dict.toMap()
+        } else if (typeof dict !== 'object') {
+            throw TypeError('not a map: ' + dict);
+        }
+        return Object.keys(dict)
+    };
+    Mapper.removeKey = function (dict, key) {
+        if (!dict) {
+            return null
+        } else if (Interface.conforms(dict, Mapper)) {
+            dict = dict.toMap()
+        } else if (typeof dict !== 'object') {
+            throw TypeError('not a map: ' + dict);
+        }
+        var value = dict[key];
+        delete dict[key];
+        return value
+    };
+    Mapper.forEach = function (dict, handleKeyValue) {
+        if (!dict) {
+            return -1
+        } else if (Interface.conforms(dict, Mapper)) {
+            dict = dict.toMap()
+        } else if (typeof dict !== 'object') {
+            throw TypeError('not a map: ' + dict);
+        }
+        var keys = Object.keys(dict);
+        var cnt = keys.length;
+        var stop;
+        var i = 0, k, v;
+        for (; i < cnt; ++i) {
+            k = keys[i];
+            v = dict[k];
+            stop = handleKeyValue(k, v);
+            if (stop) {
+                break
+            }
+        }
+        return i
+    };
+    Mapper.addAll = function (dict, fromDict) {
+        if (!dict) {
+            return -1
+        } else if (Interface.conforms(dict, Mapper)) {
+            dict = dict.toMap()
+        } else if (typeof dict !== 'object') {
+            throw TypeError('not a map: ' + dict);
+        }
+        return Mapper.forEach(fromDict, function (key, value) {
+            dict[key] = value;
+            return false
+        })
+    };
     mk.type.DataConverter = Interface(null, null);
     var DataConverter = mk.type.DataConverter;
     DataConverter.prototype = {
@@ -165,7 +255,8 @@ if (typeof MONKEY !== 'object') {
         BaseObject.call(this)
     };
     var BaseConverter = mk.type.BaseConverter;
-    Class(BaseConverter, BaseObject, [DataConverter], {
+    Class(BaseConverter, BaseObject, [DataConverter]);
+    Mixin(BaseConverter, {
         getDateTime: function (value, defaultValue) {
             if (IObject.isNull(value)) {
                 return defaultValue
@@ -267,6 +358,102 @@ if (typeof MONKEY !== 'object') {
         MAX_BOOLEAN_LEN: 'undefined'.length
     };
     var Converter = mk.type.Converter;
+    mk.type.Dictionary = function (dict) {
+        BaseObject.call(this);
+        if (!dict) {
+            dict = {}
+        } else if (Interface.conforms(dict, Mapper)) {
+            dict = dict.toMap()
+        }
+        this.__dictionary = dict
+    };
+    var Dictionary = mk.type.Dictionary;
+    Class(Dictionary, BaseObject, [Mapper]);
+    Mixin(Dictionary, {
+        equals: function (other) {
+            if (Interface.conforms(other, Mapper)) {
+                if (this === other) {
+                    return true
+                }
+                other = other.valueOf()
+            }
+            return Arrays.equals(this.__dictionary, other)
+        }, valueOf: function () {
+            return this.__dictionary
+        }, toString: function () {
+            return mk.format.JSON.encode(this.__dictionary)
+        }, toMap: function () {
+            return this.__dictionary
+        }, copyMap: function (deepCopy) {
+            if (deepCopy) {
+                return Copier.deepCopyMap(this.__dictionary)
+            } else {
+                return Copier.copyMap(this.__dictionary)
+            }
+        }, isEmpty: function () {
+            var keys = Object.keys(this.__dictionary);
+            return keys.length === 0
+        }, getLength: function () {
+            var keys = Object.keys(this.__dictionary);
+            return keys.length
+        }, allKeys: function () {
+            return Object.keys(this.__dictionary)
+        }, getValue: function (key) {
+            return this.__dictionary[key]
+        }, setValue: function (key, value) {
+            if (value) {
+                this.__dictionary[key] = value
+            } else if (this.__dictionary.hasOwnProperty(key)) {
+                delete this.__dictionary[key]
+            }
+        }, removeValue: function (key) {
+            var value;
+            if (this.__dictionary.hasOwnProperty(key)) {
+                value = this.__dictionary[key];
+                delete this.__dictionary[key]
+            } else {
+                value = null
+            }
+            return value
+        }, getString: function (key, defaultValue) {
+            var value = this.__dictionary[key];
+            return Converter.getString(value, defaultValue)
+        }, getBoolean: function (key, defaultValue) {
+            var value = this.__dictionary[key];
+            return Converter.getBoolean(value, defaultValue)
+        }, getInt: function (key, defaultValue) {
+            var value = this.__dictionary[key];
+            return Converter.getInt(value, defaultValue)
+        }, getFloat: function (key, defaultValue) {
+            var value = this.__dictionary[key];
+            return Converter.getFloat(value, defaultValue)
+        }, getDateTime: function (key, defaultValue) {
+            var value = this.__dictionary[key];
+            return Converter.getDateTime(value, defaultValue)
+        }, setDateTime: function (key, time) {
+            if (!time) {
+                this.removeValue(key)
+            } else if (time instanceof Date) {
+                time = time.getTime() / 1000.0;
+                this.__dictionary[key] = time
+            } else {
+                time = Converter.getFloat(time, 0);
+                this.__dictionary[key] = time
+            }
+        }, setString: function (key, string) {
+            if (!string) {
+                this.removeValue(key)
+            } else {
+                this.__dictionary[key] = string.toString()
+            }
+        }, setMap: function (key, map) {
+            if (!map) {
+                this.removeValue(key)
+            } else {
+                this.__dictionary[key] = map.toMap()
+            }
+        }
+    });
     var is_array = function (obj) {
         return obj instanceof Array || is_number_array(obj)
     };
@@ -457,7 +644,8 @@ if (typeof MONKEY !== 'object') {
         this.__alias = alias
     };
     var BaseEnum = mk.type.BaseEnum;
-    Class(BaseEnum, BaseObject, null, {
+    Class(BaseEnum, BaseObject, null);
+    Mixin(BaseEnum, {
         equals: function (other) {
             if (other instanceof BaseEnum) {
                 if (this === other) {
@@ -480,7 +668,8 @@ if (typeof MONKEY !== 'object') {
         var NamedEnum = function (value, alias) {
             BaseEnum.call(this, value, alias)
         };
-        Class(NamedEnum, BaseEnum, null, {
+        Class(NamedEnum, BaseEnum, null);
+        Mixin(NamedEnum, {
             toString: function () {
                 var clazz = NamedEnum.__type;
                 if (!clazz) {
@@ -498,7 +687,7 @@ if (typeof MONKEY !== 'object') {
         } else if (!enumeration) {
             enumeration = enum_class(null)
         } else {
-            Class(enumeration, BaseEnum, null, null)
+            Class(enumeration, BaseEnum, null)
         }
         Mapper.forEach(elements, function (alias, value) {
             if (value instanceof BaseEnum) {
@@ -548,7 +737,8 @@ if (typeof MONKEY !== 'object') {
         this.__array = []
     };
     var HashSet = mk.type.HashSet;
-    Class(HashSet, BaseObject, [Set], {
+    Class(HashSet, BaseObject, [Set]);
+    Mixin(HashSet, {
         equals: function (other) {
             if (Interface.conforms(other, Set)) {
                 if (this === other) {
@@ -602,7 +792,8 @@ if (typeof MONKEY !== 'object') {
         this.__string = str
     };
     var ConstantString = mk.type.ConstantString;
-    Class(ConstantString, BaseObject, [Stringer], {
+    Class(ConstantString, BaseObject, [Stringer]);
+    Mixin(ConstantString, {
         equals: function (other) {
             if (Interface.conforms(other, Stringer)) {
                 if (this === other) {
@@ -639,192 +830,6 @@ if (typeof MONKEY !== 'object') {
         var low2 = str2.toLowerCase();
         return low1 === low2
     };
-    mk.type.Mapper = Interface(null, [IObject]);
-    var Mapper = mk.type.Mapper;
-    Mapper.prototype = {
-        toMap: function () {
-        }, copyMap: function (deepCopy) {
-        }, isEmpty: function () {
-        }, getLength: function () {
-        }, allKeys: function () {
-        }, getValue: function (key) {
-        }, setValue: function (key, value) {
-        }, removeValue: function (key) {
-        }, getString: function (key, defaultValue) {
-        }, getBoolean: function (key, defaultValue) {
-        }, getInt: function (key, defaultValue) {
-        }, getFloat: function (key, defaultValue) {
-        }, getDateTime: function (key, defaultValue) {
-        }, setDateTime: function (key, time) {
-        }, setString: function (key, stringer) {
-        }, setMap: function (key, mapper) {
-        }
-    };
-    Mapper.count = function (dict) {
-        if (!dict) {
-            return 0
-        } else if (Interface.conforms(dict, Mapper)) {
-            dict = dict.toMap()
-        } else if (typeof dict !== 'object') {
-            throw TypeError('not a map: ' + dict);
-        }
-        return Object.keys(dict).length
-    };
-    Mapper.isEmpty = function (dict) {
-        return Mapper.count(dict) === 0
-    };
-    Mapper.keys = function (dict) {
-        if (!dict) {
-            return null
-        } else if (Interface.conforms(dict, Mapper)) {
-            dict = dict.toMap()
-        } else if (typeof dict !== 'object') {
-            throw TypeError('not a map: ' + dict);
-        }
-        return Object.keys(dict)
-    };
-    Mapper.removeKey = function (dict, key) {
-        if (!dict) {
-            return null
-        } else if (Interface.conforms(dict, Mapper)) {
-            dict = dict.toMap()
-        } else if (typeof dict !== 'object') {
-            throw TypeError('not a map: ' + dict);
-        }
-        var value = dict[key];
-        delete dict[key];
-        return value
-    };
-    Mapper.forEach = function (dict, handleKeyValue) {
-        if (!dict) {
-            return -1
-        } else if (Interface.conforms(dict, Mapper)) {
-            dict = dict.toMap()
-        } else if (typeof dict !== 'object') {
-            throw TypeError('not a map: ' + dict);
-        }
-        var keys = Object.keys(dict);
-        var cnt = keys.length;
-        var stop;
-        var i = 0, k, v;
-        for (; i < cnt; ++i) {
-            k = keys[i];
-            v = dict[k];
-            stop = handleKeyValue(k, v);
-            if (stop) {
-                break
-            }
-        }
-        return i
-    };
-    Mapper.addAll = function (dict, fromDict) {
-        if (!dict) {
-            return -1
-        } else if (Interface.conforms(dict, Mapper)) {
-            dict = dict.toMap()
-        } else if (typeof dict !== 'object') {
-            throw TypeError('not a map: ' + dict);
-        }
-        return Mapper.forEach(fromDict, function (key, value) {
-            dict[key] = value;
-            return false
-        })
-    };
-    mk.type.Dictionary = function (dict) {
-        BaseObject.call(this);
-        if (!dict) {
-            dict = {}
-        } else if (Interface.conforms(dict, Mapper)) {
-            dict = dict.toMap()
-        }
-        this.__dictionary = dict
-    };
-    var Dictionary = mk.type.Dictionary;
-    Class(Dictionary, BaseObject, [Mapper], {
-        equals: function (other) {
-            if (Interface.conforms(other, Mapper)) {
-                if (this === other) {
-                    return true
-                }
-                other = other.valueOf()
-            }
-            return Arrays.equals(this.__dictionary, other)
-        }, valueOf: function () {
-            return this.__dictionary
-        }, toString: function () {
-            return mk.format.JSON.encode(this.__dictionary)
-        }, toMap: function () {
-            return this.__dictionary
-        }, copyMap: function (deepCopy) {
-            if (deepCopy) {
-                return Copier.deepCopyMap(this.__dictionary)
-            } else {
-                return Copier.copyMap(this.__dictionary)
-            }
-        }, isEmpty: function () {
-            var keys = Object.keys(this.__dictionary);
-            return keys.length === 0
-        }, getLength: function () {
-            var keys = Object.keys(this.__dictionary);
-            return keys.length
-        }, allKeys: function () {
-            return Object.keys(this.__dictionary)
-        }, getValue: function (key) {
-            return this.__dictionary[key]
-        }, setValue: function (key, value) {
-            if (value) {
-                this.__dictionary[key] = value
-            } else if (this.__dictionary.hasOwnProperty(key)) {
-                delete this.__dictionary[key]
-            }
-        }, removeValue: function (key) {
-            var value;
-            if (this.__dictionary.hasOwnProperty(key)) {
-                value = this.__dictionary[key];
-                delete this.__dictionary[key]
-            } else {
-                value = null
-            }
-            return value
-        }, getString: function (key, defaultValue) {
-            var value = this.__dictionary[key];
-            return Converter.getString(value, defaultValue)
-        }, getBoolean: function (key, defaultValue) {
-            var value = this.__dictionary[key];
-            return Converter.getBoolean(value, defaultValue)
-        }, getInt: function (key, defaultValue) {
-            var value = this.__dictionary[key];
-            return Converter.getInt(value, defaultValue)
-        }, getFloat: function (key, defaultValue) {
-            var value = this.__dictionary[key];
-            return Converter.getFloat(value, defaultValue)
-        }, getDateTime: function (key, defaultValue) {
-            var value = this.__dictionary[key];
-            return Converter.getDateTime(value, defaultValue)
-        }, setDateTime: function (key, time) {
-            if (!time) {
-                this.removeValue(key)
-            } else if (time instanceof Date) {
-                time = time.getTime() / 1000.0;
-                this.__dictionary[key] = time
-            } else {
-                time = Converter.getFloat(time, 0);
-                this.__dictionary[key] = time
-            }
-        }, setString: function (key, string) {
-            if (!string) {
-                this.removeValue(key)
-            } else {
-                this.__dictionary[key] = string.toString()
-            }
-        }, setMap: function (key, map) {
-            if (!map) {
-                this.removeValue(key)
-            } else {
-                this.__dictionary[key] = map.toMap()
-            }
-        }
-    });
     mk.type.Wrapper = {
         fetchString: function (str) {
             if (Interface.conforms(str, Stringer)) {

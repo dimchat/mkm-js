@@ -4,13 +4,13 @@ var crypto_sources = [
     // system types
     'src/type/class.js',
     'src/type/object.js',
+    'src/type/mapper.js',
     'src/type/converter.js',
+    'src/type/dictionary.js',
     'src/type/arrays.js',
     'src/type/enum.js',
     'src/type/set.js',
     'src/type/string.js',
-    'src/type/mapper.js',
-    'src/type/dictionary.js',
     'src/type/wrapper.js',
     'src/type/copier.js',
 

@@ -98,15 +98,14 @@ mk.type.BaseObject = function () {
 };
 var BaseObject = mk.type.BaseObject;
 
-Class(BaseObject, null, [IObject], {
+Class(BaseObject, null, [IObject]);
 
-    // Override
-    getClassName: function () {
-        return Object.getPrototypeOf(this).constructor.name;
-    },
+// Override
+BaseObject.prototype.getClassName = function () {
+    return Object.getPrototypeOf(this).constructor.name;
+};
 
-    // Override
-    equals: function (other) {
-        return this === other;
-    }
-});
+// Override
+BaseObject.prototype.equals = function (other) {
+    return this === other;
+};

@@ -57,7 +57,9 @@ mk.type.BaseConverter = function () {
 };
 var BaseConverter = mk.type.BaseConverter;
 
-Class(BaseConverter, BaseObject, [DataConverter], {
+Class(BaseConverter, BaseObject, [DataConverter]);
+
+Mixin(BaseConverter, {
 
     // Override
     getDateTime: function (value, defaultValue) {

@@ -1,10 +1,5 @@
-;
+'use strict';
 // license: https://mit-license.org
-//
-//  MONKEY: Memory Object aNd KEYs
-//
-//                               Written in 2020 by Moky <albert.moky@gmail.com>
-//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -34,7 +29,6 @@
 //! require 'data.js'
 
 (function (ns) {
-    'use strict';
 
     //-------- Base64 algorithm begin --------
     var base64_chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
@@ -157,7 +151,7 @@
     var Base64Coder = function () {
         Object.call(this);
     };
-    Class(Base64Coder, Object, [DataCoder], null);
+    Class(Base64Coder, null, [DataCoder]);
 
     // Override
     Base64Coder.prototype.encode = function (data) {

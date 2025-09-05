@@ -93,7 +93,9 @@ mk.type.HashSet = function () {
 };
 var HashSet = mk.type.HashSet;
 
-Class(HashSet, BaseObject, [Set], {
+Class(HashSet, BaseObject, [Set]);
+
+Mixin(HashSet, {
 
     // Override
     equals: function (other) {

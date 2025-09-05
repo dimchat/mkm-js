@@ -59,7 +59,9 @@ mk.type.BaseEnum = function (value, alias) {
 };
 var BaseEnum = mk.type.BaseEnum;
 
-Class(BaseEnum, BaseObject, null, {
+Class(BaseEnum, BaseObject, null);
+
+Mixin(BaseEnum, {
     // Override
     equals: function (other) {
         if (other instanceof BaseEnum) {
@@ -94,7 +96,8 @@ var enum_class = function (type) {
     var NamedEnum = function (value, alias) {
         BaseEnum.call(this, value, alias);
     };
-    Class(NamedEnum, BaseEnum, null, {
+    Class(NamedEnum, BaseEnum, null);
+    Mixin(NamedEnum, {
         // Override
         toString: function () {
             var clazz = NamedEnum.__type;
@@ -125,7 +128,7 @@ mk.type.Enum = function(enumeration, elements) {
         enumeration = enum_class(null);
     } else {
         // customized enum
-        Class(enumeration, BaseEnum, null, null);
+        Class(enumeration, BaseEnum, null);
     }
     // create enum elements
     Mapper.forEach(elements, function (alias, value) {

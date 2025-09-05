@@ -71,7 +71,9 @@ mk.type.ConstantString = function (str) {
 };
 var ConstantString = mk.type.ConstantString;
 
-Class(ConstantString, BaseObject, [Stringer], {
+Class(ConstantString, BaseObject, [Stringer]);
+
+Mixin(ConstantString, {
 
     // Override
     equals: function (other) {

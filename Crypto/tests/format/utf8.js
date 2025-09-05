@@ -1,10 +1,5 @@
-;
+'use strict';
 // license: https://mit-license.org
-//
-//  MONKEY: Memory Object aNd KEYs
-//
-//                               Written in 2020 by Moky <albert.moky@gmail.com>
-//
 // =============================================================================
 // The MIT License (MIT)
 //
@@ -33,7 +28,6 @@
 //! require <crypto.js>
 
 (function (ns) {
-    'use strict';
 
     var Class = ns.type.Class;
     var StringCoder = ns.format.StringCoder;
@@ -133,7 +127,7 @@
     var Utf8Coder = function () {
         Object.call(this);
     };
-    Class(Utf8Coder, Object, [StringCoder], null);
+    Class(Utf8Coder, null, [StringCoder]);
     // Override
     Utf8Coder.prototype.encode = function (string) {
         return utf8_encode(string);

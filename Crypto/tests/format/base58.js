@@ -1,4 +1,4 @@
-;
+'use strict';
 // license: https://mit-license.org
 // =============================================================================
 // The MIT License (MIT)
@@ -28,7 +28,6 @@
 //! require <crypto.js>
 
 (function (ns) {
-    'use strict';
 
     //
     //  Patch for String.repeat()
@@ -191,7 +190,7 @@
     var Base58Coder = function () {
         Object.call(this);
     };
-    Class(Base58Coder, Object, [DataCoder], null);
+    Class(Base58Coder, null, [DataCoder]);
 
     // Override
     Base58Coder.prototype.encode = function (data) {
