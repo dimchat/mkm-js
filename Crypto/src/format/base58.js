@@ -28,45 +28,46 @@
 //! require 'coder.js'
 
 
-mk.format.Base58 = {
-    /**
-     *  Encode binary data to Base58 string
-     *
-     * @param {Uint8Array} data
-     * @return {String}
-     */
-    encode: function (data) {
-        return this.getCoder().encode(data);
-    },
+    mk.format.Base58 = {
+        /**
+         *  Encode binary data to Base58 string
+         *
+         * @param {Uint8Array} data
+         * @return {String}
+         */
+        encode: function (data) {
+            return this.getCoder().encode(data);
+        },
 
-    /**
-     *  Decode Base58 string to binary data
-     *
-     * @param string
-     * @return {Uint8Array}
-     */
-    decode: function (string) {
-        return this.getCoder().decode(string);
-    },
+        /**
+         *  Decode Base58 string to binary data
+         *
+         * @param string
+         * @return {Uint8Array}
+         */
+        decode: function (string) {
+            return this.getCoder().decode(string);
+        },
 
-    /**
-     *  Get Base58 Coder
-     *
-     * @return {mk.format.DataCoder}
-     */
-    getCoder: function () {
-        return base58Coder;
-    },
+        /**
+         *  Get Base58 Coder
+         *
+         * @return {mk.format.DataCoder}
+         */
+        getCoder: function () {
+            return base58Coder;
+        },
 
-    /**
-     *  Set Base58 Coder
-     *
-     * @param {mk.format.DataCoder} coder
-     */
-    setCoder: function (coder) {
-        base58Coder = coder
-    }
-};
-var Base58 = mk.format.Base58;
+        /**
+         *  Set Base58 Coder
+         *
+         * @param {mk.format.DataCoder} coder
+         */
+        setCoder: function (coder) {
+            base58Coder = coder
+        }
+    };
+    var Base58 = mk.format.Base58;
 
-var base58Coder = null;
+    // Singleton
+    var base58Coder = null;

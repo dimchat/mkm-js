@@ -32,85 +32,86 @@
 //! require 'arrays.js'
 //! require 'dictionary.js'
 
-mk.type.Wrapper = {
 
-    /**
-     *  Remove first wrapper
-     */
-    fetchString: function (str) {
-        if (Interface.conforms(str, Stringer)) {
-            return str.toString();
-        } else if (typeof str === 'string') {
-            // assert(str instanceof String, 'string error: ' + str);
-            return str;
-        } else {
-            // error
-            return null;
+    mk.type.Wrapper = {
+
+        /**
+         *  Remove first wrapper
+         */
+        fetchString: function (str) {
+            if (Interface.conforms(str, Stringer)) {
+                return str.toString();
+            } else if (typeof str === 'string') {
+                // assert(str instanceof String, 'string error: ' + str);
+                return str;
+            } else {
+                // error
+                return null;
+            }
+        },
+
+        fetchMap: function (dict) {
+            if (Interface.conforms(dict, Mapper)) {
+                return dict.toMap();
+            } else if (typeof dict === 'object') {
+                // assert(dict instanceof {}, 'map error: ' + dict);
+                return dict;
+            } else {
+                // error
+                return null;
+            }
+        },
+
+        /**
+         *  Remove all wrappers (recursively)
+         */
+        unwrap: function (object) {
+            if (IObject.isNull(object)) {
+                // empty
+                return null;
+            } else if (IObject.isBaseType(object)) {
+                // return as base type
+                return object;
+            } else if (Enum.isEnum(object)) {
+                // get enum value
+                return object.getValue();
+            } else if (Interface.conforms(object, Stringer)) {
+                // get inner string
+                return object.toString();
+            } else if (Interface.conforms(object, Mapper)) {
+                // unwrap inner map
+                return this.unwrapMap(object.toMap());
+            } else if (!Arrays.isArray(object)) {
+                // unwrap as a map
+                return this.unwrapMap(object);
+            } else if (object instanceof Array) {
+                // unwrap as a list
+                return this.unwrapList(object);
+            } else {
+                // base array?
+                return object;
+            }
+        },
+
+        unwrapMap: function (dict) {
+            var result = {};
+            Mapper.forEach(dict, function (key, value) {
+                // if (key instanceof Stringer) {
+                //     key = key.toString();
+                // }
+                result[key] = Wrapper.unwrap(value);
+                return false;
+            });
+            return result;
+        },
+
+        unwrapList: function (array) {
+            var result = [];
+            var count = array.length;
+            for (var i = 0; i < count; ++i) {
+                result[i] = this.unwrap(array[i]);
+            }
+            return result;
         }
-    },
-
-    fetchMap: function (dict) {
-        if (Interface.conforms(dict, Mapper)) {
-            return dict.toMap();
-        } else if (typeof dict === 'object') {
-            // assert(dict instanceof {}, 'map error: ' + dict);
-            return dict;
-        } else {
-            // error
-            return null;
-        }
-    },
-
-    /**
-     *  Remove all wrappers (recursively)
-     */
-    unwrap: function (object) {
-        if (IObject.isNull(object)) {
-            // empty
-            return null;
-        } else if (IObject.isBaseType(object)) {
-            // return as base type
-            return object;
-        } else if (Enum.isEnum(object)) {
-            // get enum value
-            return object.getValue();
-        } else if (Interface.conforms(object, Stringer)) {
-            // get inner string
-            return object.toString();
-        } else if (Interface.conforms(object, Mapper)) {
-            // unwrap inner map
-            return this.unwrapMap(object.toMap());
-        } else if (!Arrays.isArray(object)) {
-            // unwrap as a map
-            return this.unwrapMap(object);
-        } else if (object instanceof Array) {
-            // unwrap as a list
-            return this.unwrapList(object);
-        } else {
-            // base array?
-            return object;
-        }
-    },
-
-    unwrapMap: function (dict) {
-        var result = {};
-        Mapper.forEach(dict, function (key, value) {
-            // if (key instanceof Stringer) {
-            //     key = key.toString();
-            // }
-            result[key] = Wrapper.unwrap(value);
-            return false;
-        });
-        return result;
-    },
-
-    unwrapList: function (array) {
-        var result = [];
-        var count = array.length;
-        for (var i = 0; i < count; ++i) {
-            result[i] = this.unwrap(array[i]);
-        }
-        return result;
-    }
-};
-var Wrapper = mk.type.Wrapper;
+    };
+    var Wrapper = mk.type.Wrapper;

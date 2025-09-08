@@ -27,85 +27,86 @@
 
 //! require 'class.js'
 
-/**
- *  Object Interface
- */
-mk.type.Object = Interface(null, null);
-var IObject = mk.type.Object;
 
-IObject.prototype = {
+    /**
+     *  Object Interface
+     */
+    mk.type.Object = Interface(null, null);
+    var IObject = mk.type.Object;
 
-    getClassName: function () {},
+    IObject.prototype = {
 
-    equals: function () {},
+        getClassName: function () {},
 
-    valueOf: function () {},
+        equals: function () {},
 
-    toString: function () {}
+        valueOf: function () {},
 
-};
+        toString: function () {}
 
-IObject.isNull = function (object) {
-    if (typeof object === 'undefined') {
-        return true;
-    } else {
-        return object === null;
-    }
-};
-IObject.isString = function (object) {
-    return typeof object === 'string';
-};
-IObject.isNumber = function (object) {
-    return typeof object === 'number';
-};
-IObject.isBoolean = function (object) {
-    return typeof object === 'boolean';
-};
-IObject.isFunction = function (object) {
-    return typeof object === 'function';
-};
+    };
 
-IObject.isBaseType = function (object) {
-    var t = typeof object;
-    if (t === 'string' || t === 'number' || t === 'boolean' || t === 'function') {
-        return true;
-    }
-    /*/
-    if (object instanceof String) {
-        return true;
-    }
-    if (object instanceof Number) {
-        return true;
-    }
-    if (object instanceof Boolean) {
-        return true;
-    }
-    /*/
-    if (object instanceof Date) {
-        return true;
-    }
-    if (object instanceof RegExp) {
-        return true;
-    }
-    return object instanceof Error;
-};
+    IObject.isNull = function (object) {
+        if (typeof object === 'undefined') {
+            return true;
+        } else {
+            return object === null;
+        }
+    };
+    IObject.isString = function (object) {
+        return typeof object === 'string';
+    };
+    IObject.isNumber = function (object) {
+        return typeof object === 'number';
+    };
+    IObject.isBoolean = function (object) {
+        return typeof object === 'boolean';
+    };
+    IObject.isFunction = function (object) {
+        return typeof object === 'function';
+    };
 
-/**
- *  Base class for Object
- */
-mk.type.BaseObject = function () {
-    Object.call(this);
-};
-var BaseObject = mk.type.BaseObject;
+    IObject.isBaseType = function (object) {
+        var t = typeof object;
+        if (t === 'string' || t === 'number' || t === 'boolean' || t === 'function') {
+            return true;
+        }
+        /*/
+        if (object instanceof String) {
+            return true;
+        }
+        if (object instanceof Number) {
+            return true;
+        }
+        if (object instanceof Boolean) {
+            return true;
+        }
+        /*/
+        if (object instanceof Date) {
+            return true;
+        }
+        if (object instanceof RegExp) {
+            return true;
+        }
+        return object instanceof Error;
+    };
 
-Class(BaseObject, null, [IObject]);
+    /**
+     *  Base class for Object
+     */
+    mk.type.BaseObject = function () {
+        Object.call(this);
+    };
+    var BaseObject = mk.type.BaseObject;
 
-// Override
-BaseObject.prototype.getClassName = function () {
-    return Object.getPrototypeOf(this).constructor.name;
-};
+    Class(BaseObject, null, [IObject]);
 
-// Override
-BaseObject.prototype.equals = function (other) {
-    return this === other;
-};
+    // Override
+    BaseObject.prototype.getClassName = function () {
+        return Object.getPrototypeOf(this).constructor.name;
+    };
+
+    // Override
+    BaseObject.prototype.equals = function (other) {
+        return this === other;
+    };

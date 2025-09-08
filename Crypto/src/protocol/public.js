@@ -29,59 +29,25 @@
 
 //! require 'keys.js'
 
-/** Asymmetric Cryptography Public Key
- *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- *
- *  key data format: {
- *      algorithm : "RSA", // "ECC", ...
- *      data      : "{BASE64_ENCODE}",
- *      ...
- *  }
- */
-mk.protocol.PublicKey = Interface(null, [VerifyKey]);
-var PublicKey = mk.protocol.PublicKey;
 
-// PublicKey.RSA = AsymmetricKey.RSA;
-// PublicKey.ECC = AsymmetricKey.ECC;
+    /** Asymmetric Cryptography Public Key
+     *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     *
+     *  key data format: {
+     *      algorithm : "RSA", // "ECC", ...
+     *      data      : "{BASE64_ENCODE}",
+     *      ...
+     *  }
+     */
+    mk.protocol.PublicKey = Interface(null, [VerifyKey]);
+    var PublicKey = mk.protocol.PublicKey;
 
-//
-//  Factory methods
-//
+    // PublicKey.RSA = AsymmetricKey.RSA;
+    // PublicKey.ECC = AsymmetricKey.ECC;
 
-/**
- *  Parse map object to key
- *
- * @param {*} key - key info
- * @return {mk.protocol.PublicKey}
- */
-PublicKey.parse = function (key) {
-    var helper = CryptoExtensions.getPublicHelper();
-    return helper.parsePublicKey(key);
-};
-
-/**
- *  Register public key factory with algorithm
- *
- * @param {string} algorithm
- * @param {mk.protocol.PublicKey.Factory} factory
- */
-PublicKey.setFactory = function (algorithm, factory) {
-    var helper = CryptoExtensions.getPublicHelper();
-    helper.setPublicKeyFactory(algorithm, factory);
-};
-PublicKey.getFactory = function (algorithm) {
-    var helper = CryptoExtensions.getPublicHelper();
-    return helper.getPublicKeyFactory(algorithm);
-};
-
-/**
- *  Public Key Factory
- *  ~~~~~~~~~~~~~~~~~~
- */
-PublicKey.Factory = Interface(null, null);
-var PublicKeyFactory = PublicKey.Factory;
-
-PublicKeyFactory.prototype = {
+    //
+    //  Factory methods
+    //
 
     /**
      *  Parse map object to key
@@ -89,6 +55,41 @@ PublicKeyFactory.prototype = {
      * @param {*} key - key info
      * @return {mk.protocol.PublicKey}
      */
-    parsePublicKey: function (key) {}
+    PublicKey.parse = function (key) {
+        var helper = CryptoExtensions.getPublicHelper();
+        return helper.parsePublicKey(key);
+    };
 
-};
+    /**
+     *  Register public key factory with algorithm
+     *
+     * @param {string} algorithm
+     * @param {mk.protocol.PublicKey.Factory} factory
+     */
+    PublicKey.setFactory = function (algorithm, factory) {
+        var helper = CryptoExtensions.getPublicHelper();
+        helper.setPublicKeyFactory(algorithm, factory);
+    };
+    PublicKey.getFactory = function (algorithm) {
+        var helper = CryptoExtensions.getPublicHelper();
+        return helper.getPublicKeyFactory(algorithm);
+    };
+
+    /**
+     *  Public Key Factory
+     *  ~~~~~~~~~~~~~~~~~~
+     */
+    PublicKey.Factory = Interface(null, null);
+    var PublicKeyFactory = PublicKey.Factory;
+
+    PublicKeyFactory.prototype = {
+
+        /**
+         *  Parse map object to key
+         *
+         * @param {*} key - key info
+         * @return {mk.protocol.PublicKey}
+         */
+        parsePublicKey: function (key) {}
+
+    };

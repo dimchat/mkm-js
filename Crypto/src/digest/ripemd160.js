@@ -27,36 +27,37 @@
 
 //! require 'hash.js'
 
-mk.digest.RIPEMD160 = {
 
-    /**
-     *  Get digest of binary data
-     *
-     * @param {Uint8Array} data - binary data
-     * @return {Uint8Array} binary data
-     */
-    digest: function (data) {
-        return this.getDigester().digest(data);
-    },
+    mk.digest.RIPEMD160 = {
 
-    /**
-     *  Get RipeMD160 Digester
-     *
-     * @return {mk.digest.MessageDigester}
-     */
-    getDigester: function () {
-        return ripemd160Digester;
-    },
+        /**
+         *  Get digest of binary data
+         *
+         * @param {Uint8Array} data - binary data
+         * @return {Uint8Array} binary data
+         */
+        digest: function (data) {
+            return this.getDigester().digest(data);
+        },
 
-    /**
-     *  Set RipeMD160 Digester
-     * @param {mk.digest.MessageDigester} digester
-     */
-    setDigester: function (digester) {
-        ripemd160Digester = digester;
-    }
-};
-var RIPEMD160 = mk.digest.RIPEMD160;
+        /**
+         *  Get RipeMD160 Digester
+         *
+         * @return {mk.digest.MessageDigester}
+         */
+        getDigester: function () {
+            return ripemd160Digester;
+        },
 
-// Singleton
-var ripemd160Digester = null;
+        /**
+         *  Set RipeMD160 Digester
+         * @param {mk.digest.MessageDigester} digester
+         */
+        setDigester: function (digester) {
+            ripemd160Digester = digester;
+        }
+    };
+    var RIPEMD160 = mk.digest.RIPEMD160;
+
+    // Singleton
+    var ripemd160Digester = null;

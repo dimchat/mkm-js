@@ -29,91 +29,48 @@
 
 //! require 'keys.js'
 
-/** Asymmetric Cryptography Private Key
- *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- *  This class is used to decrypt symmetric key or sign message data
- *
- *  key data format: {
- *      algorithm : "RSA", // "ECC", ...
- *      data      : "{BASE64_ENCODE}",
- *      ...
- *  }
- */
-mk.protocol.PrivateKey = Interface(null, [SignKey]);
-var PrivateKey = mk.protocol.PrivateKey;
 
-PrivateKey.prototype = {
-
-    /**
-     *  Create public key from this private key
+    /** Asymmetric Cryptography Private Key
+     *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     *  This class is used to decrypt symmetric key or sign message data
      *
-     * @return {mk.protocol.PublicKey}
+     *  key data format: {
+     *      algorithm : "RSA", // "ECC", ...
+     *      data      : "{BASE64_ENCODE}",
+     *      ...
+     *  }
      */
-    getPublicKey: function () {}
+    mk.protocol.PrivateKey = Interface(null, [SignKey]);
+    var PrivateKey = mk.protocol.PrivateKey;
 
-};
+    PrivateKey.prototype = {
 
-// PrivateKey.RSA = AsymmetricKey.RSA;
-// PrivateKey.ECC = AsymmetricKey.ECC;
+        /**
+         *  Create public key from this private key
+         *
+         * @return {mk.protocol.PublicKey}
+         */
+        getPublicKey: function () {}
 
-//
-//  Factory methods
-//
+    };
 
-/**
- *  Generate key with algorithm name
- *
- * @param {string} algorithm - algorithm name ('RSA', 'ECC')
- * @return {mk.protocol.PrivateKey}
- */
-PrivateKey.generate = function (algorithm) {
-    var helper = CryptoExtensions.getPrivateHelper();
-    return helper.generatePrivateKey(algorithm);
-};
+    // PrivateKey.RSA = AsymmetricKey.RSA;
+    // PrivateKey.ECC = AsymmetricKey.ECC;
 
-/**
- *  Parse map object to key
- *
- * @param {*} key - key info
- * @return {mk.protocol.PrivateKey}
- */
-PrivateKey.parse = function (key) {
-    var helper = CryptoExtensions.getPrivateHelper();
-    return helper.parsePrivateKey(key);
-};
-
-/**
- *  Register private key factory with algorithm
- *
- * @param {string} algorithm
- * @param {mk.protocol.PrivateKey.Factory} factory
- */
-PrivateKey.setFactory = function (algorithm, factory) {
-    var helper = CryptoExtensions.getPrivateHelper();
-    helper.setPrivateKeyFactory(algorithm, factory);
-};
-PrivateKey.getFactory = function (algorithm) {
-    var helper = CryptoExtensions.getPrivateHelper();
-    return helper.getPrivateKeyFactory(algorithm);
-};
-
-
-/**
- *  Private Key Factory
- *  ~~~~~~~~~~~~~~~~~~~
- */
-PrivateKey.Factory = Interface(null, null);
-var PrivateKeyFactory = PrivateKey.Factory;
-
-PrivateKeyFactory.prototype = {
+    //
+    //  Factory methods
+    //
 
     /**
-     *  Generate key
+     *  Generate key with algorithm name
      *
+     * @param {string} algorithm - algorithm name ('RSA', 'ECC')
      * @return {mk.protocol.PrivateKey}
      */
-    generatePrivateKey: function () {},
-
+    PrivateKey.generate = function (algorithm) {
+        var helper = CryptoExtensions.getPrivateHelper();
+        return helper.generatePrivateKey(algorithm);
+    };
 
     /**
      *  Parse map object to key
@@ -121,6 +78,50 @@ PrivateKeyFactory.prototype = {
      * @param {*} key - key info
      * @return {mk.protocol.PrivateKey}
      */
-    parsePrivateKey: function (key) {}
+    PrivateKey.parse = function (key) {
+        var helper = CryptoExtensions.getPrivateHelper();
+        return helper.parsePrivateKey(key);
+    };
 
-};
+    /**
+     *  Register private key factory with algorithm
+     *
+     * @param {string} algorithm
+     * @param {mk.protocol.PrivateKey.Factory} factory
+     */
+    PrivateKey.setFactory = function (algorithm, factory) {
+        var helper = CryptoExtensions.getPrivateHelper();
+        helper.setPrivateKeyFactory(algorithm, factory);
+    };
+    PrivateKey.getFactory = function (algorithm) {
+        var helper = CryptoExtensions.getPrivateHelper();
+        return helper.getPrivateKeyFactory(algorithm);
+    };
+
+
+    /**
+     *  Private Key Factory
+     *  ~~~~~~~~~~~~~~~~~~~
+     */
+    PrivateKey.Factory = Interface(null, null);
+    var PrivateKeyFactory = PrivateKey.Factory;
+
+    PrivateKeyFactory.prototype = {
+
+        /**
+         *  Generate key
+         *
+         * @return {mk.protocol.PrivateKey}
+         */
+        generatePrivateKey: function () {},
+
+
+        /**
+         *  Parse map object to key
+         *
+         * @param {*} key - key info
+         * @return {mk.protocol.PrivateKey}
+         */
+        parsePrivateKey: function (key) {}
+
+    };

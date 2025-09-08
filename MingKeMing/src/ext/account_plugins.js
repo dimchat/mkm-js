@@ -31,93 +31,93 @@
 //
 
 
-/**
- *  Account GeneralFactory
- *  ~~~~~~~~~~~~~~~~~~~~~~
- */
-mkm.ext.GeneralAccountHelper = Interface(null, null);
-var GeneralAccountHelper = mkm.ext.GeneralAccountHelper;
+    /**
+     *  Account GeneralFactory
+     *  ~~~~~~~~~~~~~~~~~~~~~~
+     */
+    mkm.ext.GeneralAccountHelper = Interface(null, null);
+    var GeneralAccountHelper = mkm.ext.GeneralAccountHelper;
 
-GeneralAccountHelper.prototype = {
+    GeneralAccountHelper.prototype = {
 
-    //
-    //  Algorithm Version
-    //
+        //
+        //  Algorithm Version
+        //
+
+        /**
+         *  Get meta type
+         *
+         * @return {String}
+         */
+        getMetaType: function (meta, defaultValue) {},
+
+        /**
+         *  Get document type
+         *
+         * @return {String}
+         */
+        getDocumentType: function (doc, defaultValue) {}
+
+    };
+
 
     /**
-     *  Get meta type
-     *
-     * @return {String}
+     *  Account FactoryManager
+     *  ~~~~~~~~~~~~~~~~~~~~~~
      */
-    getMetaType: function (meta, defaultValue) {},
+    mkm.ext.SharedAccountExtensions = {
 
-    /**
-     *  Get document type
-     *
-     * @return {String}
-     */
-    getDocumentType: function (doc, defaultValue) {}
+        //
+        //  Address
+        //
+        setAddressHelper: function (helper) {
+            AccountExtensions.setAddressHelper(helper);
+        },
+        getAddressHelper: function () {
+            return AccountExtensions.getAddressHelper();
+        },
 
-};
+        //
+        //  ID
+        //
+        setIdentifierHelper: function (helper) {
+            AccountExtensions.setIdentifierHelper(helper);
+        },
+        getIdentifierHelper: function () {
+            return AccountExtensions.getIdentifierHelper();
+        },
 
+        //
+        //  Meta
+        //
+        setMetaHelper: function (helper) {
+            AccountExtensions.setMetaHelper(helper);
+        },
+        getMetaHelper: function () {
+            return AccountExtensions.getMetaHelper();
+        },
 
-/**
- *  Account FactoryManager
- *  ~~~~~~~~~~~~~~~~~~~~~~
- */
-mkm.ext.SharedAccountExtensions = {
+        //
+        //  Document
+        //
+        setDocumentHelper: function (helper) {
+            AccountExtensions.setDocumentHelper(helper);
+        },
+        getDocumentHelper: function () {
+            return AccountExtensions.getDocumentHelper();
+        },
 
-    //
-    //  Address
-    //
-    setAddressHelper: function (helper) {
-        AccountExtensions.setAddressHelper(helper);
-    },
-    getAddressHelper: function () {
-        return AccountExtensions.getAddressHelper();
-    },
+        //
+        //  General Helper
+        //
+        setHelper: function (helper) {
+            generalAccountHelper = helper;
+        },
+        getHelper: function () {
+            return generalAccountHelper;
+        }
 
-    //
-    //  ID
-    //
-    setIdentifierHelper: function (helper) {
-        AccountExtensions.setIdentifierHelper(helper);
-    },
-    getIdentifierHelper: function () {
-        return AccountExtensions.getIdentifierHelper();
-    },
+    };
+    var SharedAccountExtensions = mkm.ext.SharedAccountExtensions;
 
-    //
-    //  Meta
-    //
-    setMetaHelper: function (helper) {
-        AccountExtensions.setMetaHelper(helper);
-    },
-    getMetaHelper: function () {
-        return AccountExtensions.getMetaHelper();
-    },
-
-    //
-    //  Document
-    //
-    setDocumentHelper: function (helper) {
-        AccountExtensions.setDocumentHelper(helper);
-    },
-    getDocumentHelper: function () {
-        return AccountExtensions.getDocumentHelper();
-    },
-
-    //
-    //  General Helper
-    //
-    setHelper: function (helper) {
-        generalAccountHelper = helper;
-    },
-    getHelper: function () {
-        return generalAccountHelper;
-    }
-
-};
-var SharedAccountExtensions = mkm.ext.SharedAccountExtensions;
-
-var generalAccountHelper = null;
+    var generalAccountHelper = null;

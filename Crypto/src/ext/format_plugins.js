@@ -26,66 +26,67 @@
 //
 
 
-/**
- *  Format GeneralFactory
- *  ~~~~~~~~~~~~~~~~~~~~~
- */
-mk.ext.GeneralFormatHelper = Interface(null, null);
-var GeneralFormatHelper = mk.ext.GeneralFormatHelper;
+    /**
+     *  Format GeneralFactory
+     *  ~~~~~~~~~~~~~~~~~~~~~
+     */
+    mk.ext.GeneralFormatHelper = Interface(null, null);
+    var GeneralFormatHelper = mk.ext.GeneralFormatHelper;
 
-GeneralFormatHelper.prototype = {
+    GeneralFormatHelper.prototype = {
 
-    //
-    //  Algorithm
-    //
+        //
+        //  Algorithm
+        //
+
+        /**
+         *  Get TED algorithm
+         *
+         * @return {String}
+         */
+        getFormatAlgorithm: function (ted, defaultValue) {}
+
+    };
+
 
     /**
-     *  Get TED algorithm
-     *
-     * @return {String}
+     *  Format FactoryManager
+     *  ~~~~~~~~~~~~~~~~~~~~~
      */
-    getFormatAlgorithm: function (ted, defaultValue) {}
+    mk.ext.SharedFormatExtensions = {
 
-};
+        //
+        //  TED
+        //
+        setTEDHelper: function (helper) {
+            FormatExtensions.setTEDHelper(helper);
+        },
+        getTEDHelper: function () {
+            return FormatExtensions.getTEDHelper();
+        },
 
+        //
+        //  PNF
+        //
+        setPNFHelper: function (helper) {
+            FormatExtensions.setPNFHelper(helper);
+        },
+        getPNFHelper: function () {
+            return FormatExtensions.getPNFHelper();
+        },
 
-/**
- *  Format FactoryManager
- *  ~~~~~~~~~~~~~~~~~~~~~
- */
-mk.ext.SharedFormatExtensions = {
+        //
+        //  General Helper
+        //
+        setHelper: function (helper) {
+            generalFormatHelper = helper;
+        },
+        getHelper: function () {
+            return generalFormatHelper;
+        }
 
-    //
-    //  TED
-    //
-    setTEDHelper: function (helper) {
-        FormatExtensions.setTEDHelper(helper);
-    },
-    getTEDHelper: function () {
-        return FormatExtensions.getTEDHelper();
-    },
+    };
+    var SharedFormatExtensions = mk.ext.SharedFormatExtensions;
 
-    //
-    //  PNF
-    //
-    setPNFHelper: function (helper) {
-        FormatExtensions.setPNFHelper(helper);
-    },
-    getPNFHelper: function () {
-        return FormatExtensions.getPNFHelper();
-    },
-
-    //
-    //  General Helper
-    //
-    setHelper: function (helper) {
-        generalFormatHelper = helper;
-    },
-    getHelper: function () {
-        return generalFormatHelper;
-    }
-
-};
-var SharedFormatExtensions = mk.ext.SharedFormatExtensions;
-
-var generalFormatHelper = null;
+    // Singleton
+    var generalFormatHelper = null;

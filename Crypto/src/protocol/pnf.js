@@ -31,140 +31,140 @@
 //! require 'ted.js'
 
 
-/** Transportable File
- *  ~~~~~~~~~~~~~~~~~~
- *  PNF - Portable Network File
- *
- *      0. "{URL}"
- *      1. "base64,{BASE64_ENCODE}"
- *      2. "data:image/png;base64,{BASE64_ENCODE}"
- *      3. {
- *              data     : "...",        // base64_encode(fileContent)
- *              filename : "avatar.png",
- *
- *              URL      : "http://...", // download from CDN
- *              // before fileContent uploaded to a public CDN,
- *              // it can be encrypted by a symmetric key
- *              key      : {             // symmetric key to decrypt file content
- *                  algorithm : "AES",   // "DES", ...
- *                  data      : "{BASE64_ENCODE}",
- *                  ...
- *              }
- *         }
- */
-mk.protocol.PortableNetworkFile = Interface(null, [Mapper]);
-var PortableNetworkFile = mk.protocol.PortableNetworkFile;
+    /** Transportable File
+     *  ~~~~~~~~~~~~~~~~~~
+     *  PNF - Portable Network File
+     *
+     *      0. "{URL}"
+     *      1. "base64,{BASE64_ENCODE}"
+     *      2. "data:image/png;base64,{BASE64_ENCODE}"
+     *      3. {
+     *              data     : "...",        // base64_encode(fileContent)
+     *              filename : "avatar.png",
+     *
+     *              URL      : "http://...", // download from CDN
+     *              // before fileContent uploaded to a public CDN,
+     *              // it can be encrypted by a symmetric key
+     *              key      : {             // symmetric key to decrypt file content
+     *                  algorithm : "AES",   // "DES", ...
+     *                  data      : "{BASE64_ENCODE}",
+     *                  ...
+     *              }
+     *         }
+     */
+    mk.protocol.PortableNetworkFile = Interface(null, [Mapper]);
+    var PortableNetworkFile = mk.protocol.PortableNetworkFile;
 
-PortableNetworkFile.prototype = {
+    PortableNetworkFile.prototype = {
+
+        /**
+         *  When file data is too big, don't set it in this dictionary,
+         *  but upload it to a CDN and set the download URL instead.
+         *
+         * @param {Uint8Array} fileData
+         */
+        setData: function (fileData) {},
+        getData: function () {},
+
+        /**
+         *  Set file name
+         *
+         * @param {string} filename
+         */
+        setFilename: function (filename) {},
+        getFilename: function () {},
+
+        /**
+         *  Download URL
+         *
+         * @param {URL} url
+         */
+        setURL: function (url) {},
+        getURL: function () {},
+
+        /**
+         *  Password for decrypting the downloaded data from CDN,
+         *  default is a plain key, which just return the same data when decrypting.
+         *
+         * @param {mk.protocol.DecryptKey} key
+         */
+        setPassword: function (key) {},
+        getPassword: function () {},
+
+        /**
+         *  Get encoded string
+         *
+         * @return {String} "URL", or
+         *                  "base64,{BASE64_ENCODE}", or
+         *                  "data:image/png;base64,{BASE64_ENCODE}", or
+         *                  "{...}"
+         */
+        toString: function () {},
+
+        /**
+         *  toJson()
+         *
+         * @return {String|{}} String, or Map
+         */
+        toObject: function () {}
+
+    };
+
+    //
+    //  Factory methods
+    //
+
+    PortableNetworkFile.createFromURL = function (url, password) {
+        return PortableNetworkFile.create(null, null, url, password);
+    };
+    PortableNetworkFile.createFromData = function (ted, filename) {
+        return PortableNetworkFile.create(ted, filename, null, null);
+    };
+    PortableNetworkFile.create = function (ted, filename, url, password) {
+        var helper = FormatExtensions.getPNFHelper();
+        return helper.createPortableNetworkFile(ted, filename, url, password);
+    };
+    PortableNetworkFile.parse = function (pnf) {
+        var helper = FormatExtensions.getPNFHelper();
+        return helper.parsePortableNetworkFile(pnf);
+    };
+
+    PortableNetworkFile.setFactory = function (factory) {
+        var helper = FormatExtensions.getPNFHelper();
+        return helper.setPortableNetworkFileFactory(factory);
+    };
+    PortableNetworkFile.getFactory = function () {
+        var helper = FormatExtensions.getPNFHelper();
+        return helper.getPortableNetworkFileFactory();
+    };
+
 
     /**
-     *  When file data is too big, don't set it in this dictionary,
-     *  but upload it to a CDN and set the download URL instead.
-     *
-     * @param {Uint8Array} fileData
+     *  PNF Factory
+     *  ~~~~~~~~~~~
      */
-    setData: function (fileData) {},
-    getData: function () {},
+    PortableNetworkFile.Factory = Interface(null, null);
+    var PortableNetworkFileFactory = PortableNetworkFile.Factory;
 
-    /**
-     *  Set file name
-     *
-     * @param {string} filename
-     */
-    setFilename: function (filename) {},
-    getFilename: function () {},
+    PortableNetworkFileFactory.prototype = {
 
-    /**
-     *  Download URL
-     *
-     * @param {URL} url
-     */
-    setURL: function (url) {},
-    getURL: function () {},
+        /**
+         *  Create PNF
+         *
+         * @param {TransportableData} ted - file data (not encrypted)
+         * @param {String} filename       - file name
+         * @param {URL} url               - download URL
+         * @param {DecryptKey} password   - decrypt key for downloaded data
+         * @return {mk.protocol.PortableNetworkFile} PNF object
+         */
+        createPortableNetworkFile: function (ted, filename, url, password) {},
 
-    /**
-     *  Password for decrypting the downloaded data from CDN,
-     *  default is a plain key, which just return the same data when decrypting.
-     *
-     * @param {mk.protocol.DecryptKey} key
-     */
-    setPassword: function (key) {},
-    getPassword: function () {},
+        /**
+         *  Parse map object to PNF
+         *
+         * @param {*} pnf - PNF info
+         * @return {mk.protocol.PortableNetworkFile} PNF object
+         */
+        parsePortableNetworkFile: function (pnf) {}
 
-    /**
-     *  Get encoded string
-     *
-     * @return {String} "URL", or
-     *                  "base64,{BASE64_ENCODE}", or
-     *                  "data:image/png;base64,{BASE64_ENCODE}", or
-     *                  "{...}"
-     */
-    toString: function () {},
-
-    /**
-     *  toJson()
-     *
-     * @return {String|{}} String, or Map
-     */
-    toObject: function () {}
-
-};
-
-//
-//  Factory methods
-//
-
-PortableNetworkFile.createFromURL = function (url, password) {
-    return PortableNetworkFile.create(null, null, url, password);
-};
-PortableNetworkFile.createFromData = function (ted, filename) {
-    return PortableNetworkFile.create(ted, filename, null, null);
-};
-PortableNetworkFile.create = function (ted, filename, url, password) {
-    var helper = FormatExtensions.getPNFHelper();
-    return helper.createPortableNetworkFile(ted, filename, url, password);
-};
-PortableNetworkFile.parse = function (pnf) {
-    var helper = FormatExtensions.getPNFHelper();
-    return helper.parsePortableNetworkFile(pnf);
-};
-
-PortableNetworkFile.setFactory = function (factory) {
-    var helper = FormatExtensions.getPNFHelper();
-    return helper.setPortableNetworkFileFactory(factory);
-};
-PortableNetworkFile.getFactory = function () {
-    var helper = FormatExtensions.getPNFHelper();
-    return helper.getPortableNetworkFileFactory();
-};
-
-
-/**
- *  PNF Factory
- *  ~~~~~~~~~~~
- */
-PortableNetworkFile.Factory = Interface(null, null);
-var PortableNetworkFileFactory = PortableNetworkFile.Factory;
-
-PortableNetworkFileFactory.prototype = {
-
-    /**
-     *  Create PNF
-     *
-     * @param {TransportableData} ted - file data (not encrypted)
-     * @param {String} filename       - file name
-     * @param {URL} url               - download URL
-     * @param {DecryptKey} password   - decrypt key for downloaded data
-     * @return {mk.protocol.PortableNetworkFile} PNF object
-     */
-    createPortableNetworkFile: function (ted, filename, url, password) {},
-
-    /**
-     *  Parse map object to PNF
-     *
-     * @param {*} pnf - PNF info
-     * @return {mk.protocol.PortableNetworkFile} PNF object
-     */
-    parsePortableNetworkFile: function (pnf) {}
-
-};
+    };

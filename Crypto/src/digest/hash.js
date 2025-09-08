@@ -27,22 +27,23 @@
 
 //! require 'type/class.js'
 
-/**
- *  Message Digest
- *  ~~~~~~~~~~~~~~
- *  MD5, SHA1, SHA256, Keccak256, RipeMD160, ...
- */
-mk.digest.MessageDigester = Interface(null, null);
-var MessageDigester = mk.digest.MessageDigester;
-
-MessageDigester.prototype = {
 
     /**
-     *  Get digest of binary data
-     *
-     * @param {Uint8Array} data - binary data
-     * @return {Uint8Array} binary data
+     *  Message Digest
+     *  ~~~~~~~~~~~~~~
+     *  MD5, SHA1, SHA256, Keccak256, RipeMD160, ...
      */
-    digest: function (data) {}
+    mk.digest.MessageDigester = Interface(null, null);
+    var MessageDigester = mk.digest.MessageDigester;
 
-};
+    MessageDigester.prototype = {
+
+        /**
+         *  Get digest of binary data
+         *
+         * @param {Uint8Array} data - binary data
+         * @return {Uint8Array} binary data
+         */
+        digest: function (data) {}
+
+    };

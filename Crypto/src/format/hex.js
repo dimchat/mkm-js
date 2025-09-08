@@ -28,45 +28,46 @@
 //! require 'coder.js'
 
 
-mk.format.Hex = {
-    /**
-     *  Encode binary data to Hex string
-     *
-     * @param {Uint8Array} data
-     * @return {String}
-     */
-    encode: function (data) {
-        return this.getCoder().encode(data);
-    },
+    mk.format.Hex = {
+        /**
+         *  Encode binary data to Hex string
+         *
+         * @param {Uint8Array} data
+         * @return {String}
+         */
+        encode: function (data) {
+            return this.getCoder().encode(data);
+        },
 
-    /**
-     *  Decode Hex string to binary data
-     *
-     * @param {string} string
-     * @return {Uint8Array}
-     */
-    decode: function (string) {
-        return this.getCoder().decode(string);
-    },
+        /**
+         *  Decode Hex string to binary data
+         *
+         * @param {string} string
+         * @return {Uint8Array}
+         */
+        decode: function (string) {
+            return this.getCoder().decode(string);
+        },
 
-    /**
-     *  Get Hex Coder
-     *
-     * @return {mk.format.DataCoder}
-     */
-    getCoder: function () {
-        return hexCoder;
-    },
+        /**
+         *  Get Hex Coder
+         *
+         * @return {mk.format.DataCoder}
+         */
+        getCoder: function () {
+            return hexCoder;
+        },
 
-    /**
-     *  Set Hex Coder
-     *
-     * @param {mk.format.DataCoder} coder
-     */
-    setCoder: function (coder) {
-        hexCoder = coder
-    }
-};
-var Hex = mk.format.Hex;
+        /**
+         *  Set Hex Coder
+         *
+         * @param {mk.format.DataCoder} coder
+         */
+        setCoder: function (coder) {
+            hexCoder = coder
+        }
+    };
+    var Hex = mk.format.Hex;
 
-var hexCoder = null;
+    // Singleton
+    var hexCoder = null;

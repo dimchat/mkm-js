@@ -30,94 +30,95 @@
 //! require 'protocol/symmetric.js'
 
 
-mk.ext.PublicKeyHelper = Interface(null, null);
-var PublicKeyHelper = mk.ext.PublicKeyHelper;
+    mk.ext.PublicKeyHelper = Interface(null, null);
+    var PublicKeyHelper = mk.ext.PublicKeyHelper;
 
-PublicKeyHelper.prototype = {
+    PublicKeyHelper.prototype = {
 
-    setPublicKeyFactory: function (algorithm, factory) {},
-    getPublicKeyFactory: function (algorithm) {},
+        setPublicKeyFactory: function (algorithm, factory) {},
+        getPublicKeyFactory: function (algorithm) {},
 
-    parsePublicKey: function (key) {}
+        parsePublicKey: function (key) {}
 
-};
-
-
-mk.ext.PrivateKeyHelper = Interface(null, null);
-var PrivateKeyHelper = mk.ext.PrivateKeyHelper;
-
-PrivateKeyHelper.prototype = {
-
-    setPrivateKeyFactory: function (algorithm, factory) {},
-    getPrivateKeyFactory: function (algorithm) {},
-
-    generatePrivateKey: function (algorithm) {},
-
-    parsePrivateKey: function (key) {}
-
-};
+    };
 
 
-mk.ext.SymmetricKeyHelper = Interface(null, null);
-var SymmetricKeyHelper = mk.ext.SymmetricKeyHelper;
+    mk.ext.PrivateKeyHelper = Interface(null, null);
+    var PrivateKeyHelper = mk.ext.PrivateKeyHelper;
 
-SymmetricKeyHelper.prototype = {
+    PrivateKeyHelper.prototype = {
 
-    setSymmetricKeyFactory: function (algorithm, factory) {},
-    getSymmetricKeyFactory: function (algorithm) {},
+        setPrivateKeyFactory: function (algorithm, factory) {},
+        getPrivateKeyFactory: function (algorithm) {},
 
-    generateSymmetricKey: function (algorithm) {},
+        generatePrivateKey: function (algorithm) {},
 
-    parseSymmetricKey: function (key) {}
+        parsePrivateKey: function (key) {}
 
-};
+    };
 
 
-/**
- *  CryptographyKey FactoryManager
- *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- */
-mk.ext.CryptoExtensions = {
+    mk.ext.SymmetricKeyHelper = Interface(null, null);
+    var SymmetricKeyHelper = mk.ext.SymmetricKeyHelper;
+
+    SymmetricKeyHelper.prototype = {
+
+        setSymmetricKeyFactory: function (algorithm, factory) {},
+        getSymmetricKeyFactory: function (algorithm) {},
+
+        generateSymmetricKey: function (algorithm) {},
+
+        parseSymmetricKey: function (key) {}
+
+    };
+
 
     /**
-     *  Init public key helper
-     *
-     * @param {PublicKeyHelper} helper
+     *  CryptographyKey FactoryManager
+     *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      */
-    setPublicHelper: function (helper) {
-        publicHelper = helper;
-    },
-    getPublicHelper: function () {
-        return publicHelper;
-    },
+    mk.ext.CryptoExtensions = {
 
-    /**
-     *  Init private key helper
-     *
-     * @param {PrivateKeyHelper} helper
-     */
-    setPrivateHelper: function (helper) {
-        privateHelper = helper;
-    },
-    getPrivateHelper: function () {
-        return privateHelper;
-    },
+        /**
+         *  Init public key helper
+         *
+         * @param {PublicKeyHelper} helper
+         */
+        setPublicHelper: function (helper) {
+            publicHelper = helper;
+        },
+        getPublicHelper: function () {
+            return publicHelper;
+        },
 
-    /**
-     *  Init symmetric key helper
-     *
-     * @param {SymmetricKeyHelper} helper
-     */
-    setSymmetricHelper: function (helper) {
-        symmetricHelper = helper;
-    },
-    getSymmetricHelper: function () {
-        return symmetricHelper;
-    }
+        /**
+         *  Init private key helper
+         *
+         * @param {PrivateKeyHelper} helper
+         */
+        setPrivateHelper: function (helper) {
+            privateHelper = helper;
+        },
+        getPrivateHelper: function () {
+            return privateHelper;
+        },
 
-};
-var CryptoExtensions = mk.ext.CryptoExtensions;
+        /**
+         *  Init symmetric key helper
+         *
+         * @param {SymmetricKeyHelper} helper
+         */
+        setSymmetricHelper: function (helper) {
+            symmetricHelper = helper;
+        },
+        getSymmetricHelper: function () {
+            return symmetricHelper;
+        }
 
-var publicHelper = null;
-var privateHelper = null;
-var symmetricHelper = null;
+    };
+    var CryptoExtensions = mk.ext.CryptoExtensions;
+
+    // Singleton
+    var publicHelper = null;
+    var privateHelper = null;
+    var symmetricHelper = null;

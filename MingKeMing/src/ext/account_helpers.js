@@ -36,151 +36,151 @@
 //! require 'protocol/document.js'
 
 
-mkm.ext.AddressHelper = Interface(null, null);
-var AddressHelper = mkm.ext.AddressHelper;
+    mkm.ext.AddressHelper = Interface(null, null);
+    var AddressHelper = mkm.ext.AddressHelper;
 
-AddressHelper.prototype = {
+    AddressHelper.prototype = {
 
-    setAddressFactory: function (factory) {},
-    getAddressFactory: function () {},
+        setAddressFactory: function (factory) {},
+        getAddressFactory: function () {},
 
-    parseAddress: function (address) {},
+        parseAddress: function (address) {},
 
-    generateAddress: function (meta, network) {}
+        generateAddress: function (meta, network) {}
 
-};
-
-
-mkm.ext.IdentifierHelper = Interface(null, null);
-var IdentifierHelper = mkm.ext.IdentifierHelper;
-
-IdentifierHelper.prototype = {
-
-    setIdentifierFactory: function (factory) {},
-    getIdentifierFactory: function () {},
-
-    parseIdentifier: function (identifier) {},
-
-    createIdentifier: function (name, address, terminal) {},
-
-    generateIdentifier: function (meta, network, terminal) {}
-
-};
+    };
 
 
-mkm.ext.MetaHelper = Interface(null, null);
-var MetaHelper = mkm.ext.MetaHelper;
+    mkm.ext.IdentifierHelper = Interface(null, null);
+    var IdentifierHelper = mkm.ext.IdentifierHelper;
 
-MetaHelper.prototype = {
+    IdentifierHelper.prototype = {
 
-    setMetaFactory: function (type, factory) {},
-    getMetaFactory: function (type) {},
+        setIdentifierFactory: function (factory) {},
+        getIdentifierFactory: function () {},
 
-    /**
-     *  Create meta from local storage
-     *
-     * @param {String} type
-     * @param {VerifyKey} key
-     * @param {String} seed
-     * @param {TransportableData} fingerprint
-     */
-    createMeta: function (type, key, seed, fingerprint) {},
+        parseIdentifier: function (identifier) {},
 
-    /**
-     *  Generate new meta
-     *
-     * @param {String} type
-     * @param {SignKey} sKey
-     * @param {String} seed
-     */
-    generateMeta: function (type, sKey, seed) {},
+        createIdentifier: function (name, address, terminal) {},
 
-    parseMeta: function (meta) {}
+        generateIdentifier: function (meta, network, terminal) {}
 
-};
+    };
 
 
-mkm.ext.DocumentHelper = Interface(null, null);
-var DocumentHelper = mkm.ext.DocumentHelper;
+    mkm.ext.MetaHelper = Interface(null, null);
+    var MetaHelper = mkm.ext.MetaHelper;
 
-DocumentHelper.prototype = {
+    MetaHelper.prototype = {
 
-    setDocumentFactory: function (type, factory) {},
-    getDocumentFactory: function (type) {},
+        setMetaFactory: function (type, factory) {},
+        getMetaFactory: function (type) {},
 
-    /**
-     *  Create document from local storage
-     *
-     * @param {String} type
-     * @param {ID} identifier
-     * @param {String} data
-     * @param {TransportableData} signature
-     */
-    createDocument: function (type, identifier, data, signature) {},
+        /**
+         *  Create meta from local storage
+         *
+         * @param {String} type
+         * @param {VerifyKey} key
+         * @param {String} seed
+         * @param {TransportableData} fingerprint
+         */
+        createMeta: function (type, key, seed, fingerprint) {},
 
-    parseDocument: function (doc) {}
+        /**
+         *  Generate new meta
+         *
+         * @param {String} type
+         * @param {SignKey} sKey
+         * @param {String} seed
+         */
+        generateMeta: function (type, sKey, seed) {},
 
-};
+        parseMeta: function (meta) {}
+
+    };
 
 
-/**
- *  Account FactoryManager
- *  ~~~~~~~~~~~~~~~~~~~~~~
- */
-mkm.ext.AccountExtensions = {
+    mkm.ext.DocumentHelper = Interface(null, null);
+    var DocumentHelper = mkm.ext.DocumentHelper;
+
+    DocumentHelper.prototype = {
+
+        setDocumentFactory: function (type, factory) {},
+        getDocumentFactory: function (type) {},
+
+        /**
+         *  Create document from local storage
+         *
+         * @param {String} type
+         * @param {ID} identifier
+         * @param {String} data
+         * @param {TransportableData} signature
+         */
+        createDocument: function (type, identifier, data, signature) {},
+
+        parseDocument: function (doc) {}
+
+    };
+
 
     /**
-     *  Init address helper
-     *
-     * @param {AddressHelper} helper
+     *  Account FactoryManager
+     *  ~~~~~~~~~~~~~~~~~~~~~~
      */
-    setAddressHelper: function (helper) {
-        addressHelper = helper;
-    },
-    getAddressHelper: function () {
-        return addressHelper;
-    },
+    mkm.ext.AccountExtensions = {
 
-    /**
-     *  Init did helper
-     *
-     * @param {IdentifierHelper} helper
-     */
-    setIdentifierHelper: function (helper) {
-        idHelper = helper;
-    },
-    getIdentifierHelper: function () {
-        return idHelper;
-    },
+        /**
+         *  Init address helper
+         *
+         * @param {AddressHelper} helper
+         */
+        setAddressHelper: function (helper) {
+            addressHelper = helper;
+        },
+        getAddressHelper: function () {
+            return addressHelper;
+        },
 
-    /**
-     *  Init meta helper
-     *
-     * @param {MetaHelper} helper
-     */
-    setMetaHelper: function (helper) {
-        metaHelper = helper;
-    },
-    getMetaHelper: function () {
-        return metaHelper;
-    },
+        /**
+         *  Init did helper
+         *
+         * @param {IdentifierHelper} helper
+         */
+        setIdentifierHelper: function (helper) {
+            idHelper = helper;
+        },
+        getIdentifierHelper: function () {
+            return idHelper;
+        },
 
-    /**
-     *  Init document helper
-     *
-     * @param {DocumentHelper} helper
-     */
-    setDocumentHelper: function (helper) {
-        docHelper = helper;
-    },
-    getDocumentHelper: function () {
-        return docHelper;
-    }
+        /**
+         *  Init meta helper
+         *
+         * @param {MetaHelper} helper
+         */
+        setMetaHelper: function (helper) {
+            metaHelper = helper;
+        },
+        getMetaHelper: function () {
+            return metaHelper;
+        },
 
-};
-var AccountExtensions = mkm.ext.AccountExtensions;
+        /**
+         *  Init document helper
+         *
+         * @param {DocumentHelper} helper
+         */
+        setDocumentHelper: function (helper) {
+            docHelper = helper;
+        },
+        getDocumentHelper: function () {
+            return docHelper;
+        }
 
-var addressHelper = null;
-var idHelper = null;
-var metaHelper = null;
-var docHelper = null;
+    };
+    var AccountExtensions = mkm.ext.AccountExtensions;
+
+    var addressHelper = null;
+    var idHelper = null;
+    var metaHelper = null;
+    var docHelper = null;

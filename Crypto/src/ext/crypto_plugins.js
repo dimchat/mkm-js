@@ -26,121 +26,122 @@
 //
 
 
-/**
- *  CryptographyKey GeneralFactory
- *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- */
-mk.ext.GeneralCryptoHelper = Interface(null, null);
-var GeneralCryptoHelper = mk.ext.GeneralCryptoHelper;
+    /**
+     *  CryptographyKey GeneralFactory
+     *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     */
+    mk.ext.GeneralCryptoHelper = Interface(null, null);
+    var GeneralCryptoHelper = mk.ext.GeneralCryptoHelper;
 
-GeneralCryptoHelper.prototype = {
+    GeneralCryptoHelper.prototype = {
 
-    //
-    //  Algorithm
-    //
+        //
+        //  Algorithm
+        //
+
+        /**
+         *  Get crypto algorithm
+         *
+         * @return {String}
+         */
+        getKeyAlgorithm: function (key, defaultValue) {}
+
+    };
 
     /**
-     *  Get crypto algorithm
-     *
-     * @return {String}
+     *  Sample data for checking keys
      */
-    getKeyAlgorithm: function (key, defaultValue) {}
+    GeneralCryptoHelper.PROMISE = 'Moky loves May Lee forever!';
 
-};
+    var sample_data = function () {
+        var promise = GeneralCryptoHelper.PROMISE;
+        if (promise instanceof Uint8Array) {
+            return promise;
+        } else {
+            var data = UTF8.encode(promise);
+            GeneralCryptoHelper.PROMISE = data;
+            return data;
+        }
+    };
 
-/**
- *  Sample data for checking keys
- */
-GeneralCryptoHelper.PROMISE = 'Moky loves May Lee forever!';
+    /**
+     *  Compare asymmetric keys
+     *
+     * @param {mk.protocol.SignKey} sKey
+     * @param {mk.protocol.VerifyKey} pKey
+     * @return true on signature matched
+     */
+    GeneralCryptoHelper.matchAsymmetricKeys = function (sKey, pKey) {
+        var promise = sample_data();
+        // verify with signature
+        var signature = sKey.sign(promise);
+        return pKey.verify(promise, signature);
+    };
 
-var sample_data = function () {
-    var promise = GeneralCryptoHelper.PROMISE;
-    if (promise instanceof Uint8Array) {
-        return promise;
-    } else {
-        var data = UTF8.encode(promise);
-        GeneralCryptoHelper.PROMISE = data;
-        return data;
-    }
-};
-
-/**
- *  Compare asymmetric keys
- *
- * @param {mk.protocol.SignKey} sKey
- * @param {mk.protocol.VerifyKey} pKey
- * @return true on signature matched
- */
-GeneralCryptoHelper.matchAsymmetricKeys = function (sKey, pKey) {
-    var promise = sample_data();
-    // verify with signature
-    var signature = sKey.sign(promise);
-    return pKey.verify(promise, signature);
-};
-
-/**
- *  Compare symmetric keys
- *
- * @param {mk.protocol.EncryptKey} encKey
- * @param {mk.protocol.DecryptKey} decKey
- */
-GeneralCryptoHelper.matchSymmetricKeys = function (encKey, decKey) {
-    var promise = sample_data();
-    var params = {};
-    // check by encryption
-    var ciphertext = encKey.encrypt(promise, params);
-    var plaintext = decKey.decrypt(ciphertext, params);
-    return plaintext && Arrays.equals(plaintext, promise);
-};
+    /**
+     *  Compare symmetric keys
+     *
+     * @param {mk.protocol.EncryptKey} encKey
+     * @param {mk.protocol.DecryptKey} decKey
+     */
+    GeneralCryptoHelper.matchSymmetricKeys = function (encKey, decKey) {
+        var promise = sample_data();
+        var params = {};
+        // check by encryption
+        var ciphertext = encKey.encrypt(promise, params);
+        var plaintext = decKey.decrypt(ciphertext, params);
+        return plaintext && Arrays.equals(plaintext, promise);
+    };
 
 
-/**
- *  CryptographyKey FactoryManager
- *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- */
-mk.ext.SharedCryptoExtensions = {
+    /**
+     *  CryptographyKey FactoryManager
+     *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     */
+    mk.ext.SharedCryptoExtensions = {
 
-    //
-    //  Public Key
-    //
-    setPublicHelper: function (helper) {
-        CryptoExtensions.setPublicHelper(helper);
-    },
-    getPublicHelper: function () {
-        return CryptoExtensions.getPublicHelper();
-    },
+        //
+        //  Public Key
+        //
+        setPublicHelper: function (helper) {
+            CryptoExtensions.setPublicHelper(helper);
+        },
+        getPublicHelper: function () {
+            return CryptoExtensions.getPublicHelper();
+        },
 
-    //
-    //  Private Key
-    //
-    setPrivateHelper: function (helper) {
-        CryptoExtensions.setPrivateHelper(helper);
-    },
-    getPrivateHelper: function () {
-        return CryptoExtensions.getPrivateHelper();
-    },
+        //
+        //  Private Key
+        //
+        setPrivateHelper: function (helper) {
+            CryptoExtensions.setPrivateHelper(helper);
+        },
+        getPrivateHelper: function () {
+            return CryptoExtensions.getPrivateHelper();
+        },
 
-    //
-    //  Symmetric Key
-    //
-    setSymmetricHelper: function (helper) {
-        CryptoExtensions.setSymmetricHelper(helper);
-    },
-    getSymmetricHelper: function () {
-        return CryptoExtensions.getSymmetricHelper();
-    },
+        //
+        //  Symmetric Key
+        //
+        setSymmetricHelper: function (helper) {
+            CryptoExtensions.setSymmetricHelper(helper);
+        },
+        getSymmetricHelper: function () {
+            return CryptoExtensions.getSymmetricHelper();
+        },
 
-    //
-    //  General Helper
-    //
-    setHelper: function (helper) {
-        generalCryptoHelper = helper;
-    },
-    getHelper: function () {
-        return generalCryptoHelper;
-    }
+        //
+        //  General Helper
+        //
+        setHelper: function (helper) {
+            generalCryptoHelper = helper;
+        },
+        getHelper: function () {
+            return generalCryptoHelper;
+        }
 
-};
-var SharedCryptoExtensions = mk.ext.SharedCryptoExtensions;
+    };
+    var SharedCryptoExtensions = mk.ext.SharedCryptoExtensions;
 
-var generalCryptoHelper = null;
+    // Singleton
+    var generalCryptoHelper = null;

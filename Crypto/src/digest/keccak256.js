@@ -27,36 +27,37 @@
 
 //! require 'hash.js'
 
-mk.digest.KECCAK256 = {
 
-    /**
-     *  Get digest of binary data
-     *
-     * @param {Uint8Array} data - binary data
-     * @return {Uint8Array} binary data
-     */
-    digest: function (data) {
-        return this.getDigester().digest(data);
-    },
+    mk.digest.KECCAK256 = {
 
-    /**
-     *  Get Keccak256 Digester
-     *
-     * @return {mk.digest.MessageDigester}
-     */
-    getDigester: function () {
-        return keccak256Digester;
-    },
+        /**
+         *  Get digest of binary data
+         *
+         * @param {Uint8Array} data - binary data
+         * @return {Uint8Array} binary data
+         */
+        digest: function (data) {
+            return this.getDigester().digest(data);
+        },
 
-    /**
-     *  Set Keccak256 Digester
-     * @param {mk.digest.MessageDigester} digester
-     */
-    setDigester: function (digester) {
-        keccak256Digester = digester;
-    }
-};
-var KECCAK256 = mk.digest.KECCAK256;
+        /**
+         *  Get Keccak256 Digester
+         *
+         * @return {mk.digest.MessageDigester}
+         */
+        getDigester: function () {
+            return keccak256Digester;
+        },
 
-// Singleton
-var keccak256Digester = null;
+        /**
+         *  Set Keccak256 Digester
+         * @param {mk.digest.MessageDigester} digester
+         */
+        setDigester: function (digester) {
+            keccak256Digester = digester;
+        }
+    };
+    var KECCAK256 = mk.digest.KECCAK256;
+
+    // Singleton
+    var keccak256Digester = null;

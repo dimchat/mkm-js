@@ -28,45 +28,46 @@
 //! require 'coder.js'
 
 
-mk.format.Base64 = {
-    /**
-     *  Encode binary data to Base64 string
-     *
-     * @param {Uint8Array} data
-     * @return {String}
-     */
-    encode: function (data) {
-        return this.getCoder().encode(data);
-    },
+    mk.format.Base64 = {
+        /**
+         *  Encode binary data to Base64 string
+         *
+         * @param {Uint8Array} data
+         * @return {String}
+         */
+        encode: function (data) {
+            return this.getCoder().encode(data);
+        },
 
-    /**
-     *  Decode Base64 string to binary data
-     *
-     * @param string
-     * @return {Uint8Array}
-     */
-    decode: function (string) {
-        return this.getCoder().decode(string);
-    },
+        /**
+         *  Decode Base64 string to binary data
+         *
+         * @param string
+         * @return {Uint8Array}
+         */
+        decode: function (string) {
+            return this.getCoder().decode(string);
+        },
 
-    /**
-     *  Get Base64 Coder
-     *
-     * @return {mk.format.DataCoder}
-     */
-    getCoder: function () {
-        return base64Coder;
-    },
+        /**
+         *  Get Base64 Coder
+         *
+         * @return {mk.format.DataCoder}
+         */
+        getCoder: function () {
+            return base64Coder;
+        },
 
-    /**
-     *  Set Base64 Coder
-     *
-     * @param {mk.format.DataCoder} coder
-     */
-    setCoder: function (coder) {
-        base64Coder = coder
-    }
-};
-var Base64 = mk.format.Base64;
+        /**
+         *  Set Base64 Coder
+         *
+         * @param {mk.format.DataCoder} coder
+         */
+        setCoder: function (coder) {
+            base64Coder = coder
+        }
+    };
+    var Base64 = mk.format.Base64;
 
-var base64Coder = null;
+    // Singleton
+    var base64Coder = null;

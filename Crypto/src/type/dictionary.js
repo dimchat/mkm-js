@@ -31,28 +31,27 @@
 //! require 'copier.js'
 //! require 'mapper.js'
 
-/**
- *  Create dictionary with values or JSON string
- *
- * @param {mk.type.Mapper|{}} dict
- */
-mk.type.Dictionary = function (dict) {
-    BaseObject.call(this);
-    if (!dict) {
-        dict = {};
-    } else if (Interface.conforms(dict, Mapper)) {
-        dict = dict.toMap();
-    }
-    this.__dictionary = dict;
-};
-var Dictionary = mk.type.Dictionary;
 
-Class(Dictionary, BaseObject, [Mapper]);
+    /**
+     *  Create dictionary with values or JSON string
+     *
+     * @param {mk.type.Mapper|{}} dict
+     */
+    mk.type.Dictionary = function (dict) {
+        BaseObject.call(this);
+        if (!dict) {
+            dict = {};
+        } else if (Interface.conforms(dict, Mapper)) {
+            dict = dict.toMap();
+        }
+        this.__dictionary = dict;
+    };
+    var Dictionary = mk.type.Dictionary;
 
-Mixin(Dictionary, {
+    Class(Dictionary, BaseObject, [Mapper]);
 
     // Override
-    equals: function (other) {
+    Dictionary.prototype.equals = function (other) {
         if (Interface.conforms(other, Mapper)) {
             if (this === other) {
                 return true;
@@ -60,70 +59,70 @@ Mixin(Dictionary, {
             other = other.valueOf();
         }
         return Arrays.equals(this.__dictionary, other);
-    },
+    };
 
     // Override
-    valueOf: function () {
+    Dictionary.prototype.valueOf = function () {
         return this.__dictionary;
-    },
+    };
 
     // Override
-    toString: function () {
+    Dictionary.prototype.toString = function () {
         return mk.format.JSON.encode(this.__dictionary);
-    },
+    };
 
     //-------- Mapper
 
     // Override
-    toMap: function () {
+    Dictionary.prototype.toMap = function () {
         return this.__dictionary;
-    },
+    };
 
     // Override
-    copyMap: function (deepCopy) {
+    Dictionary.prototype.copyMap = function (deepCopy) {
         if (deepCopy) {
             return Copier.deepCopyMap(this.__dictionary);
         } else {
             return Copier.copyMap(this.__dictionary);
         }
-    },
+    };
 
     // Override
-    isEmpty: function () {
+    Dictionary.prototype.isEmpty = function () {
         // return Mapper.isEmpty(this.__dictionary);
         var keys = Object.keys(this.__dictionary);
         return keys.length === 0;
-    },
+    };
 
     // Override
-    getLength: function() {
+    Dictionary.prototype.getLength = function() {
         // return Mapper.count(this.__dictionary);
         var keys = Object.keys(this.__dictionary);
         return keys.length;
-    },
+    };
 
     // Override
-    allKeys: function() {
+    Dictionary.prototype.allKeys = function() {
         // return Mapper.keys(this.__dictionary);
         return Object.keys(this.__dictionary);
-    },
+    };
 
     // Override
-    getValue: function (key) {
+    Dictionary.prototype.getValue = function (key) {
         return this.__dictionary[key];
-    },
+    };
 
     // Override
-    setValue: function (key, value) {
+    Dictionary.prototype.setValue = function (key, value) {
         if (value) {
             this.__dictionary[key] = value;
         } else if (this.__dictionary.hasOwnProperty(key)) {
             delete this.__dictionary[key];
         }
-    },
+    };
 
     // Override
-    removeValue: function (key) {
+    Dictionary.prototype.removeValue = function (key) {
         var value;
         if (this.__dictionary.hasOwnProperty(key)) {
             value = this.__dictionary[key];
@@ -132,40 +131,40 @@ Mixin(Dictionary, {
             value = null;
         }
         return value;
-    },
+    };
 
     // Override
-    getString: function (key, defaultValue) {
+    Dictionary.prototype.getString = function (key, defaultValue) {
         var value = this.__dictionary[key];
         return Converter.getString(value, defaultValue);
-    },
+    };
 
     // Override
-    getBoolean: function (key, defaultValue) {
+    Dictionary.prototype.getBoolean = function (key, defaultValue) {
         var value = this.__dictionary[key];
         return Converter.getBoolean(value, defaultValue);
-    },
+    };
 
     // Override
-    getInt: function (key, defaultValue) {
+    Dictionary.prototype.getInt = function (key, defaultValue) {
         var value = this.__dictionary[key];
         return Converter.getInt(value, defaultValue);
-    },
+    };
 
     // Override
-    getFloat: function (key, defaultValue) {
+    Dictionary.prototype.getFloat = function (key, defaultValue) {
         var value = this.__dictionary[key];
         return Converter.getFloat(value, defaultValue);
-    },
+    };
 
     // Override
-    getDateTime: function (key, defaultValue) {
+    Dictionary.prototype.getDateTime = function (key, defaultValue) {
         var value = this.__dictionary[key];
         return Converter.getDateTime(value, defaultValue);
-    },
+    };
 
     // Override
-    setDateTime: function (key, time) {
+    Dictionary.prototype.setDateTime = function (key, time) {
         if (!time) {
             this.removeValue(key);
         } else if (time instanceof Date) {
@@ -175,24 +174,22 @@ Mixin(Dictionary, {
             time = Converter.getFloat(time, 0);
             this.__dictionary[key] = time;
         }
-    },
+    };
 
     // Override
-    setString: function (key, string) {
+    Dictionary.prototype.setString = function (key, string) {
         if (!string) {
             this.removeValue(key);
         } else {
             this.__dictionary[key] = string.toString();
         }
-    },
+    };
 
     // Override
-    setMap: function (key, map) {
+    Dictionary.prototype.setMap = function (key, map) {
         if (!map) {
             this.removeValue(key);
         } else {
             this.__dictionary[key] = map.toMap();
         }
-    }
-
-});
+    };

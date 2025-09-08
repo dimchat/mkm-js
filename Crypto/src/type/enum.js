@@ -28,42 +28,43 @@
 //! require 'class.js'
 //! require 'object.js'
 
-/**
- *  searching exists elements for alias
- */
-var get_enum_alias = function (enumeration, value) {
-    var alias = null;
-    Mapper.forEach(enumeration, function (n, e) {
-        if (e instanceof BaseEnum && e.equals(value)) {
-            alias = e.__alias;
-            return true;
+
+    /**
+     *  searching exists elements for alias
+     */
+    var get_enum_alias = function (enumeration, value) {
+        var alias = null;
+        Mapper.forEach(enumeration, function (n, e) {
+            if (e instanceof BaseEnum && e.equals(value)) {
+                alias = e.__alias;
+                return true;
+            }
+            return false;
+        });
+        return alias;
+    };
+
+    /**
+     *  Create Enum with value & alias
+     *
+     * @param {int} value
+     * @param {String} alias
+     */
+    mk.type.BaseEnum = function (value, alias) {
+        BaseObject.call(this);
+        if (!alias) {
+            alias = get_enum_alias(this, value);
         }
-        return false;
-    });
-    return alias;
-};
+        this.__value = value;
+        this.__alias = alias;
+    };
+    var BaseEnum = mk.type.BaseEnum;
 
-/**
- *  Create Enum with value & alias
- *
- * @param {int} value
- * @param {String} alias
- */
-mk.type.BaseEnum = function (value, alias) {
-    BaseObject.call(this);
-    if (!alias) {
-        alias = get_enum_alias(this, value);
-    }
-    this.__value = value;
-    this.__alias = alias;
-};
-var BaseEnum = mk.type.BaseEnum;
+    Class(BaseEnum, BaseObject, null);
 
-Class(BaseEnum, BaseObject, null);
 
-Mixin(BaseEnum, {
     // Override
-    equals: function (other) {
+    BaseEnum.prototype.equals = function (other) {
         if (other instanceof BaseEnum) {
             if (this === other) {
                 return true;
@@ -71,96 +72,95 @@ Mixin(BaseEnum, {
             other = other.valueOf();
         }
         return this.__value === other;
-    },
-
-    // Override
-    toString: function () {
-        return '<' + this.getName() + ': ' + this.getValue() + '>';
-    },
-
-    // Override
-    valueOf: function () {
-        return this.__value;
-    },
-
-    getValue: function () {
-        return this.__value;
-    },
-
-    getName: function () {
-        return this.__alias;
-    }
-});
-
-var enum_class = function (type) {
-    var NamedEnum = function (value, alias) {
-        BaseEnum.call(this, value, alias);
     };
-    Class(NamedEnum, BaseEnum, null);
-    Mixin(NamedEnum, {
-        // Override
-        toString: function () {
-            var clazz = NamedEnum.__type;
-            if (!clazz) {
-                clazz = this.getClassName();
+
+    // Override
+    BaseEnum.prototype.toString = function () {
+        return '<' + this.getName() + ': ' + this.getValue() + '>';
+    };
+
+    // Override
+    BaseEnum.prototype.valueOf = function () {
+        return this.__value;
+    };
+
+    BaseEnum.prototype.getValue = function () {
+        return this.__value;
+    };
+
+    BaseEnum.prototype.getName = function () {
+        return this.__alias;
+    };
+
+    var enum_class = function (type) {
+        var NamedEnum = function (value, alias) {
+            BaseEnum.call(this, value, alias);
+        };
+        Class(NamedEnum, BaseEnum, null);
+        Implementation(NamedEnum, {
+            // Override
+            toString: function () {
+                var clazz = NamedEnum.__type;
+                if (!clazz) {
+                    clazz = this.getClassName();
+                }
+                return '<' + clazz + ' ' + this.getName() +
+                    ': ' + this.getValue() + '>';
             }
-            return '<' + clazz + ' ' + this.getName() +
-                ': ' + this.getValue() + '>';
-        }
-    });
-    NamedEnum.__type = type;
-    return NamedEnum;
-};
+        });
+        NamedEnum.__type = type;
+        return NamedEnum;
+    };
 
-/**
- *  Define Enum with elements names & values
- *
- * @param {String|Class} enumeration - enum name/constructor
- * @param {{}} elements              - enum elements
- * @return {Class} enum class
- */
-mk.type.Enum = function(enumeration, elements) {
-    if (IObject.isString(enumeration)) {
-        // enum with name
-        enumeration = enum_class(enumeration);
-    } else if (!enumeration) {
-        // enum without name
-        enumeration = enum_class(null);
-    } else {
-        // customized enum
-        Class(enumeration, BaseEnum, null);
-    }
-    // create enum elements
-    Mapper.forEach(elements, function (alias, value) {
+    /**
+     *  Define Enum with elements names & values
+     *
+     * @param {String|Class} enumeration - enum name/constructor
+     * @param {{}} elements              - enum elements
+     * @return {Class} enum class
+     */
+    mk.type.Enum = function(enumeration, elements) {
+        if (IObject.isString(enumeration)) {
+            // enum with name
+            enumeration = enum_class(enumeration);
+        } else if (!enumeration) {
+            // enum without name
+            enumeration = enum_class(null);
+        } else {
+            // customized enum
+            Class(enumeration, BaseEnum, null);
+        }
+        // create enum elements
+        Mapper.forEach(elements, function (alias, value) {
+            if (value instanceof BaseEnum) {
+                value = value.getValue();
+            } else if (typeof value !== 'number') {
+                throw new TypeError('Enum value must be a number!');
+            }
+            enumeration[alias] = new enumeration(value, alias);
+            return false;
+        });
+        return enumeration;
+    };
+    var Enum = mk.type.Enum;
+
+    Enum.prototype.getValue = function () {};
+    Enum.prototype.getName = function () {};
+
+    Enum.isEnum = function (value) {
+        return value instanceof BaseEnum;
+    };
+
+    Enum.getInt = function (value, defaultValue) {
         if (value instanceof BaseEnum) {
-            value = value.getValue();
-        } else if (typeof value !== 'number') {
-            throw new TypeError('Enum value must be a number!');
+            return value.getValue();
         }
-        enumeration[alias] = new enumeration(value, alias);
-        return false;
-    });
-    return enumeration;
-};
-var Enum = mk.type.Enum;
+        return Converter.getInt(value, defaultValue);
+    };
 
-Enum.prototype.getValue = function () {};
-Enum.prototype.getName = function () {};
-
-Enum.isEnum = function (value) {
-    return value instanceof BaseEnum;
-};
-
-Enum.getInt = function (value, defaultValue) {
-    if (value instanceof BaseEnum) {
-        return value.getValue();
-    }
-    return Converter.getInt(value, defaultValue);
-};
-
-Enum.getString = function (value, defaultValue) {
-    if (value instanceof BaseEnum) {
-        return value.getName();
-    }
-    return Converter.getString(value, defaultValue);
-}
+    Enum.getString = function (value, defaultValue) {
+        if (value instanceof BaseEnum) {
+            return value.getName();
+        }
+        return Converter.getString(value, defaultValue);
+    };

@@ -32,105 +32,106 @@
 //! require 'arrays.js'
 //! require 'dictionary.js'
 
-mk.type.Copier = {
 
-    /**
-     *  Shallow Copy
-     */
-    copy: function (object) {
-        if (IObject.isNull(object)) {
-            // empty
-            return null;
-        } else if (IObject.isBaseType(object)) {
-            // return as base type
-            return object;
-        } else if (Enum.isEnum(object)) {
-            // get enum value
-            return object.getValue();
-        } else if (Interface.conforms(object, Stringer)) {
-            // get inner string
-            return object.toString();
-        } else if (Interface.conforms(object, Mapper)) {
-            // copy inner map
-            return this.copyMap(object.toMap());
-        } else if (!Arrays.isArray(object)) {
-            // unwrap as a map
-            return this.copyMap(object);
-        } else if (object instanceof Array) {
-            // unwrap as a list
-            return this.copyList(object);
-        } else {
-            // base array?
-            return object;
+    mk.type.Copier = {
+
+        /**
+         *  Shallow Copy
+         */
+        copy: function (object) {
+            if (IObject.isNull(object)) {
+                // empty
+                return null;
+            } else if (IObject.isBaseType(object)) {
+                // return as base type
+                return object;
+            } else if (Enum.isEnum(object)) {
+                // get enum value
+                return object.getValue();
+            } else if (Interface.conforms(object, Stringer)) {
+                // get inner string
+                return object.toString();
+            } else if (Interface.conforms(object, Mapper)) {
+                // copy inner map
+                return this.copyMap(object.toMap());
+            } else if (!Arrays.isArray(object)) {
+                // unwrap as a map
+                return this.copyMap(object);
+            } else if (object instanceof Array) {
+                // unwrap as a list
+                return this.copyList(object);
+            } else {
+                // base array?
+                return object;
+            }
+        },
+
+        copyMap: function (dict) {
+            var clone = {};
+            Mapper.forEach(dict, function (key, value) {
+                clone[key] = value;
+                return false;
+            });
+            return clone;
+        },
+
+        copyList: function (array) {
+            var clone = [];
+            var count = array.length;
+            for (var i = 0; i < count; ++i) {
+                clone.push(array[i]);
+            }
+            return clone;
+        },
+
+
+        /**
+         *  Deep Copy
+         */
+        deepCopy: function (object) {
+            if (IObject.isNull(object)) {
+                // empty
+                return null;
+            } else if (IObject.isBaseType(object)) {
+                // return as base type
+                return object;
+            } else if (Enum.isEnum(object)) {
+                // get enum value
+                return object.getValue();
+            } else if (Interface.conforms(object, Stringer)) {
+                // get inner string
+                return object.toString();
+            } else if (Interface.conforms(object, Mapper)) {
+                // copy inner map
+                return this.deepCopyMap(object.toMap());
+            } else if (!Arrays.isArray(object)) {
+                // unwrap as a map
+                return this.deepCopyMap(object);
+            } else if (object instanceof Array) {
+                // unwrap as a list
+                return this.deepCopyList(object);
+            } else {
+                // base array?
+                return object;
+            }
+        },
+
+        deepCopyMap: function (dict) {
+            var clone = {};
+            Mapper.forEach(dict, function (key, value) {
+                clone[key] = Copier.deepCopy(value);
+                return false;
+            });
+            return clone;
+        },
+
+        deepCopyList: function (array) {
+            var clone = [];
+            var count = array.length;
+            for (var i = 0; i < count; ++i) {
+                clone.push(this.deepCopy(array[i]));
+            }
+            return clone;
         }
-    },
-
-    copyMap: function (dict) {
-        var clone = {};
-        Mapper.forEach(dict, function (key, value) {
-            clone[key] = value;
-            return false;
-        });
-        return clone;
-    },
-
-    copyList: function (array) {
-        var clone = [];
-        var count = array.length;
-        for (var i = 0; i < count; ++i) {
-            clone.push(array[i]);
-        }
-        return clone;
-    },
-
-
-    /**
-     *  Deep Copy
-     */
-    deepCopy: function (object) {
-        if (IObject.isNull(object)) {
-            // empty
-            return null;
-        } else if (IObject.isBaseType(object)) {
-            // return as base type
-            return object;
-        } else if (Enum.isEnum(object)) {
-            // get enum value
-            return object.getValue();
-        } else if (Interface.conforms(object, Stringer)) {
-            // get inner string
-            return object.toString();
-        } else if (Interface.conforms(object, Mapper)) {
-            // copy inner map
-            return this.deepCopyMap(object.toMap());
-        } else if (!Arrays.isArray(object)) {
-            // unwrap as a map
-            return this.deepCopyMap(object);
-        } else if (object instanceof Array) {
-            // unwrap as a list
-            return this.deepCopyList(object);
-        } else {
-            // base array?
-            return object;
-        }
-    },
-
-    deepCopyMap: function (dict) {
-        var clone = {};
-        Mapper.forEach(dict, function (key, value) {
-            clone[key] = Copier.deepCopy(value);
-            return false;
-        });
-        return clone;
-    },
-
-    deepCopyList: function (array) {
-        var clone = [];
-        var count = array.length;
-        for (var i = 0; i < count; ++i) {
-            clone.push(this.deepCopy(array[i]));
-        }
-        return clone;
-    }
-};
-var Copier = mk.type.Copier;
+    };
+    var Copier = mk.type.Copier;

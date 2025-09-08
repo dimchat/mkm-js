@@ -35,25 +35,25 @@
 //! require 'broadcast.js'
 
 
-/**
- *  ID for entity (User/Group)
- *
- *      data format: "name@address[/terminal]"
- *
- *      fields:
- *          name     - entity name, the seed of fingerprint to build address
- *          address  - a string to identify an entity
- *          terminal - entity login resource(device), OPTIONAL
- */
-mkm.mkm.Identifier = function (identifier, name, address, terminal) {
-    ConstantString.call(this, identifier);
-    this.__name = name;
-    this.__address = address;
-    this.__terminal = terminal;
-};
-var Identifier = mkm.mkm.Identifier;
+    /**
+     *  ID for entity (User/Group)
+     *
+     *      data format: "name@address[/terminal]"
+     *
+     *      fields:
+     *          name     - entity name, the seed of fingerprint to build address
+     *          address  - a string to identify an entity
+     *          terminal - entity login resource(device), OPTIONAL
+     */
+    mkm.mkm.Identifier = function (identifier, name, address, terminal) {
+        ConstantString.call(this, identifier);
+        this.__name = name;
+        this.__address = address;
+        this.__terminal = terminal;
+    };
+    var Identifier = mkm.mkm.Identifier;
 
-Class(Identifier, ConstantString, [ID]);
+    Class(Identifier, ConstantString, [ID]);
     
     // Override
     Identifier.prototype.getName = function () {

@@ -30,68 +30,69 @@
 //! require 'format/pnf.js'
 
 
-mk.ext.TransportableDataHelper = Interface(null, null);
-var TransportableDataHelper = mk.ext.TransportableDataHelper;
+    mk.ext.TransportableDataHelper = Interface(null, null);
+    var TransportableDataHelper = mk.ext.TransportableDataHelper;
 
-TransportableDataHelper.prototype = {
+    TransportableDataHelper.prototype = {
 
-    setTransportableDataFactory: function (algorithm, factory) {},
-    getTransportableDataFactory: function (algorithm) {},
+        setTransportableDataFactory: function (algorithm, factory) {},
+        getTransportableDataFactory: function (algorithm) {},
 
-    createTransportableData: function (data, algorithm) {},
+        createTransportableData: function (data, algorithm) {},
 
-    parseTransportableData: function (ted) {}
+        parseTransportableData: function (ted) {}
 
-};
-
-
-mk.ext.PortableNetworkFileHelper = Interface(null, null);
-var PortableNetworkFileHelper = mk.ext.PortableNetworkFileHelper;
-
-PortableNetworkFileHelper.prototype = {
-
-    setPortableNetworkFileFactory: function (factory) {},
-    getPortableNetworkFileFactory: function () {},
-
-    createPortableNetworkFile: function (data, filename, url, password) {},
-
-    parsePortableNetworkFile: function (pnf) {}
-
-};
+    };
 
 
-/**
- *  Format FactoryManager
- *  ~~~~~~~~~~~~~~~~~~~~~
- */
-mk.ext.FormatExtensions = {
+    mk.ext.PortableNetworkFileHelper = Interface(null, null);
+    var PortableNetworkFileHelper = mk.ext.PortableNetworkFileHelper;
+
+    PortableNetworkFileHelper.prototype = {
+
+        setPortableNetworkFileFactory: function (factory) {},
+        getPortableNetworkFileFactory: function () {},
+
+        createPortableNetworkFile: function (data, filename, url, password) {},
+
+        parsePortableNetworkFile: function (pnf) {}
+
+    };
+
 
     /**
-     *  Init TED helper
-     *
-     * @param {TransportableDataHelper} helper
+     *  Format FactoryManager
+     *  ~~~~~~~~~~~~~~~~~~~~~
      */
-    setTEDHelper: function (helper) {
-        tedHelper = helper;
-    },
-    getTEDHelper: function () {
-        return tedHelper;
-    },
+    mk.ext.FormatExtensions = {
 
-    /**
-     *  Init PNF helper
-     *
-     * @param {PortableNetworkFileHelper} helper
-     */
-    setPNFHelper: function (helper) {
-        pnfHelper = helper;
-    },
-    getPNFHelper: function () {
-        return pnfHelper;
-    }
+        /**
+         *  Init TED helper
+         *
+         * @param {TransportableDataHelper} helper
+         */
+        setTEDHelper: function (helper) {
+            tedHelper = helper;
+        },
+        getTEDHelper: function () {
+            return tedHelper;
+        },
 
-};
-var FormatExtensions = mk.ext.FormatExtensions;
+        /**
+         *  Init PNF helper
+         *
+         * @param {PortableNetworkFileHelper} helper
+         */
+        setPNFHelper: function (helper) {
+            pnfHelper = helper;
+        },
+        getPNFHelper: function () {
+            return pnfHelper;
+        }
 
-var tedHelper = null;
-var pnfHelper = null;
+    };
+    var FormatExtensions = mk.ext.FormatExtensions;
+
+    // Singleton
+    var tedHelper = null;
+    var pnfHelper = null;

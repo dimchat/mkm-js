@@ -28,41 +28,40 @@
 //! require 'class.js'
 //! require 'object.js'
 
-/**
- *  Data Converter
- */
-mk.type.DataConverter = Interface(null, null);
-var DataConverter = mk.type.DataConverter;
 
-DataConverter.prototype = {
+    /**
+     *  Data Converter
+     */
+    mk.type.DataConverter = Interface(null, null);
+    var DataConverter = mk.type.DataConverter;
 
-    getString: function (value, defaultValue) {},
+    DataConverter.prototype = {
 
-    // assume value can be a config string:
-    //     'true', 'false', 'yes', 'no', 'on', 'off', '1', '0', ...
-    getBoolean: function (value, defaultValue) {},
+        getString: function (value, defaultValue) {},
 
-    getInt: function (value, defaultValue) {},
-    getFloat: function (value, defaultValue) {},
+        // assume value can be a config string:
+        //     'true', 'false', 'yes', 'no', 'on', 'off', '1', '0', ...
+        getBoolean: function (value, defaultValue) {},
 
-    // assume value can be a timestamp (seconds from 1970-01-01 00:00:00)
-    getDateTime: function (value, defaultValue) {}
-};
+        getInt: function (value, defaultValue) {},
+        getFloat: function (value, defaultValue) {},
 
-/**
- *  Default Data Converter
- */
-mk.type.BaseConverter = function () {
-    BaseObject.call(this);
-};
-var BaseConverter = mk.type.BaseConverter;
+        // assume value can be a timestamp (seconds from 1970-01-01 00:00:00)
+        getDateTime: function (value, defaultValue) {}
+    };
 
-Class(BaseConverter, BaseObject, [DataConverter]);
+    /**
+     *  Default Data Converter
+     */
+    mk.type.BaseConverter = function () {
+        BaseObject.call(this);
+    };
+    var BaseConverter = mk.type.BaseConverter;
 
-Mixin(BaseConverter, {
+    Class(BaseConverter, BaseObject, [DataConverter]);
 
     // Override
-    getDateTime: function (value, defaultValue) {
+    BaseConverter.prototype.getDateTime = function (value, defaultValue) {
         if (IObject.isNull(value)) {
             // empty
             return defaultValue;
@@ -73,10 +72,10 @@ Mixin(BaseConverter, {
         var seconds = this.getFloat(value, 0);
         var millis = seconds * 1000;
         return new Date(millis);
-    },
+    };
 
     // Override
-    getFloat: function (value, defaultValue) {
+    BaseConverter.prototype.getFloat = function (value, defaultValue) {
         if (IObject.isNull(value)) {
             // empty
             return defaultValue;
@@ -86,12 +85,12 @@ Mixin(BaseConverter, {
         } else if (IObject.isBoolean(value)) {
             return value ? 1.0 : 0.0;
         }
-        var text = this.getStr(value);
+        var text = conv_str(value);
         return parseFloat(text);
-    },
+    };
 
     // Override
-    getInt: function (value, defaultValue) {
+    BaseConverter.prototype.getInt = function (value, defaultValue) {
         if (IObject.isNull(value)) {
             // empty
             return defaultValue;
@@ -101,12 +100,12 @@ Mixin(BaseConverter, {
         } else if (IObject.isBoolean(value)) {
             return value ? 1 : 0;
         }
-        var text = this.getStr(value);
+        var text = conv_str(value);
         return parseInt(text);
-    },
+    };
 
     // Override
-    getBoolean: function (value, defaultValue) {
+    BaseConverter.prototype.getBoolean = function (value, defaultValue) {
         if (IObject.isNull(value)) {
             // empty
             return defaultValue;
@@ -116,7 +115,7 @@ Mixin(BaseConverter, {
         } else if (IObject.isNumber(value)) {
             return value > 0 || value < 0;
         }
-        var text = this.getStr(value);
+        var text = conv_str(value);
         text = text.trim();
         var size = text.length;
         if (size === 0) {
@@ -131,10 +130,10 @@ Mixin(BaseConverter, {
             throw new TypeError('Boolean value error: "' + value + '"');
         }
         return state;
-    },
+    };
 
     // Override
-    getString: function (value, defaultValue) {
+    BaseConverter.prototype.getString = function (value, defaultValue) {
         if (IObject.isNull(value)) {
             // empty
             return defaultValue;
@@ -144,50 +143,50 @@ Mixin(BaseConverter, {
         } else {
             return value.toString();
         }
-    },
+    };
 
     // private
-    getStr: function (value) {
+    var conv_str = function (value) {
         if (IObject.isString(value)) {
-            return  value;
+            return value;
         } else {
             return value.toString();
         }
-    }
-});
+    };
 
-/**
- *  Data Convert Interface
- */
-mk.type.Converter = {
 
-    getString: function (value, defaultValue) {
-        return this.converter.getString(value, defaultValue);
-    },
-    getBoolean: function (value, defaultValue) {
-        return this.converter.getBoolean(value, defaultValue);
-    },
+    /**
+     *  Data Convert Interface
+     */
+    mk.type.Converter = {
 
-    getInt: function (value, defaultValue) {
-        return this.converter.getInt(value, defaultValue);
-    },
-    getFloat: function (value, defaultValue) {
-        return this.converter.getFloat(value, defaultValue);
-    },
+        getString: function (value, defaultValue) {
+            return this.converter.getString(value, defaultValue);
+        },
+        getBoolean: function (value, defaultValue) {
+            return this.converter.getBoolean(value, defaultValue);
+        },
 
-    getDateTime: function (value, defaultValue) {
-        return this.converter.getDateTime(value, defaultValue);
-    },
+        getInt: function (value, defaultValue) {
+            return this.converter.getInt(value, defaultValue);
+        },
+        getFloat: function (value, defaultValue) {
+            return this.converter.getFloat(value, defaultValue);
+        },
 
-    converter: new BaseConverter(),
+        getDateTime: function (value, defaultValue) {
+            return this.converter.getDateTime(value, defaultValue);
+        },
 
-    BOOLEAN_STATES: {
-        '1': true, 'yes': true, 'true': true, 'on': true,
+        converter: new BaseConverter(),
 
-        '0': false, 'no': false, 'false': false, 'off': false,
-        //'+0': false, '-0': false, '0.0': false, '+0.0': false, '-0.0': false,
-        'null': false, 'none': false, 'undefined': false
-    },
-    MAX_BOOLEAN_LEN: 'undefined'.length
-};
-var Converter = mk.type.Converter;
+        BOOLEAN_STATES: {
+            '1': true, 'yes': true, 'true': true, 'on': true,
+
+            '0': false, 'no': false, 'false': false, 'off': false,
+            //'+0': false, '-0': false, '0.0': false, '+0.0': false, '-0.0': false,
+            'null': false, 'none': false, 'undefined': false
+        },
+        MAX_BOOLEAN_LEN: 'undefined'.length
+    };
+    var Converter = mk.type.Converter;

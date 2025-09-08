@@ -27,36 +27,37 @@
 
 //! require 'hash.js'
 
-mk.digest.SHA256 = {
 
-    /**
-     *  Get digest of binary data
-     *
-     * @param {Uint8Array} data - binary data
-     * @return {Uint8Array} binary data
-     */
-    digest: function (data) {
-        return this.getDigester().digest(data);
-    },
+    mk.digest.SHA256 = {
 
-    /**
-     *  Get SHA256 Digester
-     *
-     * @return {mk.digest.MessageDigester}
-     */
-    getDigester: function () {
-        return sha256Digester;
-    },
+        /**
+         *  Get digest of binary data
+         *
+         * @param {Uint8Array} data - binary data
+         * @return {Uint8Array} binary data
+         */
+        digest: function (data) {
+            return this.getDigester().digest(data);
+        },
 
-    /**
-     *  Set SHA256 Digester
-     * @param {mk.digest.MessageDigester} digester
-     */
-    setDigester: function (digester) {
-        sha256Digester = digester;
-    }
-};
-var SHA256 = mk.digest.SHA256;
+        /**
+         *  Get SHA256 Digester
+         *
+         * @return {mk.digest.MessageDigester}
+         */
+        getDigester: function () {
+            return sha256Digester;
+        },
 
-// Singleton
-var sha256Digester = null;
+        /**
+         *  Set SHA256 Digester
+         * @param {mk.digest.MessageDigester} digester
+         */
+        setDigester: function (digester) {
+            sha256Digester = digester;
+        }
+    };
+    var SHA256 = mk.digest.SHA256;
+
+    // Singleton
+    var sha256Digester = null;

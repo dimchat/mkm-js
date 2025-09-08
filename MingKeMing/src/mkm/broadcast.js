@@ -34,25 +34,25 @@
 //! require 'protocol/address.js'
 
 
-/**
- *  Address for broadcast
- */
-mkm.mkm.BroadcastAddress = function (string, network) {
-    ConstantString.call(this, string);
-    this.__network = Enum.getInt(network);
-};
-var BroadcastAddress = mkm.mkm.BroadcastAddress;
+    /**
+     *  Address for broadcast
+     */
+    mkm.mkm.BroadcastAddress = function (string, network) {
+        ConstantString.call(this, string);
+        this.__network = Enum.getInt(network);
+    };
+    var BroadcastAddress = mkm.mkm.BroadcastAddress;
 
-Class(BroadcastAddress, ConstantString, [Address]);
+    Class(BroadcastAddress, ConstantString, [Address]);
 
-// Override
-BroadcastAddress.prototype.getType = function () {
-    return this.__network;
-};
+    // Override
+    BroadcastAddress.prototype.getType = function () {
+        return this.__network;
+    };
 
 
-/**
- *  Address for broadcast
- */
-Address.ANYWHERE = new BroadcastAddress('anywhere', EntityType.ANY);
-Address.EVERYWHERE = new BroadcastAddress('everywhere', EntityType.EVERY);
+    /**
+     *  Address for broadcast
+     */
+    Address.ANYWHERE = new BroadcastAddress('anywhere', EntityType.ANY);
+    Address.EVERYWHERE = new BroadcastAddress('everywhere', EntityType.EVERY);

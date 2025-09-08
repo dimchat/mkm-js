@@ -28,97 +28,97 @@
 //! require 'type/class.js'
 
 
-/**
- *  Data Coder
- *  ~~~~~~~~~~
- *  Hex, Base58, Base64, ...
- *
- *  1. encode binary data to string;
- *  2. decode string to binary data.
- */
-mk.format.DataCoder = Interface(null, null);
-var DataCoder = mk.format.DataCoder;
+    /**
+     *  Data Coder
+     *  ~~~~~~~~~~
+     *  Hex, Base58, Base64, ...
+     *
+     *  1. encode binary data to string;
+     *  2. decode string to binary data.
+     */
+    mk.format.DataCoder = Interface(null, null);
+    var DataCoder = mk.format.DataCoder;
 
-DataCoder.prototype = {
+    DataCoder.prototype = {
+
+        /**
+         *  Encode binary data to local string
+         *
+         * @param {Uint8Array} data
+         * @return {String}
+         */
+        encode: function (data) {},
+
+        /**
+         *  Decode local string to binary data
+         *
+         * @param {string} string
+         * @return {Uint8Array}
+         */
+        decode: function (string) {}
+
+    };
+
 
     /**
-     *  Encode binary data to local string
+     *  Object Coder
+     *  ~~~~~~~~~~~~
+     *  JsON, XML, ...
      *
-     * @param {Uint8Array} data
-     * @return {String}
+     *  1. encode object to string;
+     *  2. decode string to object.
      */
-    encode: function (data) {},
+    mk.format.ObjectCoder = Interface(null, null);
+    var ObjectCoder = mk.format.ObjectCoder;
+
+    ObjectCoder.prototype = {
+
+        /**
+         *  Encode Map/List object to string
+         *
+         * @param {{}|[]} object - Map or List
+         * @return {String} serialized string
+         */
+        encode: function (object) {},
+
+        /**
+         *  Decode string to Map/List object
+         *
+         * @param {string} string - serialized string
+         * @return {{}|[]} Map or List
+         */
+        decode: function (string) {}
+
+    };
+
 
     /**
-     *  Decode local string to binary data
+     *  String Coder
+     *  ~~~~~~~~~~~~
+     *  UTF-8, UTF-16, GBK, GB2312, ...
      *
-     * @param {string} string
-     * @return {Uint8Array}
+     *  1. encode string to binary data;
+     *  2. decode binary data to string.
      */
-    decode: function (string) {}
+    mk.format.StringCoder = Interface(null, null);
+    var StringCoder = mk.format.StringCoder;
 
-};
+    StringCoder.prototype = {
 
+        /**
+         *  Encode local string to binary data
+         *
+         * @param {string} string
+         * @return {Uint8Array}
+         */
+        encode: function (string) {},
 
-/**
- *  Object Coder
- *  ~~~~~~~~~~~~
- *  JsON, XML, ...
- *
- *  1. encode object to string;
- *  2. decode string to object.
- */
-mk.format.ObjectCoder = Interface(null, null);
-var ObjectCoder = mk.format.ObjectCoder;
+        /**
+         *  Decode binary data to local string
+         *
+         * @param {Uint8Array} data
+         * @return {String}
+         */
+        decode: function (data) {}
 
-ObjectCoder.prototype = {
-
-    /**
-     *  Encode Map/List object to string
-     *
-     * @param {{}|[]} object - Map or List
-     * @return {String} serialized string
-     */
-    encode: function (object) {},
-
-    /**
-     *  Decode string to Map/List object
-     *
-     * @param {string} string - serialized string
-     * @return {{}|[]} Map or List
-     */
-    decode: function (string) {}
-
-};
-
-
-/**
- *  String Coder
- *  ~~~~~~~~~~~~
- *  UTF-8, UTF-16, GBK, GB2312, ...
- *
- *  1. encode string to binary data;
- *  2. decode binary data to string.
- */
-mk.format.StringCoder = Interface(null, null);
-var StringCoder = mk.format.StringCoder;
-
-StringCoder.prototype = {
-
-    /**
-     *  Encode local string to binary data
-     *
-     * @param {string} string
-     * @return {Uint8Array}
-     */
-    encode: function (string) {},
-
-    /**
-     *  Decode binary data to local string
-     *
-     * @param {Uint8Array} data
-     * @return {String}
-     */
-    decode: function (data) {}
-
-};
+    };

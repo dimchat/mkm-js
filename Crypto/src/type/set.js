@@ -29,76 +29,75 @@
 //! require 'object.js'
 //! require 'arrays.js'
 
-/**
- *  Set Interface
- */
-mk.type.Set = Interface(null, [IObject]);
-var Set = mk.type.Set;
-
-Set.prototype = {
-
-    isEmpty: function () {},
 
     /**
-     *  Get length of the set
-     *
-     * @return {int}
+     *  Set Interface
      */
-    getLength: function () {},
+    mk.type.Set = Interface(null, [IObject]);
+    var Set = mk.type.Set;
+
+    Set.prototype = {
+
+        isEmpty: function () {},
+
+        /**
+         *  Get length of the set
+         *
+         * @return {int}
+         */
+        getLength: function () {},
+
+        /**
+         *  Check whether [element] is in the set
+         *
+         * @param element
+         * @return {boolean} false on not found
+         */
+        contains: function (element) {},
+
+        /**
+         *  Adds [element] to the set
+         *
+         * @param element
+         * @return {boolean} false on duplicated
+         */
+        add: function (element) {},
+
+        /**
+         *  Removes [element] from the set
+         *
+         * @param element
+         * @return {boolean} false on not found
+         */
+        remove: function (element) {},
+
+        /**
+         *  Remove all elements from the set
+         */
+        clear: function () {},
+
+        /**
+         *  Create a new Array with all elements
+         *
+         * @return {*[]} a copy of inner array
+         */
+        toArray: function () {}
+    };
 
     /**
-     *  Check whether [element] is in the set
-     *
-     * @param element
-     * @return {boolean} false on not found
+     *  Create Hash Set
+     *  ~~~~~~~~~~~~~~~
      */
-    contains: function (element) {},
+    mk.type.HashSet = function () {
+        BaseObject.call(this);
+        this.__array = [];
+    };
+    var HashSet = mk.type.HashSet;
 
-    /**
-     *  Adds [element] to the set
-     *
-     * @param element
-     * @return {boolean} false on duplicated
-     */
-    add: function (element) {},
-
-    /**
-     *  Removes [element] from the set
-     *
-     * @param element
-     * @return {boolean} false on not found
-     */
-    remove: function (element) {},
-
-    /**
-     *  Remove all elements from the set
-     */
-    clear: function () {},
-
-    /**
-     *  Create a new Array with all elements
-     *
-     * @return {*[]} a copy of inner array
-     */
-    toArray: function () {}
-};
-
-/**
- *  Create Hash Set
- *  ~~~~~~~~~~~~~~~
- */
-mk.type.HashSet = function () {
-    BaseObject.call(this);
-    this.__array = [];
-};
-var HashSet = mk.type.HashSet;
-
-Class(HashSet, BaseObject, [Set]);
-
-Mixin(HashSet, {
+    Class(HashSet, BaseObject, [Set]);
 
     // Override
-    equals: function (other) {
+    HashSet.prototype.equals = function (other) {
         if (Interface.conforms(other, Set)) {
             if (this === other) {
                 return true;
@@ -106,38 +105,38 @@ Mixin(HashSet, {
             other = other.valueOf();
         }
         return Arrays.equals(this.__array, other);
-    },
+    };
 
     // Override
-    valueOf: function () {
+    HashSet.prototype.valueOf = function () {
         return this.__array;
-    },
+    };
 
     // Override
-    toString: function () {
+    HashSet.prototype.toString = function () {
         return this.__array.toString();
-    },
+    };
 
     //-------- Set
 
     // Override
-    isEmpty: function () {
+    HashSet.prototype.isEmpty = function () {
         return this.__array.length === 0;
-    },
+    };
 
     // Override
-    getLength: function() {
+    HashSet.prototype.getLength = function() {
         return this.__array.length;
-    },
+    };
 
     // Override
-    contains: function (item) {
+    HashSet.prototype.contains = function (item) {
         var pos = Arrays.find(this.__array, item);
         return pos >= 0;
-    },
+    };
 
     // Override
-    add: function (item) {
+    HashSet.prototype.add = function (item) {
         var pos = Arrays.find(this.__array, item);
         if (pos < 0) {
             this.__array.push(item);
@@ -145,20 +144,19 @@ Mixin(HashSet, {
         } else {
             return false;
         }
-    },
+    };
 
     // Override
-    remove: function (item) {
+    HashSet.prototype.remove = function (item) {
         return Arrays.remove(this.__array, item);
-    },
+    };
 
     // Override
-    clear: function () {
+    HashSet.prototype.clear = function () {
         this.__array = [];
-    },
+    };
 
     // Override
-    toArray: function () {
+    HashSet.prototype.toArray = function () {
         return this.__array.slice();
-    }
-});
+    };

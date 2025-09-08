@@ -30,24 +30,38 @@ if (typeof MONKEY !== 'object') {
             child = function () {
                 Object.call(this)
             }
+        } else if (typeof child === 'function') {
+        } else {
+            throw new TypeError('class params error: ' + child + ', ' + parent + ', ' + interfaces);
         }
-        if (parent) {
+        if (typeof parent === 'function') {
             child._mk_super_class = parent
         } else {
             parent = Object
         }
         child.prototype = Object.create(parent.prototype);
         child.prototype.constructor = child;
-        if (interfaces) {
+        if (interfaces instanceof Array) {
             child._mk_interfaces = interfaces
         }
         return child
     };
     var Class = mk.type.Class;
     mk.type.Mixin = function (clazz, methods) {
+        if (!clazz) {
+            clazz = function () {
+            }
+        } else if (typeof clazz === 'function') {
+        } else {
+            throw new TypeError('mixin params error: ' + clazz + ', ' + methods);
+        }
         if (typeof methods === 'function') {
             methods = methods.prototype
         }
+        return Implementation(clazz, methods)
+    };
+    var Mixin = mk.type.Mixin;
+    mk.type.Implementation = function (clazz, methods) {
         var names = Object.keys(methods);
         var key;
         for (var i = 0; i < names.length; ++i) {
@@ -56,13 +70,16 @@ if (typeof MONKEY !== 'object') {
         }
         return clazz
     };
-    var Mixin = mk.type.Mixin;
+    var Implementation = mk.type.Implementation;
     mk.type.Interface = function (child, parents) {
         if (!child) {
             child = function () {
             }
+        } else if (typeof child === 'function') {
+        } else {
+            throw new TypeError('interface params error: ' + child + ', ' + parents);
         }
-        if (parents) {
+        if (parents instanceof Array) {
             child._mk_super_interfaces = parents
         }
         return child
@@ -77,6 +94,9 @@ if (typeof MONKEY !== 'object') {
         return check_extends(object.constructor, protocol)
     };
     var check_extends = function (constructor, protocol) {
+        if (!constructor) {
+            return false
+        }
         var interfaces = constructor._mk_interfaces;
         if (interfaces && check_implements(interfaces, protocol)) {
             return true
@@ -256,75 +276,78 @@ if (typeof MONKEY !== 'object') {
     };
     var BaseConverter = mk.type.BaseConverter;
     Class(BaseConverter, BaseObject, [DataConverter]);
-    Mixin(BaseConverter, {
-        getDateTime: function (value, defaultValue) {
-            if (IObject.isNull(value)) {
-                return defaultValue
-            } else if (value instanceof Date) {
-                return value
-            }
-            var seconds = this.getFloat(value, 0);
-            var millis = seconds * 1000;
-            return new Date(millis)
-        }, getFloat: function (value, defaultValue) {
-            if (IObject.isNull(value)) {
-                return defaultValue
-            } else if (IObject.isNumber(value)) {
-                return value
-            } else if (IObject.isBoolean(value)) {
-                return value ? 1.0 : 0.0
-            }
-            var text = this.getStr(value);
-            return parseFloat(text)
-        }, getInt: function (value, defaultValue) {
-            if (IObject.isNull(value)) {
-                return defaultValue
-            } else if (IObject.isNumber(value)) {
-                return value
-            } else if (IObject.isBoolean(value)) {
-                return value ? 1 : 0
-            }
-            var text = this.getStr(value);
-            return parseInt(text)
-        }, getBoolean: function (value, defaultValue) {
-            if (IObject.isNull(value)) {
-                return defaultValue
-            } else if (IObject.isBoolean(value)) {
-                return value
-            } else if (IObject.isNumber(value)) {
-                return value > 0 || value < 0
-            }
-            var text = this.getStr(value);
-            text = text.trim();
-            var size = text.length;
-            if (size === 0) {
-                return false
-            } else if (size > Converter.MAX_BOOLEAN_LEN) {
-                throw new TypeError('Boolean value error: "' + value + '"');
-            } else {
-                text = text.toLowerCase()
-            }
-            var state = Converter.BOOLEAN_STATES[text];
-            if (IObject.isNull(state)) {
-                throw new TypeError('Boolean value error: "' + value + '"');
-            }
-            return state
-        }, getString: function (value, defaultValue) {
-            if (IObject.isNull(value)) {
-                return defaultValue
-            } else if (IObject.isString(value)) {
-                return value
-            } else {
-                return value.toString()
-            }
-        }, getStr: function (value) {
-            if (IObject.isString(value)) {
-                return value
-            } else {
-                return value.toString()
-            }
+    BaseConverter.prototype.getDateTime = function (value, defaultValue) {
+        if (IObject.isNull(value)) {
+            return defaultValue
+        } else if (value instanceof Date) {
+            return value
         }
-    });
+        var seconds = this.getFloat(value, 0);
+        var millis = seconds * 1000;
+        return new Date(millis)
+    };
+    BaseConverter.prototype.getFloat = function (value, defaultValue) {
+        if (IObject.isNull(value)) {
+            return defaultValue
+        } else if (IObject.isNumber(value)) {
+            return value
+        } else if (IObject.isBoolean(value)) {
+            return value ? 1.0 : 0.0
+        }
+        var text = conv_str(value);
+        return parseFloat(text)
+    };
+    BaseConverter.prototype.getInt = function (value, defaultValue) {
+        if (IObject.isNull(value)) {
+            return defaultValue
+        } else if (IObject.isNumber(value)) {
+            return value
+        } else if (IObject.isBoolean(value)) {
+            return value ? 1 : 0
+        }
+        var text = conv_str(value);
+        return parseInt(text)
+    };
+    BaseConverter.prototype.getBoolean = function (value, defaultValue) {
+        if (IObject.isNull(value)) {
+            return defaultValue
+        } else if (IObject.isBoolean(value)) {
+            return value
+        } else if (IObject.isNumber(value)) {
+            return value > 0 || value < 0
+        }
+        var text = conv_str(value);
+        text = text.trim();
+        var size = text.length;
+        if (size === 0) {
+            return false
+        } else if (size > Converter.MAX_BOOLEAN_LEN) {
+            throw new TypeError('Boolean value error: "' + value + '"');
+        } else {
+            text = text.toLowerCase()
+        }
+        var state = Converter.BOOLEAN_STATES[text];
+        if (IObject.isNull(state)) {
+            throw new TypeError('Boolean value error: "' + value + '"');
+        }
+        return state
+    };
+    BaseConverter.prototype.getString = function (value, defaultValue) {
+        if (IObject.isNull(value)) {
+            return defaultValue
+        } else if (IObject.isString(value)) {
+            return value
+        } else {
+            return value.toString()
+        }
+    };
+    var conv_str = function (value) {
+        if (IObject.isString(value)) {
+            return value
+        } else {
+            return value.toString()
+        }
+    };
     mk.type.Converter = {
         getString: function (value, defaultValue) {
             return this.converter.getString(value, defaultValue)
@@ -369,91 +392,107 @@ if (typeof MONKEY !== 'object') {
     };
     var Dictionary = mk.type.Dictionary;
     Class(Dictionary, BaseObject, [Mapper]);
-    Mixin(Dictionary, {
-        equals: function (other) {
-            if (Interface.conforms(other, Mapper)) {
-                if (this === other) {
-                    return true
-                }
-                other = other.valueOf()
+    Dictionary.prototype.equals = function (other) {
+        if (Interface.conforms(other, Mapper)) {
+            if (this === other) {
+                return true
             }
-            return Arrays.equals(this.__dictionary, other)
-        }, valueOf: function () {
-            return this.__dictionary
-        }, toString: function () {
-            return mk.format.JSON.encode(this.__dictionary)
-        }, toMap: function () {
-            return this.__dictionary
-        }, copyMap: function (deepCopy) {
-            if (deepCopy) {
-                return Copier.deepCopyMap(this.__dictionary)
-            } else {
-                return Copier.copyMap(this.__dictionary)
-            }
-        }, isEmpty: function () {
-            var keys = Object.keys(this.__dictionary);
-            return keys.length === 0
-        }, getLength: function () {
-            var keys = Object.keys(this.__dictionary);
-            return keys.length
-        }, allKeys: function () {
-            return Object.keys(this.__dictionary)
-        }, getValue: function (key) {
-            return this.__dictionary[key]
-        }, setValue: function (key, value) {
-            if (value) {
-                this.__dictionary[key] = value
-            } else if (this.__dictionary.hasOwnProperty(key)) {
-                delete this.__dictionary[key]
-            }
-        }, removeValue: function (key) {
-            var value;
-            if (this.__dictionary.hasOwnProperty(key)) {
-                value = this.__dictionary[key];
-                delete this.__dictionary[key]
-            } else {
-                value = null
-            }
-            return value
-        }, getString: function (key, defaultValue) {
-            var value = this.__dictionary[key];
-            return Converter.getString(value, defaultValue)
-        }, getBoolean: function (key, defaultValue) {
-            var value = this.__dictionary[key];
-            return Converter.getBoolean(value, defaultValue)
-        }, getInt: function (key, defaultValue) {
-            var value = this.__dictionary[key];
-            return Converter.getInt(value, defaultValue)
-        }, getFloat: function (key, defaultValue) {
-            var value = this.__dictionary[key];
-            return Converter.getFloat(value, defaultValue)
-        }, getDateTime: function (key, defaultValue) {
-            var value = this.__dictionary[key];
-            return Converter.getDateTime(value, defaultValue)
-        }, setDateTime: function (key, time) {
-            if (!time) {
-                this.removeValue(key)
-            } else if (time instanceof Date) {
-                time = time.getTime() / 1000.0;
-                this.__dictionary[key] = time
-            } else {
-                time = Converter.getFloat(time, 0);
-                this.__dictionary[key] = time
-            }
-        }, setString: function (key, string) {
-            if (!string) {
-                this.removeValue(key)
-            } else {
-                this.__dictionary[key] = string.toString()
-            }
-        }, setMap: function (key, map) {
-            if (!map) {
-                this.removeValue(key)
-            } else {
-                this.__dictionary[key] = map.toMap()
-            }
+            other = other.valueOf()
         }
-    });
+        return Arrays.equals(this.__dictionary, other)
+    };
+    Dictionary.prototype.valueOf = function () {
+        return this.__dictionary
+    };
+    Dictionary.prototype.toString = function () {
+        return mk.format.JSON.encode(this.__dictionary)
+    };
+    Dictionary.prototype.toMap = function () {
+        return this.__dictionary
+    };
+    Dictionary.prototype.copyMap = function (deepCopy) {
+        if (deepCopy) {
+            return Copier.deepCopyMap(this.__dictionary)
+        } else {
+            return Copier.copyMap(this.__dictionary)
+        }
+    };
+    Dictionary.prototype.isEmpty = function () {
+        var keys = Object.keys(this.__dictionary);
+        return keys.length === 0
+    };
+    Dictionary.prototype.getLength = function () {
+        var keys = Object.keys(this.__dictionary);
+        return keys.length
+    };
+    Dictionary.prototype.allKeys = function () {
+        return Object.keys(this.__dictionary)
+    };
+    Dictionary.prototype.getValue = function (key) {
+        return this.__dictionary[key]
+    };
+    Dictionary.prototype.setValue = function (key, value) {
+        if (value) {
+            this.__dictionary[key] = value
+        } else if (this.__dictionary.hasOwnProperty(key)) {
+            delete this.__dictionary[key]
+        }
+    };
+    Dictionary.prototype.removeValue = function (key) {
+        var value;
+        if (this.__dictionary.hasOwnProperty(key)) {
+            value = this.__dictionary[key];
+            delete this.__dictionary[key]
+        } else {
+            value = null
+        }
+        return value
+    };
+    Dictionary.prototype.getString = function (key, defaultValue) {
+        var value = this.__dictionary[key];
+        return Converter.getString(value, defaultValue)
+    };
+    Dictionary.prototype.getBoolean = function (key, defaultValue) {
+        var value = this.__dictionary[key];
+        return Converter.getBoolean(value, defaultValue)
+    };
+    Dictionary.prototype.getInt = function (key, defaultValue) {
+        var value = this.__dictionary[key];
+        return Converter.getInt(value, defaultValue)
+    };
+    Dictionary.prototype.getFloat = function (key, defaultValue) {
+        var value = this.__dictionary[key];
+        return Converter.getFloat(value, defaultValue)
+    };
+    Dictionary.prototype.getDateTime = function (key, defaultValue) {
+        var value = this.__dictionary[key];
+        return Converter.getDateTime(value, defaultValue)
+    };
+    Dictionary.prototype.setDateTime = function (key, time) {
+        if (!time) {
+            this.removeValue(key)
+        } else if (time instanceof Date) {
+            time = time.getTime() / 1000.0;
+            this.__dictionary[key] = time
+        } else {
+            time = Converter.getFloat(time, 0);
+            this.__dictionary[key] = time
+        }
+    };
+    Dictionary.prototype.setString = function (key, string) {
+        if (!string) {
+            this.removeValue(key)
+        } else {
+            this.__dictionary[key] = string.toString()
+        }
+    };
+    Dictionary.prototype.setMap = function (key, map) {
+        if (!map) {
+            this.removeValue(key)
+        } else {
+            this.__dictionary[key] = map.toMap()
+        }
+    };
     var is_array = function (obj) {
         return obj instanceof Array || is_number_array(obj)
     };
@@ -645,31 +684,33 @@ if (typeof MONKEY !== 'object') {
     };
     var BaseEnum = mk.type.BaseEnum;
     Class(BaseEnum, BaseObject, null);
-    Mixin(BaseEnum, {
-        equals: function (other) {
-            if (other instanceof BaseEnum) {
-                if (this === other) {
-                    return true
-                }
-                other = other.valueOf()
+    BaseEnum.prototype.equals = function (other) {
+        if (other instanceof BaseEnum) {
+            if (this === other) {
+                return true
             }
-            return this.__value === other
-        }, toString: function () {
-            return '<' + this.getName() + ': ' + this.getValue() + '>'
-        }, valueOf: function () {
-            return this.__value
-        }, getValue: function () {
-            return this.__value
-        }, getName: function () {
-            return this.__alias
+            other = other.valueOf()
         }
-    });
+        return this.__value === other
+    };
+    BaseEnum.prototype.toString = function () {
+        return '<' + this.getName() + ': ' + this.getValue() + '>'
+    };
+    BaseEnum.prototype.valueOf = function () {
+        return this.__value
+    };
+    BaseEnum.prototype.getValue = function () {
+        return this.__value
+    };
+    BaseEnum.prototype.getName = function () {
+        return this.__alias
+    };
     var enum_class = function (type) {
         var NamedEnum = function (value, alias) {
             BaseEnum.call(this, value, alias)
         };
         Class(NamedEnum, BaseEnum, null);
-        Mixin(NamedEnum, {
+        Implementation(NamedEnum, {
             toString: function () {
                 var clazz = NamedEnum.__type;
                 if (!clazz) {
@@ -719,7 +760,7 @@ if (typeof MONKEY !== 'object') {
             return value.getName()
         }
         return Converter.getString(value, defaultValue)
-    }
+    };
     mk.type.Set = Interface(null, [IObject]);
     var Set = mk.type.Set;
     Set.prototype = {
@@ -738,42 +779,49 @@ if (typeof MONKEY !== 'object') {
     };
     var HashSet = mk.type.HashSet;
     Class(HashSet, BaseObject, [Set]);
-    Mixin(HashSet, {
-        equals: function (other) {
-            if (Interface.conforms(other, Set)) {
-                if (this === other) {
-                    return true
-                }
-                other = other.valueOf()
-            }
-            return Arrays.equals(this.__array, other)
-        }, valueOf: function () {
-            return this.__array
-        }, toString: function () {
-            return this.__array.toString()
-        }, isEmpty: function () {
-            return this.__array.length === 0
-        }, getLength: function () {
-            return this.__array.length
-        }, contains: function (item) {
-            var pos = Arrays.find(this.__array, item);
-            return pos >= 0
-        }, add: function (item) {
-            var pos = Arrays.find(this.__array, item);
-            if (pos < 0) {
-                this.__array.push(item);
+    HashSet.prototype.equals = function (other) {
+        if (Interface.conforms(other, Set)) {
+            if (this === other) {
                 return true
-            } else {
-                return false
             }
-        }, remove: function (item) {
-            return Arrays.remove(this.__array, item)
-        }, clear: function () {
-            this.__array = []
-        }, toArray: function () {
-            return this.__array.slice()
+            other = other.valueOf()
         }
-    });
+        return Arrays.equals(this.__array, other)
+    };
+    HashSet.prototype.valueOf = function () {
+        return this.__array
+    };
+    HashSet.prototype.toString = function () {
+        return this.__array.toString()
+    };
+    HashSet.prototype.isEmpty = function () {
+        return this.__array.length === 0
+    };
+    HashSet.prototype.getLength = function () {
+        return this.__array.length
+    };
+    HashSet.prototype.contains = function (item) {
+        var pos = Arrays.find(this.__array, item);
+        return pos >= 0
+    };
+    HashSet.prototype.add = function (item) {
+        var pos = Arrays.find(this.__array, item);
+        if (pos < 0) {
+            this.__array.push(item);
+            return true
+        } else {
+            return false
+        }
+    };
+    HashSet.prototype.remove = function (item) {
+        return Arrays.remove(this.__array, item)
+    };
+    HashSet.prototype.clear = function () {
+        this.__array = []
+    };
+    HashSet.prototype.toArray = function () {
+        return this.__array.slice()
+    };
     mk.type.Stringer = Interface(null, [IObject]);
     var Stringer = mk.type.Stringer;
     Stringer.prototype = {
@@ -793,35 +841,38 @@ if (typeof MONKEY !== 'object') {
     };
     var ConstantString = mk.type.ConstantString;
     Class(ConstantString, BaseObject, [Stringer]);
-    Mixin(ConstantString, {
-        equals: function (other) {
-            if (Interface.conforms(other, Stringer)) {
-                if (this === other) {
-                    return true
-                }
-                other = other.valueOf()
-            }
-            return this.__string === other
-        }, valueOf: function () {
-            return this.__string
-        }, toString: function () {
-            return this.__string
-        }, isEmpty: function () {
-            return this.__string.length === 0
-        }, getLength: function () {
-            return this.__string.length
-        }, equalsIgnoreCase: function (other) {
+    ConstantString.prototype.equals = function (other) {
+        if (Interface.conforms(other, Stringer)) {
             if (this === other) {
                 return true
-            } else if (!other) {
-                return !this.__string
-            } else if (Interface.conforms(other, Stringer)) {
-                return equalsIgnoreCase(this.__string, other.toString())
-            } else {
-                return equalsIgnoreCase(this.__string, other)
             }
+            other = other.valueOf()
         }
-    });
+        return this.__string === other
+    };
+    ConstantString.prototype.valueOf = function () {
+        return this.__string
+    };
+    ConstantString.prototype.toString = function () {
+        return this.__string
+    };
+    ConstantString.prototype.isEmpty = function () {
+        return this.__string.length === 0
+    };
+    ConstantString.prototype.getLength = function () {
+        return this.__string.length
+    };
+    ConstantString.prototype.equalsIgnoreCase = function (other) {
+        if (this === other) {
+            return true
+        } else if (!other) {
+            return !this.__string
+        } else if (Interface.conforms(other, Stringer)) {
+            return equalsIgnoreCase(this.__string, other.toString())
+        } else {
+            return equalsIgnoreCase(this.__string, other)
+        }
+    };
     var equalsIgnoreCase = function (str1, str2) {
         if (str1.length !== str2.length) {
             return false

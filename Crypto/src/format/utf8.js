@@ -28,45 +28,46 @@
 //! require 'coder.js'
 
 
-mk.format.UTF8 = {
-    /**
-     *  Encode local string to binary data
-     *
-     * @param {string} string
-     * @return {Uint8Array}
-     */
-    encode: function (string) {
-        return this.getCoder().encode(string);
-    },
+    mk.format.UTF8 = {
+        /**
+         *  Encode local string to binary data
+         *
+         * @param {string} string
+         * @return {Uint8Array}
+         */
+        encode: function (string) {
+            return this.getCoder().encode(string);
+        },
 
-    /**
-     *  Decode binary data to local string
-     *
-     * @param {Uint8Array} data
-     * @return {String}
-     */
-    decode: function (data) {
-        return this.getCoder().decode(data);
-    },
+        /**
+         *  Decode binary data to local string
+         *
+         * @param {Uint8Array} data
+         * @return {String}
+         */
+        decode: function (data) {
+            return this.getCoder().decode(data);
+        },
 
-    /**
-     *  Get UTF8 Coder
-     *
-     * @return {mk.format.StringCoder}
-     */
-    getCoder: function () {
-        return utf8Coder;
-    },
+        /**
+         *  Get UTF8 Coder
+         *
+         * @return {mk.format.StringCoder}
+         */
+        getCoder: function () {
+            return utf8Coder;
+        },
 
-    /**
-     *  Set UTF8 Coder
-     *
-     * @param {mk.format.StringCoder} coder
-     */
-    setCoder: function (coder) {
-        utf8Coder = coder
-    }
-};
-var UTF8 = mk.format.UTF8;
+        /**
+         *  Set UTF8 Coder
+         *
+         * @param {mk.format.StringCoder} coder
+         */
+        setCoder: function (coder) {
+            utf8Coder = coder
+        }
+    };
+    var UTF8 = mk.format.UTF8;
 
-var utf8Coder = null;
+    // Singleton
+    var utf8Coder = null;

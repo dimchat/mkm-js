@@ -28,62 +28,63 @@
 //! require 'coder.js'
 
 
-mk.format.JSON = {
-    /**
-     *  Encode Map/List object to JsON string
-     *
-     * @param {{}|[]} object - Map or List
-     * @return {String} JsON string
-     */
-    encode: function (object) {
-        return this.getCoder().encode(object);
-    },
+    mk.format.JSON = {
+        /**
+         *  Encode Map/List object to JsON string
+         *
+         * @param {{}|[]} object - Map or List
+         * @return {String} JsON string
+         */
+        encode: function (object) {
+            return this.getCoder().encode(object);
+        },
 
-    /**
-     *  Decode JsON string to Map/List object
-     *
-     * @param {string} string - JsON string
-     * @return {{}|[]} Map or List
-     */
-    decode: function (string) {
-        return this.getCoder().decode(string);
-    },
+        /**
+         *  Decode JsON string to Map/List object
+         *
+         * @param {string} string - JsON string
+         * @return {{}|[]} Map or List
+         */
+        decode: function (string) {
+            return this.getCoder().decode(string);
+        },
 
-    /**
-     *  Get JsON Coder
-     *
-     * @return {mk.format.ObjectCoder}
-     */
-    getCoder: function () {
-        return jsonCoder;
-    },
+        /**
+         *  Get JsON Coder
+         *
+         * @return {mk.format.ObjectCoder}
+         */
+        getCoder: function () {
+            return jsonCoder;
+        },
 
-    /**
-     *  Set JsON Coder
-     *
-     * @param {mk.format.ObjectCoder} coder
-     */
-    setCoder: function (coder) {
-        jsonCoder = coder
-    }
-};
-// var JSON = mk.format.JSON;
+        /**
+         *  Set JsON Coder
+         *
+         * @param {mk.format.ObjectCoder} coder
+         */
+        setCoder: function (coder) {
+            jsonCoder = coder
+        }
+    };
+    // var JSON = mk.format.JSON;
 
-var jsonCoder = null;
+    // Singleton
+    var jsonCoder = null;
 
 
-mk.format.JSONMap = {
-    encode: function (dictionary) {
-        return this.getCoder().encode(dictionary);
-    },
-    decode: function (string) {
-        return this.getCoder().decode(string);
-    },
-    getCoder: function () {
-        return jsonCoder;
-    },
-    setCoder: function (coder) {
-        jsonCoder = coder
-    }
-};
-var JSONMap = mk.format.JSONMap;
+    mk.format.JSONMap = {
+        encode: function (dictionary) {
+            return this.getCoder().encode(dictionary);
+        },
+        decode: function (string) {
+            return this.getCoder().decode(string);
+        },
+        getCoder: function () {
+            return jsonCoder;
+        },
+        setCoder: function (coder) {
+            jsonCoder = coder
+        }
+    };
+    var JSONMap = mk.format.JSONMap;
